@@ -28,6 +28,14 @@ export type TabNavItem = {
   label: string;
   count?: number | null;
   disabled?: boolean;
+  /**
+   * Playwright anchor (kebab-case, surface-prefixed, e.g.
+   * `account-settings-tab-security`). Rendered on the underline-strip tab
+   * button ONLY — the overflow dropdown re-renders the same tabs, and
+   * duplicating the id there breaks strict-mode lookups (see
+   * tests/lessons.md 2026-06-01, StatusTabs entry).
+   */
+  testId?: string;
 };
 
 export type TabNavSize = 'sm' | 'md';
@@ -97,6 +105,7 @@ export function TabNav({ tabs, value, onChange, size = 'md', sticky = false, cla
               role="tab"
               aria-selected={isActive}
               disabled={isDisabled}
+              data-testid={tab.testId}
               tabIndex={overflow ? -1 : 0}
               onClick={() => !isDisabled && onChange?.(tab.value)}
               className={cn(

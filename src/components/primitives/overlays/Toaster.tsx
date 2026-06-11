@@ -49,6 +49,7 @@ export function AppBaseToast({ variant, title, description, action, cancel, onDi
   return (
     <div
       role="status"
+      data-testid={`toast-${variant}`}
       className={cn(
         'w-[360px] rounded-[10px] p-[12px_14px]',
         'flex gap-3 items-start',

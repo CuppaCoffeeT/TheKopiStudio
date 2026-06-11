@@ -175,6 +175,7 @@ export default function ResultDetailPage() {
           confirmLabel="Delete result"
           loading={removeResult.isPending}
           onConfirm={() => removeResult.mutate()}
+          testId="result-detail-delete-dialog"
         />
       )}
     </DetailPageFrame>

@@ -54,7 +54,8 @@ export const SelectMenuTrigger = forwardRef<
         'hover:border-zinc-400 dark:hover:border-zinc-600',
         'focus:outline-none focus:border-red-700 dark:focus:border-red-400 focus:ring-[3px] focus:ring-red-700/15 dark:focus:ring-red-400/25',
         'disabled:cursor-not-allowed disabled:opacity-60',
-        'data-[placeholder]:text-zinc-400',
+        // zinc-600 on the white trigger meets WCAG AA 4.5:1 (zinc-400 is 2.6:1).
+        'data-[placeholder]:text-zinc-600 dark:data-[placeholder]:text-zinc-400',
         className,
       )}
       style={{ fontFamily: 'var(--font-sans)' }}

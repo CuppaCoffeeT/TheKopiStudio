@@ -37,7 +37,12 @@ export function ScoreCard({ profile }: { profile: ProfileResult }) {
           return (
             <div key={d} data-testid={`result-score-row-${d}`}>
               <div className="mb-1 flex items-baseline justify-between gap-2">
-                <span style={{ fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600, color: PR[d].col }}>
+                {/* Zinc text — the brand hex fails WCAG AA 4.5:1 as text on the
+                    card (the coloured bar below carries the DISC identity). */}
+                <span
+                  className="text-zinc-800 dark:text-zinc-100"
+                  style={{ fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600 }}
+                >
                   DISC-{d} — {PR[d].nm}
                 </span>
                 <span

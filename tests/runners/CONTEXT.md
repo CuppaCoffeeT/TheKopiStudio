@@ -12,6 +12,7 @@ Non-UI checks: DB rows (Supabase service-role), NAS files (SMB at `/Volumes/JLQI
 | File | Tool | Purpose |
 |------|------|---------|
 | `supabaseChecks.ts` | Supabase | Generic row-exists / count assertions via service-role client |
+| `resultsCleanup.ts` | Supabase (PostgREST, user session) | Zero-residue delete of spec-created `results` rows by exact prospect_name — role's own RLS scope, no service key |
 | `quotationChecks.ts` | Supabase + UI | Quotation lifecycle assertions (status flips, audit log entries) |
 | `clientContactsChecks.ts` | Supabase | Client contact CRUD assertions |
 | `nasChecks.ts` | NAS (SMB) | File-exists / folder-shape assertions on `/Volumes/JLQI/` |

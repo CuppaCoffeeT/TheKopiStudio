@@ -31,6 +31,11 @@ interface DestructiveConfirmDialogProps {
   confirmLabel?: string;
   loading?: boolean;
   onConfirm: () => void;
+  /**
+   * Testid forwarded to the Modal surface; the footer actions derive
+   * `${testId}-cancel-btn` / `${testId}-confirm-btn` from it (Playwright).
+   */
+  testId?: string;
 }
 
 const AUTO_TITLE: Record<DestructiveTier, (kind: string) => string> = {
@@ -57,6 +62,7 @@ export function DestructiveConfirmDialog({
   confirmLabel,
   loading = false,
   onConfirm,
+  testId,
 }: DestructiveConfirmDialogProps) {
   const [typed, setTyped] = useState('');
   const [irreversibleChecked, setIrreversibleChecked] = useState(false);
@@ -111,10 +117,21 @@ export function DestructiveConfirmDialog({
       }
       destructive
       size={tier === 1 ? 'sm' : 'md'}
+      testId={testId}
       footer={
         <>
-          <ModalGhostAction onClick={() => onOpenChange(false)}>Cancel</ModalGhostAction>
-          <ModalPrimaryAction destructive disabled={!canConfirm || loading} onClick={onConfirm}>
+          <ModalGhostAction
+            data-testid={testId ? `${testId}-cancel-btn` : undefined}
+            onClick={() => onOpenChange(false)}
+          >
+            Cancel
+          </ModalGhostAction>
+          <ModalPrimaryAction
+            destructive
+            disabled={!canConfirm || loading}
+            onClick={onConfirm}
+            data-testid={testId ? `${testId}-confirm-btn` : undefined}
+          >
             {loading && (
               <span
                 aria-hidden

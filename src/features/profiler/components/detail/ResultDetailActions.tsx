@@ -25,8 +25,8 @@ function ReadOnlyHint({ mobile }: { mobile?: boolean }) {
     <span
       className={
         mobile
-          ? 'inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 text-zinc-500 dark:text-zinc-400'
-          : 'inline-flex items-center gap-1.5 text-zinc-500 dark:text-zinc-400'
+          ? 'inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 text-zinc-600 dark:text-zinc-400'
+          : 'inline-flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400'
       }
       style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, letterSpacing: '0.04em' }}
       title="Only the advisor who saved a result can edit its notes or delete it."

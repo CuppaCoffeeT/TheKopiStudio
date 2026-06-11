@@ -48,7 +48,7 @@ export function PlaybookSection({ primary, profile }: PlaybookSectionProps) {
   return (
     <Card className="border-amber-400/30 bg-amber-50/40 dark:bg-amber-950/10" data-testid="result-playbook">
       <Eyebrow>Communication Playbook — DISC-{primary}</Eyebrow>
-      <p className="m-0 mb-3.5 text-[12px] leading-6 text-zinc-500 dark:text-zinc-400">
+      <p className="m-0 mb-3.5 text-[12px] leading-6 text-zinc-600 dark:text-zinc-400">
         Ready-to-use statements. Replace [Name], [Day], [detail] with real info. Tap the copy icon
         to copy a statement.
       </p>
@@ -77,7 +77,7 @@ export function PlaybookSection({ primary, profile }: PlaybookSectionProps) {
                     className="flex items-start gap-2.5 border-b border-zinc-100 px-3.5 py-2.5 last:border-b-0 dark:border-zinc-900"
                   >
                     <span
-                      className="mt-0.5 flex-shrink-0 text-zinc-400 dark:text-zinc-500"
+                      className="mt-0.5 flex-shrink-0 text-zinc-600 dark:text-zinc-400"
                       style={{ fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 700 }}
                     >
                       {i + 1}.

@@ -25,8 +25,8 @@ import { SecurityPasswordForm } from '../components/SecurityPasswordForm';
 import type { AccountSettingsTab } from '../types';
 
 const TABS: TabNavItem[] = [
-  { value: 'profile', label: 'Profile' },
-  { value: 'security', label: 'Security' },
+  { value: 'profile', label: 'Profile', testId: 'account-settings-tab-profile' },
+  { value: 'security', label: 'Security', testId: 'account-settings-tab-security' },
 ];
 
 export default function AccountSettingsPage() {

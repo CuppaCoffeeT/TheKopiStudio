@@ -15,9 +15,9 @@ export function OpeningLineCard({ profile }: { profile: DiscProfile }) {
       style={{ borderColor: `${profile.col}44`, backgroundColor: `${profile.col}12` }}
       data-testid="result-opening-line"
     >
-      <Eyebrow className="mb-1.5">
-        <span style={{ color: profile.col }}>Try This Opening Line</span>
-      </Eyebrow>
+      {/* Eyebrow keeps its zinc text — the brand hex fails WCAG AA 4.5:1 on
+          the tinted card; the border/background tint carries the identity. */}
+      <Eyebrow className="mb-1.5">Try This Opening Line</Eyebrow>
       <p className="m-0 text-[14px] italic leading-7 text-zinc-800 dark:text-zinc-100">{profile.op}</p>
     </Card>
   );
@@ -31,12 +31,13 @@ export function TraitsCard({ profile }: { profile: DiscProfile }) {
         {profile.tr.map((trait) => (
           <span
             key={trait}
-            className="rounded-full px-3 py-1"
+            // Zinc text + tinted bg/border (DiscChip pattern) — the brand hex
+            // as text fails WCAG AA 4.5:1 on its own tint.
+            className="rounded-full px-3 py-1 text-zinc-800 dark:text-zinc-100"
             style={{
               fontFamily: 'var(--font-sans)',
               fontSize: 12,
               fontWeight: 600,
-              color: profile.col,
               backgroundColor: `${profile.col}22`,
               border: `1px solid ${profile.col}55`,
             }}
