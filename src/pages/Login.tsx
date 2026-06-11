@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { showError } from '@/utils/toastHelper';
+import { useLoginRedirect } from '@/hooks/useLoginRedirect';
 import {
   Card,
   CardHeader,
@@ -17,10 +18,13 @@ import { Field, Input } from '@/components/primitives/form';
  *
  * Auth runs against Supabase Auth (`signInWithPassword`). On success the
  * AuthProvider's `onAuthStateChange` rehydrates the session and we land on
- * `/dashboard`. Build out password-reset / email-verification flows as your
- * app needs them.
+ * `/dashboard`. Already-authenticated visitors are bounced straight to
+ * `/dashboard` by useLoginRedirect (the contract the E2E storageState
+ * harness depends on). Build out password-reset / email-verification flows
+ * as your app needs them.
  */
 export default function Login() {
+  useLoginRedirect();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -54,6 +58,7 @@ export default function Login() {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 autoComplete="email"
+                data-testid="login-email-input"
                 required
               />
             </Field>
@@ -64,10 +69,17 @@ export default function Login() {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 autoComplete="current-password"
+                data-testid="login-password-input"
                 required
               />
             </Field>
-            <Button type="submit" variant="primary" loading={loading} className="w-full">
+            <Button
+              type="submit"
+              variant="primary"
+              loading={loading}
+              className="w-full"
+              data-testid="login-submit-btn"
+            >
               Sign in
             </Button>
           </form>

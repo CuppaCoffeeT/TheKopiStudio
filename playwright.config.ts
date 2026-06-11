@@ -5,17 +5,17 @@ const isCI = !!process.env.CI;
 
 export default defineConfig({
   testDir: './tests/workflows',
-  // Seed + teardown the TEST_INVOICE_AUTOMATION fixture once per suite invocation.
-  // Runs even on Ctrl+C / failure (Playwright wraps globalTeardown in try/finally),
-  // so cancelled runs no longer leave "No number" rows in prod.
+  // Verify env once per suite invocation (no fixtures are seeded — the profiler
+  // suite runs against live tables with pre-provisioned e2e accounts). Teardown
+  // is a logging no-op kept for symmetry/future cleanup.
   // See: tests/global-setup.ts · tests/global-teardown.ts
   globalSetup: './tests/global-setup',
   globalTeardown: './tests/global-teardown',
-  // Tests share a single admin user (testUsers.admin) for sign-in. Multiple
-  // workers performing parallel sign-ins cause Supabase session-token conflicts
-  // and cascading auth failures, so we keep `fullyParallel: false` + 1 local
-  // worker. CI uses 2 workers because the 2 Playwright projects (chromium +
-  // mobile-safari) can shard cleanly across them.
+  // Specs sign in through the UI with shared per-role accounts (testUsers).
+  // Multiple workers performing parallel sign-ins cause Supabase session-token
+  // conflicts and cascading auth failures, so we keep `fullyParallel: false` +
+  // 1 local worker. CI uses 2 workers because the 2 Playwright projects
+  // (chromium + mobile-safari) can shard cleanly across them.
   fullyParallel: false,
   forbidOnly: isCI,
   retries: isCI ? 2 : 1,

@@ -2,24 +2,25 @@
  * playwright.parallel.config.ts — HIGH-PARALLELISM config for fast LOCAL full-suite runs.
  *
  * The default `playwright.config.ts` is deliberately `workers: 1` because the suite's
- * specs each do a UI sign-in with the single shared admin account, and N parallel
+ * specs each do a UI sign-in with a single shared account, and N parallel
  * sign-ins race on Supabase auth. This config removes that bottleneck:
  *
  *   1. A `setup` project (tests/auth.setup.ts) signs in ONCE PER ROLE and saves each
- *      session to tests/.auth/<role>.json (admin · coordinator · supervisor · storeman).
- *   2. The authed projects reuse the admin session via `storageState`, so the in-spec
- *      `LoginPage.signIn(...)` calls become instant no-ops (LoginPage.signIn detects the
- *      /login → /dashboard auto-redirect and returns early). Zero repeat sign-ins → no race.
+ *      session to tests/.auth/<role>.json (advisor · manager · super_admin).
+ *   2. The authed projects reuse the super_admin session via `storageState`, so the
+ *      in-spec `LoginPage.signIn(...)` calls become instant no-ops (LoginPage.signIn
+ *      detects the /login → /dashboard auto-redirect and returns early). Zero repeat
+ *      sign-ins → no race.
  *   3. With auth solved, we run many workers. Default 10 (override with E2E_WORKERS=N).
  *
  * PER-ROLE SESSIONS
  * -----------------
- * A spec that must run as a NON-admin role has two options:
+ * A spec that must run as a NON-super_admin role has two options:
  *   (a) Per-spec storageState (preferred — instant, no UI sign-in):
  *         import { authFileFor } from '../../fixtures/roleAuth';
- *         test.use({ storageState: authFileFor('coordinator') });
+ *         test.use({ storageState: authFileFor('advisor') });
  *       The `setup` project already wrote that file, so the spec starts authed as
- *       the coordinator. Add `tests/workflows/<area>` under a role-scoped project
+ *       the advisor. Add `tests/workflows/<area>` under a role-scoped project
  *       below if you want a whole folder pinned to one role.
  *   (b) In-spec UI sign-in via `loginAs(page, role)` (roleAuth.ts) — for the rare
  *       within-spec role SWITCH, or specs under tests/workflows/auth/** which run
@@ -39,7 +40,7 @@ import { defineConfig, devices } from '@playwright/test';
 import base from './playwright.config';
 import { authFileFor } from './tests/fixtures/roleAuth';
 
-const ADMIN_AUTH_FILE = authFileFor('admin');
+const SUPER_ADMIN_AUTH_FILE = authFileFor('super_admin');
 const WORKERS = process.env.E2E_WORKERS ? Number(process.env.E2E_WORKERS) : 10;
 
 export default defineConfig({
@@ -51,25 +52,25 @@ export default defineConfig({
   reporter: [['list'], ['json', { outputFile: 'test-results/parallel-results.json' }], ['html', { open: 'never' }]],
 
   projects: [
-    // 1. Sign in once PER ROLE → tests/.auth/<role>.json (admin/coordinator/supervisor/storeman)
+    // 1. Sign in once PER ROLE → tests/.auth/<role>.json (advisor/manager/super_admin)
     {
       name: 'setup',
       testDir: './tests',
       testMatch: /auth\.setup\.ts/,
     },
-    // 2. Authed suite (everything EXCEPT the logged-out auth-flow specs) — admin session.
+    // 2. Authed suite (everything EXCEPT the logged-out auth-flow specs) — super_admin session.
     {
       name: 'chromium-desktop',
       testDir: './tests/workflows',
       testIgnore: '**/auth/**',
-      use: { ...devices['Desktop Chrome'], storageState: ADMIN_AUTH_FILE },
+      use: { ...devices['Desktop Chrome'], storageState: SUPER_ADMIN_AUTH_FILE },
       dependencies: ['setup'],
     },
     {
       name: 'mobile-safari',
       testDir: './tests/workflows',
       testIgnore: '**/auth/**',
-      use: { ...devices['iPhone 13'], storageState: ADMIN_AUTH_FILE },
+      use: { ...devices['iPhone 13'], storageState: SUPER_ADMIN_AUTH_FILE },
       dependencies: ['setup'],
     },
     // 3. Logged-out auth-flow specs (NO saved session — they test login/register/reset,

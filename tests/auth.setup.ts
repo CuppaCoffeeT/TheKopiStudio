@@ -1,9 +1,10 @@
 /**
- * Playwright auth setup — signs in ONCE per role per suite invocation and saves
- * each authenticated session to tests/.auth/<role>.json. Authed projects reuse
- * that storageState (see playwright.parallel.config.ts), so the in-spec
- * `LoginPage.signIn(...)` calls become instant no-ops (LoginPage.signIn detects
- * the /login → /dashboard auto-redirect and returns early).
+ * Playwright auth setup — signs in ONCE per role (advisor · manager ·
+ * super_admin) per suite invocation and saves each authenticated session to
+ * tests/.auth/<role>.json. Authed projects reuse that storageState (see
+ * playwright.parallel.config.ts), so the in-spec `LoginPage.signIn(...)` calls
+ * become instant no-ops (LoginPage.signIn detects the /login → /dashboard
+ * auto-redirect and returns early).
  *
  * Why this exists: the suite used to force `workers: 1` because N parallel UI
  * sign-ins of a single shared account raced on Supabase auth. Reusing one saved
@@ -23,12 +24,6 @@ import { test as setup, expect } from '@playwright/test';
 import { LoginPage } from './pom/LoginPage';
 import { requireTestUser } from './fixtures/testUsers';
 import { AUTH_ROLES, authFileFor } from './fixtures/roleAuth';
-
-// Back-compat: existing config + docs reference ADMIN_AUTH_FILE by name.
-export const ADMIN_AUTH_FILE = authFileFor('admin');
-export const COORDINATOR_AUTH_FILE = authFileFor('coordinator');
-export const SUPERVISOR_AUTH_FILE = authFileFor('supervisor');
-export const STOREMAN_AUTH_FILE = authFileFor('storeman');
 
 for (const role of AUTH_ROLES) {
   setup(`authenticate as ${role}`, async ({ browser }) => {
