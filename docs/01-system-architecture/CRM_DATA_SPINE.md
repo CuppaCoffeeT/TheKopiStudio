@@ -66,18 +66,18 @@ Migration: `supabase/migrations/20260611_165020_harden_users_rls.sql`. The found
 
 ## 🔄 role-sync Edge Function Contract
 
-`supabase/functions/role-sync/index.ts` — deployed v1 ACTIVE, `verify_jwt` ON. The only sanctioned promote/demote/approve mechanism.
+`supabase/functions/role-sync/index.ts` — v2 (profiles mirror, 2026-06-11), `verify_jwt` ON. The only sanctioned promote/demote/approve mechanism.
 
 **Request**: `POST` with caller `Authorization: Bearer <user JWT>` and JSON body
 `{ "user_id": "<uuid>", "role"?: "<role name>", "is_approved"?: boolean }` — at least one of `role`/`is_approved` required.
 
-**Flow**: (1) caller identity via anon-key client + `auth.getUser()`; (2) **authoritative** authorization via service-role read of `public.users` (caller must be approved/active/not-deleted) joined to `rls_capabilities` requiring `manage_accounts` — the JWT `app_metadata.role` claim is never trusted alone; (3) target + role validation against `public.roles` (must exist and be active); (4) UPDATE `public.users`, then on role change sync `auth.users` `app_metadata.role` via `auth.admin.updateUserById` (existing app_metadata keys preserved; on sync failure the `users` row is rolled back). `public.profiles` is never touched (legacy CHECK constraint + frozen semantics).
+**Flow**: (1) caller identity via anon-key client + `auth.getUser()`; (2) **authoritative** authorization via service-role read of `public.users` (caller must be approved/active/not-deleted) joined to `rls_capabilities` requiring `manage_accounts` — the JWT `app_metadata.role` claim is never trusted alone; (3) target + role validation against `public.roles` (must exist and be active); (4) UPDATE `public.users`, then on role change sync `auth.users` `app_metadata.role` via `auth.admin.updateUserById` (existing app_metadata keys preserved; on sync failure the `users` row is rolled back); (5) **v2 — legacy `public.profiles.role` mirror** on any request that includes `role`: `'advisor'`/`'manager'` mirror as-is, `'super_admin'` mirrors as `'manager'` (the profiles CHECK constraint only allows `advisor|manager`). The legacy results policy reads `profiles.role` via `get_my_role()`, so promotions must land there for manager read-all visibility until cutover. The mirror is **non-fatal**: on failure (DB error or missing profiles row) the function logs, returns `"profiles_mirror": "failed"`, and does NOT roll back `public.users` — `users` stays canonical; `profiles` is the legacy table.
 
 **Responses**:
 
 | Status | Body | When |
 |---|---|---|
-| 200 | `{ success: true, user_id, role, is_approved }` | Mutation (and any auth sync) succeeded |
+| 200 | `{ success: true, user_id, role, is_approved, profiles_mirror? }` | Mutation (and any auth sync) succeeded. `profiles_mirror` (`"ok"` \| `"failed"`) present only when the request included `role` |
 | 400 | `{ error }` | Invalid JSON; missing/non-string `user_id`; neither `role` nor `is_approved`; unknown/inactive role; **last-super-admin guard** |
 | 401 | `{ error: "Unauthorized" }` | Missing `Authorization` header or invalid/anon token |
 | 403 | `{ error }` | Caller not approved/active, or caller's role lacks `manage_accounts` |
@@ -86,7 +86,7 @@ Migration: `supabase/migrations/20260611_165020_harden_users_rls.sql`. The found
 
 **Last-super-admin guard**: demoting a `super_admin` to any other role is refused (400) when they are the last approved + active + non-deleted super_admin — the system must always retain an RBAC administrator.
 
-**Accepted v1 limitations** (PRD Resolved decisions, 2026-06-11): `is_approved: false` on the last super_admin is still possible (recoverable via service-role/SQL); a non-UUID `user_id` returns 500 (Postgres cast error) rather than 400; no role-assignment ceiling — a manager may promote to `super_admin` (Permissions-Matrix-sanctioned); `protect_user_privileges` appears in RPC-exposure lint but is a trigger function and cannot be invoked via RPC.
+**Accepted limitations** (PRD Resolved decisions, 2026-06-11; carried into v2): `is_approved: false` on the last super_admin is still possible (recoverable via service-role/SQL); a non-UUID `user_id` returns 500 (Postgres cast error) rather than 400; no role-assignment ceiling — a manager may promote to `super_admin` (Permissions-Matrix-sanctioned); `protect_user_privileges` appears in RPC-exposure lint but is a trigger function and cannot be invoked via RPC.
 
 ## 📦 Import Runbook (one-time, old CRM → canonical project)
 

@@ -7,4 +7,9 @@
 
 export { default as AccountSettingsPage } from './pages/AccountSettingsPage';
 
-export type { AccountUser, AccountSettingsTab } from './types';
+export type {
+  AccountUser,
+  AccountSettingsTab,
+  AccountProfile,
+  UpdateSelfInput,
+} from './types';

@@ -14,3 +14,26 @@ export type AccountUser = Tables<'users'>;
 
 /** Tab values for the Account Settings TabNav. */
 export type AccountSettingsTab = 'profile' | 'security';
+
+/**
+ * Combined self-profile read: `get_user_profile()` RPC (id/name/email/role/
+ * approval flags — no phone) + `users` select (phone, created_at) + legacy
+ * `profiles.username` (display-only; null when no legacy row exists).
+ */
+export interface AccountProfile {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  isApproved: boolean;
+  isActive: boolean;
+  phone: string | null;
+  createdAt: string | null;
+  legacyUsername: string | null;
+}
+
+/** Self-service editable fields — everything else is read-only on this surface. */
+export interface UpdateSelfInput {
+  name: string;
+  phone: string | null;
+}
