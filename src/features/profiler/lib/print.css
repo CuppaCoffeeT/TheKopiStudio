@@ -21,6 +21,10 @@
  *     action buttons, notes/reset buttons, login CTA. (Applying it to the
  *     action-button row fixes the legacy bug where PDF/CSV buttons printed —
  *     legacy hid `.abg` but rendered the buttons in an unclassed div.)
+ *   - `.print-area` marks ONE region as the only printable content — for
+ *     pages whose chrome lives inside frame primitives (DetailPageFrame's
+ *     AppHeader/hero) where `.print-hide` cannot be applied per element.
+ *     Uses the visibility pattern so ancestors of the area never clip it.
  */
 
 /* Print-only report header — hidden on screen (legacy .rph). */
@@ -71,5 +75,23 @@
 
   .rph {
     display: block !important;
+  }
+
+  /* Print-only region (see header contract). Applied on the report wrapper
+     by pages that cannot class their frame chrome individually. */
+  body:has(.print-area) * {
+    visibility: hidden;
+  }
+
+  body:has(.print-area) .print-area,
+  body:has(.print-area) .print-area * {
+    visibility: visible;
+  }
+
+  body:has(.print-area) .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
   }
 }

@@ -58,6 +58,12 @@ export interface ListPageFrameProps {
   columns: TableHeaderColumn[];
   rows: DataTableRow[];
   variant?: DataTableVariant;
+  /** Custom copy for the `empty` variant — forwarded to DataTable (additive, 2026-06-11). */
+  emptyText?: string;
+  emptySubtext?: string;
+  /** Custom copy for the `no-results` variant — forwarded to DataTable (additive, 2026-06-11). */
+  noResultsText?: string;
+  noResultsSubtext?: string;
   density?: DataRowDensity;
   selectable?: boolean;
   selectState?: 'none' | 'some' | 'all';
@@ -104,6 +110,7 @@ export function ListPageFrame({
   searchQuery, onSearchChange, searchPlaceholder, showCommandHint,
   filters, onClearFilters, onColumnsClick, onExportClick,
   columns, rows, variant = 'default', density = 'compact',
+  emptyText, emptySubtext, noResultsText, noResultsSubtext,
   selectable = true, selectState = 'none', onSelectAllChange, onRowSelectedChange, onSort,
   mobileBody, renderExpanded,
   page, totalPages, totalItems, rowsPerPage, rowsPerPageOptions, onPageChange, onRowsPerPageChange,
@@ -180,6 +187,10 @@ export function ListPageFrame({
         <DataTable
           density={density}
           variant={variant}
+          emptyText={emptyText}
+          emptySubtext={emptySubtext}
+          noResultsText={noResultsText}
+          noResultsSubtext={noResultsSubtext}
           columns={columns}
           rows={rows}
           selectable={selectable}
