@@ -1,6 +1,6 @@
 # Data Spine — CRM Schema, RLS, Role-Sync & Cross-Project Import — PRD
 
-**Created:** 2026-06-11 · **Last Updated:** 2026-06-11 · **Status:** 🔵 Planning · **Priority:** P0 (blocks profiler + crm modules)
+**Created:** 2026-06-11 · **Last Updated:** 2026-06-11 · **Status:** 🟡 In Progress (P1-P3 ✅, P4 blocked on user key, P5 in flight) · **Priority:** P0 (blocks profiler + crm modules)
 **Work type**: module (data-spine — DB schema + privileged edge function + data migration; NO UI)
 
 🤖 Build via: `/prd-execute docs/05-implementation/active/DATA_SPINE_PRD.md`
@@ -10,13 +10,13 @@
 
 | Phase | Status | Notes |
 |---|---|---|
-| P1 — CRM tables migration + capabilities + decisions ledger | ⬜ | |
-| P2 — users-table hardening migration | ⬜ | |
-| P3 — role-sync edge function | ⬜ | |
-| P4 — CRM data export + import + verification | ⬜ | BLOCKED on `SOURCE_SUPABASE_SERVICE_ROLE_KEY` from the user (old CRM project dashboard) |
-| P5 — docs + index registration | ⬜ | |
+| P1 — CRM tables migration + capabilities + decisions ledger | ✅ | Applied 20260611_164841; advisors clean; 10/10 RLS simulations pass |
+| P2 — users-table hardening migration | ✅ | Applied 20260611_165020; escalation paths verified blocked |
+| P3 — role-sync edge function | ✅ | Deployed v1 ACTIVE, verify_jwt ON; OPTIONS 200 / no-auth 401 / anon-key 401 |
+| P4 — CRM data export + import + verification | 🟡 | Scripts authored + verified; EXECUTE blocked on `SOURCE_SUPABASE_SERVICE_ROLE_KEY` (user) |
+| P5 — docs + index registration | 🟡 | |
 
-Current phase: — · Blockers: P4 needs the source project's service-role key (see Open Questions)
+Current phase: P5 · Blockers: P4 EXECUTE needs the source project's service-role key (see Open Questions)
 
 ## 📋 Definition
 
@@ -110,6 +110,8 @@ N/A by scope: primitive greps, @p0 Playwright, feature CONTEXT.md, folder-struct
 
 ## ❓ Open Questions / Risks
 
+**Resolved decisions** (2026-06-11): managers-see-everything via `view_all_clients` (user); manager writes = read-only default (user accepted via PRD); standing user approval granted for ADDITIVE Supabase changes for the rest of the build — destructive changes still require explicit sign-off. Role-sync v1 accepted minors (logged): is_approved un-approve of last super_admin possible but recoverable; non-UUID user_id → 500 not 400; no role-assignment ceiling for managers (matrix-sanctioned); `protect_user_privileges` shows in advisor RPC-exposure lint but is a trigger function and cannot be invoked via RPC.
+
 1. **Manager writes to CRM rows** — default: read-only (owner-only writes). Reversible: single-policy change later. (User said "managers see everything"; write access not requested.)
 2. **Unmatched source emails at import** — default: ABORT and list them; user decides map-to-owner vs invite. If the CRM advisor email matches skytwech@gmail.com or keane.nsb@gmail.com, no question arises.
 3. **`SOURCE_SUPABASE_SERVICE_ROLE_KEY`** — user action: old CRM project dashboard → Settings → API → service_role; place as `SOURCE_SUPABASE_SERVICE_ROLE_KEY=…` in `"/Users/tenshi/Documents/Projects/Insurance CRM/.env.migration"` (never committed). P4 EXECUTE blocked until present; everything else proceeds.
@@ -121,4 +123,7 @@ N/A by scope: primitive greps, @p0 Playwright, feature CONTEXT.md, folder-struct
 
 | Date | Phase | Result |
 |---|---|---|
-| | | |
+| 2026-06-11 | P1 | 4-author workflow + adversarial verify (2 lenses/artifact, 0 blockers). Migration 20260611_164841_create_crm_tables applied via MCP: 5 tables, Pattern D RLS, 6 capability rows. Redundant pcv policy_id index removed (UNIQUE covers it). decisions.md ledger founded (2 dated entries). get_advisors: no findings on new tables. 10/10 Permissions-Matrix SQL simulations passed (cross-advisor isolation, manager read-all/write-none, spoofed-owner insert 42501). |
+| 2026-06-11 | P2 | Migration 20260611_165020_harden_users_rls applied (user-approved): per-command policies + protect_user_privileges guard trigger. Simulations: self role flip → 42501; self name update OK; cross-user update 0 rows; super_admin cross-row direct UPDATE 0 rows (role-sync path is canonical — disclosed semantic). |
+| 2026-06-11 | P3 | role-sync deployed (v1 ACTIVE, verify_jwt ON) after 2-lens adversarial review (0 blockers; minors logged below). Smoke: OPTIONS 200, no-auth 401, anon-bearer 401. Happy-path E2E lands with the Manage Accounts UI (Phase 2 module PRD). |
+| 2026-06-11 | P4 | export-crm.mjs + import-crm.mjs authored + verified (SQL-escaping, FK order, pcv de-dup, deterministic total recompute). EXECUTE blocked: SOURCE_SUPABASE_SERVICE_ROLE_KEY not yet supplied ("/Users/tenshi/Documents/Projects/Insurance CRM/.env.migration"). Gates at time of authoring: tsc 0, lint 0 err/2 warn, build green, drift 0, types regenerated (5 CRM tables present). |
