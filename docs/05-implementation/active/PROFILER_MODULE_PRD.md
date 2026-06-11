@@ -1,6 +1,6 @@
 # Profiler Module — Wizard, Results, Account Settings, Manage Accounts — PRD
 
-**Created:** 2026-06-11 · **Last Updated:** 2026-06-11 · **Status:** 🟡 In Progress (wave 1: P0-P2 ✅) · **Priority:** P0 (the app's flagship surface)
+**Created:** 2026-06-11 · **Last Updated:** 2026-06-11 · **Status:** 🟡 In Progress (P0-P5 ✅; P6 E2E next) · **Priority:** P0 (the app's flagship surface)
 **Work type**: module (four surfaces: public profiling wizard · saved results LIST+DETAIL · Account Settings · Manage Accounts)
 
 🤖 Build via: `/prd-execute docs/05-implementation/active/PROFILER_MODULE_PRD.md`
@@ -13,13 +13,13 @@
 | P0 — E2E harness repair + test accounts | ✅ | Harness donor-free; 3 e2e accounts live (confirmed/approved/promoted, JWT + profiles mirror for manager) |
 | P1 — Scaffold + module registration + routes + queryKeys | ✅ | Migration 20260611_174434 applied; grants verified per role via get_user_modules |
 | P2 — lib port: content, scoring, export + golden-master tests | ✅ | vitest 28/28 — all 8 live rows reproduce exactly; quirk corpus green |
-| P3 — Public wizard (TOOL) | ⬜ | |
-| P4 — Results list + detail | ⬜ | |
-| P5 — Account Settings + Manage Accounts (+ role-sync v2 profiles mirror) | ⬜ | |
+| P3 — Public wizard (TOOL) | ✅ | Full flow + report + playbook; saves anon/auth; draft persistence; vitest 40/40 |
+| P4 — Results list + detail | ✅ | ListPageFrame + reconstruction via scoring replay; RLS-aware mutations |
+| P5 — Account Settings + Manage Accounts (+ role-sync v2 profiles mirror) | ✅ | role-sync v3 deployed with profiles mirror; smoke 200/401 |
 | P6 — @p0 E2E matrix + load/a11y, iterate to green | ⬜ | |
 | P7 — Docs + completeness + close-out | ⬜ | |
 
-Current phase: wave 2 (P3-P5) · Blockers: none
+Current phase: P6 E2E · Blockers: none
 
 ## 📋 Definition
 
@@ -131,4 +131,5 @@ Gates 1-8b standard (tsc 0 · lint ≤15 warn · 5 primitive greps 0 · build ·
 
 | Date | Phase | Result |
 |---|---|---|
+| 2026-06-11 | P3-P5 | Wave-2 workflow (5 authors + adversarial verify, 0 remaining blockers; minor-fix agent applied wildcard/testid/delete-detection/contrast fixes). Wizard faithful to port map with sessionStorage drafts + duplicate-save guard; results list (server-side ilike search, URL pagination) + detail (report reconstruction via scoring replay — honest MBTI strengths); Account Settings (RPC + self-update, auth.updateUser for email/password); Manage Accounts (direct users query, role-sync mutations, pending-approval tab). role-sync v2 (profiles.role mirror, super_admin→manager) deployed as version 3. content.ts split into content/* (LOC); wizard page slimmed via useWizardController. LOC baseline honestly re-set to 38 pre-existing template files (was bogus 0). Gates: tsc 0 · lint 0 err · build · drift 0 · vitest 40/40 · loc:check green. |
 | 2026-06-11 | P0-P2 | Wave-1 workflow (4 authors + adversarial verify, 0 remaining blockers). P0: global-setup donor-free, teardown added, Login testids, role model advisor/manager/super_admin, 3 plus-addressed e2e accounts provisioned (confirmed+approved via MCP; manager mirrored in profiles.role; superadmin NOT mirrored per matrix). P1: 3 feature skeletons, registration migration applied (UNIQUE(path) added, 4 modules, grants incl. advisor deny on /manage-accounts), lazy routes (public /profiler with own Suspense), profilerResults queryKeys. P2: content.ts (8Q/53obs/104 statements, entity→unicode verified), scoring.ts exact port (explicit D>I>S>C + E/S/T/J ties, occNudge quirks preserved), export.ts (CSV quoted), print.css, golden-master vitest 28/28. Gates: tsc 0 · lint 0 err · build · drift 0 · vitest green. |
