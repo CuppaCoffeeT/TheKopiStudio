@@ -1,0 +1,7 @@
+# Link this folder to your project once with:  supabase link --project-ref <ref>
+project_id = "mymzcbalyqqgdmzsfmam"
+
+# Edge functions verified by signature (not JWT) must opt out of the gateway's
+# JWT check. Example for the bundled resend-webhook template:
+# [functions.resend-webhook]
+# verify_jwt = false

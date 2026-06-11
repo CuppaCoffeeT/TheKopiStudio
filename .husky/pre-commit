@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+# W22 pre-commit gate — fast checks (~15-25s).
+# Bypass in emergencies with:  git commit --no-verify
+
+echo "[W22] pre-commit: tsc --noEmit (incremental)..."
+npx tsc --noEmit --incremental || {
+  echo ""
+  echo "✖ TypeScript errors — commit rejected."
+  echo "  Fix the errors above, re-stage, try again."
+  exit 1
+}
+
+echo "[W22] pre-commit: lint-staged (ESLint on changed .ts/.tsx files)..."
+npx lint-staged || {
+  echo ""
+  echo "✖ ESLint errors — commit rejected."
+  echo "  The gate is zero-error (warnings allowed up to the global debt"
+  echo "  ceiling of 1610). Fix new errors before re-staging."
+  exit 1
+}
+
+echo "[W22] pre-commit: ok"

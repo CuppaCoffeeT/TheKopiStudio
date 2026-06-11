@@ -1,0 +1,71 @@
+#!/usr/bin/env sh
+# W22 pre-push gate — heavier checks (~3-5 min).
+# Runs the @pushgate fast Playwright gate before code leaves the laptop.
+# Bypass in emergencies with:  git push --no-verify
+
+echo "[W22] pre-push: tsc --noEmit (full)..."
+npx tsc --noEmit || {
+  echo ""
+  echo "✖ TypeScript errors — push rejected."
+  exit 1
+}
+
+echo "[W22] pre-push: ESLint (full · --max-warnings=15)..."
+npm run lint || {
+  echo ""
+  echo "✖ ESLint errors or warning count exceeded 15 — push rejected."
+  echo "  If you introduced a new warning, fix it. If you genuinely need the"
+  echo "  cap raised (rare), update package.json 'lint' script + log in"
+  echo "  RECENT_CHANGES.md with justification."
+  exit 1
+}
+
+echo "[W23] pre-push: dependency-cruiser drift (net-new vs baseline)..."
+npm run drift:check || {
+  echo ""
+  echo "✖ New architecture violation (circular dep OR cross-feature import OR pages→features)."
+  echo "  Route cross-feature reuse through src/components/shared|primitives, src/hooks, or src/lib."
+  echo "  Import concrete sibling files, never a group/feature index.ts barrel."
+  echo "  To intentionally re-baseline (rare): npm run drift:baseline + commit + note in RECENT_CHANGES.md."
+  exit 1
+}
+
+echo "[W22] pre-push: vite production build (deploy gate — NOT skippable)..."
+npm run build || {
+  echo ""
+  echo "✖ Production build FAILED — Vercel deploy would break. Fix before pushing."
+  echo "  tsc/eslint/drift do NOT catch bare-dir imports (missing index.ts) or dangling"
+  echo "  dynamic import() paths — only the bundler does. A broken build reached main once"
+  echo "  (d0148960, 2026-05-30) because this gate was missing. ~12s; keep it."
+  exit 1
+}
+
+echo "[W23] pre-push: per-file LOC ratchet (≤ baseline files over 200 LOC)..."
+npm run loc:check || {
+  echo ""
+  echo "✖ A new file exceeds 200 LOC (or the over-ceiling count grew)."
+  echo "  Decompose into sub-components/hooks/lib. To lock a reduction: npm run loc:baseline + commit."
+  exit 1
+}
+
+# Skip Playwright when SKIP_E2E=1 is set (emergencies or doc-only pushes).
+if [ "$SKIP_E2E" = "1" ]; then
+  echo "[W22] pre-push: skipping Playwright (SKIP_E2E=1)."
+  echo "[W22] pre-push: ok (e2e skipped)"
+  exit 0
+fi
+
+echo "[W22] pre-push: Playwright @pushgate fast gate (chromium-desktop + mobile-safari)..."
+echo "         ~3-5 min. Override with SKIP_E2E=1 git push."
+# Cap WF-9000's route tour for the FAST gate (keeps it ≤5 min); the Mac Mini
+# comprehensive run unsets SMOKE_MAX_ROUTES → all ~50 routes nightly. Override
+# with SMOKE_MAX_ROUTES=N git push to widen/narrow.
+SMOKE_MAX_ROUTES="${SMOKE_MAX_ROUTES:-15}" npm run test:e2e:pushgate || {
+  echo ""
+  echo "✖ @pushgate gate failed — push rejected."
+  echo "  Review the failure above. Fix the test or the code before pushing."
+  echo "  Emergency bypass:  SKIP_E2E=1 git push  (then open a follow-up fix PR)"
+  exit 1
+}
+
+echo "[W22] pre-push: ok"

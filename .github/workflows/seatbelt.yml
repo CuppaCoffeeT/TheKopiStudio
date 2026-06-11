@@ -1,0 +1,127 @@
+name: Seatbelt (W22)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: seatbelt-${{ github.ref }}
+  cancel-in-progress: true
+
+# Needed so the ledger auto-sync job (final step) can push back.
+permissions:
+  contents: write
+
+jobs:
+  typecheck-lint:
+    name: TypeScript + ESLint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - name: tsc --noEmit
+        run: npx tsc --noEmit
+      - name: ESLint (max-warnings=15 — zero-debt ratchet, lowered from 1610 after full any-cleanup 2026-05-29)
+        run: npm run lint
+      - name: dependency-cruiser drift (net-new vs baseline — circular=0, cross-feature/page ratcheting down)
+        run: npm run drift:check
+      - name: vite production build
+        run: npm run build
+      - name: per-file LOC ratchet (count over 200 LOC may only decrease)
+        run: npm run loc:check
+
+  e2e-p0:
+    name: Playwright @p0 (${{ matrix.project }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: typecheck-lint
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [chromium-desktop, mobile-safari]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      - name: Run @p0 seatbelt (${{ matrix.project }})
+        env:
+          CI: 'true'
+          # SMOKE_MAX_ROUTES caps WF-9000's route loop so ubuntu-latest doesn't
+          # hit ERR_INSUFFICIENT_RESOURCES / ENOSPC. 20 routes OOM'd. 10 routes
+          # still ENOSPC'd at /report-dashboard (CI run 24625646962, 2026-04-19).
+          # Dropped to 5: Dashboard + Login + /quotations + /projectlist + /admin —
+          # the essentials every module depends on. Local runs keep all 50.
+          SMOKE_MAX_ROUTES: '5'
+          # Dev server (npm run dev) needs VITE_* names
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
+          # Test runners (tests/runners/supabaseChecks.ts) need these
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          # Test fixtures (tests/fixtures/testUsers.ts) need these
+          AIGENT_USER_ID: ${{ secrets.AIGENT_USER_ID }}
+          AIGENT_EMAIL: ${{ secrets.AIGENT_EMAIL }}
+          AIGENT_PASSWORD: ${{ secrets.AIGENT_PASSWORD }}
+        # Full local @p0 is WF-0001 · WF-0012 · WF-0019 · WF-9000. WF-0012 and
+        # WF-0019 auto-skip on CI via assertNasMountAvailable() (no SMB mount
+        # on ubuntu-latest). WF-9000 respects SMOKE_MAX_ROUTES above.
+        run: npx playwright test --grep @p0 --project=${{ matrix.project }}
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.project }}
+          path: playwright-report/
+          retention-days: 7
+
+  sync-ledger:
+    name: Sync Last CI green to WORKFLOW_LEDGER.md
+    runs-on: ubuntu-latest
+    needs: [typecheck-lint, e2e-p0]
+    if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      - name: Patch Last CI green line
+        run: |
+          TODAY=$(TZ=Asia/Singapore date +%Y-%m-%d)
+          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          LINE="**Last CI green**: ${TODAY} SGT · run [${{ github.run_id }}](${RUN_URL}) · @p0 suite on chromium-desktop + mobile-safari (WF-0001 always; WF-0012/WF-0019 auto-skipped on CI; WF-9000 capped at SMOKE_MAX_ROUTES=5)."
+          FILE=docs/99-refactor/_system/ledgers/WORKFLOW_LEDGER.md
+          # Replace the Last CI green line in-place (GNU sed syntax; ubuntu runners ship GNU sed).
+          python3 - <<PY
+          import pathlib, re
+          f = pathlib.Path("$FILE")
+          text = f.read_text()
+          new_line = """$LINE"""
+          text = re.sub(r"^\*\*Last CI green\*\*:.*$", new_line, text, count=1, flags=re.MULTILINE)
+          f.write_text(text)
+          PY
+      - name: Commit + push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/99-refactor/_system/ledgers/WORKFLOW_LEDGER.md
+          if git diff --cached --quiet; then
+            echo "Ledger already current — no commit."
+          else
+            git commit -m "chore(ledger): sync Last CI green [skip ci]"
+            # Retry once on push race — another agent may have pushed first.
+            git push || (git pull --rebase && git push)
+          fi

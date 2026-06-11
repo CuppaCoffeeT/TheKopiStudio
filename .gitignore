@@ -1,0 +1,87 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Claude Code MCP configuration (contains secrets)
+.clauderc
+.mcp.json
+
+# Local secrets — browser MCP auth, ad-hoc credentials (NEVER commit)
+.env.secrets
+.env.local
+.env.*.local
+
+# Playwright saved auth session (live super_admin token — NEVER commit)
+tests/.auth/
+
+# Python
+__pycache__/
+*.pyc
+
+# Playwright MCP browser automation cache
+.playwright-mcp/
+
+# Playwright test artifacts
+test-results/
+playwright-report/
+blob-report/
+
+# Design-lab local snapshots (not for commit)
+design-lab-*.png
+design-lab-snapshot.md
+v2-*.md
+
+# W## verification screenshots — local-only artifacts from workflow sweeps
+w[0-9][0-9]-*.png
+
+# Ad-hoc agent browser snapshots (accidental commits — gitignore catches these)
+v*-snap.md
+
+# TypeScript incremental build cache
+tsconfig.tsbuildinfo
+tsconfig.*.tsbuildinfo
+
+# gh CLI config when redirected via GH_CONFIG_DIR (workaround for /Users/*/.config owned by root)
+.gh-config/
+
+# Claude Code runtime artifacts
+.claude/scheduled_tasks.lock
+
+# /w09-migrate scratch output (HTML/PDF/MD summaries)
+tmp/
+
+# Playwright MCP screenshot dumps at repo root
+/claude-design-*.png
+/session-*.png
+/.playwright-mcp/
+
+# Personal/local-only reference documents (cover letters, sample reports, etc)
+/reference/
+
+# Claude Code agent worktrees
+.claude/worktrees/
+
+# Root-level debug screenshots (saved manually during dev review)
+/*.png
+.env
