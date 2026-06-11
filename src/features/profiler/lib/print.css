@@ -1,0 +1,75 @@
+/**
+ * Profiler print stylesheet — port of the legacy index.html print CSS.
+ *
+ * Legacy block (for reference):
+ *   .rph{display:none;text-align:center;padding-bottom:14px;
+ *        border-bottom:2px solid #C9A84C;margin-bottom:16px}
+ *   @media print{
+ *     #hdr,#prg,#bot,.mbg,.toast,.abg,.anotes,.arst{display:none!important}
+ *     #app{padding:0!important}
+ *     body{background:#fff!important;color:#111!important;
+ *          font-family:Arial,sans-serif!important}
+ *     .rph{display:block!important}
+ *     @page{margin:12mm;size:A4}
+ *   }
+ *
+ * Contract for the wizard/results pages (P3/P4):
+ *   - `.rph` wraps the print-only report header (kicker / prospect name /
+ *     advisor-date-meeting meta line). Hidden on screen, shown in print.
+ *   - `.print-hide` goes on every piece of app chrome that must not print:
+ *     app header, progress bar, footer nav, modals, toasts, the PDF/CSV
+ *     action buttons, notes/reset buttons, login CTA. (Applying it to the
+ *     action-button row fixes the legacy bug where PDF/CSV buttons printed —
+ *     legacy hid `.abg` but rendered the buttons in an unclassed div.)
+ */
+
+/* Print-only report header — hidden on screen (legacy .rph). */
+.rph {
+  display: none;
+  text-align: center;
+  padding-bottom: 14px;
+  border-bottom: 2px solid #c9a84c;
+  margin-bottom: 16px;
+}
+
+/* Inner header lines, mirroring the legacy inline styles. */
+.rph-kicker {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #c9a84c;
+  margin-bottom: 4px;
+}
+
+.rph-name {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.rph-meta {
+  font-size: 12px;
+  color: #666;
+  margin-top: 3px;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  body {
+    background: #fff !important;
+    color: #111 !important;
+    font-family: Arial, sans-serif !important;
+  }
+
+  /* App chrome + action buttons (legacy #hdr,#prg,#bot,.mbg,.toast,.abg,.anotes,.arst). */
+  .print-hide {
+    display: none !important;
+  }
+
+  .rph {
+    display: block !important;
+  }
+}
