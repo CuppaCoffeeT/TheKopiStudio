@@ -34,6 +34,7 @@ const usersKeys = createQueryKeys('users');
 const peopleBase = createQueryKeys('people');
 const modulesKeys = createQueryKeys('modules');
 const notificationsKeys = createQueryKeys('notifications');
+const profilerResultsKeys = createQueryKeys('profilerResults');
 
 const peopleKeys = {
   ...peopleBase,
@@ -46,6 +47,7 @@ export const queryKeys = {
   people: peopleKeys,
   modules: modulesKeys,
   notifications: notificationsKeys,
+  profilerResults: profilerResultsKeys,
 } as const;
 
 // ---------------------------------------------------------------------------

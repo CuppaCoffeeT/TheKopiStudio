@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import {
   createBrowserRouter,
   RouterProvider,
@@ -13,7 +14,23 @@ import RouteError from "@/pages/RouteError";
 
 import { ThemeProvider } from "@/lib/design/ThemeProvider";
 import { TooltipProvider, Toaster } from "@/components/primitives/overlays";
+import { LoadingSpinner } from "@/components/primitives/shell";
 import { HelmetProvider } from "react-helmet-async";
+
+// Lazy feature pages — each becomes its own chunk. Route paths below must
+// byte-match modules.path (registration migration) + ProtectedRoute modulePath.
+const ProfilerWizardPage = lazy(() => import("@/features/profiler/pages/ProfilerWizardPage"));
+const ResultsListPage = lazy(() => import("@/features/profiler/pages/ResultsListPage"));
+const ResultDetailPage = lazy(() => import("@/features/profiler/pages/ResultDetailPage"));
+const AccountSettingsPage = lazy(() => import("@/features/account-settings/pages/AccountSettingsPage"));
+const ManageAccountsPage = lazy(() => import("@/features/manage-accounts/pages/ManageAccountsPage"));
+
+/** Same fallback DashboardLayout uses — for lazy routes outside its Suspense. */
+const suspenseFallback = (
+  <div className="flex min-h-[60vh] items-center justify-center">
+    <LoadingSpinner size="lg" />
+  </div>
+);
 
 /**
  * Router for the empty base.
@@ -40,6 +57,17 @@ function App() {
       errorElement: <RouteError />,
     },
     {
+      // PUBLIC wizard — outside DashboardLayout, no ProtectedRoute (anonymous
+      // visitors run profiles). Needs its own Suspense boundary.
+      path: "/profiler",
+      element: (
+        <Suspense fallback={suspenseFallback}>
+          <ProfilerWizardPage />
+        </Suspense>
+      ),
+      errorElement: <RouteError />,
+    },
+    {
       element: <DashboardLayout />,
       errorElement: <RouteError />,
       children: [
@@ -51,15 +79,39 @@ function App() {
             </ProtectedRoute>
           ),
         },
-        // ── Add protected feature routes here ──
-        // {
-        //   path: "/your-module",
-        //   element: (
-        //     <ProtectedRoute modulePath="/your-module">
-        //       <YourModulePage />
-        //     </ProtectedRoute>
-        //   ),
-        // },
+        {
+          path: "/profiler-results",
+          element: (
+            <ProtectedRoute modulePath="/profiler-results">
+              <ResultsListPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          // Detail shares the list's modulePath (one module row covers both).
+          path: "/profiler-results/:id",
+          element: (
+            <ProtectedRoute modulePath="/profiler-results">
+              <ResultDetailPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/account-settings",
+          element: (
+            <ProtectedRoute modulePath="/account-settings">
+              <AccountSettingsPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/manage-accounts",
+          element: (
+            <ProtectedRoute modulePath="/manage-accounts">
+              <ManageAccountsPage />
+            </ProtectedRoute>
+          ),
+        },
       ],
     },
     {
