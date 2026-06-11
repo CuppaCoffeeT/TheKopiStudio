@@ -2,7 +2,8 @@
  * NotesModal — add/edit meeting notes on the result screen (legacy `openNotes`
  * / `saveNotes`). Notes live in wizard state: they print on the PDF and land
  * in the CSV, and persist to the DB only via the auto-save at generation time
- * (legacy parity — post-save edits are export-only until P4 notes editing).
+ * (legacy parity — notes edited here AFTER the auto-save are export-only;
+ * saved rows get their notes edited on the result detail page instead).
  */
 
 import { useEffect, useState } from 'react';

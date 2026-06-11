@@ -11,18 +11,23 @@ Layer-3 reference docs shipped with the AppBase template (01/02/03/04/06/99 cate
 |---|---|
 | [CRM_DATA_SPINE.md](01-system-architecture/CRM_DATA_SPINE.md) | 5 CRM tables · RLS Pattern D · capabilities · users hardening · role-sync contract · import runbook |
 
+## 03 — Features (project-specific)
+
+| Doc | Purpose |
+|---|---|
+| [profiler/PROFILER_MODULE.md](03-features/profiler/PROFILER_MODULE.md) | Profiler module as-built: wizard + results + Account Settings + Manage Accounts · scoring parity · legacy save contract · permissions matrix · E2E matrix · accepted divergences |
+
 ## 05 — Implementation (Layer 4: active → completed)
 
-**Active: 2**
+**Active: 1**
 
 | Doc | Status | Purpose |
 |---|---|---|
-| [active/PROFILER_MODULE_PRD.md](05-implementation/active/PROFILER_MODULE_PRD.md) | 🔵 Planning | Profiler wizard (public) + results + Account Settings + Manage Accounts modules |
 | [active/DATA_SPINE_PRD.md](05-implementation/active/DATA_SPINE_PRD.md) | 🟡 In Progress (P4 import blocked on user key) | CRM schema + RLS Pattern D + role-sync edge fn + cross-project data import |
 | [MERGE_PLAN_2026-06-11.md](05-implementation/MERGE_PLAN_2026-06-11.md) | 📋 Reference | Master plan: merge Prospect Profiler + Insurance CRM onto AppBase |
 
-**Completed: 0**
+**Completed: 1**
 
 | Doc | Completed | Purpose |
 |---|---|---|
-| _(none yet)_ | | |
+| [completed/PROFILER_MODULE_PRD.md](05-implementation/completed/PROFILER_MODULE_PRD.md) | 🟢 2026-06-11 | Profiler wizard (public) + results + Account Settings + Manage Accounts modules |
