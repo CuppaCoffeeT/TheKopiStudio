@@ -85,3 +85,4 @@ tmp/
 # Root-level debug screenshots (saved manually during dev review)
 /*.png
 .env
+backups/

@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS public.users (
     email       text UNIQUE NOT NULL,
     name        text NOT NULL,
     phone       text,
-    role        text NOT NULL DEFAULT 'supervisor' REFERENCES public.roles(name),
+    role        text NOT NULL DEFAULT 'advisor' REFERENCES public.roles(name),
     is_approved boolean NOT NULL DEFAULT false,
     is_active   boolean NOT NULL DEFAULT true,
     is_deleted  boolean NOT NULL DEFAULT false,
@@ -259,8 +259,11 @@ CREATE POLICY "Users manage own notifications"
 
 -- ---------------------------------------------------------------------------
 -- 9. handle_new_user() — auth signup → public.users row (HARDENED)
---    role is hardcoded 'supervisor' + is_approved=FALSE so a signup cannot
+--    role is hardcoded 'advisor' + is_approved=FALSE so a signup cannot
 --    self-elevate via raw_user_meta_data; an admin assigns the real role on approval.
+--    TRANSITION COMPAT: also inserts the legacy public.profiles row the old
+--    deployed Prospect Profiler app depends on. Remove the profiles insert at
+--    cutover when public.profiles is retired.
 -- ---------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION public.handle_new_user()
   RETURNS trigger
@@ -270,13 +273,26 @@ BEGIN
   INSERT INTO public.users (id, name, email, role, is_approved, is_active)
   VALUES (
     NEW.id,
-    COALESCE(NEW.raw_user_meta_data->>'name', NEW.email),
+    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', NEW.raw_user_meta_data->>'username', NEW.email),
     NEW.email,
-    'supervisor',   -- hardcoded; metadata role ignored to prevent self-elevation
+    'advisor',      -- hardcoded; metadata role ignored to prevent self-elevation
     FALSE,          -- requires admin approval before access
     TRUE
   )
   ON CONFLICT (id) DO NOTHING;
+
+  -- Legacy table for the still-deployed old app (signup form supplies username).
+  -- New-app signups have no username metadata; email is unique so it is a safe stand-in.
+  INSERT INTO public.profiles (id, username, email, full_name, role)
+  VALUES (
+    NEW.id,
+    COALESCE(NEW.raw_user_meta_data->>'username', NEW.email),
+    NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'username', NEW.email),
+    'advisor'
+  )
+  ON CONFLICT (id) DO NOTHING;
+
   RETURN NEW;
 END;
 $$;
@@ -301,7 +317,9 @@ GRANT EXECUTE ON FUNCTION public.update_updated_at_column() TO anon, authenticat
 INSERT INTO public.roles (name, display_name, is_system_role) VALUES
   ('super_admin', 'Super Admin', true),
   ('management',  'Management',  true),
-  ('supervisor',  'Supervisor',  true)
+  ('supervisor',  'Supervisor',  true),
+  ('advisor',     'Advisor',     true),
+  ('manager',     'Manager',     true)
 ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO public.modules (name, description, icon_name, path, category, sort_order) VALUES
