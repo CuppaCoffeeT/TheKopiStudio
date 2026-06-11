@@ -1,38 +1,20 @@
-# Edge Functions — Supabase Deno Functions
+# Edge Functions
 
-Server-side Deno functions deployed to Supabase Edge. Used for integrations (Gmail, Xero, NAS, Resend), file generation (PDFs, attachments), and async jobs.
+Deno functions deployed to Supabase (project `mymzcbalyqqgdmzsfmam`). Deploy via `mcp__supabase__deploy_edge_function` — NEVER the CLI. Logs via `mcp__supabase__get_logs` (service: edge-function). Secrets via the Supabase dashboard, read with `Deno.env.get()`; redeploy after changing.
 
-## Scope
+## Functions
 
-**Belongs**: Deno TypeScript functions deployed via `mcp__supabase__deploy_edge_function`.
-**Doesn't**: Migrations (`migrations/`); React app code (`src/`); function *docs* (`docs/04-integrations/`).
+| Function | Auth | Purpose |
+|---|---|---|
+| `role-sync` | caller JWT (verify_jwt ON) + DB-authoritative `manage_accounts` check | Privileged promote/demote/approve: updates `public.users` + syncs `auth.users.app_metadata.role`. Contract: [docs/01-system-architecture/CRM_DATA_SPINE.md](../../docs/01-system-architecture/CRM_DATA_SPINE.md) |
+| `pdf-generation` | caller JWT (anon-key client + Authorization header) | Template: server-side PDF generation |
+| `resend-webhook` | HMAC signature over raw body (verify_jwt OFF) | Template: inbound email webhook |
 
-## Navigation
+`_shared/cors.ts` holds the shared CORS headers — tighten `Access-Control-Allow-Origin` to the app's domain at cutover.
 
-| Folder | Purpose |
-|--------|---------|
-| `_shared/` | Shared utilities (CORS, env, Supabase admin client) — import from siblings, not duplicate |
-| `gmail-*` | `gmail-auth`, `gmail-sync`, `gmail-send`, `gmail-webhook`, `gmail-attachment` — Gmail integration |
-| `xero-*` | `xero-auth`, `xero-sync` — Xero integration |
-| `synology-nas`, `nas-thumbnail`, `process-nas-operations` | NAS file ops |
-| `attachment-preview`, `download-attachment`, `upload-trial-trench-attachment` | File transit |
-| `nda-upload-signed` | Signed NDA upload + RPC |
-| `pdf-generation`, `generate-payslip-pdf`, `site-form-pdf-generation` | PDF rendering |
-| `send-email`, `resend-webhook` | Resend email + webhooks |
-| `onemap-search` | OneMap address search proxy |
-| `cleanup-synced-storage` | Storage cleanup job |
+## Conventions
 
-## Before working here
-
-- **Runtime**: Deno (not Node) — use `Deno.env.get()`, web standard `fetch`, JSR/esm.sh imports.
-- **Auth**: validate JWT via `Authorization: Bearer` header; service-role calls only when explicitly required (cron / webhook).
-- **CORS**: always import + apply the `_shared/cors.ts` headers — browser callers fail silently otherwise.
-- **Deploy**: via `mcp__supabase__deploy_edge_function` (project_id `your-project-ref`) — NEVER `supabase functions deploy` CLI.
-- **Logs**: read with `mcp__supabase__get_logs` (`service: edge-function`) when debugging.
-- **Secrets**: managed via Supabase dashboard (env vars). Don't commit secrets to function code.
-- **Idempotency**: webhook handlers (`gmail-webhook`, `resend-webhook`) must be idempotent — Supabase retries on non-2xx.
-
-## 📚 Related
-
-- [supabase/CONTEXT.md](../CONTEXT.md)
-- [docs/04-integrations/CONTEXT.md](../../docs/04-integrations/CONTEXT.md) — feature docs for Gmail, Resend, Xero, NAS
+- Two auth archetypes: user-context (anon-key client bound to the caller's Authorization header → `auth.getUser()`) and machine/webhook (HMAC over `req.text()` before parse, service-role client).
+- Privileged mutations use the service-role client (`SUPABASE_SERVICE_ROLE_KEY`, `autoRefreshToken:false, persistSession:false`) and authorize from the DATABASE, never from JWT claims alone.
+- JSON responses always spread `corsHeaders` + `Content-Type: application/json`; OPTIONS preflight returns `ok`.
+- Deploy guide: [docs/04-integrations/EDGE_FUNCTION_DEPLOYMENT_GUIDE.md](../../docs/04-integrations/EDGE_FUNCTION_DEPLOYMENT_GUIDE.md)

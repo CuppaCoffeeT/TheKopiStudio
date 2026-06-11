@@ -57,6 +57,7 @@ default guidance (Pattern A for non-sensitive tables, Pattern B for operational
 tables, Pattern C for `notifications`), and it does not touch the legacy
 `profiles`/`results` policies. The same shape is the intended template for the
 profiler `results` cutover later (capability `view_all_results`, seeded now).
+
 ## 2026-06-11 — Users-table hardening (P2): per-command policies + privilege-guard trigger
 
 **Migration**: `20260611_165020_harden_users_rls.sql`

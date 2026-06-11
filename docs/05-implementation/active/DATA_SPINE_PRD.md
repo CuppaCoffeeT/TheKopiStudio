@@ -14,9 +14,9 @@
 | P2 — users-table hardening migration | ✅ | Applied 20260611_165020; escalation paths verified blocked |
 | P3 — role-sync edge function | ✅ | Deployed v1 ACTIVE, verify_jwt ON; OPTIONS 200 / no-auth 401 / anon-key 401 |
 | P4 — CRM data export + import + verification | 🟡 | Scripts authored + verified; EXECUTE blocked on `SOURCE_SUPABASE_SERVICE_ROLE_KEY` (user) |
-| P5 — docs + index registration | 🟡 | |
+| P5 — docs + index registration | ✅ | CRM_DATA_SPINE.md written; index updated; completeness findings fixed |
 
-Current phase: P5 · Blockers: P4 EXECUTE needs the source project's service-role key (see Open Questions)
+Current phase: complete except P4 EXECUTE · Blockers: P4 EXECUTE needs the source project's service-role key (see Open Questions)
 
 ## 📋 Definition
 
@@ -69,7 +69,7 @@ This is a deliberate, documented extension — record in `supabase/migrations/de
 | INSERT (user_id = self) | ✅ | ❌ (user_id≠self) | ✅ own only | ✅ own only |
 | UPDATE / DELETE | ✅ own | ❌ | ❌ others' (read-only) | ❌ others' (read-only) |
 | role-sync function call | ❌ 403 | ❌ 403 | ✅ (manage_accounts) | ✅ |
-| users.role / is_approved change via direct UPDATE | ❌ blocked (P2 trigger) | ❌ | ❌ | ✅ (is_super_admin) |
+| users.role / is_approved change via direct UPDATE | ❌ blocked (P2 trigger) | ❌ | ❌ | ✅ own row only — cross-row changes go via role-sync (users_update is self-only) |
 
 ## 🚦 Phases
 
@@ -93,7 +93,7 @@ This is a deliberate, documented extension — record in `supabase/migrations/de
 
 ### P4 — CRM data export + import + verification
 **Goal**: the old CRM book lives in the canonical project.
-**Scope**: `scripts/export-crm.mjs` — env `SOURCE_SUPABASE_URL` (default `https://uivdgousiyfeyrebloaz.supabase.co`) + `SOURCE_SUPABASE_SERVICE_ROLE_KEY` (required; abort with instructions if unset); exports all 5 tables + source auth user emails (admin API) to `backups/crm-export-<date>.json` (gitignored); prints row counts. `scripts/import-crm.mjs --dry-run|--execute` — reads the export, remaps user_id by email against canonical `public.users` (MCP-free: takes a `--users-map` JSON or queries via supplied target anon key + service path is NOT available → simplest: emits FK-ordered idempotent INSERT … ON CONFLICT (id) DO NOTHING SQL to `backups/crm-import-<date>.sql` with `created_at` carried over, pcv sorted by age, `total_bank_balance`/`last_review_date` recomputed from latest history) — **orchestrator executes the generated SQL via `mcp__supabase__execute_sql`** in FK order, then runs verification queries. Unmatched source emails → abort and surface (Open Question #2).
+**Scope**: `scripts/export-crm.mjs` — env `SOURCE_SUPABASE_URL` (default `https://uivdgousiyfeyrebloaz.supabase.co`) + `SOURCE_SUPABASE_SERVICE_ROLE_KEY` (required; abort with instructions if unset); exports all 5 tables + source auth user emails (admin API) to `backups/crm-export-<date>.json` (gitignored); prints row counts. `scripts/import-crm.mjs --export <file> [--users-map <json-or-file>] [--default-user <uuid>] [--out <sqlfile>] [--verify-out <sqlfile>]` (pure SQL generator — never executes) — reads the export, remaps user_id by email against canonical `public.users` (MCP-free: takes a `--users-map` JSON or queries via supplied target anon key + service path is NOT available → simplest: emits FK-ordered idempotent INSERT … ON CONFLICT (id) DO NOTHING SQL to `backups/crm-import-<date>.sql` with `created_at` carried over, pcv sorted by age, `total_bank_balance`/`last_review_date` recomputed from latest history) — **orchestrator executes the generated SQL via `mcp__supabase__execute_sql`** in FK order, then runs verification queries. Unmatched source emails → abort and surface (Open Question #2).
 **Verify**: row-count parity per table (source export vs target SELECT count), zero FK violations, every client's total_bank_balance equals its max-date history balance, spot-check 3 clients' policies/interactions field-by-field, RLS check: owner sees rows / other-advisor JWT sees none / manager JWT sees all.
 **Parallel-safe**: script authoring yes; the EXECUTE step blocked on the user-supplied key. **Dependencies**: P1 (tables), user key.
 
@@ -126,4 +126,5 @@ N/A by scope: primitive greps, @p0 Playwright, feature CONTEXT.md, folder-struct
 | 2026-06-11 | P1 | 4-author workflow + adversarial verify (2 lenses/artifact, 0 blockers). Migration 20260611_164841_create_crm_tables applied via MCP: 5 tables, Pattern D RLS, 6 capability rows. Redundant pcv policy_id index removed (UNIQUE covers it). decisions.md ledger founded (2 dated entries). get_advisors: no findings on new tables. 10/10 Permissions-Matrix SQL simulations passed (cross-advisor isolation, manager read-all/write-none, spoofed-owner insert 42501). |
 | 2026-06-11 | P2 | Migration 20260611_165020_harden_users_rls applied (user-approved): per-command policies + protect_user_privileges guard trigger. Simulations: self role flip → 42501; self name update OK; cross-user update 0 rows; super_admin cross-row direct UPDATE 0 rows (role-sync path is canonical — disclosed semantic). |
 | 2026-06-11 | P3 | role-sync deployed (v1 ACTIVE, verify_jwt ON) after 2-lens adversarial review (0 blockers; minors logged below). Smoke: OPTIONS 200, no-auth 401, anon-bearer 401. Happy-path E2E lands with the Manage Accounts UI (Phase 2 module PRD). |
+| 2026-06-11 | P5 | CRM_DATA_SPINE.md (architecture doc + import runbook) written; DOCUMENTATION_INDEX updated; stale donor function docs reconciled; Permissions-Matrix super_admin cell amended (own-row only; cross-row via role-sync). DoD: 1-8,10,11 green; #9 (import parity) open pending the source key. PRD stays in active/ until P4 EXECUTE completes. |
 | 2026-06-11 | P4 | export-crm.mjs + import-crm.mjs authored + verified (SQL-escaping, FK order, pcv de-dup, deterministic total recompute). EXECUTE blocked: SOURCE_SUPABASE_SERVICE_ROLE_KEY not yet supplied ("/Users/tenshi/Documents/Projects/Insurance CRM/.env.migration"). Gates at time of authoring: tsc 0, lint 0 err/2 warn, build green, drift 0, types regenerated (5 CRM tables present). |
