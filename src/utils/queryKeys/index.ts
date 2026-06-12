@@ -53,12 +53,20 @@ const crmClientsKeys = {
   policies: (id: string) => [...crmClientsBase.detail(id), 'policies'] as const,
   interactions: (id: string) => [...crmClientsBase.detail(id), 'interactions'] as const,
   bankHistory: (id: string) => [...crmClientsBase.detail(id), 'bank-history'] as const,
+  linkedResults: (id: string) => [...crmClientsBase.detail(id), 'linked-results'] as const,
 };
 
 const crmDashboardBase = createQueryKeys('crmDashboard');
 const crmDashboardKeys = {
   ...crmDashboardBase,
   stats: () => [...crmDashboardBase.all, 'stats'] as const,
+};
+
+const crmPortfolioBase = createQueryKeys('crmPortfolio');
+const crmPortfolioKeys = {
+  ...crmPortfolioBase,
+  /** The /crm-reports book-wide report payload (REPORTS_LINK_PRD.md P3). */
+  report: () => [...crmPortfolioBase.all, 'report'] as const,
 };
 
 export const queryKeys = {
@@ -69,6 +77,7 @@ export const queryKeys = {
   profilerResults: profilerResultsKeys,
   crmClients: crmClientsKeys,
   crmDashboard: crmDashboardKeys,
+  crmPortfolio: crmPortfolioKeys,
 } as const;
 
 // ---------------------------------------------------------------------------

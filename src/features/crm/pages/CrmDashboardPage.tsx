@@ -5,12 +5,22 @@
  * The "Annual premium" tile is the CORRECT annualised figure (frequency
  * multiplier + ILP inclusion percent) — a documented divergence from the
  * mislabeled legacy raw sum (CRM_MODULE_PRD.md research findings). An empty
- * book swaps the quick-link card for an "Add your first client" CTA; the
- * portfolio-report quick action belongs to the NEXT PRD and is omitted.
+ * book swaps the quick-link cards for an "Add your first client" CTA; a
+ * non-empty book shows two quick actions — the client book and the
+ * /crm-reports portfolio report (REPORTS_LINK_PRD.md P3).
  */
 
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, CalendarClock, Contact, ShieldCheck, Users, Wallet } from 'lucide-react';
+import {
+  ArrowRight,
+  CalendarClock,
+  Contact,
+  FileText,
+  ShieldCheck,
+  Users,
+  Wallet,
+} from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { AppHeaderShell } from '@/components/primitives/shell/AppHeaderShell';
 import { Button } from '@/components/primitives/shell/Button';
 import { Card, CardDescription, CardTitle } from '@/components/primitives/shell/Card';
@@ -82,8 +92,16 @@ function EmptyBookCard({ onAddClick }: { onAddClick: () => void }) {
   );
 }
 
-/** Quick link into the client book (LIST page owns search/CRUD). */
-function ClientsQuickLinkCard({ onOpen }: { onOpen: () => void }) {
+interface QuickLinkCardProps {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  onOpen: () => void;
+  testId: string;
+}
+
+/** Quick-action card — keyboard-activatable navigation shortcut. */
+function QuickLinkCard({ icon: Icon, title, description, onOpen, testId }: QuickLinkCardProps) {
   return (
     <Card
       interactive
@@ -96,18 +114,16 @@ function ClientsQuickLinkCard({ onOpen }: { onOpen: () => void }) {
           onOpen();
         }
       }}
-      className="mt-6 flex min-h-[44px] items-center justify-between gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950"
-      data-testid="crm-quick-link-clients"
+      className="flex min-h-[44px] items-center justify-between gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950"
+      data-testid={testId}
     >
       <span className="flex items-center gap-3">
-        <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-100 text-zinc-600 dark:bg-zinc-900 dark:text-zinc-300">
-          <Contact className="h-[18px] w-[18px]" strokeWidth={1.8} />
+        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-600 dark:bg-zinc-900 dark:text-zinc-300">
+          <Icon className="h-[18px] w-[18px]" strokeWidth={1.8} />
         </span>
         <span>
-          <CardTitle as="h2">Clients</CardTitle>
-          <CardDescription className="mt-0.5">
-            Open the client book — search, reviews, policies and balances.
-          </CardDescription>
+          <CardTitle as="h2">{title}</CardTitle>
+          <CardDescription className="mt-0.5">{description}</CardDescription>
         </span>
       </span>
       <ArrowRight className="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500" strokeWidth={1.8} />
@@ -149,7 +165,22 @@ export default function CrmDashboardPage() {
           {stats.totalClients === 0 ? (
             <EmptyBookCard onAddClick={goToClients} />
           ) : (
-            <ClientsQuickLinkCard onOpen={goToClients} />
+            <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <QuickLinkCard
+                icon={Contact}
+                title="Clients"
+                description="Open the client book — search, reviews, policies and balances."
+                onOpen={goToClients}
+                testId="crm-quick-link-clients"
+              />
+              <QuickLinkCard
+                icon={FileText}
+                title="Generate portfolio report"
+                description="Book-wide financial summary — stats, annualised premiums and per-client policies, print-ready."
+                onOpen={() => navigate('/crm-reports')}
+                testId="crm-quick-link-portfolio-report"
+              />
+            </div>
           )}
         </>
       )}
