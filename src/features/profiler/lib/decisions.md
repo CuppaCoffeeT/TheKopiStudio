@@ -111,3 +111,18 @@ drift error. Provenance is a notes prefix
 (`Converted from profiler result <id8> · Age range … · DISC … · MBTI …`)
 because converted clients have no date_of_birth — age_range is a band; the
 client report defaults age math to 40 until the advisor fills DOB.
+
+## 2026-06-12 — P4: linked-result visibility resolves to ONE neutral empty state (crm-side card)
+
+The prospect→client link is intentionally asymmetric: profiler owns the WRITE
+(convertService) and the result-side affordances (Convert / View client);
+the READ surface — the "Communication style" card — is crm-owned
+(`crm/api/linkedResultsService`, letters + playbook link only; no profiler
+imports). Because the untouched legacy results RLS prunes rows server-side,
+a client whose linked results are invisible to the viewer (advisor's client
+linked to an anon-owned result; super_admin until cutover) is
+INDISTINGUISHABLE from a never-converted client — the card therefore renders
+the single neutral caption 'No visible profiling results' for both, and the
+profiler feature deliberately exposes NO API to disambiguate (doing so would
+leak row existence past RLS). Full rationale + palette decision:
+`src/features/crm/lib/decisions.md` (2026-06-12 P4 entry).

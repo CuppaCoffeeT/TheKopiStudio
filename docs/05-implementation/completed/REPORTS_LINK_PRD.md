@@ -1,6 +1,6 @@
 # Reports + Prospect→Client Link — PRD
 
-**Created:** 2026-06-12 · **Last Updated:** 2026-06-12 · **Status:** 🔵 Planning · **Priority:** P0 (final build phase before cutover)
+**Created:** 2026-06-12 · **Last Updated:** 2026-06-12 · **Status:** 🟢 Complete · **Priority:** P0 (final build phase before cutover)
 **Work type**: feature (extends `src/features/crm/` + `src/features/profiler/`; one new module row `/crm-reports`)
 
 🤖 Build via: `/prd-execute docs/05-implementation/active/REPORTS_LINK_PRD.md`
@@ -10,14 +10,14 @@
 
 | Phase | Status | Notes |
 |---|---|---|
-| P1 — client_id migration + financeReport extension + oracle tests | ⬜ | |
-| P2 — Client financial report page (/clients/:id/report) | ⬜ | |
-| P3 — Portfolio report (/crm-reports) + dashboard quick action | ⬜ | |
-| P4 — Convert-to-client + DISC card | ⬜ | |
-| P5 — E2E + a11y | ⬜ | |
-| P6 — Docs + close-out | ⬜ | |
+| P1 — client_id migration + financeReport extension + oracle tests | ✅ | Applied; 140 oracle tests; types regen |
+| P2 — Client financial report page (/clients/:id/report) | ✅ | 13 sections, math-pure, 39 section oracles |
+| P3 — Portfolio report (/crm-reports) + dashboard quick action | ✅ | Module applied; annualised + footnote |
+| P4 — Convert-to-client + DISC card | ✅ | Own-rows-only, keyed retry, neutral states |
+| P5 — E2E + a11y | ✅ | Full suite 86 passed; real WCAG + useTabsOverflow fixes |
+| P6 — Docs + close-out | ✅ | Docs final; completeness clean |
 
-Current phase: 0 · Blockers: none
+Current phase: COMPLETE · Blockers: none
 
 ## 📋 Definition
 **What**: The two printable reports (per-client financial report; portfolio report), and the prospect→client bridge (nullable `results.client_id`, own-rows-only Convert action, DISC communication card on client detail).
@@ -68,4 +68,4 @@ tsc 0 · lint 0 err · build · drift 0 (no cross-feature imports — the conver
 ## 🗒️ Execution Log
 | Date | Phase | Result |
 |---|---|---|
-| | | |
+| 2026-06-12 | P1-P6 | client_id FK applied + types regen; all inline report math promoted with verbatim legacy-oracle tests (140); 13-section client report + portfolio module (annualised, footnoted) + convert/DISC card (own-rows-only, keyed retry, neutral RLS states); full-suite E2E 86 passed after fixing REAL findings (legacy band tones failed WCAG AA — darkened with documented divergence; unfocusable scroll region; sticky-bar contrast; useTabsOverflow re-measure bug); docs final. Gates: tsc 0 · lint 0 · build · drift 0 · loc 38≤38 · vitest 424/424 · @p0 86 green. Migration-file note: applied register_crm_reports_module statements are character-identical to the committed file; header comments differ (logged). PRD → completed/. |

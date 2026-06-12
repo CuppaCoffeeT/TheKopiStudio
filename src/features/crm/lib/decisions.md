@@ -182,3 +182,51 @@ the card's contract is DISC/MBTI letters + a link to
 `/profiler-results/:id` — playbook content stays profiler-owned. Letters
 keep zinc text over tinted backgrounds (AA in both modes); unexpected
 letters fall back to a toneless zinc pill rather than throwing.
+
+## 2026-06-12 — Reports: math-purity rule for report components
+
+REPORTS_LINK_PRD DoD rule, grep-enforced: `components/report/*` do DISPLAY
+FORMATTING ONLY (`Math.round`/`toFixed`/`toLocaleString`/string templates).
+Every number derived from client/policy fields comes from the
+`lib/financeReport` barrel (+ Bands/Economics/Portfolio/Sections splits),
+where each function is oracle-locked against an expression copied VERBATIM
+from the legacy JSX with file:line cited in the test. Preserved literals live
+in lib too: death Cost@65 uses ×1.025^y GENERAL inflation (do NOT "fix" to
+the 6% medical rate), CI/ECI use ×1.06 with the 150000/30000 bases. The sole
+sanctioned inline arithmetic is legacy-cited YEAR-COUNT math (the
+`yearsTo55 = Math.max(0, 55 − currentAge)` clamp in ClientReportPage /
+ReportCpfProjection — CPFProjection.jsx:8; a year count, not money math).
+
+## 2026-06-12 — Reports: WCAG band-tone divergence (old → new hex)
+
+The legacy HealthSnapshot band trio doubled as the card's TEXT color on the
+tinted backgrounds (#d1fae5 / #fef3c7 / #fee2e2) and fails axe WCAG 2 AA
+there — amber-500 sat at ~2.1:1. DELIBERATE COLOR-ONLY DIVERGENCE:
+- Good:   #059669 (emerald-600) → **#047857** (emerald-700, 4.83:1 on #d1fae5)
+- Review: #f59e0b (amber-500)  → **#92400e** (amber-800, 6.37:1 on #fef3c7)
+- Action: #dc2626 (red-600)    → **#b91c1c** (red-700, 5.30:1 on #fee2e2)
+Band THRESHOLDS, comparison logic and labels (incl. the premiums card's
+SPECIAL 'Underinsured'/'Review cost' states) stay oracle-locked verbatim in
+`financeReportBands.ts`. The retirement-economics callouts darken the same
+way (legacy tones were ~3.4–3.95:1). Pinned by the reports axe E2E.
+
+## 2026-06-12 — Reports: portfolio premium totals are ANNUALISED (documented divergence)
+
+Legacy Reports.jsx/CrmApp `totalPremium` RAW-summed `premium` per stored
+frequency yet labeled the row "annual" — the same mislabel as the dashboard
+tile (P3 entry). `summarisePortfolio` (`financeReportPortfolio.ts`) reuses
+`summariseClient` (frequency multipliers; ILP scaled by inclusion percent) so
+the portfolio table, dashboard KPI and client report agree; averages keep the
+legacy 0-when-empty guards. The page renders an "(annualised)" footnote
+(`report-portfolio-annualised-note`), and the per-client policy LINES still
+show the RAW "X/frequency" amount exactly like legacy. PRD-resolved;
+asserted by the portfolio E2E.
+
+## 2026-06-12 — Reports: legacy-HTML-only extras DROPPED (reversible scope cut)
+
+Per the merge-plan default the new report pages do NOT port: Priority Action
+Items, the Medisave AWL boxes, the Universal Life section, and the portfolio
+report's per-client interaction tables. PDF export stays `window.print()` —
+no PDF library. PRD-resolved ("Scope cut", open question closed); reversible
+later by porting the corresponding legacy JSX blocks into new
+`components/report/*` sections backed by lib functions + oracle tests.

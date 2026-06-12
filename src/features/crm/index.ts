@@ -4,7 +4,7 @@
  * Route entries in App.tsx lazy-import page files directly for code-splitting;
  * everything else imports from here. Internal components (modals, tabs, badge)
  * are deliberately NOT exported — they are intra-feature. The lib/finance +
- * lib/financeReport exports are the tested surface the reports PRD builds on.
+ * lib/financeReport exports are the tested surface the report pages consume.
  */
 
 // P1 — scaffold

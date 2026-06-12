@@ -15,22 +15,22 @@ Layer-3 reference docs shipped with the AppBase template (01/02/03/04/06/99 cate
 
 | Doc | Purpose |
 |---|---|
-| [profiler/PROFILER_MODULE.md](03-features/profiler/PROFILER_MODULE.md) | Profiler module as-built: wizard + results + Account Settings + Manage Accounts · scoring parity · legacy save contract · permissions matrix · E2E matrix · accepted divergences |
-| [crm/CRM_MODULE.md](03-features/crm/CRM_MODULE.md) | CRM module as-built: dashboard + clients + policies + interactions + bank history · 4 corrected legacy bugs · finance golden-vector parity (115, refYear) · follow-up badge semantics · permissions matrix · modal parity + label divergences · E2E summary · accepted deviations |
+| [profiler/PROFILER_MODULE.md](03-features/profiler/PROFILER_MODULE.md) | Profiler module as-built: wizard + results + convert-to-client (own-rows-only, keyed retry, provenance) + Account Settings + Manage Accounts · scoring parity · legacy save contract · permissions matrix · E2E matrix |
+| [crm/CRM_MODULE.md](03-features/crm/CRM_MODULE.md) | CRM module as-built: dashboard + clients + policies + interactions + bank history + reports (client 13-section + portfolio, math-purity rule, annualised + WCAG band-tone divergences) + communication-style card · 4 corrected legacy bugs · finance golden-vector parity · permissions · E2E summary |
 
 ## 05 — Implementation (Layer 4: active → completed)
 
-**Active: 2**
+**Active: 1**
 
 | Doc | Status | Purpose |
 |---|---|---|
-| [active/REPORTS_LINK_PRD.md](05-implementation/active/REPORTS_LINK_PRD.md) | 🔵 Planning | Client + portfolio reports, prospect→client link |
 | [active/DATA_SPINE_PRD.md](05-implementation/active/DATA_SPINE_PRD.md) | 🟡 In Progress (P4 import blocked on user key) | CRM schema + RLS Pattern D + role-sync edge fn + cross-project data import |
 | [MERGE_PLAN_2026-06-11.md](05-implementation/MERGE_PLAN_2026-06-11.md) | 📋 Reference | Master plan: merge Prospect Profiler + Insurance CRM onto AppBase |
 
-**Completed: 2**
+**Completed: 3**
 
 | Doc | Completed | Purpose |
 |---|---|---|
+| [completed/REPORTS_LINK_PRD.md](05-implementation/completed/REPORTS_LINK_PRD.md) | 🟢 2026-06-12 | Client + portfolio reports, prospect→client link |
 | [completed/CRM_MODULE_PRD.md](05-implementation/completed/CRM_MODULE_PRD.md) | 🟢 2026-06-12 | CRM module: clients/policies/interactions/bank + dashboard + finance math port |
 | [completed/PROFILER_MODULE_PRD.md](05-implementation/completed/PROFILER_MODULE_PRD.md) | 🟢 2026-06-11 | Profiler wizard (public) + results + Account Settings + Manage Accounts modules |
