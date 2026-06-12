@@ -24,6 +24,9 @@ const ResultsListPage = lazy(() => import("@/features/profiler/pages/ResultsList
 const ResultDetailPage = lazy(() => import("@/features/profiler/pages/ResultDetailPage"));
 const AccountSettingsPage = lazy(() => import("@/features/account-settings/pages/AccountSettingsPage"));
 const ManageAccountsPage = lazy(() => import("@/features/manage-accounts/pages/ManageAccountsPage"));
+const CrmDashboardPage = lazy(() => import("@/features/crm/pages/CrmDashboardPage"));
+const ClientsListPage = lazy(() => import("@/features/crm/pages/ClientsListPage"));
+const ClientDetailPage = lazy(() => import("@/features/crm/pages/ClientDetailPage"));
 
 /** Same fallback DashboardLayout uses — for lazy routes outside its Suspense. */
 const suspenseFallback = (
@@ -93,6 +96,31 @@ function App() {
           element: (
             <ProtectedRoute modulePath="/profiler-results">
               <ResultDetailPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/crm",
+          element: (
+            <ProtectedRoute modulePath="/crm">
+              <CrmDashboardPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/clients",
+          element: (
+            <ProtectedRoute modulePath="/clients">
+              <ClientsListPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          // Detail shares the list's modulePath (one module row covers both).
+          path: "/clients/:id",
+          element: (
+            <ProtectedRoute modulePath="/clients">
+              <ClientDetailPage />
             </ProtectedRoute>
           ),
         },

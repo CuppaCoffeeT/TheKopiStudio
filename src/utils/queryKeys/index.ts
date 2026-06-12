@@ -35,11 +35,30 @@ const peopleBase = createQueryKeys('people');
 const modulesKeys = createQueryKeys('modules');
 const notificationsKeys = createQueryKeys('notifications');
 const profilerResultsKeys = createQueryKeys('profilerResults');
+const crmClientsBase = createQueryKeys('crmClients');
 
 const peopleKeys = {
   ...peopleBase,
   unapprovedUsers: () => [...peopleBase.all, 'unapproved'] as const,
   pendingUsers: () => [...peopleBase.all, 'pending'] as const,
+};
+
+/**
+ * CRM child collections (policies / interactions / bank history) nest under
+ * `detail(id)` so a single `invalidateQueries({ queryKey: detail(id) })`
+ * refetches the client AND every per-client child list (CRM_MODULE_PRD.md P3).
+ */
+const crmClientsKeys = {
+  ...crmClientsBase,
+  policies: (id: string) => [...crmClientsBase.detail(id), 'policies'] as const,
+  interactions: (id: string) => [...crmClientsBase.detail(id), 'interactions'] as const,
+  bankHistory: (id: string) => [...crmClientsBase.detail(id), 'bank-history'] as const,
+};
+
+const crmDashboardBase = createQueryKeys('crmDashboard');
+const crmDashboardKeys = {
+  ...crmDashboardBase,
+  stats: () => [...crmDashboardBase.all, 'stats'] as const,
 };
 
 export const queryKeys = {
@@ -48,6 +67,8 @@ export const queryKeys = {
   modules: modulesKeys,
   notifications: notificationsKeys,
   profilerResults: profilerResultsKeys,
+  crmClients: crmClientsKeys,
+  crmDashboard: crmDashboardKeys,
 } as const;
 
 // ---------------------------------------------------------------------------
