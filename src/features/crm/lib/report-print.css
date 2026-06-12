@@ -1,0 +1,308 @@
+/**
+ * CRM report stylesheet — PRINT-CSS CONTRACT (REPORTS_LINK_PRD.md P2), shared
+ * by /clients/:id/report and the portfolio report page:
+ * - Print-first: `.report-canvas` is locked white bg + dark ink ON SCREEN AND
+ *   IN PRINT — the dark-mode pairing rule is deliberately waived so the
+ *   screen preview is the printed artifact.
+ * - `.no-print` on every interactive affordance (action bar, buttons).
+ * - `.report-page-break` = break BEFORE a section (legacy: sections [4][8][9]).
+ * - `.report-print-root` marks the ONLY printable region (visibility pattern,
+ *   same as profiler lib/print.css `.print-area`) so chrome/portals never print.
+ * - @page is A4 / 12mm margins (legacy index.html print block).
+ */
+
+/* ── Report canvas (screen + print; light styling locked) ─────────────── */
+.report-canvas {
+  background: #fff;
+  color: #111827;
+  border-radius: 12px;
+  padding: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.report-section {
+  margin-top: 28px;
+}
+
+.report-section h2 {
+  font-size: 19px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.report-section h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+/* ── Section [1] hero strip ───────────────────────────────────────────── */
+.report-hero {
+  background: linear-gradient(135deg, #0f172a, #1e3a8a);
+  color: #fff;
+  border-radius: 12px;
+  padding: 22px;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.report-hero h1 {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.report-hero-sub {
+  opacity: 0.75;
+  font-size: 13px;
+  margin: 0 0 16px;
+}
+
+.report-hero-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.report-stat {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.report-stat .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.75;
+}
+
+.report-stat .value {
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.report-stat .note {
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+/* ── Tables (sections [4][5][6][10][12] share this) ───────────────────── */
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.report-table th,
+.report-table td {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 6px 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.report-table th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+
+.report-table .num {
+  text-align: right;
+}
+
+/* Bold totals row (legacy inline `fontWeight:600, background:#fef3c7`). */
+.report-row-total {
+  font-weight: 600;
+  background: #fef3c7;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+/* ── Cards (sections [2][6][7]; band colors arrive via inline style) ──── */
+.report-health-card {
+  border: 2px solid;
+  border-radius: 10px;
+  padding: 12px;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.report-callout {
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+/* Bootstrap bg-warning-subtle / bg-success-subtle (legacy hosp/ILP cards). */
+.report-callout--warning { background: #fff3cd; }
+.report-callout--success { background: #d1e7dd; }
+
+/* ── Print rules ──────────────────────────────────────────────────────── */
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .report-page-break {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  /* Keep cards/stats whole; sections themselves may flow across pages. */
+  .report-callout,
+  .report-health-card,
+  .report-stat {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .report-canvas {
+    border-radius: 0;
+    padding: 0;
+  }
+
+  /* Only the report region prints (profiler print.css visibility pattern). */
+  body:has(.report-print-root) * {
+    visibility: hidden;
+  }
+
+  body:has(.report-print-root) .report-print-root,
+  body:has(.report-print-root) .report-print-root * {
+    visibility: visible;
+  }
+
+  body:has(.report-print-root) .report-print-root {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}
+
+/* ── Sections [8][9] — gradient stat cards + RA panel (appended by the
+   sections [8]-[13] author; same light-locked print-color contract) ────── */
+
+.report-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.report-grad-card {
+  color: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.report-grad-card .label {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.report-grad-card .value {
+  font-size: 24px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.report-grad-card .note {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+/* Legacy styles.css .cpf-card / .retirement-card gradients (git c09c549). */
+.report-grad-card--oa { background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%); }
+.report-grad-card--sa { background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%); }
+.report-grad-card--ma { background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); }
+.report-grad-card--ilp { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+.report-grad-card--bank { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+.report-grad-card--total { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
+
+/* Bootstrap alert tones the callout set above lacks (legacy Alert
+   variant="danger" / variant="primary" in sections [9] and [11]). */
+.report-callout--danger { background: #f8d7da; }
+.report-callout--primary { background: #cfe2ff; }
+
+/* Total-row tints for the CPF (#f0fdf4) and retirement (#f3e8ff) tables —
+   declared after .report-row-total so the combination overrides its amber. */
+.report-row-total--green { background: #f0fdf4; }
+.report-row-total--violet { background: #f3e8ff; }
+
+/* Opportunity-cost row highlight (legacy inline background #fee2e2). */
+.report-row-loss {
+  background: #fee2e2;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+/* RA assessment panel (legacy CPFProjection.jsx:120-208 inline styles). */
+.report-ra-panel {
+  background: #f0f9ff;
+  border: 2px solid #0284c7;
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 12px;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.report-ra-cohort {
+  background: #fef3c7;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 12px;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.report-ra-sums {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.report-ra-value {
+  background: #fff;
+  border: 1px solid #0284c7;
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.report-cpf-life {
+  background: #fefce8;
+  border-radius: 6px;
+  padding: 10px;
+  margin-top: 12px;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+@media print {
+  .report-grad-card,
+  .report-ra-panel,
+  .report-ra-cohort,
+  .report-cpf-life {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}

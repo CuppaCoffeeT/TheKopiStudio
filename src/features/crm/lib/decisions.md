@@ -163,3 +163,22 @@ tone on the list than on their detail header — acceptable for v1; revisit only
 if reviewers want a `follow_up` rollup column on `clients`. Both surfaces
 render through `components/FollowUpBadge.tsx` (tones: overdue → red, ≤7 days →
 amber, else blue, per lib/followUps thresholds).
+
+## 2026-06-12 — P4: Communication style card — neutral empty state + local DISC palette
+
+The OverviewTab card reads `public.results` through the crm-owned
+`listLinkedResultsByClient` (bounded `.limit(10)`, newest first, on the
+`crmClients.detail(id)` sub-key family) — never through profiler imports.
+Legacy results RLS prunes the rows server-side, so a client with NO visible
+linked results renders one NEUTRAL caption, 'No visible profiling results',
+deliberately NOT distinguishing "never converted" from "linked but
+RLS-hidden" (advisor's client linked to an anon-owned result; super_admin
+sees clients but the legacy results policy is manager-only until cutover) —
+the PRD's neutral-empty-state rule, mirroring the not-found ambiguity the
+client page already ships. DISC chip colours (D #C0392B, I #D4680A,
+S #1A7A40, C #1A5F8A) are LOCAL constants duplicating the profiler palette
+hexes by design: cross-feature imports are a dependency-cruiser error, and
+the card's contract is DISC/MBTI letters + a link to
+`/profiler-results/:id` — playbook content stays profiler-owned. Letters
+keep zinc text over tinted backgrounds (AA in both modes); unexpected
+letters fall back to a toneless zinc pill rather than throwing.

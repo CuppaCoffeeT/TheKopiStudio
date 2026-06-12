@@ -160,3 +160,18 @@ export {
   useSoftDeleteBankRecord,
 } from './hooks/useBankMutations';
 export { useDashboardStats } from './hooks/useDashboardStats';
+
+// P2 (reports PRD) — per-client printable report page
+export { default as ClientReportPage } from './pages/ClientReportPage';
+
+// P3 (reports PRD) — portfolio report (/crm-reports)
+export { default as PortfolioReportPage } from './pages/PortfolioReportPage';
+export { summarisePortfolio } from './lib/financeReport';
+export type { PortfolioPolicyInput, PortfolioTotals } from './lib/financeReport';
+export { assemblePortfolioReport, getPortfolioReport } from './api/portfolioService';
+export type {
+  PortfolioReportClient,
+  PortfolioReportData,
+  PortfolioReportPolicy,
+} from './api/portfolioService';
+export { usePortfolioReport } from './hooks/usePortfolioReport';

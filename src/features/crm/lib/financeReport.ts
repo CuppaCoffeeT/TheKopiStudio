@@ -24,6 +24,7 @@ import {
   annualisePremium,
   projectCPFTo55,
   retirementSumsFor,
+  toFloat,
   type SummaryPolicyInput,
 } from './finance';
 
@@ -128,3 +129,55 @@ export function splitPremiums(policies: SummaryPolicyInput[]): PremiumSplit {
 // import surface for all report-side finance math.
 export * from './financeReportBands';
 export * from './financeReportEconomics';
+export * from './financeReportPortfolio';
+
+// ── P2 report-section helpers (appended; oracle tests in
+// __tests__/financeReportSections.test.ts) ──────────────────────────────────
+
+export interface PremiumIncomePcts {
+  insurancePremiumsPct: number;
+  investmentPremiumsPct: number;
+}
+
+/**
+ * ClientReportModal.jsx:60-63 — the premium split rendered as a % of income
+ * for the HealthSnapshot cards; both percentages are 0 when income ≤ 0
+ * (legacy `summary.income > 0 ? … : 0` guard preserved).
+ */
+export function premiumsPctOfIncome(split: PremiumSplit, income: number): PremiumIncomePcts {
+  return {
+    insurancePremiumsPct: income > 0 ? (split.protectionPremiums / income) * 100 : 0,
+    investmentPremiumsPct: income > 0 ? (split.investmentPremiums / income) * 100 : 0,
+  };
+}
+
+export interface HospitalShieldPolicyInput {
+  integratedShieldCPF?: string | number | null;
+  integratedShieldCash?: string | number | null;
+  riderCash?: string | number | null;
+}
+export interface HospitalShieldPremiums {
+  cpf: number;
+  cash: number;
+  rider: number;
+  /** ClientReportModal.jsx:324-326 — IS row total (CPF + cash). */
+  shieldTotal: number;
+  /** ClientReportModal.jsx:337 — bold Total row (CPF + cash + rider). */
+  totalAnnual: number;
+}
+
+/**
+ * ClientReportModal.jsx:301-303 — `parseFloat(v || 0)` coercion of the three
+ * hospitalization premium components, plus the two sums the card displays.
+ */
+export function hospitalShieldPremiums(policy: HospitalShieldPolicyInput): HospitalShieldPremiums {
+  const cpf = toFloat(policy.integratedShieldCPF);
+  const cash = toFloat(policy.integratedShieldCash);
+  const rider = toFloat(policy.riderCash);
+  return { cpf, cash, rider, shieldTotal: cpf + cash, totalAnnual: cpf + cash + rider };
+}
+
+// Sections [8]/[9] residual math (cpfCurrentTotal, raShortfall,
+// totalRetirementIfInvested, retirementSumOpportunityCost,
+// currentHoldingsTotal) — split module per the 200-LOC ratchet.
+export * from './financeReportSections';

@@ -27,6 +27,8 @@ const ManageAccountsPage = lazy(() => import("@/features/manage-accounts/pages/M
 const CrmDashboardPage = lazy(() => import("@/features/crm/pages/CrmDashboardPage"));
 const ClientsListPage = lazy(() => import("@/features/crm/pages/ClientsListPage"));
 const ClientDetailPage = lazy(() => import("@/features/crm/pages/ClientDetailPage"));
+const ClientReportPage = lazy(() => import("@/features/crm/pages/ClientReportPage"));
+const PortfolioReportPage = lazy(() => import("@/features/crm/pages/PortfolioReportPage"));
 
 /** Same fallback DashboardLayout uses — for lazy routes outside its Suspense. */
 const suspenseFallback = (
@@ -121,6 +123,23 @@ function App() {
           element: (
             <ProtectedRoute modulePath="/clients">
               <ClientDetailPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          // Printable report shares '/clients' too (REPORTS_LINK_PRD sub-route precedent).
+          path: "/clients/:id/report",
+          element: (
+            <ProtectedRoute modulePath="/clients">
+              <ClientReportPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/crm-reports",
+          element: (
+            <ProtectedRoute modulePath="/crm-reports">
+              <PortfolioReportPage />
             </ProtectedRoute>
           ),
         },
