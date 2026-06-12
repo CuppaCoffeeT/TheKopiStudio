@@ -194,17 +194,20 @@ export function ModalPrimaryAction({
 export function ModalGhostAction({
   children,
   onClick,
+  disabled = false,
   'data-testid': dataTestId,
 }: {
   children: React.ReactNode;
   onClick?: () => void;
+  disabled?: boolean;
   'data-testid'?: string;
 }) {
   return (
     <button
       onClick={onClick}
+      disabled={disabled}
       data-testid={dataTestId}
-      className="h-8 px-3 rounded-md text-xs font-medium border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900"
+      className="h-8 px-3 rounded-md text-xs font-medium border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900 disabled:opacity-40 disabled:cursor-not-allowed"
       style={{ fontFamily: 'var(--font-sans)' }}
     >
       {children}

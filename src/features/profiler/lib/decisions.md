@@ -90,3 +90,24 @@ for both primary and secondary (`DISC_TIE_ORDER` in `lib/scoring.ts`), and
 MBTI dimension winners use `>=` so ties collapse toward E/S/T/J. Locked by
 the golden-master suite and the tie-break corpus in
 `lib/__tests__/scoring.test.ts`; do not "fix" to alphabetical or random.
+
+## 2026-06-12 — P4: convert-to-client is own-rows-only and non-atomic with a keyed retry
+
+Convert lives in the isOwn action group only (desktop hero + mobile bar):
+the legacy `results` UPDATE policy is `auth.uid() = user_id`, so only the
+owner can write `client_id` — managers and anonymous viewers get no
+affordance, and RLS enforces it server-side regardless. The flow is two
+statements with no transaction (no RPC this PRD, sanctioned for v1):
+INSERT `clients` → UPDATE `results.client_id`. A failed step 2 leaves an
+orphan client BY DESIGN; `convertService` throws `ConvertLinkError` carrying
+the created client id, `useConvertResult` keeps that id in hook state (held
+at page level so it survives modal close/reopen), and the next attempt calls
+`relinkResultToClient` with the kept id instead of inserting again — no
+duplicate client. The error copy explains the orphan and that retrying will
+not duplicate. `convertService` writes `public.clients` from the profiler
+feature on purpose: the merge plan sanctions an own-feature api hitting
+shared tables, while importing crm's clientsService would be a cross-feature
+drift error. Provenance is a notes prefix
+(`Converted from profiler result <id8> · Age range … · DISC … · MBTI …`)
+because converted clients have no date_of_birth — age_range is a band; the
+client report defaults age math to 40 until the advisor fills DOB.

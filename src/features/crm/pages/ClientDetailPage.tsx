@@ -43,7 +43,7 @@ export default function ClientDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { client, policies, interactions, bankHistory } = useClientDetail(id);
+  const { client, policies, interactions, bankHistory, linkedResults } = useClientDetail(id);
   const removeClient = useSoftDeleteClient(id ?? '');
   const [tab, setTab] = useState<DetailTab>('overview');
   const [editOpen, setEditOpen] = useState(false);
@@ -143,7 +143,9 @@ export default function ClientDetailPage() {
         </Card>
       )}
 
-      {model && id && tab === 'overview' && <OverviewTab client={model} />}
+      {model && id && tab === 'overview' && (
+        <OverviewTab client={model} linkedResults={linkedResults} />
+      )}
       {model && id && tab === 'policies' && (
         <PoliciesTab clientId={id} readOnly={!isOwn} policies={policies} />
       )}

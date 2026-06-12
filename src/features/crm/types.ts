@@ -152,3 +152,16 @@ export interface CrmDashboardStats {
   /** Interactions with a follow-up date strictly after now (no window — parity). */
   upcomingFollowUps: number;
 }
+
+// ── P4 — prospect→client bridge (REPORTS_LINK_PRD; crm-owned read of `results`) ──
+
+/**
+ * Bounded projection of a linked `public.results` row for the Communication
+ * style card. Pick over the generated row type keeps it in sync with the
+ * schema without importing profiler feature types (cross-feature imports are
+ * a drift error). RLS prunes rows the viewer cannot see — possibly to empty.
+ */
+export type LinkedProfilerResult = Pick<
+  Tables<'results'>,
+  'id' | 'prospect_name' | 'disc_primary' | 'disc_secondary' | 'mbti' | 'created_at'
+>;

@@ -27,8 +27,10 @@ import { buildCsv, downloadCsv } from '../lib/export';
 import { PR } from '../lib/content';
 import { meetingLabel } from '../lib/meeting';
 import type { DiscLetter, ProfilerResult } from '../types';
+import { useConvertResult } from '../hooks/useConvertResult';
 import { useResultDetail } from '../hooks/useResultDetail';
 import { useDeleteResult, useUpdateResultNotes } from '../hooks/useResultMutations';
+import { ConvertResultModal } from '../components/detail/ConvertResultModal';
 import { ResultDetailActions } from '../components/detail/ResultDetailActions';
 import { ResultNotesModal } from '../components/detail/ResultNotesModal';
 import { StoredResultReport } from '../components/detail/StoredResultReport';
@@ -75,19 +77,24 @@ export default function ResultDetailPage() {
   const removeResult = useDeleteResult(id ?? '');
   const [notesOpen, setNotesOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [convertOpen, setConvertOpen] = useState(false);
 
   const row = detail.data ?? null;
+  const convert = useConvertResult(row);
   const isOwn = Boolean(row && user && row.user_id === user.id);
   const statusTone = row ? STATUS_TONES[row.disc_primary as DiscLetter] : undefined;
 
   const actionProps = row
     ? {
         isOwn,
+        clientId: row.client_id,
         deleting: removeResult.isPending,
+        converting: convert.isPending,
         onPdf: () => window.print(),
         onCsv: () => downloadRowCsv(row),
         onEditNotes: () => setNotesOpen(true),
         onDelete: () => setDeleteOpen(true),
+        onConvert: () => setConvertOpen(true),
       }
     : null;
 
@@ -152,6 +159,15 @@ export default function ResultDetailPage() {
 
       {row && <StoredResultReport row={row} />}
 
+      {row && isOwn && !row.client_id && (
+        <ConvertResultModal
+          open={convertOpen}
+          onOpenChange={setConvertOpen}
+          prospectName={row.prospect_name}
+          converting={convert.isPending}
+          onConfirm={() => convert.mutate()}
+        />
+      )}
       {row && (
         <ResultNotesModal
           open={notesOpen}

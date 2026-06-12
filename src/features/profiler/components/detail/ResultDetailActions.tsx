@@ -1,22 +1,28 @@
 /**
- * ResultDetailActions — PDF / CSV always; Edit notes / Delete only on OWN
- * rows. Foreign and NULL-owner rows (legacy RLS: no update/delete path) get a
- * read-only hint instead — RLS enforces this server-side regardless.
+ * ResultDetailActions — PDF / CSV always; Edit notes / Delete / Convert only
+ * on OWN rows. Foreign and NULL-owner rows (legacy RLS: no update/delete
+ * path) get a read-only hint instead — RLS enforces this server-side
+ * regardless. A converted row (`clientId` set) swaps Convert for View client.
  *
  * Rendered twice by the page: in the DetailPageFrame hero (desktop) and in
  * the sticky mobile action bar (`mobile`, 44px targets).
  */
 
-import { FileDown, Lock, Printer, StickyNote, Trash2 } from 'lucide-react';
+import { FileDown, Lock, Printer, StickyNote, Trash2, UserCheck, UserPlus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/primitives/shell/Button';
 
 interface ResultDetailActionsProps {
   isOwn: boolean;
+  /** `results.client_id` — set once the result has been converted/linked. */
+  clientId: string | null;
   deleting: boolean;
+  converting: boolean;
   onPdf: () => void;
   onCsv: () => void;
   onEditNotes: () => void;
   onDelete: () => void;
+  onConvert: () => void;
   mobile?: boolean;
 }
 
@@ -40,13 +46,17 @@ function ReadOnlyHint({ mobile }: { mobile?: boolean }) {
 
 export function ResultDetailActions({
   isOwn,
+  clientId,
   deleting,
+  converting,
   onPdf,
   onCsv,
   onEditNotes,
   onDelete,
+  onConvert,
   mobile = false,
 }: ResultDetailActionsProps) {
+  const navigate = useNavigate();
   const size = mobile ? 'lg' : 'md';
   const grow = mobile ? 'flex-1' : undefined;
 
@@ -58,6 +68,30 @@ export function ResultDetailActions({
       {!isOwn && !mobile && <ReadOnlyHint />}
       {isOwn && (
         <>
+          {clientId ? (
+            <Button
+              variant="outline"
+              size={size}
+              className={grow}
+              leadingIcon={<UserCheck className="h-3.5 w-3.5" aria-hidden="true" />}
+              onClick={() => navigate(`/clients/${clientId}`)}
+              data-testid={`result-detail-view-client-btn${mobile ? '-mobile' : ''}`}
+            >
+              View client
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              size={size}
+              className={grow}
+              leadingIcon={<UserPlus className="h-3.5 w-3.5" aria-hidden="true" />}
+              onClick={onConvert}
+              loading={converting}
+              data-testid={`result-detail-convert-btn${mobile ? '-mobile' : ''}`}
+            >
+              Convert to client
+            </Button>
+          )}
           <Button
             variant="ghost"
             size={size}
