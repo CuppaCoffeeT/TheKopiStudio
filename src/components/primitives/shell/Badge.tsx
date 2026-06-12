@@ -7,6 +7,8 @@
  * Locked status formula: 50-tint bg · 700-sat fg · 200-same-hue border · 5px fg-hue dot.
  * Counts are mono, 10.5px, tabular. Critical counts (≥10 or `critical`) use red-7 solid fill.
  * Tones: neutral (zinc) · success (emerald) · warning (amber) · danger (red) · info (blue) · accent (purple).
+ * Status badges expose `data-tone` so E2E specs can assert the semantic tone
+ * (e.g. the CRM follow-up badge turning amber) without coupling to classes.
  *
  * Replaces shadcn `@/components/ui/badge` in new code. For interactive chips
  * (toggle/tab), use the Chip primitive instead.
@@ -112,6 +114,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
       {...props}
+      data-tone={tone}
     >
       {dot && <span className={cn('w-[5px] h-[5px] rounded-full flex-shrink-0', DOT_TONE[tone])} />}
       <span className="inline-flex flex-row flex-nowrap items-center gap-1.5 min-w-0">{children}</span>

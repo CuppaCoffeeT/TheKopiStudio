@@ -55,13 +55,14 @@ export default function Home() {
                 role (see the foundation migration in <code>supabase/migrations/</code>).
               </p>
             ) : (
-              <ul className="space-y-1">
+              <ul className="space-y-1" data-testid="home-module-grid">
                 {modules.map((m) => (
                   <li key={m.path}>
                     <Button
                       variant="ghost"
                       className="w-full justify-start"
                       onClick={() => navigate(m.path)}
+                      data-testid={`home-module-tile${m.path.replace(/\//g, '-')}`}
                     >
                       {m.name}
                     </Button>

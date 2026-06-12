@@ -232,6 +232,10 @@ export function DataTable({
   return (
     <div
       data-testid={testId}
+      // Current variant, exposed for E2E: lists whose data is not guaranteed
+      // (e.g. an empty advisor book) wait for `default|empty` before an axe
+      // scan, so the loading skeleton is never scanned (crm load-a11y.spec).
+      data-variant={variant}
       className={cn(
         'rounded-[10px] overflow-hidden',
         'border border-zinc-200 dark:border-zinc-800',

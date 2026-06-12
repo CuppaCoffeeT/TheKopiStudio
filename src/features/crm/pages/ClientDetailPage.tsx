@@ -13,7 +13,7 @@
  * every mutation affordance hidden, profiler's ReadOnlyHint pattern.
  */
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { DestructiveConfirmDialog } from '@/components/primitives/detail/DestructiveConfirmDialog';
 import { DetailPageFrame } from '@/components/primitives/detail/DetailPageFrame';
@@ -50,7 +50,11 @@ export default function ClientDetailPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   const row = client.data ?? null;
-  const model = row ? clientFromRow(row) : null;
+  // Identity-stable per row (React Query structural sharing): a child-query or
+  // background refetch re-render must NOT recreate the model, or the open
+  // ClientFormModal's [open, client] re-seed effect fires again and silently
+  // clobbers in-flight edits (caught by the clients-advisor E2E rename step).
+  const model = useMemo(() => (row ? clientFromRow(row) : null), [row]);
   const isOwn = Boolean(row && user && row.user_id === user.id);
   const refDate = getCurrentSingaporeTime();
   const followUp = model
