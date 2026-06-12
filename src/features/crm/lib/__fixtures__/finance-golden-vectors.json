@@ -1,0 +1,2566 @@
+{
+  "meta": {
+    "description": "Golden vectors captured from legacy Insurance CRM finance.js for the prospect-profiler CRM port. Replay: for each vector call <fn>(args) (strip the _grid key, it is grid bookkeeping only) and assert deep-equality with <result> (floats: exact if op order preserved, else relative epsilon 1e-9). Vectors with fn prefixed \"caller:\" replay formulas re-implemented inline in ClientReportModal.jsx / CPFProjection.jsx (see each vector note).",
+    "capturedAt": "2026-06-11T12:08:58.245Z",
+    "captureYear": 2026,
+    "timeDependence": "ONLY ageFromDOB is time-dependent (new Date().getFullYear()). Its vectors are valid only when reference year == captureYear. The ported function must accept an injectable reference date; tests must pass captureYear.",
+    "source": {
+      "path": "/Users/tenshi/Documents/Projects/Insurance CRM/src/utils/finance.js",
+      "gitCommit": "c09c549d98181fa0341dd2b2366c7b8045398ffc",
+      "sha256": "2cac3f0e6e92b5479103b38ac9d1e64a7cc4de4fbf22aba2b720b73656c25c89",
+      "moduleFormat": "ESM"
+    },
+    "nodeVersion": "v24.14.0",
+    "argConventions": {
+      "projectCPFTo55": "single object {cpfOA,cpfSA,cpfMA,yearsTo55} (numbers)",
+      "retirementSumsFor": "single arg dob string \"YYYY-MM-DD\" or null",
+      "summariseClient": "single arg client object {annualIncome, policies[]}",
+      "annualisePremium": "single arg policy object {premium, frequency}",
+      "formatCoverage": "single arg number",
+      "ageFromDOB": "single arg dob string or null — TIME-DEPENDENT",
+      "caller:raAssessment": "composite: projectCPFTo55(args) + retirementSumsFor(args.dob), then formulas in note",
+      "caller:gapAnalysis": "pure formulas over constants + args, see note"
+    }
+  },
+  "constants": {
+    "MEDICAL_INFLATION_RATE": 0.06,
+    "AVERAGE_CRITICAL_ILLNESS_COST": 150000,
+    "AVERAGE_EARLY_CI_COST": 30000,
+    "BHS_2026": 79000,
+    "RETIREMENT_SUMS": {
+      "2023": {
+        "brs": 99400,
+        "frs": 198800,
+        "ers": 298200
+      },
+      "2024": {
+        "brs": 102900,
+        "frs": 205800,
+        "ers": 308700
+      },
+      "2025": {
+        "brs": 106500,
+        "frs": 213000,
+        "ers": 426000
+      },
+      "2026": {
+        "brs": 110200,
+        "frs": 220400,
+        "ers": 440800
+      },
+      "2027": {
+        "brs": 114100,
+        "frs": 228200,
+        "ers": 456400
+      }
+    }
+  },
+  "vectors": [
+    {
+      "id": "projectCPFTo55-001",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 0,
+        "yearsTo55": 30,
+        "_grid": {
+          "age": 25,
+          "balance": 0,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 0,
+        "maAt55": 0,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 0
+      }
+    },
+    {
+      "id": "projectCPFTo55-002",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 0,
+        "yearsTo55": 30,
+        "_grid": {
+          "age": 25,
+          "balance": 0,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 0,
+        "maAt55": 0,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 0
+      }
+    },
+    {
+      "id": "projectCPFTo55-003",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 50000,
+        "yearsTo55": 30,
+        "_grid": {
+          "age": 25,
+          "balance": 50000,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 86496.6705214321,
+        "maAt55": 79000,
+        "totalOverflow": 57931.61092838408,
+        "saBoostFromOverflow": 86496.6705214321,
+        "totalCPFAt55": 165496.6705214321
+      }
+    },
+    {
+      "id": "projectCPFTo55-004",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 50000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "yearsTo55": 30,
+        "_grid": {
+          "age": 25,
+          "balance": 50000,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 104878.37895408929,
+        "saAt55": 248666.5460228092,
+        "maAt55": 79000,
+        "totalOverflow": 57931.61092838408,
+        "saBoostFromOverflow": 86496.67052143213,
+        "totalCPFAt55": 432544.9249768985
+      }
+    },
+    {
+      "id": "projectCPFTo55-005",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 150000,
+        "yearsTo55": 30,
+        "_grid": {
+          "age": 25,
+          "balance": 150000,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 423810.01156429626,
+        "maAt55": 79000,
+        "totalOverflow": 168640,
+        "saBoostFromOverflow": 423810.01156429626,
+        "totalCPFAt55": 502810.01156429626
+      }
+    },
+    {
+      "id": "projectCPFTo55-006",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 150000,
+        "cpfSA": 150000,
+        "cpfMA": 150000,
+        "yearsTo55": 30,
+        "_grid": {
+          "age": 25,
+          "balance": 150000,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 314635.13686226786,
+        "saAt55": 910319.6380684273,
+        "maAt55": 79000,
+        "totalOverflow": 168640,
+        "saBoostFromOverflow": 423810.01156429615,
+        "totalCPFAt55": 1303954.774930695
+      }
+    },
+    {
+      "id": "projectCPFTo55-007",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 500000,
+        "yearsTo55": 30,
+        "_grid": {
+          "age": 25,
+          "balance": 500000,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 1604406.7052143214,
+        "maAt55": 79000,
+        "totalOverflow": 532640,
+        "saBoostFromOverflow": 1604406.7052143214,
+        "totalCPFAt55": 1683406.7052143214
+      }
+    },
+    {
+      "id": "projectCPFTo55-008",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 500000,
+        "cpfSA": 500000,
+        "cpfMA": 500000,
+        "yearsTo55": 30,
+        "_grid": {
+          "age": 25,
+          "balance": 500000,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 1048783.789540893,
+        "saAt55": 3226105.4602280916,
+        "maAt55": 79000,
+        "totalOverflow": 532640,
+        "saBoostFromOverflow": 1604406.705214321,
+        "totalCPFAt55": 4353889.2497689845
+      }
+    },
+    {
+      "id": "projectCPFTo55-009",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "yearsTo55": 30,
+        "_grid": {
+          "age": 25,
+          "shape": "mixed-150-50-50"
+        }
+      },
+      "result": {
+        "oaAt55": 314635.13686226786,
+        "saAt55": 248666.5460228092,
+        "maAt55": 79000,
+        "totalOverflow": 57931.61092838408,
+        "saBoostFromOverflow": 86496.67052143213,
+        "totalCPFAt55": 642301.6828850771
+      }
+    },
+    {
+      "id": "projectCPFTo55-010",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 0,
+        "yearsTo55": 20,
+        "_grid": {
+          "age": 35,
+          "balance": 0,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 0,
+        "maAt55": 0,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 0
+      }
+    },
+    {
+      "id": "projectCPFTo55-011",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 0,
+        "yearsTo55": 20,
+        "_grid": {
+          "age": 35,
+          "balance": 0,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 0,
+        "maAt55": 0,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 0
+      }
+    },
+    {
+      "id": "projectCPFTo55-012",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 50000,
+        "yearsTo55": 20,
+        "_grid": {
+          "age": 35,
+          "balance": 50000,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 31778.403437737863,
+        "maAt55": 79000,
+        "totalOverflow": 26331.610928384078,
+        "saBoostFromOverflow": 31778.403437737863,
+        "totalCPFAt55": 110778.40343773787
+      }
+    },
+    {
+      "id": "projectCPFTo55-013",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 50000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "yearsTo55": 20,
+        "_grid": {
+          "age": 35,
+          "balance": 50000,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 81930.82201451971,
+        "saAt55": 141334.5605894089,
+        "maAt55": 79000,
+        "totalOverflow": 26331.610928384078,
+        "saBoostFromOverflow": 31778.40343773787,
+        "totalCPFAt55": 302265.3826039286
+      }
+    },
+    {
+      "id": "projectCPFTo55-014",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 150000,
+        "yearsTo55": 20,
+        "_grid": {
+          "age": 35,
+          "balance": 150000,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 259655.2103132136,
+        "maAt55": 79000,
+        "totalOverflow": 137040,
+        "saBoostFromOverflow": 259655.2103132136,
+        "totalCPFAt55": 338655.21031321364
+      }
+    },
+    {
+      "id": "projectCPFTo55-015",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 150000,
+        "cpfSA": 150000,
+        "cpfMA": 150000,
+        "yearsTo55": 20,
+        "_grid": {
+          "age": 35,
+          "balance": 150000,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 245792.46604355914,
+        "saAt55": 588323.6817682267,
+        "maAt55": 79000,
+        "totalOverflow": 137040,
+        "saBoostFromOverflow": 259655.21031321352,
+        "totalCPFAt55": 913116.1478117858
+      }
+    },
+    {
+      "id": "projectCPFTo55-016",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 500000,
+        "yearsTo55": 20,
+        "_grid": {
+          "age": 35,
+          "balance": 500000,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 1057224.0343773786,
+        "maAt55": 79000,
+        "totalOverflow": 501040,
+        "saBoostFromOverflow": 1057224.0343773786,
+        "totalCPFAt55": 1136224.0343773786
+      }
+    },
+    {
+      "id": "projectCPFTo55-017",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 500000,
+        "cpfSA": 500000,
+        "cpfMA": 500000,
+        "yearsTo55": 20,
+        "_grid": {
+          "age": 35,
+          "balance": 500000,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 819308.2201451971,
+        "saAt55": 2152785.6058940887,
+        "maAt55": 79000,
+        "totalOverflow": 501040,
+        "saBoostFromOverflow": 1057224.0343773784,
+        "totalCPFAt55": 3051093.826039286
+      }
+    },
+    {
+      "id": "projectCPFTo55-018",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "yearsTo55": 20,
+        "_grid": {
+          "age": 35,
+          "shape": "mixed-150-50-50"
+        }
+      },
+      "result": {
+        "oaAt55": 245792.46604355914,
+        "saAt55": 141334.5605894089,
+        "maAt55": 79000,
+        "totalOverflow": 26331.610928384078,
+        "saBoostFromOverflow": 31778.40343773787,
+        "totalCPFAt55": 466127.02663296805
+      }
+    },
+    {
+      "id": "projectCPFTo55-019",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 0,
+        "yearsTo55": 10,
+        "_grid": {
+          "age": 45,
+          "balance": 0,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 0,
+        "maAt55": 0,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 0
+      }
+    },
+    {
+      "id": "projectCPFTo55-020",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 0,
+        "yearsTo55": 10,
+        "_grid": {
+          "age": 45,
+          "balance": 0,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 0,
+        "maAt55": 0,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 0
+      }
+    },
+    {
+      "id": "projectCPFTo55-021",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 50000,
+        "yearsTo55": 10,
+        "_grid": {
+          "age": 45,
+          "balance": 50000,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 0,
+        "maAt55": 74012.21424591723,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 74012.21424591723
+      }
+    },
+    {
+      "id": "projectCPFTo55-022",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 50000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "yearsTo55": 10,
+        "_grid": {
+          "age": 45,
+          "balance": 50000,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 64004.22720981783,
+        "saAt55": 74012.21424591723,
+        "maAt55": 74012.21424591723,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 1.4551915228366852e-11,
+        "totalCPFAt55": 212028.6557016523
+      }
+    },
+    {
+      "id": "projectCPFTo55-023",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 150000,
+        "yearsTo55": 10,
+        "_grid": {
+          "age": 45,
+          "balance": 150000,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 148758.10844726174,
+        "maAt55": 79000,
+        "totalOverflow": 105440,
+        "saBoostFromOverflow": 148758.10844726174,
+        "totalCPFAt55": 227758.10844726174
+      }
+    },
+    {
+      "id": "projectCPFTo55-024",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 150000,
+        "cpfSA": 150000,
+        "cpfMA": 150000,
+        "yearsTo55": 10,
+        "_grid": {
+          "age": 45,
+          "balance": 150000,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 192012.6816294535,
+        "saAt55": 370794.75118501333,
+        "maAt55": 79000,
+        "totalOverflow": 105440,
+        "saBoostFromOverflow": 148758.10844726168,
+        "totalCPFAt55": 641807.4328144668
+      }
+    },
+    {
+      "id": "projectCPFTo55-025",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 500000,
+        "yearsTo55": 10,
+        "_grid": {
+          "age": 45,
+          "balance": 500000,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 687567.028157539,
+        "maAt55": 79000,
+        "totalOverflow": 469440,
+        "saBoostFromOverflow": 687567.028157539,
+        "totalCPFAt55": 766567.028157539
+      }
+    },
+    {
+      "id": "projectCPFTo55-026",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 500000,
+        "cpfSA": 500000,
+        "cpfMA": 500000,
+        "yearsTo55": 10,
+        "_grid": {
+          "age": 45,
+          "balance": 500000,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 640042.2720981783,
+        "saAt55": 1427689.1706167113,
+        "maAt55": 79000,
+        "totalOverflow": 469440,
+        "saBoostFromOverflow": 687567.0281575391,
+        "totalCPFAt55": 2146731.4427148895
+      }
+    },
+    {
+      "id": "projectCPFTo55-027",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "yearsTo55": 10,
+        "_grid": {
+          "age": 45,
+          "shape": "mixed-150-50-50"
+        }
+      },
+      "result": {
+        "oaAt55": 192012.6816294535,
+        "saAt55": 74012.21424591723,
+        "maAt55": 74012.21424591723,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 1.4551915228366852e-11,
+        "totalCPFAt55": 340037.11012128793
+      }
+    },
+    {
+      "id": "projectCPFTo55-028",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 0,
+        "yearsTo55": 1,
+        "_grid": {
+          "age": 54,
+          "balance": 0,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 0,
+        "maAt55": 0,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 0
+      }
+    },
+    {
+      "id": "projectCPFTo55-029",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 0,
+        "yearsTo55": 1,
+        "_grid": {
+          "age": 54,
+          "balance": 0,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 0,
+        "maAt55": 0,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 0
+      }
+    },
+    {
+      "id": "projectCPFTo55-030",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 50000,
+        "yearsTo55": 1,
+        "_grid": {
+          "age": 54,
+          "balance": 50000,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 0,
+        "maAt55": 52000,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 52000
+      }
+    },
+    {
+      "id": "projectCPFTo55-031",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 50000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "yearsTo55": 1,
+        "_grid": {
+          "age": 54,
+          "balance": 50000,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 51249.99999999999,
+        "saAt55": 52000,
+        "maAt55": 52000,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 155250
+      }
+    },
+    {
+      "id": "projectCPFTo55-032",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 150000,
+        "yearsTo55": 1,
+        "_grid": {
+          "age": 54,
+          "balance": 150000,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 80080,
+        "maAt55": 79000,
+        "totalOverflow": 77000,
+        "saBoostFromOverflow": 80080,
+        "totalCPFAt55": 159080
+      }
+    },
+    {
+      "id": "projectCPFTo55-033",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 150000,
+        "cpfSA": 150000,
+        "cpfMA": 150000,
+        "yearsTo55": 1,
+        "_grid": {
+          "age": 54,
+          "balance": 150000,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 153750,
+        "saAt55": 236080,
+        "maAt55": 79000,
+        "totalOverflow": 77000,
+        "saBoostFromOverflow": 80080,
+        "totalCPFAt55": 468830
+      }
+    },
+    {
+      "id": "projectCPFTo55-034",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 500000,
+        "yearsTo55": 1,
+        "_grid": {
+          "age": 54,
+          "balance": 500000,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 458640,
+        "maAt55": 79000,
+        "totalOverflow": 441000,
+        "saBoostFromOverflow": 458640,
+        "totalCPFAt55": 537640
+      }
+    },
+    {
+      "id": "projectCPFTo55-035",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 500000,
+        "cpfSA": 500000,
+        "cpfMA": 500000,
+        "yearsTo55": 1,
+        "_grid": {
+          "age": 54,
+          "balance": 500000,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 512499.99999999994,
+        "saAt55": 978640,
+        "maAt55": 79000,
+        "totalOverflow": 441000,
+        "saBoostFromOverflow": 458640,
+        "totalCPFAt55": 1570140
+      }
+    },
+    {
+      "id": "projectCPFTo55-036",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "yearsTo55": 1,
+        "_grid": {
+          "age": 54,
+          "shape": "mixed-150-50-50"
+        }
+      },
+      "result": {
+        "oaAt55": 153750,
+        "saAt55": 52000,
+        "maAt55": 52000,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 257750
+      }
+    },
+    {
+      "id": "projectCPFTo55-037",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 0,
+        "yearsTo55": 0,
+        "_grid": {
+          "age": 55,
+          "balance": 0,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 0,
+        "maAt55": 0,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 0
+      }
+    },
+    {
+      "id": "projectCPFTo55-038",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 0,
+        "yearsTo55": 0,
+        "_grid": {
+          "age": 55,
+          "balance": 0,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 0,
+        "maAt55": 0,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 0
+      }
+    },
+    {
+      "id": "projectCPFTo55-039",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 50000,
+        "yearsTo55": 0,
+        "_grid": {
+          "age": 55,
+          "balance": 50000,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 0,
+        "maAt55": 50000,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 50000
+      }
+    },
+    {
+      "id": "projectCPFTo55-040",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 50000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "yearsTo55": 0,
+        "_grid": {
+          "age": 55,
+          "balance": 50000,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 50000,
+        "saAt55": 50000,
+        "maAt55": 50000,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 150000
+      }
+    },
+    {
+      "id": "projectCPFTo55-041",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 150000,
+        "yearsTo55": 0,
+        "_grid": {
+          "age": 55,
+          "balance": 150000,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 0,
+        "maAt55": 150000,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 150000
+      }
+    },
+    {
+      "id": "projectCPFTo55-042",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 150000,
+        "cpfSA": 150000,
+        "cpfMA": 150000,
+        "yearsTo55": 0,
+        "_grid": {
+          "age": 55,
+          "balance": 150000,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 150000,
+        "saAt55": 150000,
+        "maAt55": 150000,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 450000
+      }
+    },
+    {
+      "id": "projectCPFTo55-043",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 0,
+        "cpfSA": 0,
+        "cpfMA": 500000,
+        "yearsTo55": 0,
+        "_grid": {
+          "age": 55,
+          "balance": 500000,
+          "shape": "MA-only"
+        }
+      },
+      "result": {
+        "oaAt55": 0,
+        "saAt55": 0,
+        "maAt55": 500000,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 500000
+      }
+    },
+    {
+      "id": "projectCPFTo55-044",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 500000,
+        "cpfSA": 500000,
+        "cpfMA": 500000,
+        "yearsTo55": 0,
+        "_grid": {
+          "age": 55,
+          "balance": 500000,
+          "shape": "all-equal"
+        }
+      },
+      "result": {
+        "oaAt55": 500000,
+        "saAt55": 500000,
+        "maAt55": 500000,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 1500000
+      }
+    },
+    {
+      "id": "projectCPFTo55-045",
+      "fn": "projectCPFTo55",
+      "args": {
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "yearsTo55": 0,
+        "_grid": {
+          "age": 55,
+          "shape": "mixed-150-50-50"
+        }
+      },
+      "result": {
+        "oaAt55": 150000,
+        "saAt55": 50000,
+        "maAt55": 50000,
+        "totalOverflow": 0,
+        "saBoostFromOverflow": 0,
+        "totalCPFAt55": 250000
+      }
+    },
+    {
+      "id": "retirementSumsFor-046",
+      "fn": "retirementSumsFor",
+      "args": {
+        "dob": "1968-06-15",
+        "_grid": {
+          "cohortYear": 2023
+        }
+      },
+      "result": {
+        "brs": 99400,
+        "frs": 198800,
+        "ers": 298200,
+        "cohortYear": 2023,
+        "projected": false
+      }
+    },
+    {
+      "id": "retirementSumsFor-047",
+      "fn": "retirementSumsFor",
+      "args": {
+        "dob": "1970-03-01",
+        "_grid": {
+          "cohortYear": 2025
+        }
+      },
+      "result": {
+        "brs": 106500,
+        "frs": 213000,
+        "ers": 426000,
+        "cohortYear": 2025,
+        "projected": false
+      }
+    },
+    {
+      "id": "retirementSumsFor-048",
+      "fn": "retirementSumsFor",
+      "args": {
+        "dob": "1972-11-30",
+        "_grid": {
+          "cohortYear": 2027
+        }
+      },
+      "result": {
+        "brs": 114100,
+        "frs": 228200,
+        "ers": 456400,
+        "cohortYear": 2027,
+        "projected": false
+      }
+    },
+    {
+      "id": "retirementSumsFor-049",
+      "fn": "retirementSumsFor",
+      "args": {
+        "dob": "1975-01-01",
+        "_grid": {
+          "cohortYear": 2030
+        }
+      },
+      "result": {
+        "brs": 122873,
+        "frs": 245746,
+        "ers": 491493,
+        "cohortYear": 2030,
+        "projected": true
+      }
+    },
+    {
+      "id": "retirementSumsFor-050",
+      "fn": "retirementSumsFor",
+      "args": {
+        "dob": null
+      },
+      "result": {
+        "brs": 110200,
+        "frs": 220400,
+        "ers": 440800,
+        "cohortYear": 2026,
+        "projected": false
+      },
+      "note": "null dob -> fallback 2026 row, cohortYear 2026"
+    },
+    {
+      "id": "retirementSumsFor-051",
+      "fn": "retirementSumsFor",
+      "args": {
+        "dob": "1960-05-20"
+      },
+      "result": {
+        "brs": 110200,
+        "frs": 220400,
+        "ers": 440800,
+        "cohortYear": 2026,
+        "projected": false
+      },
+      "note": "age55Year=2015 < table start -> falls through to 2026 fallback row"
+    },
+    {
+      "id": "summariseClient-052",
+      "fn": "summariseClient",
+      "args": {
+        "client": {
+          "annualIncome": "0",
+          "policies": []
+        },
+        "_grid": {
+          "income": 0,
+          "policySet": "empty"
+        }
+      },
+      "result": {
+        "income": 0,
+        "totalCoverage": 0,
+        "totalCICoverage": 0,
+        "totalECICoverage": 0,
+        "totalAnnualPremium": 0,
+        "totalAnnualInvestment": 0,
+        "coverageRatio": 0,
+        "ciCoverageRatio": 0,
+        "eciCoverageRatio": 0,
+        "premiumRatio": 0
+      }
+    },
+    {
+      "id": "summariseClient-053",
+      "fn": "summariseClient",
+      "args": {
+        "client": {
+          "annualIncome": "0",
+          "policies": [
+            {
+              "premium": "200",
+              "frequency": "Monthly",
+              "coverageAmount": "500000",
+              "criticalIllnessCoverage": "100000",
+              "earlyCriticalIllnessCoverage": "30000"
+            }
+          ]
+        },
+        "_grid": {
+          "income": 0,
+          "policySet": "single-term"
+        }
+      },
+      "result": {
+        "income": 0,
+        "totalCoverage": 500000,
+        "totalCICoverage": 100000,
+        "totalECICoverage": 30000,
+        "totalAnnualPremium": 2400,
+        "totalAnnualInvestment": 2400,
+        "coverageRatio": 0,
+        "ciCoverageRatio": 0,
+        "eciCoverageRatio": 0,
+        "premiumRatio": 0
+      }
+    },
+    {
+      "id": "summariseClient-054",
+      "fn": "summariseClient",
+      "args": {
+        "client": {
+          "annualIncome": "0",
+          "policies": [
+            {
+              "premium": "200",
+              "frequency": "Monthly",
+              "coverageAmount": "500000",
+              "criticalIllnessCoverage": "100000",
+              "earlyCriticalIllnessCoverage": "30000"
+            },
+            {
+              "premium": "1000",
+              "frequency": "Monthly",
+              "coverageAmount": "100000",
+              "criticalIllnessCoverage": "0",
+              "earlyCriticalIllnessCoverage": "0",
+              "isInvestmentLinked": true,
+              "ilpPremiumInclusionPercent": "30"
+            },
+            {
+              "premium": "2400",
+              "frequency": "Annually",
+              "coverageAmount": "250000",
+              "criticalIllnessCoverage": "150000",
+              "earlyCriticalIllnessCoverage": "50000"
+            }
+          ]
+        },
+        "_grid": {
+          "income": 0,
+          "policySet": "term+ilp+annual"
+        }
+      },
+      "result": {
+        "income": 0,
+        "totalCoverage": 850000,
+        "totalCICoverage": 250000,
+        "totalECICoverage": 80000,
+        "totalAnnualPremium": 8400,
+        "totalAnnualInvestment": 16800,
+        "coverageRatio": 0,
+        "ciCoverageRatio": 0,
+        "eciCoverageRatio": 0,
+        "premiumRatio": 0
+      }
+    },
+    {
+      "id": "summariseClient-055",
+      "fn": "summariseClient",
+      "args": {
+        "client": {
+          "annualIncome": "60000",
+          "policies": []
+        },
+        "_grid": {
+          "income": 60000,
+          "policySet": "empty"
+        }
+      },
+      "result": {
+        "income": 60000,
+        "totalCoverage": 0,
+        "totalCICoverage": 0,
+        "totalECICoverage": 0,
+        "totalAnnualPremium": 0,
+        "totalAnnualInvestment": 0,
+        "coverageRatio": 0,
+        "ciCoverageRatio": 0,
+        "eciCoverageRatio": 0,
+        "premiumRatio": 0
+      }
+    },
+    {
+      "id": "summariseClient-056",
+      "fn": "summariseClient",
+      "args": {
+        "client": {
+          "annualIncome": "60000",
+          "policies": [
+            {
+              "premium": "200",
+              "frequency": "Monthly",
+              "coverageAmount": "500000",
+              "criticalIllnessCoverage": "100000",
+              "earlyCriticalIllnessCoverage": "30000"
+            }
+          ]
+        },
+        "_grid": {
+          "income": 60000,
+          "policySet": "single-term"
+        }
+      },
+      "result": {
+        "income": 60000,
+        "totalCoverage": 500000,
+        "totalCICoverage": 100000,
+        "totalECICoverage": 30000,
+        "totalAnnualPremium": 2400,
+        "totalAnnualInvestment": 2400,
+        "coverageRatio": 8.333333333333334,
+        "ciCoverageRatio": 1.6666666666666667,
+        "eciCoverageRatio": 0.5,
+        "premiumRatio": 4
+      }
+    },
+    {
+      "id": "summariseClient-057",
+      "fn": "summariseClient",
+      "args": {
+        "client": {
+          "annualIncome": "60000",
+          "policies": [
+            {
+              "premium": "200",
+              "frequency": "Monthly",
+              "coverageAmount": "500000",
+              "criticalIllnessCoverage": "100000",
+              "earlyCriticalIllnessCoverage": "30000"
+            },
+            {
+              "premium": "1000",
+              "frequency": "Monthly",
+              "coverageAmount": "100000",
+              "criticalIllnessCoverage": "0",
+              "earlyCriticalIllnessCoverage": "0",
+              "isInvestmentLinked": true,
+              "ilpPremiumInclusionPercent": "30"
+            },
+            {
+              "premium": "2400",
+              "frequency": "Annually",
+              "coverageAmount": "250000",
+              "criticalIllnessCoverage": "150000",
+              "earlyCriticalIllnessCoverage": "50000"
+            }
+          ]
+        },
+        "_grid": {
+          "income": 60000,
+          "policySet": "term+ilp+annual"
+        }
+      },
+      "result": {
+        "income": 60000,
+        "totalCoverage": 850000,
+        "totalCICoverage": 250000,
+        "totalECICoverage": 80000,
+        "totalAnnualPremium": 8400,
+        "totalAnnualInvestment": 16800,
+        "coverageRatio": 14.166666666666666,
+        "ciCoverageRatio": 4.166666666666667,
+        "eciCoverageRatio": 1.3333333333333333,
+        "premiumRatio": 14.000000000000002
+      }
+    },
+    {
+      "id": "summariseClient-058",
+      "fn": "summariseClient",
+      "args": {
+        "client": {
+          "annualIncome": "120000",
+          "policies": []
+        },
+        "_grid": {
+          "income": 120000,
+          "policySet": "empty"
+        }
+      },
+      "result": {
+        "income": 120000,
+        "totalCoverage": 0,
+        "totalCICoverage": 0,
+        "totalECICoverage": 0,
+        "totalAnnualPremium": 0,
+        "totalAnnualInvestment": 0,
+        "coverageRatio": 0,
+        "ciCoverageRatio": 0,
+        "eciCoverageRatio": 0,
+        "premiumRatio": 0
+      }
+    },
+    {
+      "id": "summariseClient-059",
+      "fn": "summariseClient",
+      "args": {
+        "client": {
+          "annualIncome": "120000",
+          "policies": [
+            {
+              "premium": "200",
+              "frequency": "Monthly",
+              "coverageAmount": "500000",
+              "criticalIllnessCoverage": "100000",
+              "earlyCriticalIllnessCoverage": "30000"
+            }
+          ]
+        },
+        "_grid": {
+          "income": 120000,
+          "policySet": "single-term"
+        }
+      },
+      "result": {
+        "income": 120000,
+        "totalCoverage": 500000,
+        "totalCICoverage": 100000,
+        "totalECICoverage": 30000,
+        "totalAnnualPremium": 2400,
+        "totalAnnualInvestment": 2400,
+        "coverageRatio": 4.166666666666667,
+        "ciCoverageRatio": 0.8333333333333334,
+        "eciCoverageRatio": 0.25,
+        "premiumRatio": 2
+      }
+    },
+    {
+      "id": "summariseClient-060",
+      "fn": "summariseClient",
+      "args": {
+        "client": {
+          "annualIncome": "120000",
+          "policies": [
+            {
+              "premium": "200",
+              "frequency": "Monthly",
+              "coverageAmount": "500000",
+              "criticalIllnessCoverage": "100000",
+              "earlyCriticalIllnessCoverage": "30000"
+            },
+            {
+              "premium": "1000",
+              "frequency": "Monthly",
+              "coverageAmount": "100000",
+              "criticalIllnessCoverage": "0",
+              "earlyCriticalIllnessCoverage": "0",
+              "isInvestmentLinked": true,
+              "ilpPremiumInclusionPercent": "30"
+            },
+            {
+              "premium": "2400",
+              "frequency": "Annually",
+              "coverageAmount": "250000",
+              "criticalIllnessCoverage": "150000",
+              "earlyCriticalIllnessCoverage": "50000"
+            }
+          ]
+        },
+        "_grid": {
+          "income": 120000,
+          "policySet": "term+ilp+annual"
+        }
+      },
+      "result": {
+        "income": 120000,
+        "totalCoverage": 850000,
+        "totalCICoverage": 250000,
+        "totalECICoverage": 80000,
+        "totalAnnualPremium": 8400,
+        "totalAnnualInvestment": 16800,
+        "coverageRatio": 7.083333333333333,
+        "ciCoverageRatio": 2.0833333333333335,
+        "eciCoverageRatio": 0.6666666666666666,
+        "premiumRatio": 7.000000000000001
+      }
+    },
+    {
+      "id": "annualisePremium-061",
+      "fn": "annualisePremium",
+      "args": {
+        "policy": {
+          "premium": "100",
+          "frequency": "Monthly"
+        }
+      },
+      "result": 1200
+    },
+    {
+      "id": "annualisePremium-062",
+      "fn": "annualisePremium",
+      "args": {
+        "policy": {
+          "premium": "100",
+          "frequency": "Quarterly"
+        }
+      },
+      "result": 400
+    },
+    {
+      "id": "annualisePremium-063",
+      "fn": "annualisePremium",
+      "args": {
+        "policy": {
+          "premium": "100",
+          "frequency": "Semi-Annual"
+        }
+      },
+      "result": 200
+    },
+    {
+      "id": "annualisePremium-064",
+      "fn": "annualisePremium",
+      "args": {
+        "policy": {
+          "premium": "100",
+          "frequency": "Annually"
+        }
+      },
+      "result": 100
+    },
+    {
+      "id": "annualisePremium-065",
+      "fn": "annualisePremium",
+      "args": {
+        "policy": {
+          "premium": "250.50"
+        }
+      },
+      "result": 250.5
+    },
+    {
+      "id": "annualisePremium-066",
+      "fn": "annualisePremium",
+      "args": {
+        "policy": {
+          "premium": 0,
+          "frequency": "Monthly"
+        }
+      },
+      "result": 0
+    },
+    {
+      "id": "formatCoverage-067",
+      "fn": "formatCoverage",
+      "args": {
+        "amount": 0
+      },
+      "result": "$0"
+    },
+    {
+      "id": "formatCoverage-068",
+      "fn": "formatCoverage",
+      "args": {
+        "amount": 999
+      },
+      "result": "$999"
+    },
+    {
+      "id": "formatCoverage-069",
+      "fn": "formatCoverage",
+      "args": {
+        "amount": 1000
+      },
+      "result": "$1K"
+    },
+    {
+      "id": "formatCoverage-070",
+      "fn": "formatCoverage",
+      "args": {
+        "amount": 50000
+      },
+      "result": "$50K"
+    },
+    {
+      "id": "formatCoverage-071",
+      "fn": "formatCoverage",
+      "args": {
+        "amount": 999999
+      },
+      "result": "$1000K"
+    },
+    {
+      "id": "formatCoverage-072",
+      "fn": "formatCoverage",
+      "args": {
+        "amount": 1000000
+      },
+      "result": "$1.0M"
+    },
+    {
+      "id": "formatCoverage-073",
+      "fn": "formatCoverage",
+      "args": {
+        "amount": 1500000
+      },
+      "result": "$1.5M"
+    },
+    {
+      "id": "formatCoverage-074",
+      "fn": "formatCoverage",
+      "args": {
+        "amount": 2300000
+      },
+      "result": "$2.3M"
+    },
+    {
+      "id": "ageFromDOB-075",
+      "fn": "ageFromDOB",
+      "args": {
+        "dob": "2001-06-15",
+        "_grid": {
+          "expectedAgeAtCaptureYear": 25,
+          "birthYear": 2001
+        }
+      },
+      "result": 25,
+      "note": "TIME-DEPENDENT: result = captureYear - birthYear (no month/day adjustment)"
+    },
+    {
+      "id": "ageFromDOB-076",
+      "fn": "ageFromDOB",
+      "args": {
+        "dob": "1991-06-15",
+        "_grid": {
+          "expectedAgeAtCaptureYear": 35,
+          "birthYear": 1991
+        }
+      },
+      "result": 35,
+      "note": "TIME-DEPENDENT: result = captureYear - birthYear (no month/day adjustment)"
+    },
+    {
+      "id": "ageFromDOB-077",
+      "fn": "ageFromDOB",
+      "args": {
+        "dob": "1981-06-15",
+        "_grid": {
+          "expectedAgeAtCaptureYear": 45,
+          "birthYear": 1981
+        }
+      },
+      "result": 45,
+      "note": "TIME-DEPENDENT: result = captureYear - birthYear (no month/day adjustment)"
+    },
+    {
+      "id": "ageFromDOB-078",
+      "fn": "ageFromDOB",
+      "args": {
+        "dob": "1972-06-15",
+        "_grid": {
+          "expectedAgeAtCaptureYear": 54,
+          "birthYear": 1972
+        }
+      },
+      "result": 54,
+      "note": "TIME-DEPENDENT: result = captureYear - birthYear (no month/day adjustment)"
+    },
+    {
+      "id": "ageFromDOB-079",
+      "fn": "ageFromDOB",
+      "args": {
+        "dob": "1971-06-15",
+        "_grid": {
+          "expectedAgeAtCaptureYear": 55,
+          "birthYear": 1971
+        }
+      },
+      "result": 55,
+      "note": "TIME-DEPENDENT: result = captureYear - birthYear (no month/day adjustment)"
+    },
+    {
+      "id": "ageFromDOB-080",
+      "fn": "ageFromDOB",
+      "args": {
+        "dob": null
+      },
+      "result": 40,
+      "note": "null dob -> default 40"
+    },
+    {
+      "id": "caller:raAssessment-081",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1968-06-15",
+        "yearsTo55": 30,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2023,
+          "age": 25
+        }
+      },
+      "result": {
+        "projectedRA": 198800,
+        "remainingOA": 314635.13686226786,
+        "meetsFRS": true,
+        "meetsBRS": true,
+        "frsPercentage": 100,
+        "cpfLifeMonthlyPayout": 1780,
+        "cpfAchievementPct": 100
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:raAssessment-082",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1968-06-15",
+        "yearsTo55": 20,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2023,
+          "age": 35
+        }
+      },
+      "result": {
+        "projectedRA": 198800,
+        "remainingOA": 188327.02663296805,
+        "meetsFRS": true,
+        "meetsBRS": true,
+        "frsPercentage": 100,
+        "cpfLifeMonthlyPayout": 1780,
+        "cpfAchievementPct": 100
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:raAssessment-083",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1968-06-15",
+        "yearsTo55": 10,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2023,
+          "age": 45
+        }
+      },
+      "result": {
+        "projectedRA": 198800,
+        "remainingOA": 67224.89587537073,
+        "meetsFRS": true,
+        "meetsBRS": true,
+        "frsPercentage": 100,
+        "cpfLifeMonthlyPayout": 1780,
+        "cpfAchievementPct": 100
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:raAssessment-084",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1968-06-15",
+        "yearsTo55": 1,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2023,
+          "age": 54
+        }
+      },
+      "result": {
+        "projectedRA": 198800,
+        "remainingOA": 6950,
+        "meetsFRS": true,
+        "meetsBRS": true,
+        "frsPercentage": 100,
+        "cpfLifeMonthlyPayout": 1780,
+        "cpfAchievementPct": 100
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:raAssessment-085",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1968-06-15",
+        "yearsTo55": 0,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2023,
+          "age": 55
+        }
+      },
+      "result": {
+        "projectedRA": 198800,
+        "remainingOA": 1200,
+        "meetsFRS": true,
+        "meetsBRS": true,
+        "frsPercentage": 100,
+        "cpfLifeMonthlyPayout": 1780,
+        "cpfAchievementPct": 100
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:raAssessment-086",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1970-03-01",
+        "yearsTo55": 30,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2025,
+          "age": 25
+        }
+      },
+      "result": {
+        "projectedRA": 213000,
+        "remainingOA": 314635.13686226786,
+        "meetsFRS": true,
+        "meetsBRS": true,
+        "frsPercentage": 100,
+        "cpfLifeMonthlyPayout": 1780,
+        "cpfAchievementPct": 100
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:raAssessment-087",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1970-03-01",
+        "yearsTo55": 20,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2025,
+          "age": 35
+        }
+      },
+      "result": {
+        "projectedRA": 213000,
+        "remainingOA": 174127.02663296805,
+        "meetsFRS": true,
+        "meetsBRS": true,
+        "frsPercentage": 100,
+        "cpfLifeMonthlyPayout": 1780,
+        "cpfAchievementPct": 100
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:raAssessment-088",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1970-03-01",
+        "yearsTo55": 10,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2025,
+          "age": 45
+        }
+      },
+      "result": {
+        "projectedRA": 213000,
+        "remainingOA": 53024.89587537071,
+        "meetsFRS": true,
+        "meetsBRS": true,
+        "frsPercentage": 100,
+        "cpfLifeMonthlyPayout": 1780,
+        "cpfAchievementPct": 100
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:raAssessment-089",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1970-03-01",
+        "yearsTo55": 1,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2025,
+          "age": 54
+        }
+      },
+      "result": {
+        "projectedRA": 205750,
+        "remainingOA": 0,
+        "meetsFRS": false,
+        "meetsBRS": true,
+        "frsPercentage": 97,
+        "cpfLifeMonthlyPayout": 1719.413145539906,
+        "cpfAchievementPct": 96.59624413145539
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:raAssessment-090",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1970-03-01",
+        "yearsTo55": 0,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2025,
+          "age": 55
+        }
+      },
+      "result": {
+        "projectedRA": 200000,
+        "remainingOA": 0,
+        "meetsFRS": false,
+        "meetsBRS": true,
+        "frsPercentage": 94,
+        "cpfLifeMonthlyPayout": 1671.3615023474179,
+        "cpfAchievementPct": 93.89671361502347
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:raAssessment-091",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1972-11-30",
+        "yearsTo55": 30,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2027,
+          "age": 25
+        }
+      },
+      "result": {
+        "projectedRA": 228200,
+        "remainingOA": 314635.13686226786,
+        "meetsFRS": true,
+        "meetsBRS": true,
+        "frsPercentage": 100,
+        "cpfLifeMonthlyPayout": 1780,
+        "cpfAchievementPct": 100
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:raAssessment-092",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1972-11-30",
+        "yearsTo55": 20,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2027,
+          "age": 35
+        }
+      },
+      "result": {
+        "projectedRA": 228200,
+        "remainingOA": 158927.02663296805,
+        "meetsFRS": true,
+        "meetsBRS": true,
+        "frsPercentage": 100,
+        "cpfLifeMonthlyPayout": 1780,
+        "cpfAchievementPct": 100
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:raAssessment-093",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1972-11-30",
+        "yearsTo55": 10,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2027,
+          "age": 45
+        }
+      },
+      "result": {
+        "projectedRA": 228200,
+        "remainingOA": 37824.89587537071,
+        "meetsFRS": true,
+        "meetsBRS": true,
+        "frsPercentage": 100,
+        "cpfLifeMonthlyPayout": 1780,
+        "cpfAchievementPct": 100
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:raAssessment-094",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1972-11-30",
+        "yearsTo55": 1,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2027,
+          "age": 54
+        }
+      },
+      "result": {
+        "projectedRA": 205750,
+        "remainingOA": 0,
+        "meetsFRS": false,
+        "meetsBRS": true,
+        "frsPercentage": 90,
+        "cpfLifeMonthlyPayout": 1604.88606485539,
+        "cpfAchievementPct": 90.16213847502192
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:raAssessment-095",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1972-11-30",
+        "yearsTo55": 0,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2027,
+          "age": 55
+        }
+      },
+      "result": {
+        "projectedRA": 200000,
+        "remainingOA": 0,
+        "meetsFRS": false,
+        "meetsBRS": true,
+        "frsPercentage": 88,
+        "cpfLifeMonthlyPayout": 1560.0350569675722,
+        "cpfAchievementPct": 87.64241893076249
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:raAssessment-096",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1975-01-01",
+        "yearsTo55": 30,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2030,
+          "age": 25
+        }
+      },
+      "result": {
+        "projectedRA": 245746,
+        "remainingOA": 314635.13686226786,
+        "meetsFRS": true,
+        "meetsBRS": true,
+        "frsPercentage": 100,
+        "cpfLifeMonthlyPayout": 1780,
+        "cpfAchievementPct": 100
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:raAssessment-097",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1975-01-01",
+        "yearsTo55": 20,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2030,
+          "age": 35
+        }
+      },
+      "result": {
+        "projectedRA": 245746,
+        "remainingOA": 141381.02663296805,
+        "meetsFRS": true,
+        "meetsBRS": true,
+        "frsPercentage": 100,
+        "cpfLifeMonthlyPayout": 1780,
+        "cpfAchievementPct": 100
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:raAssessment-098",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1975-01-01",
+        "yearsTo55": 10,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2030,
+          "age": 45
+        }
+      },
+      "result": {
+        "projectedRA": 245746,
+        "remainingOA": 20278.895875370712,
+        "meetsFRS": true,
+        "meetsBRS": true,
+        "frsPercentage": 100,
+        "cpfLifeMonthlyPayout": 1780,
+        "cpfAchievementPct": 100
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:raAssessment-099",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1975-01-01",
+        "yearsTo55": 1,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2030,
+          "age": 54
+        }
+      },
+      "result": {
+        "projectedRA": 205750,
+        "remainingOA": 0,
+        "meetsFRS": false,
+        "meetsBRS": true,
+        "frsPercentage": 84,
+        "cpfLifeMonthlyPayout": 1490.2989265339008,
+        "cpfAchievementPct": 83.72465879403937
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:raAssessment-100",
+      "fn": "caller:raAssessment",
+      "args": {
+        "dob": "1975-01-01",
+        "yearsTo55": 0,
+        "cpfOA": 150000,
+        "cpfSA": 50000,
+        "cpfMA": 50000,
+        "_grid": {
+          "cohortYear": 2030,
+          "age": 55
+        }
+      },
+      "result": {
+        "projectedRA": 200000,
+        "remainingOA": 0,
+        "meetsFRS": false,
+        "meetsBRS": true,
+        "frsPercentage": 81,
+        "cpfLifeMonthlyPayout": 1448.650232353731,
+        "cpfAchievementPct": 81.38484451425455
+      },
+      "note": "Formulas copied verbatim from CPFProjection.jsx lines 14-18,201 and ClientReportModal.jsx lines 73-74"
+    },
+    {
+      "id": "caller:gapAnalysis-101",
+      "fn": "caller:gapAnalysis",
+      "args": {
+        "income": 0,
+        "yearsToRetirement": 40,
+        "totalCoverage": 300000,
+        "totalCICoverage": 100000,
+        "totalECICoverage": 30000,
+        "_grid": {
+          "income": 0,
+          "age": 25
+        }
+      },
+      "result": {
+        "futureCICost": 1542857.690568889,
+        "futureECICost": 308571.5381137778,
+        "coverageGap": 0,
+        "ciCoverageGap": 0,
+        "eciCoverageGap": 0
+      },
+      "note": "Formulas copied verbatim from ClientReportModal.jsx lines 37-44 (10x / 5x / 1.5x income multiples)"
+    },
+    {
+      "id": "caller:gapAnalysis-102",
+      "fn": "caller:gapAnalysis",
+      "args": {
+        "income": 0,
+        "yearsToRetirement": 30,
+        "totalCoverage": 300000,
+        "totalCICoverage": 100000,
+        "totalECICoverage": 30000,
+        "_grid": {
+          "income": 0,
+          "age": 35
+        }
+      },
+      "result": {
+        "futureCICost": 861523.6759369888,
+        "futureECICost": 172304.73518739775,
+        "coverageGap": 0,
+        "ciCoverageGap": 0,
+        "eciCoverageGap": 0
+      },
+      "note": "Formulas copied verbatim from ClientReportModal.jsx lines 37-44 (10x / 5x / 1.5x income multiples)"
+    },
+    {
+      "id": "caller:gapAnalysis-103",
+      "fn": "caller:gapAnalysis",
+      "args": {
+        "income": 0,
+        "yearsToRetirement": 20,
+        "totalCoverage": 300000,
+        "totalCICoverage": 100000,
+        "totalECICoverage": 30000,
+        "_grid": {
+          "income": 0,
+          "age": 45
+        }
+      },
+      "result": {
+        "futureCICost": 481070.3208319272,
+        "futureECICost": 96214.06416638543,
+        "coverageGap": 0,
+        "ciCoverageGap": 0,
+        "eciCoverageGap": 0
+      },
+      "note": "Formulas copied verbatim from ClientReportModal.jsx lines 37-44 (10x / 5x / 1.5x income multiples)"
+    },
+    {
+      "id": "caller:gapAnalysis-104",
+      "fn": "caller:gapAnalysis",
+      "args": {
+        "income": 0,
+        "yearsToRetirement": 11,
+        "totalCoverage": 300000,
+        "totalCICoverage": 100000,
+        "totalECICoverage": 30000,
+        "_grid": {
+          "income": 0,
+          "age": 54
+        }
+      },
+      "result": {
+        "futureCICost": 284744.7837503139,
+        "futureECICost": 56948.956750062775,
+        "coverageGap": 0,
+        "ciCoverageGap": 0,
+        "eciCoverageGap": 0
+      },
+      "note": "Formulas copied verbatim from ClientReportModal.jsx lines 37-44 (10x / 5x / 1.5x income multiples)"
+    },
+    {
+      "id": "caller:gapAnalysis-105",
+      "fn": "caller:gapAnalysis",
+      "args": {
+        "income": 0,
+        "yearsToRetirement": 10,
+        "totalCoverage": 300000,
+        "totalCICoverage": 100000,
+        "totalECICoverage": 30000,
+        "_grid": {
+          "income": 0,
+          "age": 55
+        }
+      },
+      "result": {
+        "futureCICost": 268627.1544814282,
+        "futureECICost": 53725.43089628564,
+        "coverageGap": 0,
+        "ciCoverageGap": 0,
+        "eciCoverageGap": 0
+      },
+      "note": "Formulas copied verbatim from ClientReportModal.jsx lines 37-44 (10x / 5x / 1.5x income multiples)"
+    },
+    {
+      "id": "caller:gapAnalysis-106",
+      "fn": "caller:gapAnalysis",
+      "args": {
+        "income": 60000,
+        "yearsToRetirement": 40,
+        "totalCoverage": 300000,
+        "totalCICoverage": 100000,
+        "totalECICoverage": 30000,
+        "_grid": {
+          "income": 60000,
+          "age": 25
+        }
+      },
+      "result": {
+        "futureCICost": 1542857.690568889,
+        "futureECICost": 308571.5381137778,
+        "coverageGap": 300000,
+        "ciCoverageGap": 200000,
+        "eciCoverageGap": 60000
+      },
+      "note": "Formulas copied verbatim from ClientReportModal.jsx lines 37-44 (10x / 5x / 1.5x income multiples)"
+    },
+    {
+      "id": "caller:gapAnalysis-107",
+      "fn": "caller:gapAnalysis",
+      "args": {
+        "income": 60000,
+        "yearsToRetirement": 30,
+        "totalCoverage": 300000,
+        "totalCICoverage": 100000,
+        "totalECICoverage": 30000,
+        "_grid": {
+          "income": 60000,
+          "age": 35
+        }
+      },
+      "result": {
+        "futureCICost": 861523.6759369888,
+        "futureECICost": 172304.73518739775,
+        "coverageGap": 300000,
+        "ciCoverageGap": 200000,
+        "eciCoverageGap": 60000
+      },
+      "note": "Formulas copied verbatim from ClientReportModal.jsx lines 37-44 (10x / 5x / 1.5x income multiples)"
+    },
+    {
+      "id": "caller:gapAnalysis-108",
+      "fn": "caller:gapAnalysis",
+      "args": {
+        "income": 60000,
+        "yearsToRetirement": 20,
+        "totalCoverage": 300000,
+        "totalCICoverage": 100000,
+        "totalECICoverage": 30000,
+        "_grid": {
+          "income": 60000,
+          "age": 45
+        }
+      },
+      "result": {
+        "futureCICost": 481070.3208319272,
+        "futureECICost": 96214.06416638543,
+        "coverageGap": 300000,
+        "ciCoverageGap": 200000,
+        "eciCoverageGap": 60000
+      },
+      "note": "Formulas copied verbatim from ClientReportModal.jsx lines 37-44 (10x / 5x / 1.5x income multiples)"
+    },
+    {
+      "id": "caller:gapAnalysis-109",
+      "fn": "caller:gapAnalysis",
+      "args": {
+        "income": 60000,
+        "yearsToRetirement": 11,
+        "totalCoverage": 300000,
+        "totalCICoverage": 100000,
+        "totalECICoverage": 30000,
+        "_grid": {
+          "income": 60000,
+          "age": 54
+        }
+      },
+      "result": {
+        "futureCICost": 284744.7837503139,
+        "futureECICost": 56948.956750062775,
+        "coverageGap": 300000,
+        "ciCoverageGap": 200000,
+        "eciCoverageGap": 60000
+      },
+      "note": "Formulas copied verbatim from ClientReportModal.jsx lines 37-44 (10x / 5x / 1.5x income multiples)"
+    },
+    {
+      "id": "caller:gapAnalysis-110",
+      "fn": "caller:gapAnalysis",
+      "args": {
+        "income": 60000,
+        "yearsToRetirement": 10,
+        "totalCoverage": 300000,
+        "totalCICoverage": 100000,
+        "totalECICoverage": 30000,
+        "_grid": {
+          "income": 60000,
+          "age": 55
+        }
+      },
+      "result": {
+        "futureCICost": 268627.1544814282,
+        "futureECICost": 53725.43089628564,
+        "coverageGap": 300000,
+        "ciCoverageGap": 200000,
+        "eciCoverageGap": 60000
+      },
+      "note": "Formulas copied verbatim from ClientReportModal.jsx lines 37-44 (10x / 5x / 1.5x income multiples)"
+    },
+    {
+      "id": "caller:gapAnalysis-111",
+      "fn": "caller:gapAnalysis",
+      "args": {
+        "income": 120000,
+        "yearsToRetirement": 40,
+        "totalCoverage": 300000,
+        "totalCICoverage": 100000,
+        "totalECICoverage": 30000,
+        "_grid": {
+          "income": 120000,
+          "age": 25
+        }
+      },
+      "result": {
+        "futureCICost": 1542857.690568889,
+        "futureECICost": 308571.5381137778,
+        "coverageGap": 900000,
+        "ciCoverageGap": 500000,
+        "eciCoverageGap": 150000
+      },
+      "note": "Formulas copied verbatim from ClientReportModal.jsx lines 37-44 (10x / 5x / 1.5x income multiples)"
+    },
+    {
+      "id": "caller:gapAnalysis-112",
+      "fn": "caller:gapAnalysis",
+      "args": {
+        "income": 120000,
+        "yearsToRetirement": 30,
+        "totalCoverage": 300000,
+        "totalCICoverage": 100000,
+        "totalECICoverage": 30000,
+        "_grid": {
+          "income": 120000,
+          "age": 35
+        }
+      },
+      "result": {
+        "futureCICost": 861523.6759369888,
+        "futureECICost": 172304.73518739775,
+        "coverageGap": 900000,
+        "ciCoverageGap": 500000,
+        "eciCoverageGap": 150000
+      },
+      "note": "Formulas copied verbatim from ClientReportModal.jsx lines 37-44 (10x / 5x / 1.5x income multiples)"
+    },
+    {
+      "id": "caller:gapAnalysis-113",
+      "fn": "caller:gapAnalysis",
+      "args": {
+        "income": 120000,
+        "yearsToRetirement": 20,
+        "totalCoverage": 300000,
+        "totalCICoverage": 100000,
+        "totalECICoverage": 30000,
+        "_grid": {
+          "income": 120000,
+          "age": 45
+        }
+      },
+      "result": {
+        "futureCICost": 481070.3208319272,
+        "futureECICost": 96214.06416638543,
+        "coverageGap": 900000,
+        "ciCoverageGap": 500000,
+        "eciCoverageGap": 150000
+      },
+      "note": "Formulas copied verbatim from ClientReportModal.jsx lines 37-44 (10x / 5x / 1.5x income multiples)"
+    },
+    {
+      "id": "caller:gapAnalysis-114",
+      "fn": "caller:gapAnalysis",
+      "args": {
+        "income": 120000,
+        "yearsToRetirement": 11,
+        "totalCoverage": 300000,
+        "totalCICoverage": 100000,
+        "totalECICoverage": 30000,
+        "_grid": {
+          "income": 120000,
+          "age": 54
+        }
+      },
+      "result": {
+        "futureCICost": 284744.7837503139,
+        "futureECICost": 56948.956750062775,
+        "coverageGap": 900000,
+        "ciCoverageGap": 500000,
+        "eciCoverageGap": 150000
+      },
+      "note": "Formulas copied verbatim from ClientReportModal.jsx lines 37-44 (10x / 5x / 1.5x income multiples)"
+    },
+    {
+      "id": "caller:gapAnalysis-115",
+      "fn": "caller:gapAnalysis",
+      "args": {
+        "income": 120000,
+        "yearsToRetirement": 10,
+        "totalCoverage": 300000,
+        "totalCICoverage": 100000,
+        "totalECICoverage": 30000,
+        "_grid": {
+          "income": 120000,
+          "age": 55
+        }
+      },
+      "result": {
+        "futureCICost": 268627.1544814282,
+        "futureECICost": 53725.43089628564,
+        "coverageGap": 900000,
+        "ciCoverageGap": 500000,
+        "eciCoverageGap": 150000
+      },
+      "note": "Formulas copied verbatim from ClientReportModal.jsx lines 37-44 (10x / 5x / 1.5x income multiples)"
+    }
+  ]
+}
