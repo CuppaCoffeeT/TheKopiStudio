@@ -119,3 +119,19 @@ the client level, and the modals consume model shapes directly. Dashboard
 child selects guard the orphan-hiding rule with `clients!inner` +
 `.eq('clients.is_deleted', false)` so children of a soft-deleted client never
 count toward stats.
+
+## 2026-06-12 — P4: list follow-up badge derives from next_review_date only
+
+The clients LIST fetch returns bare client rows — no interactions. The legacy
+ClientCard resolved its badge from the earliest future interaction follow-up,
+falling back to `next_review_date`; replicating that on the list would need
+either an N+1 interactions query per row or an unbounded join, both rejected.
+The list column therefore badges `next_review_date` alone (the recurring
+review cadence — present on effectively every client), while the DETAIL page,
+which already fetches the client's interactions, uses the full
+`resolveClientFollowUp` source chain. Consequence: a client whose earliest
+future interaction follow-up lands before their next review may show a calmer
+tone on the list than on their detail header — acceptable for v1; revisit only
+if reviewers want a `follow_up` rollup column on `clients`. Both surfaces
+render through `components/FollowUpBadge.tsx` (tones: overdue → red, ≤7 days →
+amber, else blue, per lib/followUps thresholds).

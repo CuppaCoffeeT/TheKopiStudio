@@ -28,3 +28,52 @@ Insurance CRM rebuild (IN BUILD — P1 scaffold only): client book + policies + 
 ## 📚 Related
 
 `lib/decisions.md` · PRD above · sibling pattern: `src/features/profiler/`
+
+## Map — P4 additions (dashboard + clients list)
+
+- `pages/CrmDashboardPage.tsx` — live `useDashboardStats` wiring: kpi-tile
+  skeletons while loading, ErrorState + retry on failure, 4 KpiTiles
+  (annual premium = annualised divergence, `$` prefix), empty-book CTA card
+  ("Add your first client" → /clients) vs clients quick-link card. The
+  portfolio-report quick action is the NEXT PRD — deliberately absent.
+- `pages/ClientsListPage.tsx` — live `useClientsList` wiring: 350 ms debounced
+  server-side search, URL pagination, rows mapped via `clientFromRow`,
+  columns name/email/phone/risk (Chip)/next review (DateCell)/follow-up
+  (FollowUpBadge on `next_review_date` ONLY — decisions.md P4), MobileListCard
+  body, row click → `/clients/:id`, Add client → `ClientFormModal`
+  (`components/modals/ClientFormModal`, props `open`/`onOpenChange`, create
+  mode) — built by the modals author.
+- `components/FollowUpBadge.tsx` — dumb date→pill presenter over
+  `lib/followUps.followUpBadge` (overdue/danger · urgent/warning ·
+  upcoming/info on the Badge primitive; legacy detail string as text, label as
+  tooltip; refDate injectable, defaults Singapore now).
+
+## Map — P4 additions (client detail)
+
+- `pages/ClientDetailPage.tsx` — DETAIL archetype: DetailPageFrame + TabNav
+  (Overview · Policies · Interactions · Bank history, counts from the child
+  queries), header meta = risk + review frequency + `FollowUpBadge` on
+  `resolveClientFollowUp` (earliest future interaction follow-up, else next
+  review), actions Edit client (`ClientFormModal` edit mode, self-contained
+  mutation) + tier-1 `DestructiveConfirmDialog` → `useSoftDeleteClient`
+  (navigates back on success). Loading / error / not-found per profiler
+  precedent; READ-ONLY when `client.user_id !== auth user.id` — every
+  mutation affordance hidden, `ClientDetailActions` shows the profiler-style
+  ReadOnlyHint instead. Testids `clients-detail-*`.
+- `components/detail/` — `OverviewTab` (profile facts + financial card;
+  `total_bank_balance` displayed as DERIVED, editable only via Bank history) ·
+  `PoliciesTab` (status/ILP/Hospitalization badges, premium w/ frequency,
+  `formatCoverage` summary; modal owns create/update, tab owns soft-delete) ·
+  `InteractionsTab` (date-DESC, type badge + follow-up chip toned by
+  `followUpBadge`) · `BankHistoryTab` (date-ASC, header shows the derived
+  current total) · shared `ListSection` (header + loading/error/empty + `<ul>`
+  shell) · `RowActions` (per-row Edit/Delete, 44px touch on mobile) ·
+  `ClientDetailActions` (hero + mobile action bar pair).
+
+## Map — P4 additions (form modals)
+
+- `components/modals/` — the four FORM modals (controlled string-state forms, profiler NotesModal pattern; intra-feature imports — NOT in the barrel):
+  - `ClientFormModal {open,onOpenChange,client?}` · `PolicyFormModal {open,onOpenChange,clientId,policy?}` · `InteractionFormModal {open,onOpenChange,clientId,interaction?}` · `BankBalanceModal {open,onOpenChange,clientId,record?}` — optional model present = EDIT mode; forms re-seed on every open (cancelled edits never leak); submit validates inline then calls the P3 mutation hooks (toasts + invalidation live there); success closes the modal.
+  - Helpers: `shared.tsx` (TextField/SelectField/DateField/ModalSection) · `dateStrings.ts` ('YYYY-MM-DD' ↔ DatePicker Date via timezoneUtils; `todayDateString()` defaults) · `client/ClientFormSections.tsx` · `policy/` (policyFormModel = option lists + EMPTY_POLICY + validation + projection-row mapping; core/coverage/cash-value/ILP/hospital sections).
+  - Parity rules encoded: "Client since" editable in BOTH modes (blank→today on add only); total-bank-balance is ADD-only (edit shows "Balance is managed in Bank history"); Hospitalization type one-way forces premium/coverage '0' + amber section; tpdSameAsDeath one-shot copy (not reactive, uncheck keeps value); hidden-section SCALAR state retained and persisted, but projections save as [] while "Has cash value" is unchecked (legacy submit-payload gate); incomplete projection rows dropped on save.
+- testids: `crm-client-*` / `crm-policy-*` / `crm-interaction-*` / `crm-bank-*`; modal surfaces `crm-{entity}-form-modal`; select options expose `{selectTestId}-opt-{kebab(value)}`; projection rows are index-suffixed (`crm-policy-projection-age-input-0` …).
