@@ -1,6 +1,6 @@
 # CRM Module — Clients, Policies, Interactions, Bank History, Dashboard — PRD
 
-**Created:** 2026-06-11 · **Last Updated:** 2026-06-11 · **Status:** 🔵 Planning · **Priority:** P0
+**Created:** 2026-06-11 · **Last Updated:** 2026-06-11 · **Status:** 🟡 In Progress (P1-P3 ✅) · **Priority:** P0
 **Work type**: module (one domain folder `src/features/crm/`; two module rows `/crm` + `/clients`)
 
 🤖 Build via: `/prd-execute docs/05-implementation/active/CRM_MODULE_PRD.md`
@@ -10,14 +10,14 @@
 
 | Phase | Status | Notes |
 |---|---|---|
-| P1 — Scaffold + registration migration + routes + queryKeys | ⬜ | |
-| P2 — lib port: finance.ts (+ ref date), followUps.ts + golden-vector tests | ⬜ | |
-| P3 — api/ + hooks: corrected data layer | ⬜ | |
+| P1 — Scaffold + registration migration + routes + queryKeys | ✅ | Migration 20260611_201717 applied; grants verified |
+| P2 — lib port: finance.ts (+ ref date), followUps.ts + golden-vector tests | ✅ | 115/115 vectors float-exact; 148 lib tests |
+| P3 — api/ + hooks: corrected data layer | ✅ | All 4 legacy bugs fixed + unit-pinned; 185 tests green |
 | P4 — UI: dashboard, clients list, client detail, 4 form modals | ⬜ | |
 | P5 — @p0 E2E matrix + load/a11y | ⬜ | |
 | P6 — Docs + completeness + close-out | ⬜ | |
 
-Current phase: 0 · Blockers: none (CRM data import remains separately blocked on the user key — module works with empty tables)
+Current phase: P4 UI · Blockers: none (CRM data import remains separately blocked on the user key — module works with empty tables)
 
 ## 📋 Definition
 
@@ -95,4 +95,4 @@ Current phase: 0 · Blockers: none (CRM data import remains separately blocked o
 ## 🗒️ Execution Log
 | Date | Phase | Result |
 |---|---|---|
-| | | |
+| 2026-06-11/12 | P1-P3 | Wave-1 workflow + post-limit re-verification (adversarial, 0 blockers). P1: crm skeleton, migration 20260611_201717 applied (2 modules, grants), routes, queryKeys. P2: finance.ts + financeReport.ts (LOC split, one-way import) with refYear injection — ALL 115 golden vectors replay float-exact (strict equality); followUps + mapping ported with legacy coercion asymmetries. ORCHESTRATOR SIGN-OFF on documented deviation: retirementSumsFor fallback uses refYear's row when in-table (legacy hardcoded 2026) — byte-identical at refYear 2026, strictly better 2027+; logged in lib/decisions.md. P3: corrected data layer (updateClient strips derived cols; every bank mutation recomputes latest-by-(date,created_at,id); by-id addressing; projections replace de-dup keep-last with error surfacing; soft-delete filters everywhere; user/audit stamping incl. recompute updated_by after fix round). Gates: tsc 0 · lint 0 err · build · drift 0 · loc 38≤38 · vitest 185/185. |

@@ -140,6 +140,7 @@ test.describe('account settings — advisor', () => {
 
   // Serialise the WHOLE describe across projects/workers — every test here
   // (incl. the afterEach residue guard) reads or writes the one advisor row.
+  // eslint-disable-next-line no-empty-pattern -- Playwright requires the fixture slot to access testInfo
   test.beforeAll(async ({}, testInfo) => {
     // The peer project may hold the lock for its full describe (~60-90s on a
     // loaded machine) — widen this hook's budget beyond the per-test timeout.
