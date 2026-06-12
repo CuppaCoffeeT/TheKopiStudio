@@ -32,7 +32,7 @@ export const RETIREMENT_SUMS: Record<number, RetirementSumRow> = {
 };
 
 /** Legacy `parseFloat(v || 0)` coercion — '' / null / undefined / 0 → 0. */
-function toFloat(value: string | number | null | undefined): number {
+export function toFloat(value: string | number | null | undefined): number {
   return parseFloat(String(value || 0));
 }
 

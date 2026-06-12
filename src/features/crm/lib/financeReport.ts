@@ -3,8 +3,14 @@
  * wrote INLINE in its report components (ClientReportModal.jsx,
  * CPFProjection.jsx, RetirementProjection.jsx — git c09c549), promoted to
  * named functions here so the reports PRD reuses tested code. Split from
- * `finance.ts` (the finance.js export surface) to respect the 200-LOC ratchet;
- * imports are strictly one-way: this file → finance.ts.
+ * `finance.ts` (the finance.js export surface) to respect the 200-LOC ratchet.
+ *
+ * This file is also the BARREL for the report-math surface: the health-band
+ * logic lives in `financeReportBands.ts` and the cost-at-65 / hero /
+ * retirement-economics math (incl. BANK_INTEREST_RATE + projectBankTo65,
+ * which moved there) in `financeReportEconomics.ts` — both re-exported at the
+ * bottom. Imports are strictly one-way (no cycles):
+ * this file → {financeReportBands, financeReportEconomics} → finance.ts.
  *
  * Golden-locked: the `caller:gapAnalysis` + `caller:raAssessment` vectors in
  * `__fixtures__/finance-golden-vectors.json` replay through this module
@@ -21,19 +27,12 @@ import {
   type SummaryPolicyInput,
 } from './finance';
 
-/** RetirementProjection.jsx:13 — nominal bank rate used to project balances to 65. */
-export const BANK_INTEREST_RATE = 0.005;
 /** ClientReportModal.jsx:42-44 — gap-math income multiples (death / CI / early CI). */
 export const DEATH_COVER_INCOME_MULTIPLE = 10;
 export const CI_COVER_INCOME_MULTIPLE = 5;
 export const ECI_COVER_INCOME_MULTIPLE = 1.5;
 /** CPFProjection.jsx:201 — CPF LIFE Standard Plan monthly payout at exactly FRS. */
 export const CPF_LIFE_PAYOUT_AT_FRS = 1780;
-
-/** RetirementProjection.jsx:14 / ClientReportModal.jsx:33-34 — bank balance compounded at 0.5%. */
-export function projectBankTo65(balance: number, yearsTo65: number): number {
-  return balance * Math.pow(1 + BANK_INTEREST_RATE, yearsTo65);
-}
 
 /** ClientReportModal.jsx:37-38 — average CI cost inflated at 6% medical inflation. */
 export function futureCICost(yearsToRetirement: number): number {
@@ -124,3 +123,8 @@ export function splitPremiums(policies: SummaryPolicyInput[]): PremiumSplit {
   }
   return { protectionPremiums, investmentPremiums };
 }
+
+// Report-math split modules (200-LOC ratchet) — this file stays the single
+// import surface for all report-side finance math.
+export * from './financeReportBands';
+export * from './financeReportEconomics';

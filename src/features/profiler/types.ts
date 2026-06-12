@@ -1,8 +1,10 @@
 /**
  * Profiler feature types — flat file (never a types/ directory).
  *
- * The feature reads/writes the legacy `public.results` table byte-compatibly
- * (no schema changes this PRD) — re-export the generated DB types as the
+ * The feature reads/writes the legacy `public.results` table byte-compatibly.
+ * REPORTS_LINK_PRD added ONE additive column — nullable `results.client_id`
+ * (uuid → public.clients, ON DELETE SET NULL; the legacy app never writes
+ * it) for the prospect→client link. Re-export the generated DB types as the
  * single source of truth for row shapes. Content field names mirror the
  * legacy app's `public/js/data.js` byte-for-byte (shape parity contract
  * until cutover).

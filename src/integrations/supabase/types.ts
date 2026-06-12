@@ -587,6 +587,7 @@ export type Database = {
         Row: {
           advisor_name: string
           age_range: string | null
+          client_id: string | null
           created_at: string
           disc_primary: string
           disc_secondary: string
@@ -610,6 +611,7 @@ export type Database = {
         Insert: {
           advisor_name: string
           age_range?: string | null
+          client_id?: string | null
           created_at?: string
           disc_primary: string
           disc_secondary: string
@@ -633,6 +635,7 @@ export type Database = {
         Update: {
           advisor_name?: string
           age_range?: string | null
+          client_id?: string | null
           created_at?: string
           disc_primary?: string
           disc_secondary?: string
@@ -654,6 +657,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "results_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "results_user_id_fkey"
             columns: ["user_id"]
