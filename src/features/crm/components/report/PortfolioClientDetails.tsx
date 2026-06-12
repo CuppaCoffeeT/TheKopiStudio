@@ -47,7 +47,14 @@ function ClientBlock({ client }: { client: PortfolioReportClient }) {
       </table>
 
       {client.policies.length > 0 && (
-        <div className="mt-3 overflow-x-auto">
+        // Horizontally scrollable on narrow viewports — keyboard users need a
+        // tab stop to scroll it (axe wcag2aa `scrollable-region-focusable`).
+        <div
+          className="mt-3 overflow-x-auto"
+          tabIndex={0}
+          role="region"
+          aria-label={`${client.name} policies`}
+        >
           <h4 className="mb-1 text-[13px] font-semibold">Policies</h4>
           <table className="report-table" data-testid={`report-portfolio-policies-${client.id}`}>
             <thead>

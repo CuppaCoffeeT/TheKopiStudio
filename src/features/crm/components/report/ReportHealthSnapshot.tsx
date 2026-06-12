@@ -95,7 +95,8 @@ export function ReportHealthSnapshot({
             <div className="mt-1 text-[26px] font-bold" style={{ color: card.status.tone }}>
               {card.value}
             </div>
-            <div className="text-[11px] text-gray-500">{card.guide}</div>
+            {/* gray-600 (not 500) — 11px text on the tinted band bg needs ≥4.5:1. */}
+            <div className="text-[11px] text-gray-600">{card.guide}</div>
             <div className="mt-1 text-[12px] font-semibold" style={{ color: card.status.tone }}>
               {card.status.label}
             </div>

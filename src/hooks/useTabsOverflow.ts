@@ -64,6 +64,17 @@ export function useTabsOverflow() {
     // but its own box-size may not, so a single observation on the strip can
     // miss the transition.
     if (strip.parentElement) ro.observe(strip.parentElement);
+    // And the strip's CHILDREN — the strip is a block at container width, so
+    // when content grows AFTER mount (async count pills, webfont swap) the
+    // children overflow the strip without changing the strip's or the
+    // parent's border-box, and neither observation above fires. Observing the
+    // tab buttons themselves catches that growth (2026-06-12 — client-detail
+    // tabs stuck in a visibly-overflowing strip with no dropdown on mobile).
+    for (const child of Array.from(strip.children)) ro.observe(child);
+
+    // Webfonts can land after every observed box has settled (fallback-font
+    // metrics are narrower) — re-measure once the font set resolves.
+    document.fonts?.ready.then(measure).catch(() => undefined);
 
     return () => {
       cancelAnimationFrame(raf);

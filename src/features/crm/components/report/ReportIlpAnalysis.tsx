@@ -19,7 +19,8 @@ function ValueCard({ label, value, testId }: { label: string; value: number; tes
   return (
     <div className="rounded-md bg-white p-2" data-testid={testId}>
       <div className="text-[11px] text-gray-500">{label}</div>
-      <div className="text-[20px] font-medium" style={{ color: '#059669' }}>
+      {/* emerald-700 (legacy used #059669) — 20px/500 text needs 4.5:1 on white. */}
+      <div className="text-[20px] font-medium" style={{ color: '#047857' }}>
         ${Math.round(value).toLocaleString()}
       </div>
     </div>

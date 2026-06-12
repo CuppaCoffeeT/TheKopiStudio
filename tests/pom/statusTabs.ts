@@ -52,6 +52,18 @@ export async function selectStatusTab(
   // dropdown trigger is a descendant button with aria-haspopup="dialog".
   const root = stripTab.first().locator('xpath=ancestor::*[@role="tablist"][1]/..');
   const trigger = root.locator('button[aria-haspopup="dialog"]');
+  // The overflow hook re-measures asynchronously (count pills / webfonts land
+  // after mount), so the direct click can fail DURING the strip→dropdown flip
+  // while no trigger exists yet — and on a wide-enough container it never
+  // will. Give the trigger a short window; when it doesn't materialise the
+  // strip is the interactive surface after all, so retry the direct click
+  // instead of timing out on a dropdown that isn't coming (2026-06-12).
+  try {
+    await trigger.first().waitFor({ state: 'visible', timeout: 5000 });
+  } catch {
+    await stripTab.first().click();
+    return;
+  }
   await trigger.first().click();
 
   const popover = page.locator('[data-radix-popper-content-wrapper]');

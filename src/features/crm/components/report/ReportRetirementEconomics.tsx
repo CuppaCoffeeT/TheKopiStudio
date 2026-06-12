@@ -73,21 +73,24 @@ export function ReportRetirementEconomics({
                 <td className="num">{money(bankAt65)}</td>
                 <td className="num">{money(totalRetirementSum)}</td>
               </tr>
+              {/* emerald-700 / red-700 (legacy #059669/#dc2626) — axe AA needs
+                  4.5:1 on the warning-callout (#fff3cd) and loss-row (#fee2e2)
+                  backings; the legacy tones sat at ~3.4–3.95:1. */}
               <tr>
                 <td>If invested (6% returns)</td>
-                <td className="num" style={{ color: '#059669', fontWeight: 500 }}>
+                <td className="num" style={{ color: '#047857', fontWeight: 500 }}>
                   {money(investedBankAt65)}
                 </td>
-                <td className="num" style={{ color: '#059669', fontWeight: 500 }}>
+                <td className="num" style={{ color: '#047857', fontWeight: 500 }}>
                   {money(totalIfInvested)}
                 </td>
               </tr>
               <tr className="report-row-loss" data-testid="report-retirement-opportunity-cost">
                 <td>Opportunity cost</td>
-                <td className="num" style={{ color: '#dc2626', fontWeight: 500 }}>
+                <td className="num" style={{ color: '#b91c1c', fontWeight: 500 }}>
                   {money(bankOpportunityCost)}
                 </td>
-                <td className="num" style={{ color: '#dc2626', fontWeight: 500 }}>
+                <td className="num" style={{ color: '#b91c1c', fontWeight: 500 }}>
                   {money(totalOpportunityCost)}
                 </td>
               </tr>

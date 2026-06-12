@@ -134,7 +134,8 @@ export function ReportRetirementProjection({
                 {policy.type} — {policy.provider}
               </td>
               <td className="num">{moneyExact(toFloat(policy.currentAccountValue))}</td>
-              <td className="num" style={{ color: '#059669', fontWeight: 500 }}>
+              {/* emerald-700 (legacy #059669 ≈3.97:1) — axe AA needs 4.5:1 on white. */}
+              <td className="num" style={{ color: '#047857', fontWeight: 500 }}>
                 {money(toFloat(policy.illustratedValueAge65))}
               </td>
               <td>From benefit illustration</td>

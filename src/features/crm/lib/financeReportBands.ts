@@ -53,18 +53,28 @@ export const HEALTH_BANDS = {
   cpfFrsTrackPct: { good: 100, review: 70 },
 } as const satisfies Record<string, BandThresholds>;
 
-/** HealthSnapshot.jsx:3-7 — ≥good → Good; ≥review → Review; else Action needed. */
+/**
+ * HealthSnapshot.jsx:3-7 — ≥good → Good; ≥review → Review; else Action needed.
+ *
+ * DELIBERATE DIVERGENCE from the legacy tones (#059669/#f59e0b/#dc2626): the
+ * tone doubles as the card's TEXT color on the tinted `bg`, and the legacy
+ * trio fails axe WCAG 2 AA contrast there (amber-500 was ~2.1:1). Darkened to
+ * the Tailwind *-700/800 badge pairings — emerald-700 4.83:1 on #d1fae5,
+ * amber-800 6.37:1 on #fef3c7, red-700 5.30:1 on #fee2e2 — band LOGIC and
+ * labels stay oracle-locked verbatim.
+ */
 export function bandFor(value: number, benchmarks: BandThresholds): BandStatus {
-  if (value >= benchmarks.good) return { tone: '#059669', bg: '#d1fae5', label: 'Good' };
-  if (value >= benchmarks.review) return { tone: '#f59e0b', bg: '#fef3c7', label: 'Review' };
-  return { tone: '#dc2626', bg: '#fee2e2', label: 'Action needed' };
+  if (value >= benchmarks.good) return { tone: '#047857', bg: '#d1fae5', label: 'Good' };
+  if (value >= benchmarks.review) return { tone: '#92400e', bg: '#fef3c7', label: 'Review' };
+  return { tone: '#b91c1c', bg: '#fee2e2', label: 'Action needed' };
 }
 
 /**
  * HealthSnapshot.jsx:16-21 — SPECIAL status logic for the insurance-premiums
  * card: 'Good' only when adequately covered AND premiums ≤10% of income; ANY
  * under-insurance is 'Underinsured' (red) even at low premium %; adequately
- * covered but >10% is 'Review cost' (amber).
+ * covered but >10% is 'Review cost' (amber). Tones use the same WCAG-AA
+ * darkened palette as `bandFor` (deliberate divergence — see its docblock).
  */
 export function premiumCardStatus(
   summary: CoverageRatios,
@@ -72,8 +82,8 @@ export function premiumCardStatus(
 ): BandStatus {
   const adequate = isAdequatelyCovered(summary);
   if (adequate && insurancePremiumsPct <= 10) {
-    return { tone: '#059669', bg: '#d1fae5', label: 'Good' };
+    return { tone: '#047857', bg: '#d1fae5', label: 'Good' };
   }
-  if (!adequate) return { tone: '#dc2626', bg: '#fee2e2', label: 'Underinsured' };
-  return { tone: '#f59e0b', bg: '#fef3c7', label: 'Review cost' };
+  if (!adequate) return { tone: '#b91c1c', bg: '#fee2e2', label: 'Underinsured' };
+  return { tone: '#92400e', bg: '#fef3c7', label: 'Review cost' };
 }

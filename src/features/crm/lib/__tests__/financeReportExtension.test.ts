@@ -50,11 +50,13 @@ const BALANCES = [0, 45000, 90001, 250000];
 const INCOME_YEAR_GRID = INCOMES.flatMap((income) => YEARS.map((years) => ({ income, years })));
 const BALANCE_YEAR_GRID = BALANCES.flatMap((balance) => YEARS.map((years) => ({ balance, years })));
 
-// HealthSnapshot.jsx:3-7 (verbatim oracle — the legacy `band` helper):
+// HealthSnapshot.jsx:3-7 oracle — band LOGIC/labels/bg verbatim; tones carry
+// the DELIBERATE WCAG-AA divergence (legacy #059669/#f59e0b/#dc2626 darkened
+// to the Tailwind *-700/800 badge pairings — see financeReportBands.ts):
 function legacyBand(value: number, benchmarks: BandThresholds) {
-  if (value >= benchmarks.good) return { tone: '#059669', bg: '#d1fae5', label: 'Good' };
-  if (value >= benchmarks.review) return { tone: '#f59e0b', bg: '#fef3c7', label: 'Review' };
-  return { tone: '#dc2626', bg: '#fee2e2', label: 'Action needed' };
+  if (value >= benchmarks.good) return { tone: '#047857', bg: '#d1fae5', label: 'Good' };
+  if (value >= benchmarks.review) return { tone: '#92400e', bg: '#fef3c7', label: 'Review' };
+  return { tone: '#b91c1c', bg: '#fee2e2', label: 'Action needed' };
 }
 
 // ClientReportModal.jsx:138-142 (verbatim oracle — the inline adequacy check):
@@ -136,15 +138,16 @@ describe('premiumCardStatus — HealthSnapshot.jsx:16-21 (SPECIAL underinsured l
   ];
 
   it.each(CASES)('%s', (_name, summary, insurancePremiumsPct) => {
-    // HealthSnapshot.jsx:16-21 (verbatim oracle), fed by the
+    // HealthSnapshot.jsx:16-21 oracle (logic/labels/bg verbatim; tones use
+    // the WCAG-AA darkened palette — see legacyBand above), fed by the
     // ClientReportModal.jsx:138-142 adequacy oracle:
     const isAdequate = legacyIsAdequatelyCovered(summary);
     const expected =
       isAdequate && insurancePremiumsPct <= 10
-        ? { tone: '#059669', bg: '#d1fae5', label: 'Good' }
+        ? { tone: '#047857', bg: '#d1fae5', label: 'Good' }
         : !isAdequate
-          ? { tone: '#dc2626', bg: '#fee2e2', label: 'Underinsured' }
-          : { tone: '#f59e0b', bg: '#fef3c7', label: 'Review cost' };
+          ? { tone: '#b91c1c', bg: '#fee2e2', label: 'Underinsured' }
+          : { tone: '#92400e', bg: '#fef3c7', label: 'Review cost' };
     expect(premiumCardStatus(summary, insurancePremiumsPct)).toEqual(expected);
   });
 });

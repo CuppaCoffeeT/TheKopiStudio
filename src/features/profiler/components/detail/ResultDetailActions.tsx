@@ -102,10 +102,13 @@ export function ResultDetailActions({
           >
             Edit notes
           </Button>
+          {/* red-900 (not 700) — the sticky mobile bar's translucent backing
+              (bg-white/70) blends with dark report blocks behind it, and axe
+              wcag2aa needs the red to hold 4.5:1 over that worst-case mid-gray. */}
           <Button
             variant="ghost"
             size={size}
-            className={`text-red-700 dark:text-red-400 ${grow ?? ''}`}
+            className={`text-red-900 dark:text-red-300 ${grow ?? ''}`}
             leadingIcon={<Trash2 className="h-3.5 w-3.5" aria-hidden="true" />}
             onClick={onDelete}
             loading={deleting}
