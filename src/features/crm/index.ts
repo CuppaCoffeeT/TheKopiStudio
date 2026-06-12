@@ -2,9 +2,9 @@
  * CRM feature — public barrel (the ONLY cross-feature import surface).
  *
  * Route entries in App.tsx lazy-import page files directly for code-splitting;
- * everything else imports from here. APPEND-ONLY while the module is in build
- * (parallel authors): add exports below your phase marker, never rewrite
- * others' entries.
+ * everything else imports from here. Internal components (modals, tabs, badge)
+ * are deliberately NOT exported — they are intra-feature. The lib/finance +
+ * lib/financeReport exports are the tested surface the reports PRD builds on.
  */
 
 // P1 — scaffold

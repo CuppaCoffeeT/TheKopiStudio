@@ -1,6 +1,6 @@
 # CRM Module — Clients, Policies, Interactions, Bank History, Dashboard — PRD
 
-**Created:** 2026-06-11 · **Last Updated:** 2026-06-11 · **Status:** 🟡 In Progress (P1-P3 ✅) · **Priority:** P0
+**Created:** 2026-06-11 · **Last Updated:** 2026-06-11 · **Status:** 🟢 Complete · **Priority:** P0
 **Work type**: module (one domain folder `src/features/crm/`; two module rows `/crm` + `/clients`)
 
 🤖 Build via: `/prd-execute docs/05-implementation/active/CRM_MODULE_PRD.md`
@@ -13,11 +13,11 @@
 | P1 — Scaffold + registration migration + routes + queryKeys | ✅ | Migration 20260611_201717 applied; grants verified |
 | P2 — lib port: finance.ts (+ ref date), followUps.ts + golden-vector tests | ✅ | 115/115 vectors float-exact; 148 lib tests |
 | P3 — api/ + hooks: corrected data layer | ✅ | All 4 legacy bugs fixed + unit-pinned; 185 tests green |
-| P4 — UI: dashboard, clients list, client detail, 4 form modals | ⬜ | |
-| P5 — @p0 E2E matrix + load/a11y | ⬜ | |
-| P6 — Docs + completeness + close-out | ⬜ | |
+| P4 — UI: dashboard, clients list, client detail, 4 form modals | ✅ | 3 authors + adversarial verify, 0 blockers; minors fixed |
+| P5 — @p0 E2E matrix + load/a11y | ✅ | 66 passed / 2 flaky-on-retry / 1 deliberate skip |
+| P6 — Docs + completeness + close-out | ✅ | CRM_MODULE.md + CONTEXT final; adversarial pass clean |
 
-Current phase: P4 UI · Blockers: none (CRM data import remains separately blocked on the user key — module works with empty tables)
+Current phase: COMPLETE · Blockers: none (CRM data import remains separately blocked on the user key — module works with empty tables)
 
 ## 📋 Definition
 
@@ -95,4 +95,5 @@ Current phase: P4 UI · Blockers: none (CRM data import remains separately block
 ## 🗒️ Execution Log
 | Date | Phase | Result |
 |---|---|---|
+| 2026-06-12 | P4-P6 | P4: dashboard (annualised KPIs), list (badges, server search), detail (4 tabs, read-only mode), 4 field-parity modals — 0 blockers after fix rounds. P5: E2E 66 passed incl. the drift-bug regression assert (older bank edit leaves derived total at latest-by-date); 2 cross-spec flakes pass on retry under full parallelism (noted); a11y one-test-per-surface scope: Interactions/Bank tabs + 3 modals unscanned (accepted at sign-off). P6: docs final, adversarial pass clean, decisions ledger reconciled. Gate scorecard: tsc 0 · lint 0 · build · drift 0 · loc 38≤38 · vitest 185/185 (115 vectors) · @p0 green. PRD → completed/. |
 | 2026-06-11/12 | P1-P3 | Wave-1 workflow + post-limit re-verification (adversarial, 0 blockers). P1: crm skeleton, migration 20260611_201717 applied (2 modules, grants), routes, queryKeys. P2: finance.ts + financeReport.ts (LOC split, one-way import) with refYear injection — ALL 115 golden vectors replay float-exact (strict equality); followUps + mapping ported with legacy coercion asymmetries. ORCHESTRATOR SIGN-OFF on documented deviation: retirementSumsFor fallback uses refYear's row when in-table (legacy hardcoded 2026) — byte-identical at refYear 2026, strictly better 2027+; logged in lib/decisions.md. P3: corrected data layer (updateClient strips derived cols; every bank mutation recomputes latest-by-(date,created_at,id); by-id addressing; projections replace de-dup keep-last with error surfacing; soft-delete filters everywhere; user/audit stamping incl. recompute updated_by after fix round). Gates: tsc 0 · lint 0 err · build · drift 0 · loc 38≤38 · vitest 185/185. |

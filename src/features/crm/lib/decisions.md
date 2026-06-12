@@ -36,7 +36,8 @@ serve stale 2026 sums in 2027. Outside the published table the fallback
 REMAINS the literal 2026 row — never extrapolated (matching legacy for any
 future year). If strict legacy behavior (always-2026) is preferred, flatten
 the `fallbackYear` ternary in `retirementSumsFor` — tests stay green either
-way since they pin 2026.
+way since they pin 2026. Orchestrator signed off this deviation during the
+wave-1 adversarial verification (PRD execution log, 2026-06-11/12).
 
 ## 2026-06-11 — P2: finance.ts / financeReport.ts split
 
@@ -86,6 +87,20 @@ midnight instant passes — after that the badge source falls back to
 `next_review_date`, exactly like the legacy ClientCard. Tones keep the legacy
 names (`overdue`/`urgent`/`upcoming`) for the red/amber/blue badge mapping.
 
+## 2026-06-11 — P3: soft delete everywhere; every read filters is_deleted
+
+The legacy app hard-deleted rows; the port makes every destructive UI action
+write `is_deleted = true` (+ `updated_by`) and EVERY read filter
+`.eq('is_deleted', false)` — PRD soft-delete semantics, applied across all
+five tables. Child rows of a soft-deleted client keep `is_deleted = false`
+and are orphan-hidden by the client filter (the dashboard's child selects
+enforce that with `clients!inner` + `.eq('clients.is_deleted', false)`);
+deleting a policy DOES cascade `is_deleted = true` to its projections, which
+have no client filter to hide behind. Soft-delete updates chain
+`.select('id')` so an RLS-blocked 0-row match throws instead of
+phantom-succeeding. The single exception is `replaceProjections` (next
+entry).
+
 ## 2026-06-11 — P3: replaceProjections HARD-deletes (the one exception to soft-delete)
 
 `UNIQUE(policy_id, age)` makes soft-delete impossible for the
@@ -98,16 +113,17 @@ RLS no-ops are observable, and every error throws into the mutation
 (corrected legacy bug 4). User-initiated policy deletion stays a soft delete
 and cascades `is_deleted = true` to the policy's projections.
 
-## 2026-06-11 — P3: recompute owns the derived client columns; no audit stamp
+## 2026-06-11 — P3: recompute owns the derived client columns
 
 `recomputeClientBalance` writes `clients.total_bank_balance` +
 `last_review_date` from the latest non-deleted history row ordered
 `date DESC, created_at DESC, id DESC` (same-day entries resolve by insertion
-recency, id as the stable tiebreak); zero rows reset to `0` / `null`. The
-recompute is a derived-data write, so it does NOT stamp `updated_by` — the
-triggering mutation already carries the audit stamp on the history row. It
-runs after EVERY bank mutation and after the create-client initial-history
-seed (corrected legacy bugs 2+3).
+recency, id as the stable tiebreak); zero rows reset to `0` / `null`. It runs
+after EVERY bank mutation and after the create-client initial-history seed
+(corrected legacy bugs 2+3). REVISED in the P3 fix round: the derived write
+DOES stamp `updated_by` with the acting user (initially it carried no stamp
+because the history row already does) — so the client row's audit trail names
+whoever triggered the recompute.
 
 ## 2026-06-11 — P3: client reads return rows; child reads return models
 
@@ -119,6 +135,18 @@ the client level, and the modals consume model shapes directly. Dashboard
 child selects guard the orphan-hiding rule with `clients!inner` +
 `.eq('clients.is_deleted', false)` so children of a soft-deleted client never
 count toward stats.
+
+## 2026-06-11 — P3: dashboard "Annual premium" is the annualised formula
+
+The legacy dashboard card raw-summed `parseFloat(premium)` with no frequency
+multiplier and no ILP inclusion percent — a mislabel ("annual premium" over
+mixed monthly/quarterly figures). The port computes the tile through
+`summariseClient.totalAnnualPremium` (Monthly ×12 / Quarterly ×4 /
+Semi-Annual ×2; ILP premiums scaled by `ilpPremiumInclusionPercent / 100`) so
+the dashboard agrees with the golden-locked report math. DOCUMENTED
+DIVERGENCE from legacy output, sanctioned in the PRD (resolved question:
+"dashboard uses correct annualised premium"); the dashboard E2E pins it — a
+$200 Monthly policy asserts a $2,400 tile, not $200.
 
 ## 2026-06-12 — P4: list follow-up badge derives from next_review_date only
 

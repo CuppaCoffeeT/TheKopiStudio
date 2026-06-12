@@ -14,9 +14,10 @@ import { DestructiveConfirmDialog } from '@/components/primitives/detail/Destruc
 import { Badge, type BadgeTone } from '@/components/primitives/shell/Badge';
 import { Button } from '@/components/primitives/shell/Button';
 import { formatDisplayDateLong } from '@/utils/timezoneUtils';
-import { followUpBadge, type FollowUpTone } from '../../lib/followUps';
+import { followUpBadge } from '../../lib/followUps';
 import { useSoftDeleteInteraction } from '../../hooks/useInteractionMutations';
 import type { CrmInteraction } from '../../types';
+import { FOLLOW_UP_BADGE_TONES } from '../followUpTone';
 import { InteractionFormModal } from '../modals/InteractionFormModal';
 import { ListSection } from './ListSection';
 import { RowActions } from './RowActions';
@@ -28,12 +29,6 @@ const TYPE_TONES: Record<string, BadgeTone> = {
   Email: 'accent',
   'Follow-up': 'warning',
   'Policy Review': 'success',
-};
-
-const FOLLOW_UP_TONES: Record<FollowUpTone, BadgeTone> = {
-  overdue: 'danger',
-  urgent: 'warning',
-  upcoming: 'info',
 };
 
 interface InteractionsTabProps {
@@ -108,7 +103,7 @@ export function InteractionsTab({ clientId, readOnly, interactions, refDate }: I
                   {formatDisplayDateLong(interaction.date)}
                 </span>
                 {chip && (
-                  <Badge tone={FOLLOW_UP_TONES[chip.tone]}>
+                  <Badge tone={FOLLOW_UP_BADGE_TONES[chip.tone]}>
                     Follow-up {formatDisplayDateLong(interaction.followUp)}
                   </Badge>
                 )}

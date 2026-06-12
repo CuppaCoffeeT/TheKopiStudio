@@ -10,16 +10,10 @@
  */
 
 import type { ReactNode } from 'react';
-import { Badge, type BadgeTone } from '@/components/primitives/shell/Badge';
+import { Badge } from '@/components/primitives/shell/Badge';
 import { getCurrentSingaporeTime } from '@/utils/timezoneUtils';
-import { followUpBadge, type FollowUpTone } from '../lib/followUps';
-
-/** PRD threshold → Badge primitive tone (red / amber / blue). */
-const BADGE_TONE: Record<FollowUpTone, BadgeTone> = {
-  overdue: 'danger',
-  urgent: 'warning',
-  upcoming: 'info',
-};
+import { followUpBadge } from '../lib/followUps';
+import { FOLLOW_UP_BADGE_TONES } from './followUpTone';
 
 export interface FollowUpBadgeProps {
   /** 'YYYY-MM-DD' source date (interaction follow-up or next review). Null-safe. */
@@ -46,7 +40,7 @@ export function FollowUpBadge({ date, refDate, fallback = '—', className, test
 
   return (
     <Badge
-      tone={BADGE_TONE[badge.tone]}
+      tone={FOLLOW_UP_BADGE_TONES[badge.tone]}
       title={badge.label}
       className={className}
       data-testid={testId}
