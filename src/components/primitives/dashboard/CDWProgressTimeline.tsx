@@ -89,7 +89,7 @@ function deriveState(step: CDWProgressStep): StepState {
 const CELL_BG: Record<StepState, string> = {
   completed: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300',
   ongoing:   'bg-amber-100   text-amber-800   dark:bg-amber-900/30   dark:text-amber-300',
-  pending:   'bg-zinc-100    text-zinc-600    dark:bg-zinc-800       dark:text-zinc-300',
+  pending:   'bg-secondary text-muted-foreground',
 };
 
 /** Date-line colour — one step softer than the label but still WCAG AA on
@@ -97,7 +97,7 @@ const CELL_BG: Record<StepState, string> = {
 const DATE_FG: Record<StepState, string> = {
   completed: 'text-emerald-700 dark:text-emerald-400',
   ongoing:   'text-amber-700   dark:text-amber-400',
-  pending:   'text-zinc-500    dark:text-zinc-400',
+  pending:   'text-muted-foreground',
 };
 
 /* ─── Full mode (xl+) ─────────────────────────────────────────────────── */
@@ -157,7 +157,7 @@ function FullRow({ steps }: { steps: CDWProgressStep[] }) {
   return (
     <div className="flex items-stretch gap-1">
       {steps.map((step, i) => <FullStep key={i} step={step}/>)}
-      <span className="text-xs ml-1.5 self-center whitespace-nowrap font-medium tabular-nums text-zinc-700 dark:text-zinc-300">
+      <span className="text-xs ml-1.5 self-center whitespace-nowrap font-medium tabular-nums text-muted-foreground">
         {completed}/{steps.length}
       </span>
     </div>
@@ -274,7 +274,7 @@ function MiniRow({ steps }: { steps: CDWProgressStep[] }) {
   return (
     <div className="flex items-center gap-0.5">
       {steps.map((step, i) => <MiniStep key={i} step={step}/>)}
-      <span className="text-[10px] ml-1 whitespace-nowrap font-medium tabular-nums text-zinc-400 dark:text-zinc-500">
+      <span className="text-[10px] ml-1 whitespace-nowrap font-medium tabular-nums text-muted-foreground">
         {completed}/{steps.length}
       </span>
     </div>
@@ -293,14 +293,14 @@ export function CDWProgressTimeline({
   if (isLoading) {
     return (
       <div className={cn('inline-flex', className)} aria-label="Loading CDW progress" role="status">
-        <Loader2 className="h-4 w-4 animate-spin text-zinc-300 dark:text-zinc-600" />
+        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
   if (steps.length === 0) {
     return (
-      <span className={cn('text-xs text-zinc-700 dark:text-zinc-300', className)}>{emptyText}</span>
+      <span className={cn('text-xs text-muted-foreground', className)}>{emptyText}</span>
     );
   }
 

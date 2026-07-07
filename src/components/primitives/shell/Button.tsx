@@ -62,11 +62,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         className={cn(
           iconSize,
           'rounded-md inline-flex items-center justify-center cursor-pointer transition-transform',
-          'bg-transparent text-zinc-700 dark:text-zinc-300',
-          'hover:bg-zinc-200 dark:hover:bg-zinc-800',
+          'bg-transparent text-muted-foreground',
+          'hover:bg-secondary',
           'active:scale-[0.94] active:bg-zinc-300 dark:active:bg-zinc-700',
           'disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
           className
         )}
         {...props}
@@ -84,10 +84,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   }[size];
 
   const variantClass = {
-    primary: 'bg-slate-800 hover:bg-slate-900 active:bg-black text-white dark:bg-slate-100 dark:hover:bg-white dark:text-slate-900',
+    primary: 'bg-primary hover:bg-slate-900 active:bg-black text-primary-foreground dark:hover:bg-white',
     destructive: 'bg-red-700 hover:bg-red-800 active:bg-red-900 text-white',
-    ghost: 'bg-transparent hover:bg-zinc-200 active:bg-zinc-300 dark:hover:bg-zinc-800 dark:active:bg-zinc-700 text-zinc-700 dark:text-zinc-300',
-    outline: 'bg-transparent hover:bg-zinc-50 active:bg-zinc-100 dark:hover:bg-zinc-900 dark:active:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800',
+    ghost: 'bg-transparent hover:bg-secondary active:bg-zinc-300 dark:active:bg-zinc-700 text-muted-foreground',
+    outline: 'bg-transparent hover:bg-secondary active:bg-zinc-100 dark:active:bg-zinc-800 text-muted-foreground border border-border',
   }[variant];
 
   return (
@@ -102,7 +102,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         'rounded-md inline-flex items-center gap-2 font-medium whitespace-nowrap cursor-pointer transition-transform',
         'active:scale-[0.97]',
         'disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         className
       )}
       style={{ fontFamily: 'var(--font-sans)' }}

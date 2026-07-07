@@ -192,8 +192,8 @@ export function SearchableMultiSelect({
     <div className={className}>
       {label && (
         <div
-          className="text-[10.5px] font-medium uppercase tracking-[0.08em] text-zinc-500 mb-1.5"
-          style={{ fontFamily: 'var(--font-mono)' }}
+          className="text-[10.5px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-1.5"
+          style={{ fontFamily: 'var(--font-pixel)' }}
         >
           {label}
         </div>
@@ -214,32 +214,32 @@ export function SearchableMultiSelect({
               disabled
                 ? isBare
                   ? 'cursor-not-allowed opacity-60'
-                  : 'bg-zinc-100 dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 cursor-not-allowed opacity-70'
+                  : 'bg-secondary border-border cursor-not-allowed opacity-70'
                 : isBare
                   ? open
-                    ? 'bg-white dark:bg-zinc-900 ring-2 ring-red-700/30 cursor-pointer'
-                    : 'bg-transparent hover:bg-zinc-50/60 dark:hover:bg-zinc-900/40 cursor-pointer'
+                    ? 'bg-card ring-2 ring-ring/30 cursor-pointer'
+                    : 'bg-transparent hover:bg-secondary cursor-pointer'
                   : open
-                    ? 'bg-white dark:bg-zinc-950 border-red-700 dark:border-red-400 ring-[3px] ring-red-700/15 dark:ring-red-400/20 cursor-pointer'
-                    : 'bg-white dark:bg-zinc-950 border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-600 cursor-pointer'
+                    ? 'bg-card border-ring ring-[3px] ring-ring/15 cursor-pointer'
+                    : 'bg-card border-border hover:border-border cursor-pointer'
             )}
             style={{ fontFamily: 'var(--font-sans)' }}
           >
             {selectedOptions.length === 0 && (
-              <span className="flex-1 min-w-0 truncate text-[13px] text-zinc-600 dark:text-zinc-400">
+              <span className="flex-1 min-w-0 truncate text-[13px] text-muted-foreground">
                 {placeholder ?? (isMulti ? 'Select…' : 'Select one…')}
               </span>
             )}
             {selectedOptions.length > 0 && !isMulti && (
               <span
-                className="flex-1 min-w-0 truncate text-[13px] text-zinc-900 dark:text-zinc-50"
+                className="flex-1 min-w-0 truncate text-[13px] text-foreground"
                 title={selectedOptions[0].label}
               >
                 {selectedOptions[0].label}
               </span>
             )}
             {selectedOptions.length > 0 && isMulti && hideSelectedPills && (
-              <span className="flex-1 min-w-0 truncate text-[13px] text-zinc-600 dark:text-zinc-400">
+              <span className="flex-1 min-w-0 truncate text-[13px] text-muted-foreground">
                 {placeholder ?? `${selectedOptions.length} selected`}
               </span>
             )}
@@ -262,7 +262,7 @@ export function SearchableMultiSelect({
                 ))}
                 {overflow > 0 && (
                   <span
-                    className="text-[12px] px-2 py-[3px] rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300"
+                    className="text-[12px] px-2 py-[3px] rounded-full bg-secondary text-muted-foreground"
                     style={{ fontFamily: 'var(--font-mono)' }}
                   >
                     +{overflow} more
@@ -279,13 +279,13 @@ export function SearchableMultiSelect({
                   if (isMulti) onValuesChange?.([]);
                   else onValueChange?.(null);
                 }}
-                className="w-[18px] h-[18px] flex items-center justify-center shrink-0 text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 cursor-pointer"
+                className="w-[18px] h-[18px] flex items-center justify-center shrink-0 text-muted-foreground hover:text-foreground cursor-pointer"
                 aria-hidden
               >
                 <X className="w-[10px] h-[10px]" />
               </span>
             )}
-            <ChevronDown className="w-[10px] h-[10px] shrink-0 text-zinc-500 ml-0.5" />
+            <ChevronDown className="w-[10px] h-[10px] shrink-0 text-muted-foreground ml-0.5" />
           </button>
         </PopoverPrimitive.Trigger>
 
@@ -320,15 +320,15 @@ export function SearchableMultiSelect({
             style={{ fontFamily: 'var(--font-sans)' }}
           >
             {searchable && (
-              <div className="flex-shrink-0 border-b border-zinc-100 dark:border-zinc-900 px-3 py-2.5 flex items-center gap-2">
-                <Search className="w-3 h-3 text-zinc-500 flex-shrink-0" />
+              <div className="flex-shrink-0 border-b border-border px-3 py-2.5 flex items-center gap-2">
+                <Search className="w-3 h-3 text-muted-foreground flex-shrink-0" />
                 <input
                   ref={inputRef}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onKeyDown={handleKey}
                   placeholder="Search…"
-                  className="flex-1 text-[13px] pointer-coarse:text-[16px] bg-transparent outline-none text-zinc-900 dark:text-zinc-50 placeholder:text-zinc-400"
+                  className="flex-1 text-[13px] pointer-coarse:text-[16px] bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
                   style={{ fontFamily: 'var(--font-sans)' }}
                 />
               </div>
@@ -336,7 +336,7 @@ export function SearchableMultiSelect({
 
             <div className="flex-1 min-h-0 max-h-[300px] overflow-y-auto overscroll-contain p-1">
               {filtered.length === 0 && !showCreate && (
-                <div className="py-4 text-center text-xs text-zinc-500">
+                <div className="py-4 text-center text-xs text-muted-foreground">
                   {q ? `No matches for "${q}"` : 'No results'}
                 </div>
               )}
@@ -354,19 +354,18 @@ export function SearchableMultiSelect({
                       onClick={() => toggle(o)}
                       className={cn(
                         'flex items-start gap-2.5 px-2.5 py-2 rounded',
-                        active && !o.disabled ? 'bg-slate-100 dark:bg-white/5' : '',
+                        active && !o.disabled ? 'bg-secondary' : '',
                         o.disabled ? 'opacity-45 cursor-not-allowed' : 'cursor-pointer'
                       )}
                     >
                       <Indicator multi={isMulti} selected={sel} />
                       <div className="flex-1 min-w-0">
-                        <div className="text-[13px] font-medium text-zinc-900 dark:text-zinc-50 leading-snug">
+                        <div className="text-[13px] font-medium text-foreground leading-snug">
                           {highlight(o.label, q)}
                         </div>
                         {o.description && (
                           <div
-                            className="text-[11px] text-zinc-500 mt-0.5 leading-snug"
-                            style={{ fontFamily: 'var(--font-mono)' }}
+                            className="text-[11px] text-muted-foreground mt-0.5 leading-snug"
                           >
                             {o.description}
                           </div>
@@ -387,8 +386,8 @@ export function SearchableMultiSelect({
                   return (
                     <div key={g}>
                       <div
-                        className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-zinc-500 dark:text-zinc-400"
-                        style={{ fontFamily: 'var(--font-mono)' }}
+                        className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground"
+                        style={{ fontFamily: 'var(--font-pixel)' }}
                       >
                         {g}
                       </div>
@@ -404,7 +403,7 @@ export function SearchableMultiSelect({
             </div>
 
             {showCreate && (
-              <div className="flex-shrink-0 border-t border-zinc-100 dark:border-zinc-900 p-1">
+              <div className="flex-shrink-0 border-t border-border p-1">
                 <button
                   type="button"
                   onClick={() => {
@@ -426,14 +425,14 @@ export function SearchableMultiSelect({
               </div>
             )}
 
-            <div className="flex-shrink-0 border-t border-zinc-100 dark:border-zinc-900 bg-zinc-50/60 dark:bg-zinc-950/80 px-3 py-2 flex gap-3 items-center">
-              <span className="text-[10px] text-zinc-500 flex items-center gap-1" style={{ fontFamily: 'var(--font-mono)' }}>
+            <div className="flex-shrink-0 border-t border-border bg-secondary px-3 py-2 flex gap-3 items-center">
+              <span className="text-[10px] text-muted-foreground flex items-center gap-1" style={{ fontFamily: 'var(--font-mono)' }}>
                 <Kbd>↑↓</Kbd> navigate
               </span>
-              <span className="text-[10px] text-zinc-500 flex items-center gap-1" style={{ fontFamily: 'var(--font-mono)' }}>
+              <span className="text-[10px] text-muted-foreground flex items-center gap-1" style={{ fontFamily: 'var(--font-mono)' }}>
                 <Kbd>⏎</Kbd> {isMulti ? 'toggle' : 'select'}
               </span>
-              <span className="text-[10px] text-zinc-500 flex items-center gap-1" style={{ fontFamily: 'var(--font-mono)' }}>
+              <span className="text-[10px] text-muted-foreground flex items-center gap-1" style={{ fontFamily: 'var(--font-mono)' }}>
                 <Kbd>esc</Kbd> close
               </span>
             </div>
@@ -450,8 +449,8 @@ function Indicator({ multi, selected }: { multi: boolean; selected: boolean }) {
         className={cn(
           'w-3.5 h-3.5 mt-[3px] rounded-[3px] border-[1.5px] flex-shrink-0 inline-flex items-center justify-center',
           selected
-            ? 'bg-red-700 dark:bg-red-400 border-red-700 dark:border-red-400'
-            : 'border-zinc-400 dark:border-zinc-600 bg-transparent'
+            ? 'bg-primary border-primary'
+            : 'border-border bg-transparent'
         )}
       >
         {selected && (
@@ -463,7 +462,7 @@ function Indicator({ multi, selected }: { multi: boolean; selected: boolean }) {
     );
   }
   return (
-    <span className="w-3.5 h-3.5 mt-[3px] flex-shrink-0 inline-flex items-center justify-center text-red-700 dark:text-red-400">
+    <span className="w-3.5 h-3.5 mt-[3px] flex-shrink-0 inline-flex items-center justify-center text-primary">
       {selected && (
         <svg width="14" height="14" viewBox="0 0 14 14">
           <path d="M2 7 L6 11 L12 3" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" />
@@ -491,7 +490,7 @@ function SMSBadge({
       {onRemove && (
         <span
           onClick={onRemove}
-          className="inline-flex w-3.5 h-3.5 items-center justify-center text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 rounded cursor-pointer flex-shrink-0"
+          className="inline-flex w-3.5 h-3.5 items-center justify-center text-muted-foreground hover:text-foreground rounded cursor-pointer flex-shrink-0"
           aria-hidden
         >
           <svg width="8" height="8" viewBox="0 0 8 8">

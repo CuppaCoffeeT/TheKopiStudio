@@ -59,18 +59,18 @@ export function AppHeaderUserMenu({
           data-testid="app-header-user-menu-trigger"
           className={cn(
             'h-8 rounded-md inline-flex items-center gap-2 cursor-pointer',
-            'bg-transparent text-zinc-900 dark:text-zinc-50',
-            'hover:bg-zinc-200 dark:hover:bg-zinc-800',
+            'bg-transparent text-foreground',
+            'hover:bg-secondary',
             'active:bg-zinc-300 dark:active:bg-zinc-700',
             'transition-colors',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
             'data-[state=open]:bg-zinc-200 dark:data-[state=open]:bg-zinc-800',
             showName ? 'pr-2 pl-1' : 'px-1',
           )}
           style={{ fontFamily: 'var(--font-sans)' }}
         >
           <span
-            className="w-6 h-6 rounded-full inline-flex items-center justify-center font-semibold text-[11px] bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900"
+            className="w-6 h-6 rounded-full inline-flex items-center justify-center font-semibold text-[11px] bg-primary text-primary-foreground"
             style={{ letterSpacing: '0.02em' }}
           >
             {initial}
@@ -78,7 +78,7 @@ export function AppHeaderUserMenu({
           {showName && (
             <>
               <span className="text-[13px] font-medium">{userName}</span>
-              <ChevronDown className="w-2 h-2 text-zinc-500" strokeWidth={1.3} />
+              <ChevronDown className="w-2 h-2 text-muted-foreground" strokeWidth={1.3} />
             </>
           )}
         </button>
@@ -86,7 +86,7 @@ export function AppHeaderUserMenu({
       <DropdownMenuContent align="end" className={cn(mobile ? 'w-[280px]' : 'w-64')}>
         <div className="px-3 pt-2 pb-2.5">
           <div
-            className="text-[12.5px] text-zinc-900 dark:text-zinc-50"
+            className="text-[12.5px] text-foreground"
             style={{ fontFamily: 'var(--font-mono)' }}
           >
             {userEmail}
@@ -104,7 +104,7 @@ export function AppHeaderUserMenu({
         {/* Mobile-only items — on desktop these live as separate header buttons. */}
         {mobile && viewAsSlot && (
           <div className="px-2 py-1.5 flex items-center justify-between gap-2">
-            <span className="text-[11.5px] text-zinc-600 dark:text-zinc-400">View as</span>
+            <span className="text-[11.5px] text-muted-foreground">View as</span>
             {viewAsSlot}
           </div>
         )}

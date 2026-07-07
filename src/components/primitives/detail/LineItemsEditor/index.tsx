@@ -100,15 +100,15 @@ export function LineItemsEditor({
     return (
       <div
         className={cn(
-          'rounded-[10px] border border-dashed border-zinc-200 dark:border-zinc-800',
-          'bg-zinc-50 dark:bg-zinc-900',
+          'rounded-[10px] border border-dashed border-border',
+          'bg-secondary',
           'p-10 text-center',
           className
         )}
         style={{ fontFamily: 'var(--font-sans)' }}
       >
         <div
-          className="text-[18px] text-zinc-700 dark:text-zinc-300 lowercase"
+          className="text-[18px] text-muted-foreground lowercase"
           style={{
             fontFamily: 'var(--font-pixel)',
             letterSpacing: '-0.01em',
@@ -118,7 +118,7 @@ export function LineItemsEditor({
         >
           no line items yet
         </div>
-        <div className="text-[12.5px] text-zinc-500 mt-1">
+        <div className="text-[12.5px] text-muted-foreground mt-1">
           Add your first line to start building this quotation.
         </div>
         {onAddItem && (
@@ -128,10 +128,9 @@ export function LineItemsEditor({
             data-testid="line-items-add-item"
             className={cn(
               'mt-3.5 h-8 px-3.5 rounded-md inline-flex items-center gap-1.5 cursor-pointer',
-              'bg-slate-800 hover:bg-slate-900 text-white',
-              'dark:bg-slate-100 dark:hover:bg-white dark:text-slate-900',
+              'bg-primary text-primary-foreground hover:bg-primary/90',
               'text-[13px] font-medium',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2'
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
             )}
             style={{ fontFamily: 'var(--font-sans)' }}
           >
@@ -168,8 +167,8 @@ export function LineItemsEditor({
     <div
       className={cn(
         'rounded-[10px] overflow-hidden',
-        'border border-zinc-200 dark:border-zinc-800',
-        'bg-white dark:bg-zinc-950',
+        'border border-border',
+        'bg-card',
         className
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
@@ -178,9 +177,9 @@ export function LineItemsEditor({
       <div
         className={cn(
           'hidden md:grid gap-2.5 px-3 py-2',
-          'border-b border-zinc-200 dark:border-zinc-800',
-          'bg-zinc-50 dark:bg-zinc-900',
-          'text-[10px] font-semibold uppercase tracking-widest text-zinc-500'
+          'border-b border-border',
+          'bg-secondary',
+          'text-[10px] font-semibold uppercase tracking-widest text-muted-foreground'
         )}
         style={{
           fontFamily: 'var(--font-mono)',
@@ -227,7 +226,7 @@ export function LineItemsEditor({
       </div>
 
       {/* Add row + clear all */}
-      <div className="flex items-center gap-2 px-3 py-2.5 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/40 dark:bg-white/[0.015]">
+      <div className="flex items-center gap-2 px-3 py-2.5 border-t border-border bg-zinc-50/40 dark:bg-white/[0.015]">
         {onAddItem && (
           <button
             type="button"
@@ -235,10 +234,10 @@ export function LineItemsEditor({
             data-testid="line-items-add-item"
             className={cn(
               'h-7 px-2.5 rounded-[5px] inline-flex items-center gap-1.5 cursor-pointer',
-              'text-[12px] font-medium text-zinc-700 dark:text-zinc-300',
-              'bg-transparent border border-dashed border-zinc-200 dark:border-zinc-800',
-              'hover:bg-white dark:hover:bg-zinc-900',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700'
+              'text-[12px] font-medium text-muted-foreground',
+              'bg-transparent border border-dashed border-border',
+              'hover:bg-secondary',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
             )}
           >
             <Plus className="w-2.5 h-2.5" />
@@ -249,7 +248,7 @@ export function LineItemsEditor({
           <button
             type="button"
             onClick={onAddNote}
-            className="h-7 px-2.5 rounded-[5px] text-[12px] text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50 cursor-pointer"
+            className="h-7 px-2.5 rounded-[5px] text-[12px] text-muted-foreground hover:text-foreground cursor-pointer"
           >
             + Note row
           </button>
@@ -266,7 +265,7 @@ export function LineItemsEditor({
         )}
       </div>
       {footerExtras && (
-        <div className="border-t border-zinc-100 dark:border-zinc-900">
+        <div className="border-t border-border">
           {footerExtras}
         </div>
       )}
@@ -275,37 +274,37 @@ export function LineItemsEditor({
       <div
         className={cn(
           'px-4 py-3.5 grid gap-x-2.5 gap-y-1 justify-items-end',
-          'border-t border-zinc-200 dark:border-zinc-800',
-          'bg-zinc-50 dark:bg-zinc-900',
+          'border-t border-border',
+          'bg-secondary',
           'tabular-nums'
         )}
         style={{ gridTemplateColumns: '1fr 120px', fontFamily: 'var(--font-mono)' }}
       >
-        <span className="text-[10.5px] uppercase tracking-widest text-zinc-500">Subtotal</span>
-        <span className="text-[12.5px] text-zinc-700 dark:text-zinc-300">${fmt(subtotal)}</span>
+        <span className="text-[10.5px] uppercase tracking-widest text-muted-foreground">Subtotal</span>
+        <span className="text-[12.5px] text-muted-foreground">${fmt(subtotal)}</span>
 
-        <span className="text-[10.5px] uppercase tracking-widest text-zinc-500">{taxLabel}</span>
-        <span className="text-[12.5px] text-zinc-700 dark:text-zinc-300">${fmt(taxTotal)}</span>
+        <span className="text-[10.5px] uppercase tracking-widest text-muted-foreground">{taxLabel}</span>
+        <span className="text-[12.5px] text-muted-foreground">${fmt(taxTotal)}</span>
 
-        <span className="w-full text-right pt-1.5 border-t border-zinc-200 dark:border-zinc-800 text-[11px] font-semibold uppercase tracking-widest text-zinc-900 dark:text-zinc-50">
+        <span className="w-full text-right pt-1.5 border-t border-border text-[11px] font-semibold uppercase tracking-widest text-foreground">
           Total · {currency}
         </span>
-        <span className="pt-1.5 border-t border-zinc-200 dark:border-zinc-800 text-[15px] font-semibold text-zinc-900 dark:text-zinc-50">
+        <span className="pt-1.5 border-t border-border text-[15px] font-semibold text-foreground">
           ${fmt(total)}
         </span>
       </div>
 
       {/* Keyboard hint */}
       <div
-        className="hidden md:flex items-center gap-3 px-3 py-1.5 border-t border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 text-[10.5px] text-zinc-600 dark:text-zinc-400 tracking-wide"
+        className="hidden md:flex items-center gap-3 px-3 py-1.5 border-t border-border bg-card text-[10.5px] text-muted-foreground tracking-wide"
         style={{ fontFamily: 'var(--font-mono)' }}
       >
         <Kbd>↑ ↓ ← →</Kbd> move cell
-        <span className="text-zinc-400 dark:text-zinc-600" aria-hidden>·</span>
+        <span className="text-muted-foreground" aria-hidden>·</span>
         <Kbd>Space</Kbd> pick up row
-        <span className="text-zinc-400 dark:text-zinc-600" aria-hidden>·</span>
+        <span className="text-muted-foreground" aria-hidden>·</span>
         <Kbd>⌘ ⏎</Kbd> new row
-        <span className="text-zinc-400 dark:text-zinc-600" aria-hidden>·</span>
+        <span className="text-muted-foreground" aria-hidden>·</span>
         <Kbd>⌘ ⌫</Kbd> delete row
       </div>
     </div>

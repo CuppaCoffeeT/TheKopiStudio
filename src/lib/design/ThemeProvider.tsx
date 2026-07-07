@@ -69,13 +69,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const resolved: ResolvedTheme = preference === 'system' ? systemTheme : preference;
+  // Prospect Profiler original aesthetic is always the warm navy/gold dark
+  // look (2026-07-07 de-AppBase). The preference API is kept for compatibility
+  // but `resolved` is pinned to 'dark' so every surface renders on navy.
+  void systemTheme;
+  const resolved: ResolvedTheme = 'dark';
 
-  // Flip `dark` class on <html> so every page respects the toggle.
+  // Keep the `dark` class on <html> permanently.
   useEffect(() => {
-    const root = document.documentElement;
-    if (resolved === 'dark') root.classList.add('dark');
-    else root.classList.remove('dark');
+    document.documentElement.classList.add('dark');
   }, [resolved]);
 
   const value = useMemo(

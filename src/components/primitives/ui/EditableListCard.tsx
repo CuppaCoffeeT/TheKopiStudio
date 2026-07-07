@@ -72,18 +72,18 @@ export const EditableListCard = forwardRef<HTMLDivElement, EditableListCardProps
         {...rest}
         className={cn(
           'flex flex-col gap-2.5 transition-[background,border-color,box-shadow] duration-150',
-          'bg-white dark:bg-zinc-950',
-          'text-zinc-900 dark:text-zinc-50',
+          'bg-card',
+          'text-foreground',
           isCard
-            ? 'rounded-[10px] border border-zinc-200 dark:border-zinc-800 p-3'
-            : 'border-b border-zinc-100 dark:border-zinc-900 last:border-b-0 px-[14px] py-3',
-          isHoverOrActive && 'bg-zinc-50 dark:bg-zinc-900',
-          isFocus && isCard && 'border-red-700 dark:border-red-400 ring-[3px] ring-red-700/15 dark:ring-red-400/25',
-          isFocus && !isCard && 'ring-2 ring-inset ring-red-700 dark:ring-red-400',
+            ? 'rounded-[10px] border border-border p-3'
+            : 'border-b border-border last:border-b-0 px-[14px] py-3',
+          isHoverOrActive && 'bg-secondary',
+          isFocus && isCard && 'border-ring ring-[3px] ring-ring/15',
+          isFocus && !isCard && 'ring-2 ring-inset ring-ring',
           isDisabled && 'opacity-50 pointer-events-none cursor-not-allowed',
           !isDisabled && onClick && 'cursor-pointer',
-          !isDisabled && onClick && isCard && 'focus-visible:outline-none focus-visible:border-red-700 dark:focus-visible:border-red-400 focus-visible:ring-[3px] focus-visible:ring-red-700/15 dark:focus-visible:ring-red-400/25',
-          !isDisabled && onClick && !isCard && 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-red-700 dark:focus-visible:ring-red-400',
+          !isDisabled && onClick && isCard && 'focus-visible:outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/15',
+          !isDisabled && onClick && !isCard && 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring',
           '[-webkit-tap-highlight-color:transparent]',
           className,
         )}
@@ -93,19 +93,19 @@ export const EditableListCard = forwardRef<HTMLDivElement, EditableListCardProps
             {header.index != null && (
               <span
                 style={{ fontFamily: 'var(--font-mono)' }}
-                className="w-5 shrink-0 text-[11px] tabular-nums text-zinc-400 dark:text-zinc-500 tracking-[0.02em]"
+                className="w-5 shrink-0 text-[11px] tabular-nums text-muted-foreground tracking-[0.02em]"
               >
                 {header.index}
               </span>
             )}
             <div className="flex-1 min-w-0 flex items-baseline gap-2 flex-wrap">
-              <span className="text-sm font-semibold tracking-[-0.005em] text-zinc-900 dark:text-zinc-50 truncate max-w-full">
+              <span className="text-sm font-semibold tracking-[-0.005em] text-foreground truncate max-w-full">
                 {header.title}
               </span>
               {header.subtitle && (
                 <span
                   style={{ fontFamily: 'var(--font-mono)' }}
-                  className="text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums whitespace-nowrap"
+                  className="text-[11px] text-muted-foreground tabular-nums whitespace-nowrap"
                 >
                   {header.subtitle}
                 </span>

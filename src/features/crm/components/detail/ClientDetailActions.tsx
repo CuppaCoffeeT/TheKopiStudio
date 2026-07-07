@@ -24,8 +24,8 @@ function ReadOnlyHint({ mobile }: { mobile?: boolean }) {
     <span
       className={
         mobile
-          ? 'inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 text-zinc-600 dark:text-zinc-400'
-          : 'inline-flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400'
+          ? 'inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 text-muted-foreground'
+          : 'inline-flex items-center gap-1.5 text-muted-foreground'
       }
       style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, letterSpacing: '0.04em' }}
       title="Only the advisor who owns a client can edit or delete the record."

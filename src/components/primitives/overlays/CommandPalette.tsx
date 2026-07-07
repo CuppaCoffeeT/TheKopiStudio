@@ -115,9 +115,9 @@ export function CommandPalette({
                 'max-h-[70dvh] overflow-y-auto p-1',
                 '[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5',
                 '[&_[cmdk-group-heading]]:text-[10.5px] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.08em]',
-                '[&_[cmdk-group-heading]]:text-zinc-500 [&_[cmdk-group-heading]]:font-medium'
+                '[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:font-medium'
               )}
-              style={{ fontFamily: 'var(--font-mono)' }}
+              style={{ fontFamily: 'var(--font-pixel)' }}
             >
               {children}
             </CommandPrimitive.List>
@@ -139,13 +139,13 @@ function SearchRow({
   onValueChange: (next: string) => void;
 }) {
   return (
-    <div className="px-3 py-2.5 flex items-center gap-2 border-b border-zinc-200/60 dark:border-zinc-800/70">
-      <Search className="w-3.5 h-3.5 text-zinc-500 flex-shrink-0" strokeWidth={1.4} />
+    <div className="px-3 py-2.5 flex items-center gap-2 border-b border-border">
+      <Search className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" strokeWidth={1.4} />
       <CommandPrimitive.Input
         placeholder={placeholder}
         value={value}
         onValueChange={onValueChange}
-        className="flex-1 h-6 bg-transparent outline-none border-none text-[13px] text-zinc-900 dark:text-zinc-50 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
+        className="flex-1 h-6 bg-transparent outline-none border-none text-[13px] text-foreground placeholder:text-muted-foreground"
         style={{ fontFamily: 'var(--font-sans)' }}
       />
       <Kbd>esc</Kbd>
@@ -155,7 +155,7 @@ function SearchRow({
 
 function Footer() {
   return (
-    <div className="px-3 py-2 flex gap-3 items-center border-t border-zinc-200/60 dark:border-zinc-800/70 bg-zinc-50/60 dark:bg-zinc-950/80">
+    <div className="px-3 py-2 flex gap-3 items-center border-t border-border bg-secondary">
       <Hint>
         <Kbd>↑↓</Kbd> navigate
       </Hint>
@@ -172,7 +172,7 @@ function Footer() {
 function Hint({ children }: { children: ReactNode }) {
   return (
     <span
-      className="text-[10px] text-zinc-500 flex items-center gap-1"
+      className="text-[10px] text-muted-foreground flex items-center gap-1"
       style={{ fontFamily: 'var(--font-mono)' }}
     >
       {children}

@@ -84,8 +84,8 @@ export function EmailComposeForm({
     >
       {modeLabel && (
         <div
-          className="text-[10.5px] uppercase tracking-[0.08em] text-zinc-500 dark:text-zinc-400"
-          style={{ fontFamily: 'var(--font-mono)' }}
+          className="text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground"
+          style={{ fontFamily: 'var(--font-pixel)' }}
         >
           {modeLabel}
         </div>
@@ -117,7 +117,7 @@ export function EmailComposeForm({
             className={cn(
               'text-[10.5px] inline-flex items-center gap-0.5',
               'text-blue-700 dark:text-blue-400 hover:underline',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 rounded-sm',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm',
             )}
             aria-expanded={ccBccOpen}
           >
@@ -187,7 +187,7 @@ export function EmailComposeForm({
         />
       </FieldWrap>
 
-      <div className="flex items-center justify-end gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/60">
+      <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
         {onCancel && (
           <button
             type="button"
@@ -195,9 +195,9 @@ export function EmailComposeForm({
             disabled={isPending}
             className={cn(
               'h-8 px-3 rounded-md inline-flex items-center gap-1.5 text-[12.5px]',
-              'text-zinc-600 dark:text-zinc-400',
-              'hover:bg-zinc-100 dark:hover:bg-zinc-800',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+              'text-muted-foreground',
+              'hover:bg-secondary',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
               'disabled:opacity-40 disabled:cursor-not-allowed',
             )}
           >
@@ -210,9 +210,8 @@ export function EmailComposeForm({
           disabled={!canSend}
           className={cn(
             'h-8 px-3.5 rounded-md inline-flex items-center gap-1.5 text-[12.5px] font-medium',
-            'bg-slate-800 hover:bg-slate-900 text-white',
-            'dark:bg-slate-100 dark:hover:bg-white dark:text-slate-900',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+            'bg-primary hover:bg-primary/90 text-primary-foreground',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
             'disabled:opacity-40 disabled:cursor-not-allowed',
           )}
         >
@@ -226,11 +225,11 @@ export function EmailComposeForm({
 
 const fieldInputCls = cn(
   'w-full h-8 px-2.5 rounded-md border text-[12.5px]',
-  'bg-white dark:bg-zinc-950',
-  'border-zinc-200 dark:border-zinc-800',
-  'text-zinc-900 dark:text-zinc-100',
-  'placeholder:text-zinc-400 dark:placeholder:text-zinc-500',
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+  'bg-card',
+  'border-border',
+  'text-foreground',
+  'placeholder:text-muted-foreground',
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
   'disabled:opacity-60 disabled:cursor-not-allowed',
 );
 
@@ -247,8 +246,8 @@ function FieldWrap({
     <div className="flex flex-col gap-1 min-w-0">
       <div className="flex items-center justify-between">
         <span
-          className="text-[9.5px] uppercase tracking-[0.08em] text-zinc-500 dark:text-zinc-400"
-          style={{ fontFamily: 'var(--font-mono)' }}
+          className="text-[9.5px] uppercase tracking-[0.08em] text-muted-foreground"
+          style={{ fontFamily: 'var(--font-pixel)' }}
         >
           {label}
         </span>

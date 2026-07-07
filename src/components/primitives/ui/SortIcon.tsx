@@ -31,8 +31,8 @@ export function SortIcon({ dir = null, className }: SortIconProps) {
         d="M5 1 L8 4 L2 4 Z"
         className={
           ascActive
-            ? 'fill-zinc-700 dark:fill-zinc-300'
-            : 'fill-zinc-400 dark:fill-zinc-500'
+            ? 'fill-foreground'
+            : 'fill-muted-foreground'
         }
         opacity={ascActive ? 1 : 0.5}
       />
@@ -40,8 +40,8 @@ export function SortIcon({ dir = null, className }: SortIconProps) {
         d="M5 11 L8 8 L2 8 Z"
         className={
           descActive
-            ? 'fill-zinc-700 dark:fill-zinc-300'
-            : 'fill-zinc-400 dark:fill-zinc-500'
+            ? 'fill-foreground'
+            : 'fill-muted-foreground'
         }
         opacity={descActive ? 1 : 0.5}
       />

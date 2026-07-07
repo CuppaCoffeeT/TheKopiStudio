@@ -122,8 +122,8 @@ export function Pagination({
     <div
       className={cn(
         'flex items-center gap-[6px] px-[14px] py-3',
-        'bg-white dark:bg-zinc-950',
-        'border-t border-zinc-200 dark:border-zinc-800',
+        'bg-card',
+        'border-t border-border',
         className
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
@@ -131,7 +131,7 @@ export function Pagination({
       aria-label="Pagination"
     >
       <span
-        className="text-[12px] text-zinc-500 dark:text-zinc-400"
+        className="text-[12px] text-muted-foreground"
         style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}
       >
         {from}&ndash;{to} of {total.toLocaleString('en-SG')}
@@ -139,7 +139,7 @@ export function Pagination({
       <div className="flex-1" />
       {showRowsPerPage && (
         <label
-          className="inline-flex items-center gap-1.5 mr-2 text-[11.5px] text-zinc-500 dark:text-zinc-400"
+          className="inline-flex items-center gap-1.5 mr-2 text-[11.5px] text-muted-foreground"
           style={{ fontFamily: 'var(--font-sans)' }}
         >
           <span>Rows per page</span>
@@ -147,7 +147,7 @@ export function Pagination({
             value={rowsPerPage}
             onChange={(e) => onRowsPerPageChange?.(Number(e.target.value))}
             aria-label="Rows per page"
-            className="h-7 pl-2 pr-6 rounded-md bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-[12px] text-zinc-900 dark:text-zinc-50 hover:bg-zinc-100 dark:hover:bg-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400"
+            className="h-7 pl-2 pr-6 rounded-md bg-card border border-border text-[12px] text-foreground hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}
           >
             {rowsPerPageOptions.map((opt) => (
@@ -160,12 +160,11 @@ export function Pagination({
       )}
       {loading && (
         <span
-          className="inline-flex items-center gap-[6px] mr-2 text-[11px] text-zinc-500 dark:text-zinc-400"
-          style={{ fontFamily: 'var(--font-mono)' }}
+          className="inline-flex items-center gap-[6px] mr-2 text-[11px] text-muted-foreground"
         >
           <span
             aria-hidden
-            className="inline-block w-[10px] h-[10px] rounded-full border-[1.5px] border-zinc-300 border-t-red-700 dark:border-zinc-700 dark:border-t-red-400 animate-spin"
+            className="inline-block w-[10px] h-[10px] rounded-full border-[1.5px] border-border border-t-primary animate-spin"
           />
           Loading&hellip;
         </span>
@@ -179,8 +178,7 @@ export function Pagination({
       ))}
       {showEllipsis && (
         <span
-          className="px-[2px] text-[12px] text-zinc-400 dark:text-zinc-600"
-          style={{ fontFamily: 'var(--font-mono)' }}
+          className="px-[2px] text-[12px] text-muted-foreground"
           aria-hidden
         >
           &hellip;

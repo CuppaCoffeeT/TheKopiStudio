@@ -39,7 +39,7 @@ export function DateCell({
   const formatted = value ? formatDisplayDateShort(value) : '';
   return (
     <span
-      className={cn('text-[12.5px] text-zinc-800 dark:text-zinc-200 tabular-nums', className)}
+      className={cn('text-[12.5px] text-foreground tabular-nums', className)}
       style={{ fontFamily: 'var(--font-sans)', ...style }}
     >
       {formatted || fallback}

@@ -26,7 +26,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
         'inline-flex items-center gap-2.5 select-none',
         disabled ? 'cursor-not-allowed opacity-70' : 'cursor-pointer',
         'text-[14px]',
-        disabled ? 'text-zinc-400 dark:text-zinc-500' : 'text-zinc-700 dark:text-zinc-300',
+        disabled ? 'text-muted-foreground' : 'text-muted-foreground',
         labelClassName
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
@@ -44,12 +44,12 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
           className={cn(
             'w-5 h-5 rounded-full inline-flex items-center justify-center flex-shrink-0',
             'border-[1.5px] transition-colors duration-150',
-            'bg-white dark:bg-zinc-950',
+            'bg-card',
             checked
               ? 'border-slate-800 dark:border-slate-100'
-              : 'border-zinc-300 dark:border-zinc-700',
-            !checked && !disabled && 'peer-hover:border-zinc-400 dark:peer-hover:border-zinc-600',
-            'peer-focus-visible:ring-2 peer-focus-visible:ring-red-700 dark:peer-focus-visible:ring-red-400 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-white dark:peer-focus-visible:ring-offset-zinc-950'
+              : 'border-border',
+            !checked && !disabled && 'peer-hover:border-border',
+            'peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background'
           )}
         >
           {checked && (

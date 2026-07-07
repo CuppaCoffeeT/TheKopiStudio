@@ -37,14 +37,14 @@ export function CategoryHeader({
         clickable && [
           'cursor-pointer',
           // Hover bg must CONTRAST with --page-bg (zinc-100) — use white/zinc-800 not zinc-100/900
-          'hover:bg-white dark:hover:bg-zinc-800',
-          'hover:border-zinc-200 dark:hover:border-zinc-700',
+          'hover:bg-card',
+          'hover:border-border',
           'hover:shadow-sm',
-          'active:bg-zinc-50 dark:active:bg-zinc-900',
+          'active:bg-secondary',
           'active:shadow-none',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-1',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
         ],
-        !clickable && 'cursor-default border-b border-zinc-100 dark:border-zinc-900 rounded-none',
+        !clickable && 'cursor-default border-b border-border rounded-none',
         className
       )}
     >
@@ -53,8 +53,8 @@ export function CategoryHeader({
           className={cn(
             'w-3 h-3 transition-colors',
             clickable
-              ? 'text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-200'
-              : 'text-zinc-400'
+              ? 'text-muted-foreground group-hover:text-foreground'
+              : 'text-muted-foreground'
           )}
           strokeWidth={1.3}
         />
@@ -63,10 +63,9 @@ export function CategoryHeader({
         className={cn(
           'text-[10.5px] font-medium uppercase tracking-[0.12em] transition-colors',
           clickable
-            ? 'text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-zinc-50'
-            : 'text-zinc-700 dark:text-zinc-300'
+            ? 'text-muted-foreground group-hover:text-foreground'
+            : 'text-muted-foreground'
         )}
-        style={{ fontFamily: 'var(--font-mono)' }}
       >
         {label}
       </span>
@@ -76,8 +75,8 @@ export function CategoryHeader({
           className={cn(
             'text-[10px] transition-colors',
             clickable
-              ? 'text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-300'
-              : 'text-zinc-600 dark:text-zinc-400'
+              ? 'text-muted-foreground group-hover:text-foreground'
+              : 'text-muted-foreground'
           )}
           style={{ fontFamily: 'var(--font-mono)' }}
         >
@@ -89,8 +88,8 @@ export function CategoryHeader({
           className={cn(
             'w-3 h-3 transition-all duration-150',
             clickable
-              ? 'text-zinc-400 group-hover:text-red-700 dark:group-hover:text-red-400'
-              : 'text-zinc-400',
+              ? 'text-muted-foreground group-hover:text-primary'
+              : 'text-muted-foreground',
             collapsed && '-rotate-90'
           )}
           strokeWidth={1.5}

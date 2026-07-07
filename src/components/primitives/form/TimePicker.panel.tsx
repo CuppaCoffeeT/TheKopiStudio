@@ -26,8 +26,8 @@ function ColumnCell({ label, selected, onClick, width = 44 }: ColumnCellProps) {
         'h-7 rounded-md flex items-center justify-center text-xs tabular-nums shrink-0 transition-colors',
         'border-none p-0 appearance-none cursor-pointer',
         selected
-          ? 'bg-slate-800 text-white font-semibold dark:bg-slate-100 dark:text-slate-900'
-          : 'bg-transparent text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.06]',
+          ? 'bg-primary text-primary-foreground font-semibold'
+          : 'bg-transparent text-muted-foreground hover:bg-secondary',
       )}
     >
       {label}
@@ -47,15 +47,15 @@ function ColumnSection({ heading, focused, divider, children }: ColumnSectionPro
     <div
       className={cn(
         'flex-1 min-w-0 flex flex-col items-center gap-0.5 px-1 py-1.5 max-h-[196px] overflow-y-auto',
-        divider === 'right' && 'border-r border-zinc-200 dark:border-zinc-800',
+        divider === 'right' && 'border-r border-border',
       )}
     >
       <div
-        style={{ fontFamily: 'var(--font-mono)' }}
+        style={{ fontFamily: 'var(--font-pixel)' }}
         className={cn(
           'w-full text-center uppercase tracking-[0.08em] text-[10px] py-1 mb-1.5 border-b transition-colors',
-          'text-zinc-500 dark:text-zinc-400',
-          focused ? 'border-red-700 dark:border-red-400' : 'border-zinc-200 dark:border-zinc-800',
+          'text-muted-foreground',
+          focused ? 'border-primary' : 'border-border',
         )}
       >
         {heading}
@@ -109,7 +109,7 @@ export function TimePickerPanel({
           </ColumnSection>
         )}
       </div>
-      <div className={cn('flex items-center gap-2 px-3 py-2.5 border-t', 'border-zinc-200 dark:border-zinc-800', 'bg-zinc-50 dark:bg-zinc-900')}>
+      <div className={cn('flex items-center gap-2 px-3 py-2.5 border-t', 'border-border', 'bg-secondary')}>
         <button
           type="button"
           onClick={onNow}
@@ -117,10 +117,10 @@ export function TimePickerPanel({
           style={{ fontFamily: 'var(--font-mono)' }}
           className={cn(
             'h-[26px] px-2.5 rounded-md border text-[11px] font-semibold cursor-pointer',
-            'border-zinc-200 dark:border-zinc-700',
-            'text-red-700 dark:text-red-400',
-            'bg-transparent hover:bg-red-50 dark:hover:bg-red-500/[0.08]',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400',
+            'border-border',
+            'text-primary',
+            'bg-transparent hover:bg-primary/10',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
           )}
         >
           Now
@@ -132,16 +132,16 @@ export function TimePickerPanel({
           style={{ fontFamily: 'var(--font-mono)' }}
           className={cn(
             'h-[26px] px-2.5 rounded-md border text-[11px] cursor-pointer',
-            'border-zinc-200 dark:border-zinc-700',
-            'text-zinc-700 dark:text-zinc-300',
-            'bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400',
+            'border-border',
+            'text-muted-foreground',
+            'bg-transparent hover:bg-secondary',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
           )}
         >
           Clear
         </button>
         <div className="flex-1" />
-        <span style={{ fontFamily: 'var(--font-mono)' }} className="text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums">
+        <span style={{ fontFamily: 'var(--font-mono)' }} className="text-[11px] text-muted-foreground tabular-nums">
           {value ? formatDisplay(value, format) : '--:--'}
         </span>
       </div>

@@ -50,7 +50,7 @@ export function CurrencyCell({
   return (
     <span
       className={cn(
-        'text-[12.5px] tabular-nums text-right text-zinc-900 dark:text-zinc-50 inline-block min-w-[4ch]',
+        'text-[12.5px] tabular-nums text-right text-foreground inline-block min-w-[4ch]',
         amount !== null && amount < 0 && 'text-red-700 dark:text-red-400',
         className,
       )}

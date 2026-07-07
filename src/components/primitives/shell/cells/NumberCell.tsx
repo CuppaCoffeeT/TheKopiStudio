@@ -49,7 +49,7 @@ export function NumberCell({
   return (
     <span
       className={cn(
-        'text-[12.5px] tabular-nums text-right text-zinc-800 dark:text-zinc-200 inline-block min-w-[3ch]',
+        'text-[12.5px] tabular-nums text-right text-foreground inline-block min-w-[3ch]',
         className,
       )}
       style={{ fontFamily: 'var(--font-sans)', ...style }}

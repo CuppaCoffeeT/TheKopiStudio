@@ -61,7 +61,7 @@ export function ResultHero({
         </span>
         <div
           className="uppercase mb-1"
-          style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.25em', color: 'rgba(255,255,255,.65)' }}
+          style={{ fontFamily: 'var(--font-pixel)', fontSize: 9, letterSpacing: '0.25em', color: 'rgba(255,255,255,.65)' }}
         >
           {meetingLabel} · {advisorName} · {dateLabel}
         </div>
@@ -86,7 +86,7 @@ export function ResultHero({
       <div className="bg-zinc-950 px-4 py-3">
         <div
           className="uppercase mb-1"
-          style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.25em', color: '#C9A84C' }}
+          style={{ fontFamily: 'var(--font-pixel)', fontSize: 9, letterSpacing: '0.25em', color: '#C9A84C' }}
         >
           Advisor Quick Read
         </div>

@@ -77,7 +77,7 @@ export function AIOverrideClassificationPanel({
       collapsible
       defaultCollapsed
       summary={
-        <span className="flex items-center gap-1.5 text-[11.5px] min-w-0 text-zinc-500 dark:text-zinc-400">
+        <span className="flex items-center gap-1.5 text-[11.5px] min-w-0 text-muted-foreground">
           {manualCategory ? (
             <>
               <span className="shrink-0">manual:</span>
@@ -130,7 +130,7 @@ export function AIOverrideClassificationPanel({
           {aiCategory ? (
             <EmailCategoryBadge category={aiCategory} />
           ) : (
-            <span className="text-[11.5px] italic text-zinc-500 dark:text-zinc-400">—</span>
+            <span className="text-[11.5px] italic text-muted-foreground">—</span>
           )}
         </FieldLabelWrap>
         <FieldLabelWrap label="Manual override">
@@ -139,9 +139,9 @@ export function AIOverrideClassificationPanel({
             onChange={(e) => onSelectedCategoryChange(e.target.value)}
             className={cn(
               'w-full h-8 px-2.5 rounded-md border text-[12px]',
-              'border-zinc-200 dark:border-zinc-800',
-              'bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+              'border-border',
+              'bg-card text-foreground',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
             )}
             style={{ fontFamily: 'var(--font-sans)' }}
           >
@@ -162,10 +162,10 @@ export function AIOverrideClassificationPanel({
           placeholder="Why is the AI wrong? Helps the feedback loop."
           className={cn(
             'w-full min-h-[44px] px-2.5 py-2 rounded-md border resize-y text-[12.5px] leading-[1.5]',
-            'border-zinc-200 dark:border-zinc-800',
-            'bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100',
-            'placeholder:text-zinc-400 dark:placeholder:text-zinc-500',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+            'border-border',
+            'bg-card text-foreground',
+            'placeholder:text-muted-foreground',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
           )}
           style={{ fontFamily: 'var(--font-sans)' }}
         />
@@ -184,7 +184,7 @@ function FieldLabelWrap({
   return (
     <div className="flex flex-col gap-1 min-w-0">
       <span
-        className="text-[9.5px] uppercase tracking-[0.08em] text-zinc-500 dark:text-zinc-400"
+        className="text-[9.5px] uppercase tracking-[0.08em] text-muted-foreground"
         style={{ fontFamily: 'var(--font-mono)' }}
       >
         {label}

@@ -54,7 +54,7 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
                 <span
                   className={cn(
                     'w-7 h-7 rounded-full inline-flex items-center justify-center',
-                    'bg-red-700 text-white font-semibold text-[11.5px]',
+                    'bg-primary text-primary-foreground font-semibold text-[11.5px]',
                     'shadow-[0_0_0_3px] shadow-red-200 dark:shadow-red-900/40',
                   )}
                   style={{ fontFamily: 'var(--font-mono)' }}
@@ -66,8 +66,8 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
                 <span
                   className={cn(
                     'w-7 h-7 rounded-full inline-flex items-center justify-center',
-                    'bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800',
-                    'text-zinc-500 dark:text-zinc-400 text-[11.5px] font-medium',
+                    'bg-card border border-border',
+                    'text-muted-foreground text-[11.5px] font-medium',
                   )}
                   style={{ fontFamily: 'var(--font-mono)' }}
                 >
@@ -77,9 +77,9 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
               <span
                 className={cn(
                   'text-[12.5px] whitespace-nowrap',
-                  isCurrent && 'font-medium text-zinc-900 dark:text-zinc-100',
-                  isCompleted && 'text-zinc-600 dark:text-zinc-400',
-                  isUpcoming && 'text-zinc-600 dark:text-zinc-400',
+                  isCurrent && 'font-medium text-foreground',
+                  isCompleted && 'text-muted-foreground',
+                  isUpcoming && 'text-muted-foreground',
                 )}
               >
                 {step.label}
@@ -87,7 +87,7 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
             </div>
             {idx < steps.length - 1 && (
               <div
-                className="flex-shrink-0 w-10 h-px bg-zinc-200 dark:bg-zinc-800"
+                className="flex-shrink-0 w-10 h-px bg-border"
                 aria-hidden="true"
               />
             )}

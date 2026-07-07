@@ -44,7 +44,7 @@ interface AIClassificationPanelProps {
 
 const REPLY_NEEDED_TONE = {
   yes: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-900/40',
-  no: 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700',
+  no: 'bg-secondary text-muted-foreground border-border',
   maybe: 'bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-900/40',
 } as const;
 
@@ -92,8 +92,8 @@ export function AIClassificationPanel({
             isManualOverride={isManualOverride}
           />
           {replyNeeded && (
-            <span className={cn('text-[11px] whitespace-nowrap shrink-0', 'text-zinc-500 dark:text-zinc-400')}>
-              · reply: <span className="font-medium text-zinc-700 dark:text-zinc-300">{replyNeeded}</span>
+            <span className={cn('text-[11px] whitespace-nowrap shrink-0', 'text-muted-foreground')}>
+              · reply: <span className="font-medium text-muted-foreground">{replyNeeded}</span>
             </span>
           )}
         </>
@@ -142,18 +142,18 @@ export function AIClassificationPanel({
       </div>
       {summary && (
         <p className="mb-1.5">
-          <strong className="font-medium text-zinc-900 dark:text-zinc-100">Summary · </strong>
+          <strong className="font-medium text-foreground">Summary · </strong>
           {summary}
         </p>
       )}
       {reasoning && (
         <p
           className={cn(
-            'text-[12px] text-zinc-500 dark:text-zinc-400 pt-2 mt-2',
-            'border-t border-dashed border-zinc-100 dark:border-zinc-800/60',
+            'text-[12px] text-muted-foreground pt-2 mt-2',
+            'border-t border-dashed border-border',
           )}
         >
-          <strong className="font-medium text-zinc-700 dark:text-zinc-300">Reasoning · </strong>
+          <strong className="font-medium text-muted-foreground">Reasoning · </strong>
           {reasoning}
         </p>
       )}

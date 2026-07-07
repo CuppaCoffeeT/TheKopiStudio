@@ -32,7 +32,7 @@ export function PageTitle({ children, className, style }: PageTitleProps) {
   return (
     <h1
       className={cn(
-        'font-pixel-crisp m-0 text-[32px] sm:text-[38px] md:text-5xl text-zinc-900 dark:text-zinc-50 leading-tight tracking-tight',
+        'font-pixel-crisp m-0 text-[32px] sm:text-[38px] md:text-5xl text-foreground leading-tight tracking-tight',
         className,
       )}
       style={{ fontFamily: 'var(--font-pixel, var(--font-sans))', fontWeight: 500, ...style }}

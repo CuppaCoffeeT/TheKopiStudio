@@ -40,20 +40,20 @@ export function ScoreCard({ profile }: { profile: ProfileResult }) {
                 {/* Zinc text — the brand hex fails WCAG AA 4.5:1 as text on the
                     card (the coloured bar below carries the DISC identity). */}
                 <span
-                  className="text-zinc-800 dark:text-zinc-100"
+                  className="text-foreground"
                   style={{ fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600 }}
                 >
                   DISC-{d} — {PR[d].nm}
                 </span>
                 <span
-                  className="tabular-nums text-zinc-500 dark:text-zinc-400"
+                  className="tabular-nums text-muted-foreground"
                   style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5 }}
                 >
                   {pts} pts
                 </span>
               </div>
               <div
-                className="h-2 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800"
+                className="h-2 overflow-hidden rounded-full bg-secondary"
                 role="progressbar"
                 aria-label={`DISC-${d} score`}
                 aria-valuenow={widthPc}

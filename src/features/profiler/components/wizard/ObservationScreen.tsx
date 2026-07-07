@@ -29,16 +29,16 @@ export function ObservationScreen({ groupIndex, nv, onToggle }: ObservationScree
           {group.em}
         </span>
         <div>
-          <h2 className="m-0 text-[16px] font-normal text-zinc-900 dark:text-zinc-50">{group.tt}</h2>
-          <p className="m-0 text-[11px] text-zinc-500 dark:text-zinc-400">{group.st}</p>
+          <h2 className="m-0 text-[16px] font-normal text-foreground">{group.tt}</h2>
+          <p className="m-0 text-[11px] text-muted-foreground">{group.st}</p>
         </div>
       </div>
-      <p className="m-0 text-[13px] leading-5 text-zinc-500 dark:text-zinc-400">
+      <p className="m-0 text-[13px] leading-5 text-muted-foreground">
         Tick everything you observed.
       </p>
       <p
         className="m-0 text-amber-700 dark:text-amber-500"
-        style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}
+        style={{ fontFamily: 'var(--font-pixel)', fontSize: 11 }}
         data-testid="wizard-observations-count"
       >
         {tickedCount === 0
@@ -56,7 +56,7 @@ export function ObservationScreen({ groupIndex, nv, onToggle }: ObservationScree
               className={cn(
                 'rounded-xl border transition-colors',
                 !ticked &&
-                  'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700',
+                  'border-border hover:border-muted-foreground',
               )}
               style={
                 ticked
@@ -73,7 +73,7 @@ export function ObservationScreen({ groupIndex, nv, onToggle }: ObservationScree
                     <span
                       className={cn(
                         'text-[13px] leading-5',
-                        ticked ? 'text-zinc-900 dark:text-zinc-50' : 'text-zinc-500 dark:text-zinc-400',
+                        ticked ? 'text-foreground' : 'text-muted-foreground',
                       )}
                     >
                       {item.t}

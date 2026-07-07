@@ -93,8 +93,8 @@ export function Modal({
         <div
           className={cn(
             'pointer-events-auto rounded-xl',
-            'bg-white dark:bg-zinc-950',
-            'border border-zinc-200 dark:border-zinc-800',
+            'bg-card',
+            'border border-border',
             'shadow-[0_1px_2px_rgba(0,0,0,0.04),0_24px_64px_rgba(24,24,27,0.14)]',
             'dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_24px_64px_rgba(0,0,0,0.5)]',
             'group-data-[state=open]:animate-in group-data-[state=closed]:animate-out',
@@ -107,12 +107,12 @@ export function Modal({
           style={{ width: SIZE_PX[size], fontFamily: 'var(--font-sans)' }}
         >
           {/* Header */}
-          <div className="px-5 pt-4.5 pb-3.5 flex items-start justify-between gap-3 border-b border-zinc-100 dark:border-zinc-900">
+          <div className="px-5 pt-4.5 pb-3.5 flex items-start justify-between gap-3 border-b border-border">
             <div className="flex-1 min-w-0">
               <DialogPrimitive.Title
                 className={cn(
                   'text-[22px] leading-tight m-0 font-normal',
-                  destructive ? 'text-red-700 dark:text-red-400' : 'text-zinc-900 dark:text-zinc-50'
+                  destructive ? 'text-red-700 dark:text-red-400' : 'text-foreground'
                 )}
                 style={{
                   fontFamily: 'var(--font-pixel)',
@@ -123,14 +123,14 @@ export function Modal({
                 {title}
               </DialogPrimitive.Title>
               {description && (
-                <DialogPrimitive.Description className="text-[11.5px] text-zinc-500 mt-1">
+                <DialogPrimitive.Description className="text-[11.5px] text-muted-foreground mt-1">
                   {description}
                 </DialogPrimitive.Description>
               )}
             </div>
             <DialogPrimitive.Close
               aria-label="Close"
-              className="w-6 h-6 flex items-center justify-center rounded text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-200 flex-shrink-0"
+              className="w-6 h-6 flex items-center justify-center rounded text-muted-foreground hover:text-foreground flex-shrink-0"
             >
               <X className="w-3 h-3" />
             </DialogPrimitive.Close>
@@ -144,8 +144,8 @@ export function Modal({
             <div
               className={cn(
                 'px-5 pb-4 pt-3 flex justify-end gap-2 rounded-b-xl',
-                'border-t border-zinc-100 dark:border-zinc-900',
-                'bg-zinc-50/40 dark:bg-white/[0.015]'
+                'border-t border-border',
+                'bg-secondary'
               )}
             >
               {footer}
@@ -182,7 +182,7 @@ export function ModalPrimaryAction({
         'disabled:opacity-40 disabled:cursor-not-allowed',
         destructive
           ? 'bg-red-700 hover:bg-red-800 text-white'
-          : 'bg-slate-800 hover:bg-slate-900 text-white dark:bg-slate-100 dark:hover:bg-white dark:text-slate-900'
+          : 'bg-primary hover:bg-primary/90 text-primary-foreground'
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
     >
@@ -207,7 +207,7 @@ export function ModalGhostAction({
       onClick={onClick}
       disabled={disabled}
       data-testid={dataTestId}
-      className="h-8 px-3 rounded-md text-xs font-medium border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900 disabled:opacity-40 disabled:cursor-not-allowed"
+      className="h-8 px-3 rounded-md text-xs font-medium border border-border text-muted-foreground hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed"
       style={{ fontFamily: 'var(--font-sans)' }}
     >
       {children}

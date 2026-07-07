@@ -36,11 +36,11 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
         'rounded-2xl',
         padding ?? 'p-5',
         tone === 'translucent'
-          ? 'bg-white/70 dark:bg-zinc-900/60 backdrop-blur-md backdrop-saturate-150 border border-white/60 dark:border-zinc-700/40'
+          ? 'bg-card/70 backdrop-blur-md backdrop-saturate-150 border border-border/60'
           : cn(
-              'bg-white dark:bg-zinc-950',
-              'border border-zinc-200/80 dark:border-zinc-800/80',
-              'shadow-[0_1px_2px_rgba(0,0,0,0.04)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.25)]',
+              'bg-card text-card-foreground',
+              'border border-border/80',
+              'shadow-[0_1px_2px_rgba(0,0,0,0.25)]',
               interactive &&
                 'transition-all duration-150 hover:-translate-y-px hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_4px_16px_rgba(0,0,0,0.4)] cursor-pointer',
             ),
@@ -74,7 +74,7 @@ export function CardTitle({ as: As = 'h2', className, children, ...props }: Card
   return (
     <As
       className={cn(
-        'text-[16px] font-medium leading-tight text-zinc-900 dark:text-zinc-50 m-0',
+        'text-[16px] font-medium leading-tight text-foreground m-0',
         className,
       )}
       style={{ fontFamily: 'var(--font-sans)', letterSpacing: '-0.01em' }}
@@ -90,7 +90,7 @@ type CardDescriptionProps = React.HTMLAttributes<HTMLParagraphElement>;
 export function CardDescription({ className, children, ...props }: CardDescriptionProps) {
   return (
     <p
-      className={cn('text-[12.5px] leading-relaxed text-zinc-500 dark:text-zinc-400 m-0', className)}
+      className={cn('text-[12.5px] leading-relaxed text-muted-foreground m-0', className)}
       {...props}
     >
       {children}
@@ -112,7 +112,7 @@ type CardFooterProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function CardFooter({ className, children, ...props }: CardFooterProps) {
   return (
-    <div className={cn('flex items-center gap-2 pt-4 mt-3 border-t border-zinc-100 dark:border-zinc-900', className)} {...props}>
+    <div className={cn('flex items-center gap-2 pt-4 mt-3 border-t border-border', className)} {...props}>
       {children}
     </div>
   );

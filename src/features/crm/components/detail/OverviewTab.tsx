@@ -39,7 +39,7 @@ function DiscPill({ letter, emphasis }: { letter: string; emphasis: 'primary' | 
   const col = DISC_COLORS[letter] ?? DISC_NEUTRAL;
   return (
     <span
-      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border font-medium text-zinc-800 dark:text-zinc-100 ${
+      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border font-medium text-foreground ${
         emphasis === 'primary' ? 'px-2 py-0.5 text-[11px]' : 'px-1.5 py-0.5 text-[10px] opacity-75'
       }`}
       style={{ backgroundColor: `${col}1A`, borderColor: `${col}59`, fontFamily: 'var(--font-mono)' }}
@@ -56,12 +56,12 @@ function Fact({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="min-w-0">
       <dt
-        className="text-[10.5px] uppercase tracking-[0.08em] text-zinc-500 dark:text-zinc-400"
-        style={{ fontFamily: 'var(--font-mono)' }}
+        className="text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground"
+        style={{ fontFamily: 'var(--font-pixel)' }}
       >
         {label}
       </dt>
-      <dd className="m-0 mt-0.5 break-words text-[13.5px] text-zinc-900 dark:text-zinc-50">
+      <dd className="m-0 mt-0.5 break-words text-[13.5px] text-foreground">
         {value}
       </dd>
     </div>
@@ -95,7 +95,7 @@ export function OverviewTab({ client, linkedResults }: OverviewTabProps) {
           <Fact label="Next review" value={fmtDate(client.nextReviewDate)} />
           <Fact label="Risk profile" value={fmtText(client.riskProfile)} />
         </dl>
-        <div className="mt-4 border-t border-zinc-100 pt-4 dark:border-zinc-900">
+        <div className="mt-4 border-t border-border pt-4">
           <dl>
             <Fact
               label="Notes"
@@ -118,7 +118,7 @@ export function OverviewTab({ client, linkedResults }: OverviewTabProps) {
                 <span data-testid="clients-detail-total-balance">
                   {formatCurrency(Number(client.totalBankBalance) || 0)}
                 </span>
-                <span className="block text-[11px] text-zinc-500 dark:text-zinc-400">
+                <span className="block text-[11px] text-muted-foreground">
                   Derived from bank history
                 </span>
               </>
@@ -146,7 +146,7 @@ export function OverviewTab({ client, linkedResults }: OverviewTabProps) {
         )}
         {!linkedResults.isLoading && !linkedResults.isError && linkedRows.length === 0 && (
           <p
-            className="m-0 mt-3 text-[12.5px] text-zinc-500 dark:text-zinc-400"
+            className="m-0 mt-3 text-[12.5px] text-muted-foreground"
             data-testid="clients-detail-comm-style-empty"
           >
             No visible profiling results
@@ -157,7 +157,7 @@ export function OverviewTab({ client, linkedResults }: OverviewTabProps) {
             {linkedRows.map((result) => (
               <li
                 key={result.id}
-                className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-zinc-100 pb-3 last:border-b-0 last:pb-0 dark:border-zinc-900"
+                className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-border pb-3 last:border-b-0 last:pb-0"
                 data-testid={`clients-detail-comm-style-row-${result.id}`}
               >
                 <span
@@ -168,12 +168,12 @@ export function OverviewTab({ client, linkedResults }: OverviewTabProps) {
                   <DiscPill letter={result.disc_secondary} emphasis="secondary" />
                 </span>
                 <span
-                  className="text-[13px] font-medium text-zinc-900 dark:text-zinc-50"
+                  className="text-[13px] font-medium text-foreground"
                   style={{ fontFamily: 'var(--font-mono)' }}
                 >
                   MBTI {result.mbti}
                 </span>
-                <span className="text-[12px] text-zinc-500 dark:text-zinc-400">
+                <span className="text-[12px] text-muted-foreground">
                   {formatDisplayDateLong(result.created_at)}
                 </span>
                 <Link

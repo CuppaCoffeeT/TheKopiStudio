@@ -29,16 +29,16 @@ export function LegendRow({ items, className, ...props }: LegendRowProps) {
       {items.map((it, i) => (
         <span
           key={i}
-          className="inline-flex items-center gap-1.5 text-[11px] text-zinc-700 dark:text-zinc-300"
+          className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground"
           style={{ fontFamily: 'var(--font-mono)' }}
         >
           <span
             className="inline-block flex-shrink-0 rounded-sm"
             style={{ width: 8, height: 8, background: it.color }}
           />
-          <span className="text-zinc-700 dark:text-zinc-300">{it.label}</span>
+          <span className="text-muted-foreground">{it.label}</span>
           {it.value != null && (
-            <span className="tabular-nums text-zinc-500 dark:text-zinc-400">
+            <span className="tabular-nums text-muted-foreground">
               {it.value}
             </span>
           )}

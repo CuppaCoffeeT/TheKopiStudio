@@ -52,7 +52,7 @@ export const EmailDetailHeader = forwardRef<HTMLDivElement, EmailDetailHeaderPro
           'sticky top-0 z-10',
           'flex items-center gap-2.5 px-4 py-2.5',
           'backdrop-blur-md bg-white/70 dark:bg-zinc-950/70',
-          'border-b border-zinc-200/60 dark:border-zinc-800/60',
+          'border-b border-border',
           className,
         )}
         style={{ fontFamily: 'var(--font-sans)' }}
@@ -64,9 +64,9 @@ export const EmailDetailHeader = forwardRef<HTMLDivElement, EmailDetailHeaderPro
             aria-label="Show thread list"
             className={cn(
               'hidden md:inline-flex w-[26px] h-[26px] items-center justify-center rounded-md shrink-0',
-              'text-zinc-500 dark:text-zinc-400',
-              'hover:bg-zinc-100 dark:hover:bg-zinc-800',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400',
+              'text-muted-foreground',
+              'hover:bg-secondary',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
             )}
           >
             <PanelLeft className="w-3.5 h-3.5" aria-hidden />
@@ -79,20 +79,20 @@ export const EmailDetailHeader = forwardRef<HTMLDivElement, EmailDetailHeaderPro
             aria-label="Back to inbox"
             className={cn(
               'w-[26px] h-[26px] inline-flex items-center justify-center rounded-md shrink-0',
-              'text-zinc-500 dark:text-zinc-400',
-              'hover:bg-zinc-100 dark:hover:bg-zinc-800',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400',
+              'text-muted-foreground',
+              'hover:bg-secondary',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
             )}
           >
             <ChevronLeft className="w-3.5 h-3.5" aria-hidden />
           </button>
         )}
-        <h2 className="text-[13.5px] font-semibold text-zinc-900 dark:text-zinc-100 flex-1 min-w-0 truncate">
+        <h2 className="text-[13.5px] font-semibold text-foreground flex-1 min-w-0 truncate">
           {title}
         </h2>
         {messageCount !== undefined && messageCount > 0 && (
           <span
-            className="text-[10.5px] text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 rounded-sm tabular-nums shrink-0"
+            className="text-[10.5px] text-muted-foreground bg-secondary px-1.5 rounded-sm tabular-nums shrink-0"
             style={{ fontFamily: 'var(--font-mono)' }}
           >
             {messageCount}
@@ -108,9 +108,9 @@ export const EmailDetailHeader = forwardRef<HTMLDivElement, EmailDetailHeaderPro
             aria-label={isStarred ? 'Unstar' : 'Star'}
             className={cn(
               'w-[26px] h-[26px] inline-flex items-center justify-center rounded-md shrink-0',
-              'text-zinc-400 dark:text-zinc-500',
-              'hover:bg-zinc-100 dark:hover:bg-zinc-800',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400',
+              'text-muted-foreground',
+              'hover:bg-secondary',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
             )}
           >
             <Star

@@ -99,7 +99,7 @@ export function AppHeader({
     <header
       className={cn(
         'sticky top-0 z-30 backdrop-blur-xl backdrop-saturate-[1.4]',
-        'bg-white/[0.72] dark:bg-zinc-950/70',
+        'bg-card/[0.72] dark:bg-card/70',
         'border-b border-[#ececee] dark:border-[#202024]',
         className,
       )}

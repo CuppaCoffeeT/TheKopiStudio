@@ -48,8 +48,8 @@ export const VARIANT_ACCENT: Record<
 /** Tailwind class stack for a glass surface (backdrop-blur + semi-transparent bg). */
 export const GLASS_SURFACE =
   'backdrop-blur-md backdrop-saturate-150 ' +
-  'bg-white/75 dark:bg-zinc-950/75 ' +
-  'border border-zinc-200/60 dark:border-zinc-800/70 ' +
+  'bg-card/75 ' +
+  'border border-border/60 ' +
   'shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_rgba(24,24,27,0.08)] ' +
   'dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_12px_32px_rgba(0,0,0,0.35)]';
 

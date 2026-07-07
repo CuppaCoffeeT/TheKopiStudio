@@ -61,13 +61,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           'px-3',
           error
             ? 'border-red-700 dark:border-red-400'
-            : 'border-zinc-300 dark:border-zinc-700',
-          !disabled && !error && 'hover:border-zinc-400 dark:hover:border-zinc-600',
-          !error && 'focus:border-red-700 dark:focus:border-red-400 focus:ring-[3px] focus:ring-red-700/15 dark:focus:ring-red-400/25',
+            : 'border-border',
+          !disabled && !error && 'hover:border-border',
+          !error && 'focus:border-ring focus:ring-[3px] focus:ring-ring/15',
           error && 'focus:ring-[3px] focus:ring-red-700/15 dark:focus:ring-red-400/25',
-          disabled ? 'bg-zinc-100 dark:bg-zinc-900 opacity-80 cursor-not-allowed' : 'bg-white dark:bg-zinc-950',
-          'text-zinc-900 dark:text-zinc-50',
-          'placeholder:text-zinc-400 dark:placeholder:text-zinc-500',
+          disabled ? 'bg-secondary opacity-80 cursor-not-allowed' : 'bg-card',
+          'text-foreground',
+          'placeholder:text-muted-foreground',
           'outline-none',
           mono && 'tabular-nums',
           className,
@@ -86,22 +86,22 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         heightCls,
         error
           ? 'border-red-700 dark:border-red-400'
-          : 'border-zinc-300 dark:border-zinc-700',
-        !disabled && !readOnly && !error && 'hover:border-zinc-400 dark:hover:border-zinc-600',
+          : 'border-border',
+        !disabled && !readOnly && !error && 'hover:border-border',
         !error &&
-          'focus-within:border-red-700 dark:focus-within:border-red-400 focus-within:ring-[3px] focus-within:ring-red-700/15 dark:focus-within:ring-red-400/25',
+          'focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/15',
         error &&
           'focus-within:ring-[3px] focus-within:ring-red-700/15 dark:focus-within:ring-red-400/25',
         disabled || readOnly
-          ? 'bg-zinc-100 dark:bg-zinc-900'
-          : 'bg-white dark:bg-zinc-950',
+          ? 'bg-secondary'
+          : 'bg-card',
         disabled && 'opacity-80 cursor-not-allowed',
         containerClassName,
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
     >
       {leadingIcon && (
-        <span className="inline-flex items-center justify-center pl-3 text-zinc-500 dark:text-zinc-400 flex-shrink-0">
+        <span className="inline-flex items-center justify-center pl-3 text-muted-foreground flex-shrink-0">
           {leadingIcon}
         </span>
       )}
@@ -109,9 +109,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         <span
           className={cn(
             'h-full inline-flex items-center px-2.5 flex-shrink-0',
-            'text-zinc-500 dark:text-zinc-400',
-            'border-r border-zinc-200 dark:border-zinc-800',
-            'bg-zinc-50 dark:bg-zinc-900',
+            'text-muted-foreground',
+            'border-r border-border',
+            'bg-secondary',
           )}
           style={{ fontFamily: 'var(--font-mono)', fontSize: size === 'lg' ? 14 : 13 }}
         >
@@ -124,8 +124,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         readOnly={readOnly}
         className={cn(
           'flex-1 min-w-0 h-full px-3 bg-transparent outline-none',
-          'text-zinc-900 dark:text-zinc-50',
-          'placeholder:text-zinc-400 dark:placeholder:text-zinc-500',
+          'text-foreground',
+          'placeholder:text-muted-foreground',
           disabled && 'cursor-not-allowed',
           mono && 'tabular-nums',
           className,
@@ -135,8 +135,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       />
       {readOnly && (
         <span
-          className="px-3 text-zinc-500 dark:text-zinc-400 uppercase tracking-wider flex-shrink-0"
-          style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, letterSpacing: '0.08em' }}
+          className="px-3 text-muted-foreground uppercase tracking-wider flex-shrink-0"
+          style={{ fontFamily: 'var(--font-pixel)', fontSize: 10.5, letterSpacing: '0.08em' }}
         >
           readonly
         </span>
@@ -145,9 +145,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         <span
           className={cn(
             'h-full inline-flex items-center px-2.5 flex-shrink-0',
-            'text-zinc-500 dark:text-zinc-400',
-            'border-l border-zinc-200 dark:border-zinc-800',
-            'bg-zinc-50 dark:bg-zinc-900',
+            'text-muted-foreground',
+            'border-l border-border',
+            'bg-secondary',
           )}
           style={{ fontFamily: 'var(--font-mono)', fontSize: size === 'lg' ? 14 : 13 }}
         >

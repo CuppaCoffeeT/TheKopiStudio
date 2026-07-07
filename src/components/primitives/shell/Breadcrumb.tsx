@@ -35,9 +35,9 @@ export function Breadcrumb({ segments, truncate = true, className }: BreadcrumbP
         const isEllipsis = 'ellipsis' in s && s.ellipsis;
         return (
           <span key={i} className="inline-flex items-center gap-2">
-            {i > 0 && <span className="text-zinc-600 dark:text-zinc-500 text-xs" aria-hidden="true">/</span>}
+            {i > 0 && <span className="text-muted-foreground text-xs" aria-hidden="true">/</span>}
             {isEllipsis ? (
-              <span className="text-zinc-600 dark:text-zinc-500">…</span>
+              <span className="text-muted-foreground">…</span>
             ) : s.href || s.onClick ? (
               <Link
                 to={s.href ?? '#'}
@@ -50,10 +50,10 @@ export function Breadcrumb({ segments, truncate = true, className }: BreadcrumbP
                     : undefined
                 }
                 className={cn(
-                  'hover:underline decoration-red-700 dark:decoration-red-400 underline-offset-[3px]',
+                  'hover:underline decoration-primary underline-offset-[3px]',
                   isLast
-                    ? 'font-semibold text-zinc-900 dark:text-zinc-50'
-                    : 'font-normal text-zinc-600 dark:text-zinc-400'
+                    ? 'font-semibold text-foreground'
+                    : 'font-normal text-muted-foreground'
                 )}
               >
                 {s.label}
@@ -62,8 +62,8 @@ export function Breadcrumb({ segments, truncate = true, className }: BreadcrumbP
               <span
                 className={cn(
                   isLast
-                    ? 'font-semibold text-zinc-900 dark:text-zinc-50'
-                    : 'font-normal text-zinc-600 dark:text-zinc-400'
+                    ? 'font-semibold text-foreground'
+                    : 'font-normal text-muted-foreground'
                 )}
               >
                 {s.label}

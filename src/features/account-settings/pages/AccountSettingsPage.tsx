@@ -70,7 +70,7 @@ export default function AccountSettingsPage() {
             ) : (
               <div className="flex flex-col gap-8" data-testid="account-security-tab">
                 <SecurityEmailForm currentEmail={currentEmail} />
-                <div className="border-t border-zinc-100 dark:border-zinc-900 pt-6">
+                <div className="border-t border-border pt-6">
                   <SecurityPasswordForm />
                 </div>
               </div>

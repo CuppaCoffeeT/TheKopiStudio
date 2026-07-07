@@ -23,13 +23,13 @@ function DiscLetterPill({ letter, emphasis }: DiscLetterPillProps) {
       title={`${PR[letter].nm}${emphasis === 'secondary' ? ' (secondary)' : ''}`}
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full border font-medium whitespace-nowrap',
-        'text-zinc-800 dark:text-zinc-100',
+        'text-foreground',
         emphasis === 'primary' ? 'px-2 py-0.5 text-[11px]' : 'px-1.5 py-0.5 text-[10px] opacity-75',
       )}
       style={{
         backgroundColor: `${col}1A`,
         borderColor: `${col}59`,
-        fontFamily: 'var(--font-mono)',
+        fontFamily: 'var(--font-pixel)',
       }}
     >
       {emphasis === 'primary' && (

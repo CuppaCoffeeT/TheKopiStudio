@@ -20,8 +20,8 @@ export function CountBadge({ count, urgent = false, compact = false, className }
         compact ? 'min-w-[22px] h-[18px] px-1.5' : 'min-w-[24px] h-5 px-1.5',
         'text-[10.5px]',
         critical
-          ? 'bg-red-700 text-white dark:bg-red-500/60'
-          : 'bg-zinc-200 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-200',
+          ? 'bg-primary text-primary-foreground'
+          : 'bg-secondary text-muted-foreground',
         className
       )}
       style={{ fontFamily: 'var(--font-mono)' }}

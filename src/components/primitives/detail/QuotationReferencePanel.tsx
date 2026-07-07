@@ -67,42 +67,42 @@ export function QuotationReferencePanel({ items, className }: QuotationReference
   return (
     <div
       className={cn(
-        'overflow-hidden rounded-xl border bg-white font-sans',
-        'border-zinc-200 dark:border-zinc-800 dark:bg-zinc-950',
+        'overflow-hidden rounded-xl border bg-card font-sans',
+        'border-border',
         className,
       )}
     >
       <div
         className={cn(
           'flex items-center justify-between px-4 py-3.5',
-          groups.length > 0 && 'border-b border-zinc-100 dark:border-zinc-900',
+          groups.length > 0 && 'border-b border-border',
         )}
       >
         <div className="flex items-center gap-2">
-          <FileText className="h-3.5 w-3.5 text-zinc-500 dark:text-zinc-400" />
-          <span className="text-[13px] font-semibold text-zinc-900 dark:text-zinc-50">
+          <FileText className="h-3.5 w-3.5 text-muted-foreground" />
+          <span className="text-[13px] font-semibold text-foreground">
             Linked quotations
           </span>
           {groups.length > 0 && (
-            <span className="rounded-full border border-zinc-200 bg-zinc-50 px-1.5 py-px font-mono text-[10.5px] text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
+            <span className="rounded-full border border-border bg-secondary px-1.5 py-px font-mono text-[10.5px] text-muted-foreground">
               {groups.length}
             </span>
           )}
         </div>
-        <span className="text-[11.5px] text-zinc-500 dark:text-zinc-400">
+        <span className="text-[11.5px] text-muted-foreground">
           read-only · grouped by quotation_number
         </span>
       </div>
 
       {groups.length === 0 ? (
         <div className="px-5 py-14 text-center">
-          <div className="mx-auto mb-3 inline-flex h-10 w-10 items-center justify-center rounded-[10px] border border-zinc-200 bg-zinc-50 text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
+          <div className="mx-auto mb-3 inline-flex h-10 w-10 items-center justify-center rounded-[10px] border border-border bg-secondary text-muted-foreground">
             <FileText className="h-4.5 w-4.5" />
           </div>
-          <div className="text-[13px] font-medium text-zinc-900 dark:text-zinc-50">
+          <div className="text-[13px] font-medium text-foreground">
             No quotations linked to this project
           </div>
-          <p className="mt-1 text-[12px] leading-[1.5] text-zinc-500 dark:text-zinc-400">
+          <p className="mt-1 text-[12px] leading-[1.5] text-muted-foreground">
             Quotations linked at the project level appear here for reference while you draft a claim or invoice.
           </p>
         </div>
@@ -110,16 +110,16 @@ export function QuotationReferencePanel({ items, className }: QuotationReference
         groups.map((group, gi) => (
           <div
             key={group.quotationNumber}
-            className={cn(gi > 0 && 'border-t border-zinc-100 dark:border-zinc-900')}
+            className={cn(gi > 0 && 'border-t border-border')}
           >
-            <div className="flex items-center justify-between bg-zinc-50 px-4 py-3 dark:bg-zinc-900">
-              <span className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 bg-white px-2 py-0.5 font-mono text-[11.5px] font-medium text-zinc-700 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
-                <FileText className="h-3 w-3 text-zinc-500 dark:text-zinc-400" />
+            <div className="flex items-center justify-between bg-secondary px-4 py-3">
+              <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-2 py-0.5 font-mono text-[11.5px] font-medium text-muted-foreground">
+                <FileText className="h-3 w-3 text-muted-foreground" />
                 {group.quotationNumber}
               </span>
-              <span className="text-[12px] text-zinc-500 dark:text-zinc-400">
+              <span className="text-[12px] text-muted-foreground">
                 Total:{' '}
-                <span className="font-medium text-zinc-700 dark:text-zinc-300">
+                <span className="font-medium text-muted-foreground">
                   <span className={NUM_CELL}>{formatCurrency(group.total)}</span>
                 </span>
               </span>
@@ -135,23 +135,23 @@ export function QuotationReferencePanel({ items, className }: QuotationReference
                 <col className="w-[18%]" />
               </colgroup>
               <thead>
-                <tr className="bg-zinc-50 font-mono text-[10px] uppercase tracking-[0.06em] text-zinc-400 dark:bg-zinc-900 dark:text-zinc-600">
-                  <th className="border-b border-zinc-100 px-4 py-2.5 text-left font-medium dark:border-zinc-900">
+                <tr className="bg-secondary font-mono text-[10px] uppercase tracking-[0.06em] text-muted-foreground">
+                  <th className="border-b border-border px-4 py-2.5 text-left font-medium">
                     Item
                   </th>
-                  <th className="border-b border-zinc-100 px-4 py-2.5 text-left font-medium dark:border-zinc-900">
+                  <th className="border-b border-border px-4 py-2.5 text-left font-medium">
                     Code
                   </th>
-                  <th className="border-b border-zinc-100 px-4 py-2.5 text-right font-medium dark:border-zinc-900">
+                  <th className="border-b border-border px-4 py-2.5 text-right font-medium">
                     Qty
                   </th>
-                  <th className="border-b border-zinc-100 px-4 py-2.5 text-left font-medium dark:border-zinc-900">
+                  <th className="border-b border-border px-4 py-2.5 text-left font-medium">
                     Unit
                   </th>
-                  <th className="border-b border-zinc-100 px-4 py-2.5 text-right font-medium dark:border-zinc-900">
+                  <th className="border-b border-border px-4 py-2.5 text-right font-medium">
                     Unit Price
                   </th>
-                  <th className="border-b border-zinc-100 px-4 py-2.5 text-right font-medium dark:border-zinc-900">
+                  <th className="border-b border-border px-4 py-2.5 text-right font-medium">
                     Amount
                   </th>
                 </tr>
@@ -164,45 +164,45 @@ export function QuotationReferencePanel({ items, className }: QuotationReference
                       key={item.id}
                       className={cn(
                         'align-top',
-                        i > 0 && 'border-t border-zinc-100 dark:border-zinc-900',
+                        i > 0 && 'border-t border-border',
                       )}
                     >
-                      <td className="px-4 py-2.5 text-zinc-700 dark:text-zinc-300">
-                        <div className="font-medium text-zinc-900 dark:text-zinc-50">
+                      <td className="px-4 py-2.5 text-muted-foreground">
+                        <div className="font-medium text-foreground">
                           {item.title}
                         </div>
                         {item.description && (
-                          <div className="mt-0.5 max-w-[42ch] truncate text-[11px] text-zinc-500 dark:text-zinc-400">
+                          <div className="mt-0.5 max-w-[42ch] truncate text-[11px] text-muted-foreground">
                             {item.description}
                           </div>
                         )}
                       </td>
-                      <td className="px-4 py-2.5 font-mono text-[11.5px] text-zinc-500 dark:text-zinc-400">
+                      <td className="px-4 py-2.5 font-mono text-[11.5px] text-muted-foreground">
                         {item.product_service_code || '—'}
                       </td>
-                      <td className={cn('px-4 py-2.5 text-right text-zinc-700 dark:text-zinc-300', NUM_CELL)}>
+                      <td className={cn('px-4 py-2.5 text-right text-muted-foreground', NUM_CELL)}>
                         {formatQty(item.quantity)}
                       </td>
-                      <td className="px-4 py-2.5 text-zinc-500 dark:text-zinc-400">
+                      <td className="px-4 py-2.5 text-muted-foreground">
                         {item.unit || '—'}
                       </td>
-                      <td className={cn('px-4 py-2.5 text-right text-zinc-700 dark:text-zinc-300', NUM_CELL)}>
+                      <td className={cn('px-4 py-2.5 text-right text-muted-foreground', NUM_CELL)}>
                         {formatCurrency(item.unit_price)}
                       </td>
-                      <td className={cn('px-4 py-2.5 text-right font-semibold text-zinc-900 dark:text-zinc-50', NUM_CELL)}>
+                      <td className={cn('px-4 py-2.5 text-right font-semibold text-foreground', NUM_CELL)}>
                         {formatCurrency(lineTotal)}
                       </td>
                     </tr>
                   );
                 })}
-                <tr className="border-t border-zinc-100 bg-zinc-50 dark:border-zinc-900 dark:bg-red-500/[0.06]">
+                <tr className="border-t border-border bg-secondary">
                   <td
                     colSpan={5}
-                    className="px-4 py-2.5 text-right font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-zinc-500 dark:text-zinc-400"
+                    className="px-4 py-2.5 text-right font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-muted-foreground"
                   >
                     Subtotal (excl. GST)
                   </td>
-                  <td className={cn('px-4 py-2.5 text-right font-semibold text-zinc-900 dark:text-zinc-50', NUM_CELL)}>
+                  <td className={cn('px-4 py-2.5 text-right font-semibold text-foreground', NUM_CELL)}>
                     {formatCurrency(group.total)}
                   </td>
                 </tr>

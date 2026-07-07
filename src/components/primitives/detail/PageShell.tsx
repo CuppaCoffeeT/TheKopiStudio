@@ -53,7 +53,7 @@ export function PageShell({
   const showSideRail = variant === 'withSideRail' && sideRail;
   const actionBarHide = actionBarBreakpoint === 'lg' ? 'lg:hidden' : 'md:hidden';
   return (
-    <div className={cn('min-h-full bg-zinc-100 text-zinc-900 dark:bg-zinc-900 dark:text-zinc-50', className)}>
+    <div className={cn('min-h-full bg-background text-foreground', className)}>
       {hero}
       {tabs}
       {/* Single render path — responsive via flex-col→md:flex-row. Prevents children
@@ -78,7 +78,7 @@ export function PageShell({
             actionBarHide,
             'sticky bottom-0 left-0 right-0 z-20',
             'px-4 py-2.5 flex items-center gap-2.5',
-            'border-t border-zinc-100 dark:border-zinc-900',
+            'border-t border-border',
             'bg-white/70 dark:bg-zinc-950/70',
             'backdrop-blur-md backdrop-saturate-150'
           )}
@@ -125,8 +125,8 @@ export function PageShellHero({
     <div
       className={cn(
         'px-5 md:px-10 pt-[18px] md:pt-7 pb-3.5 md:pb-5',
-        'bg-zinc-100 dark:bg-zinc-900',
-        'border-b border-zinc-100 dark:border-zinc-900',
+        'bg-background',
+        'border-b border-border',
         className
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
@@ -140,13 +140,13 @@ export function PageShellHero({
           </div>
           {(recordId || (meta && meta.length > 0)) && (
             <div
-              className="mt-2 flex flex-wrap items-center gap-2.5 text-[11.5px] text-zinc-600 dark:text-zinc-400 tracking-wide"
+              className="mt-2 flex flex-wrap items-center gap-2.5 text-[11.5px] text-muted-foreground tracking-wide"
               style={{ fontFamily: 'var(--font-mono)' }}
             >
-              {recordId && <span className="text-zinc-700 dark:text-zinc-300 font-medium">{recordId}</span>}
+              {recordId && <span className="text-muted-foreground font-medium">{recordId}</span>}
               {meta?.map((m, i) => (
                 <span key={i} className="inline-flex items-center gap-2.5">
-                  {(recordId || i > 0) && <span aria-hidden="true" className="text-zinc-400 dark:text-zinc-600">·</span>}
+                  {(recordId || i > 0) && <span aria-hidden="true" className="text-muted-foreground">·</span>}
                   <span>{m}</span>
                 </span>
               ))}
@@ -162,7 +162,7 @@ export function PageShellHero({
 // ─── Status pill ──────────────────────────────────────────────
 
 const STATUS_PILL: Record<PageShellStatusTone, string> = {
-  neutral: 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300',
+  neutral: 'bg-secondary text-muted-foreground',
   success: 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400',
   warning: 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400',
   danger: 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400',

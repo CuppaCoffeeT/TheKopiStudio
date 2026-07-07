@@ -29,10 +29,10 @@ export const Chip = forwardRef<HTMLButtonElement, ChipProps>(function Chip(
         size === 'sm' ? 'h-6 text-[11px]' : 'h-7 text-xs',
         'px-2.5 rounded-full inline-flex items-center gap-1.5 font-medium whitespace-nowrap border',
         active
-          ? 'bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-900 border-transparent'
-          : 'bg-transparent hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800',
+          ? 'bg-primary text-primary-foreground border-transparent'
+          : 'bg-transparent hover:bg-secondary text-muted-foreground border-border',
         'disabled:opacity-40 disabled:cursor-not-allowed',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         className
       )}
       style={{ fontFamily: 'var(--font-sans)' }}

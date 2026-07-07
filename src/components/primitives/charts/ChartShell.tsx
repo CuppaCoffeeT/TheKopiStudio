@@ -30,7 +30,7 @@ export const ChartShell = forwardRef<HTMLDivElement, ChartShellProps>(function C
       ref={ref}
       className={cn(
         'overflow-hidden rounded-xl border shadow-sm',
-        'border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950',
+        'border-border bg-card',
         className
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
@@ -40,19 +40,19 @@ export const ChartShell = forwardRef<HTMLDivElement, ChartShellProps>(function C
       <div
         className={cn(
           'flex items-start gap-3.5 border-b px-4.5 py-3.5',
-          'border-zinc-200 dark:border-zinc-800'
+          'border-border'
         )}
         style={{ padding: '14px 18px' }}
       >
         <div className="min-w-0 flex-1">
           <div
-            className="text-[15px] font-semibold tracking-tight text-zinc-900 dark:text-zinc-50"
+            className="text-[15px] font-semibold tracking-tight text-foreground"
           >
             {title}
           </div>
           {subtitle && (
             <div
-              className="mt-[3px] text-[11px] text-zinc-500 dark:text-zinc-400"
+              className="mt-[3px] text-[11px] text-muted-foreground"
               style={{ fontFamily: 'var(--font-mono)' }}
             >
               {subtitle}
@@ -67,7 +67,7 @@ export const ChartShell = forwardRef<HTMLDivElement, ChartShellProps>(function C
 
       {/* Canvas */}
       <div
-        className="relative bg-white dark:bg-zinc-950"
+        className="relative bg-card"
         style={{ height }}
       >
         {children}
@@ -78,7 +78,7 @@ export const ChartShell = forwardRef<HTMLDivElement, ChartShellProps>(function C
         <div
           className={cn(
             'border-t text-[11px]',
-            'border-zinc-200 text-zinc-500 dark:border-zinc-800 dark:text-zinc-400'
+            'border-border text-muted-foreground'
           )}
           style={{ padding: '10px 18px', fontFamily: 'var(--font-mono)' }}
         >
@@ -114,7 +114,7 @@ export function AxisY({ ticks, width = 40, height, format = (v) => v }: AxisYPro
         return (
           <span
             key={i}
-            className="absolute text-[10px] tabular-nums text-zinc-500 dark:text-zinc-400"
+            className="absolute text-[10px] tabular-nums text-muted-foreground"
             style={{ top: y - 7, right: 6, fontFamily: 'var(--font-mono)' }}
           >
             {format(t.value)}
@@ -140,7 +140,7 @@ export function AxisX({ ticks, width = 640, format = (v) => v }: AxisXProps) {
       {ticks.map((t, i) => (
         <span
           key={i}
-          className="text-[10px] tabular-nums text-zinc-500 dark:text-zinc-400"
+          className="text-[10px] tabular-nums text-muted-foreground"
           style={{ fontFamily: 'var(--font-mono)' }}
         >
           {format(t)}
@@ -163,7 +163,7 @@ export function GridLines({ count = 4, height }: GridLinesProps) {
         return (
           <span
             key={i}
-            className="absolute left-0 right-0 bg-zinc-100 dark:bg-zinc-800"
+            className="absolute left-0 right-0 bg-border"
             style={{ top: y, height: 1 }}
           />
         );

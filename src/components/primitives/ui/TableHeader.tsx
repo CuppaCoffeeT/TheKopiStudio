@@ -49,13 +49,12 @@ export function TableHeader({
     <div
       className={cn(
         'flex items-stretch h-10 px-[14px]',
-        'bg-zinc-100 dark:bg-zinc-900',
-        'border-b border-zinc-200 dark:border-zinc-800',
+        'bg-secondary',
+        'border-b border-border',
         'text-[10.5px] font-semibold uppercase tracking-[0.08em]',
-        'text-zinc-600 dark:text-zinc-300',
+        'text-muted-foreground',
         className
       )}
-      style={{ fontFamily: 'var(--font-mono)' }}
       role="row"
     >
       {selectable && (
@@ -77,7 +76,6 @@ export function TableHeader({
         const flexStyle = {
           flex: `${grow} ${shrink} ${basis}px`,
           minWidth,
-          fontFamily: 'var(--font-mono)',
         };
         const labelText = col.label?.trim() || col.key;
         const showLabel = !!col.label;
@@ -85,8 +83,8 @@ export function TableHeader({
           'inline-flex items-center gap-[6px] px-2',
           col.align === 'right' ? 'justify-end' : 'justify-start',
           isSorted
-            ? 'text-zinc-900 dark:text-zinc-50'
-            : 'text-zinc-600 dark:text-zinc-300',
+            ? 'text-foreground'
+            : 'text-muted-foreground',
         );
         if (!col.sortable) {
           return (
@@ -121,8 +119,8 @@ export function TableHeader({
             className={cn(
               baseClasses,
               'cursor-pointer',
-              'hover:bg-zinc-200/60 hover:text-zinc-700 dark:hover:bg-white/5 dark:hover:text-zinc-200',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+              'hover:bg-secondary hover:text-foreground',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
               'bg-transparent border-0',
             )}
             style={flexStyle}

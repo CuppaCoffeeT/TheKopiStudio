@@ -58,11 +58,11 @@ export function ChoiceCards({ options, onSelect }: ChoiceCardsProps) {
             aria-label={opt.title}
             className={cn(
               'group relative flex flex-col items-start gap-2 rounded-lg border p-4 text-left transition-all',
-              'min-h-[140px] focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+              'min-h-[140px] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
               'disabled:opacity-40 disabled:cursor-not-allowed',
               isPrimary
                 ? 'bg-slate-700 text-white hover:bg-slate-800 active:scale-[0.98] border-transparent dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white'
-                : 'bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-50 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 active:scale-[0.98]',
+                : 'bg-card border-border text-foreground hover:bg-secondary hover:border-border active:scale-[0.98]',
             )}
           >
             <span
@@ -76,16 +76,16 @@ export function ChoiceCards({ options, onSelect }: ChoiceCardsProps) {
             >
               <Icon className="h-5 w-5" strokeWidth={2} />
             </span>
-            <span className={cn('text-base font-semibold leading-tight', isPrimary ? 'text-white dark:text-slate-900' : 'text-zinc-900 dark:text-zinc-50')}>
+            <span className={cn('text-base font-semibold leading-tight', isPrimary ? 'text-white dark:text-slate-900' : 'text-foreground')}>
               {opt.title}
             </span>
-            <span className={cn('text-xs leading-relaxed', isPrimary ? 'text-white/85 dark:text-slate-900/80' : 'text-zinc-600 dark:text-zinc-400')}>
+            <span className={cn('text-xs leading-relaxed', isPrimary ? 'text-white/85 dark:text-slate-900/80' : 'text-muted-foreground')}>
               {opt.description}
             </span>
             <ChevronRight
               className={cn(
                 'absolute right-3 top-3 h-4 w-4 opacity-50 group-hover:opacity-100 transition-opacity',
-                isPrimary ? 'text-white dark:text-slate-900' : 'text-zinc-500 dark:text-zinc-400',
+                isPrimary ? 'text-white dark:text-slate-900' : 'text-muted-foreground',
               )}
               aria-hidden
               strokeWidth={2.4}

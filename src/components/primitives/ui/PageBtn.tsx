@@ -31,10 +31,10 @@ export const PageBtn = forwardRef<HTMLButtonElement, PageBtnProps>(function Page
         active ? 'font-semibold' : 'font-medium',
         'border',
         active
-          ? 'bg-slate-800 border-slate-800 text-white dark:bg-slate-100 dark:border-slate-100 dark:text-slate-900'
-          : 'bg-transparent border-zinc-200 text-zinc-700 dark:border-zinc-800 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900',
+          ? 'bg-primary border-primary text-primary-foreground'
+          : 'bg-transparent border-border text-muted-foreground hover:bg-secondary',
         'disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         className
       )}
       style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}

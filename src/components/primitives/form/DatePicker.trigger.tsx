@@ -44,10 +44,10 @@ export function DatePickerTrigger({
     'w-full flex items-center gap-2 rounded-lg border tabular-nums',
     padCls,
     heightCls,
-    error ? 'border-red-700 dark:border-red-400' : 'border-zinc-300 dark:border-zinc-700',
-    !disabled && !error && 'hover:border-zinc-400 dark:hover:border-zinc-600',
-    open && !error && 'border-red-700 dark:border-red-400 ring-[3px] ring-red-700/15 dark:ring-red-400/25',
-    disabled ? 'bg-zinc-100 dark:bg-zinc-900 opacity-80 cursor-not-allowed' : 'bg-white dark:bg-zinc-950',
+    error ? 'border-red-700 dark:border-red-400' : 'border-border',
+    !disabled && !error && 'hover:border-border',
+    open && !error && 'border-ring ring-[3px] ring-ring/15',
+    disabled ? 'bg-secondary opacity-80 cursor-not-allowed' : 'bg-card',
     'transition-[box-shadow,border-color] duration-150',
   );
 
@@ -62,7 +62,7 @@ export function DatePickerTrigger({
           aria-label="Open calendar"
           className={cn('flex-shrink-0 inline-flex items-center', !disabled && 'cursor-pointer')}
         >
-          <Calendar size={14} className="text-zinc-500 dark:text-zinc-400" />
+          <Calendar size={14} className="text-muted-foreground" />
         </button>
         <input
           type="text"
@@ -78,7 +78,7 @@ export function DatePickerTrigger({
           className={cn(
             'flex-1 min-w-0 bg-transparent border-0 p-0 outline-none',
             touchTextCls,
-            'text-zinc-900 dark:text-zinc-50 placeholder:text-zinc-600 dark:placeholder:text-zinc-300',
+            'text-foreground placeholder:text-muted-foreground',
             disabled && 'cursor-not-allowed',
             'focus:outline-none focus-visible:outline-none',
           )}
@@ -97,17 +97,17 @@ export function DatePickerTrigger({
       className={cn(
         frameCls,
         disabled ? 'cursor-not-allowed' : 'cursor-pointer',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
       )}
       style={{ fontFamily: 'var(--font-mono)' }}
     >
       {!displayText && (
-        <Calendar size={14} className="text-zinc-500 dark:text-zinc-400 flex-shrink-0" />
+        <Calendar size={14} className="text-muted-foreground flex-shrink-0" />
       )}
       <span
         className={cn(
           'flex-1 text-left truncate',
-          displayText ? 'text-zinc-900 dark:text-zinc-50' : 'text-zinc-600 dark:text-zinc-300',
+          displayText ? 'text-foreground' : 'text-muted-foreground',
         )}
       >
         {displayText || placeholder}

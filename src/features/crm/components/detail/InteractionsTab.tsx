@@ -97,7 +97,7 @@ export function InteractionsTab({ clientId, readOnly, interactions, refDate }: I
               <div className="flex flex-wrap items-center gap-2">
                 <Badge tone={TYPE_TONES[interaction.type] ?? 'neutral'}>{interaction.type}</Badge>
                 <span
-                  className="text-[11.5px] text-zinc-500 dark:text-zinc-400"
+                  className="text-[11.5px] text-muted-foreground"
                   style={{ fontFamily: 'var(--font-mono)' }}
                 >
                   {formatDisplayDateLong(interaction.date)}
@@ -121,7 +121,7 @@ export function InteractionsTab({ clientId, readOnly, interactions, refDate }: I
                   />
                 )}
               </div>
-              <p className="m-0 whitespace-pre-wrap text-[13px] leading-relaxed text-zinc-700 dark:text-zinc-300">
+              <p className="m-0 whitespace-pre-wrap text-[13px] leading-relaxed text-muted-foreground">
                 {interaction.notes}
               </p>
             </li>

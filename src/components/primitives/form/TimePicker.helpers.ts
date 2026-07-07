@@ -6,8 +6,8 @@ import { cn } from '@/lib/utils';
 
 export const TIME_PICKER_PANEL_CLASS = cn(
   'overflow-hidden rounded-[10px]',
-  'border border-zinc-200 dark:border-zinc-800',
-  'bg-white dark:bg-zinc-950',
+  'border border-border',
+  'bg-card',
   'shadow-[0_12px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.5)]',
 );
 

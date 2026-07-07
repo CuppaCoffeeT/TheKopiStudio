@@ -82,16 +82,16 @@ export function WizardMobileDrawer({
         />
         <DialogPrimitive.Content
           data-testid={testId}
-          className="fixed inset-0 z-50 flex flex-col bg-white dark:bg-zinc-950 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-bottom-4 data-[state=closed]:slide-out-to-bottom-4 data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0"
+          className="fixed inset-0 z-50 flex flex-col bg-card data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-bottom-4 data-[state=closed]:slide-out-to-bottom-4 data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0"
           style={{ fontFamily: 'var(--font-sans)' }}
         >
           {/* Header — title is caller-rendered (typically includes its own back-arrow); we add the stepper */}
           <div
-            className="flex-shrink-0 px-4.5 pt-3 pb-2 border-b border-zinc-100 dark:border-zinc-900"
+            className="flex-shrink-0 px-4.5 pt-3 pb-2 border-b border-border"
             style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}
           >
             <DialogPrimitive.Title
-              className="text-[20px] leading-tight text-zinc-900 dark:text-zinc-50 block"
+              className="text-[20px] leading-tight text-foreground block"
               style={{
                 fontFamily: 'var(--font-pixel)',
                 letterSpacing: '-0.01em',
@@ -101,7 +101,7 @@ export function WizardMobileDrawer({
               {title}
             </DialogPrimitive.Title>
             {subtitle && (
-              <DialogPrimitive.Description className="text-[11px] text-zinc-500 mt-0.5 block">
+              <DialogPrimitive.Description className="text-[11px] text-muted-foreground mt-0.5 block">
                 {subtitle}
               </DialogPrimitive.Description>
             )}
@@ -117,7 +117,7 @@ export function WizardMobileDrawer({
 
           {/* Footer — safe-area bottom padding for iPhone home-indicator */}
           <div
-            className="flex-shrink-0 px-4.5 py-3 border-t border-zinc-100 dark:border-zinc-900 flex flex-wrap gap-2 bg-white dark:bg-zinc-950"
+            className="flex-shrink-0 px-4.5 py-3 border-t border-border flex flex-wrap gap-2 bg-card"
             style={{ paddingBottom: 'max(0.875rem, env(safe-area-inset-bottom))' }}
           >
             <WizardFooter

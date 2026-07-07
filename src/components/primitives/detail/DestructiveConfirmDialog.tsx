@@ -143,7 +143,7 @@ export function DestructiveConfirmDialog({
         </>
       }
     >
-      <div className="text-[12.5px] text-zinc-600 dark:text-zinc-300 leading-relaxed">
+      <div className="text-[12.5px] text-muted-foreground leading-relaxed">
         {description ?? defaultDescription}
       </div>
 
@@ -151,7 +151,7 @@ export function DestructiveConfirmDialog({
       {tier !== 1 && consequences && consequences.length > 0 && (
         <div>
           <div
-            className="text-[10.5px] font-medium uppercase tracking-widest text-zinc-500 mb-2"
+            className="text-[10.5px] font-medium uppercase tracking-widest text-muted-foreground mb-2"
             style={{ fontFamily: 'var(--font-mono)' }}
           >
             cascading effects · {consequences.length}
@@ -183,7 +183,7 @@ export function DestructiveConfirmDialog({
       {tier !== 1 && (
         <div>
           <div
-            className="text-[10.5px] font-medium uppercase tracking-widest text-zinc-500 mb-1.5"
+            className="text-[10.5px] font-medium uppercase tracking-widest text-muted-foreground mb-1.5"
             style={{ fontFamily: 'var(--font-mono)' }}
           >
             type <span className="text-red-700 dark:text-red-400">{resource}</span> to confirm
@@ -194,12 +194,12 @@ export function DestructiveConfirmDialog({
               onChange={(e) => setTyped(e.target.value)}
               className={cn(
                 'w-full h-9 px-3 rounded-md text-[13px] tracking-wide',
-                'bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50',
+                'bg-card text-foreground',
                 'border',
                 matches
                   ? 'border-emerald-500 dark:border-emerald-400'
-                  : 'border-zinc-200 dark:border-zinc-800',
-                'focus:outline-none focus:border-red-700 focus:ring-[3px] focus:ring-red-700/15 dark:focus:ring-red-400/20'
+                  : 'border-border',
+                'focus:outline-none focus:border-ring focus:ring-[3px] focus:ring-ring/15'
               )}
               style={{ fontFamily: 'var(--font-mono)' }}
               spellCheck={false}
@@ -225,7 +225,7 @@ export function DestructiveConfirmDialog({
             'border',
             irreversibleChecked
               ? 'border-red-200 dark:border-red-900/40 bg-red-50/60 dark:bg-red-900/10'
-              : 'border-zinc-100 dark:border-zinc-900 bg-zinc-50 dark:bg-zinc-900'
+              : 'border-border bg-secondary'
           )}
         >
           <input
@@ -240,7 +240,7 @@ export function DestructiveConfirmDialog({
               'border-[1.5px]',
               irreversibleChecked
                 ? 'border-red-700 bg-red-700 text-white'
-                : 'border-zinc-400 dark:border-zinc-600 bg-transparent'
+                : 'border-border bg-transparent'
             )}
             aria-hidden
           >
@@ -258,11 +258,11 @@ export function DestructiveConfirmDialog({
             )}
           </span>
           <div className="flex-1">
-            <div className="text-[13px] font-medium text-zinc-900 dark:text-zinc-50">
+            <div className="text-[13px] font-medium text-foreground">
               I understand this is irreversible
             </div>
             <div
-              className="mt-0.5 text-[10.5px] text-zinc-500 tracking-wide"
+              className="mt-0.5 text-[10.5px] text-muted-foreground tracking-wide"
               style={{ fontFamily: 'var(--font-mono)' }}
             >
               Logged to admin audit trail
@@ -277,7 +277,7 @@ export function DestructiveConfirmDialog({
 function ResourceChip({ children }: { children: React.ReactNode }) {
   return (
     <strong
-      className="text-zinc-900 dark:text-zinc-50 font-semibold"
+      className="text-foreground font-semibold"
       style={{ fontFamily: 'var(--font-mono)' }}
     >
       {children}

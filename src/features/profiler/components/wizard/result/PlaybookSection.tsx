@@ -48,7 +48,7 @@ export function PlaybookSection({ primary, profile }: PlaybookSectionProps) {
   return (
     <Card className="border-amber-400/30 bg-amber-50/40 dark:bg-amber-950/10" data-testid="result-playbook">
       <Eyebrow>Communication Playbook — DISC-{primary}</Eyebrow>
-      <p className="m-0 mb-3.5 text-[12px] leading-6 text-zinc-600 dark:text-zinc-400">
+      <p className="m-0 mb-3.5 text-[12px] leading-6 text-muted-foreground">
         Ready-to-use statements. Replace [Name], [Day], [detail] with real info. Tap the copy icon
         to copy a statement.
       </p>
@@ -59,13 +59,13 @@ export function PlaybookSection({ primary, profile }: PlaybookSectionProps) {
           return (
             <div
               key={cat}
-              className="overflow-hidden rounded-xl border border-zinc-200/80 bg-white dark:border-zinc-800 dark:bg-zinc-950"
+              className="overflow-hidden rounded-xl border border-border/80 bg-card"
               data-testid={`result-playbook-${cat}`}
             >
-              <div className="border-b border-zinc-100 px-3.5 py-2.5 dark:border-zinc-900">
+              <div className="border-b border-border px-3.5 py-2.5">
                 <span
                   className="uppercase text-amber-700 dark:text-amber-500"
-                  style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, fontWeight: 700, letterSpacing: '0.16em' }}
+                  style={{ fontFamily: 'var(--font-pixel)', fontSize: 9.5, fontWeight: 700, letterSpacing: '0.16em' }}
                 >
                   {CATEGORY_ICONS[cat]} {section.lbl}
                 </span>
@@ -74,15 +74,15 @@ export function PlaybookSection({ primary, profile }: PlaybookSectionProps) {
                 {section.items.map((statement, i) => (
                   <li
                     key={i}
-                    className="flex items-start gap-2.5 border-b border-zinc-100 px-3.5 py-2.5 last:border-b-0 dark:border-zinc-900"
+                    className="flex items-start gap-2.5 border-b border-border px-3.5 py-2.5 last:border-b-0"
                   >
                     <span
-                      className="mt-0.5 flex-shrink-0 text-zinc-600 dark:text-zinc-400"
+                      className="mt-0.5 flex-shrink-0 text-muted-foreground"
                       style={{ fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 700 }}
                     >
                       {i + 1}.
                     </span>
-                    <span className="flex-1 text-[13px] leading-6 text-zinc-700 dark:text-zinc-200">
+                    <span className="flex-1 text-[13px] leading-6 text-muted-foreground">
                       {statement}
                     </span>
                     <IconButton

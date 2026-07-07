@@ -92,7 +92,7 @@ export const FilterBar = forwardRef<HTMLInputElement, FilterBarProps>(function F
         {hasActive && onClearAll && (
           <button
             onClick={onClearAll}
-            className="h-9 px-2.5 rounded-md text-[12.5px] font-medium text-zinc-500 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800"
+            className="h-9 px-2.5 rounded-md text-[12.5px] font-medium text-muted-foreground hover:bg-secondary"
           >
             Clear all
           </button>
@@ -105,7 +105,7 @@ export const FilterBar = forwardRef<HTMLInputElement, FilterBarProps>(function F
               <button
                 type="button"
                 onClick={onClearFilters}
-                className="h-9 px-3 rounded-md text-[12px] font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400"
+                className="h-9 px-3 rounded-md text-[12px] font-medium text-muted-foreground hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 style={{ fontFamily: 'var(--font-sans)' }}
                 data-testid={clearFiltersTestId}
               >
@@ -131,16 +131,16 @@ export const FilterBar = forwardRef<HTMLInputElement, FilterBarProps>(function F
           {activeFilters.map((f) => (
             <span
               key={f.key}
-              className="inline-flex items-center gap-1.5 h-6 pl-2.5 pr-1.5 rounded-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300"
+              className="inline-flex items-center gap-1.5 h-6 pl-2.5 pr-1.5 rounded-full bg-secondary border border-border text-muted-foreground"
               style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5 }}
             >
-              <span className="text-zinc-500">{f.label}:</span>
-              <span className="text-zinc-900 dark:text-zinc-50">{f.value}</span>
+              <span className="text-muted-foreground">{f.label}:</span>
+              <span className="text-foreground">{f.value}</span>
               {f.onRemove && (
                 <button
                   onClick={f.onRemove}
                   aria-label={`Remove filter ${f.label}`}
-                  className="w-3.5 h-3.5 rounded-full inline-flex items-center justify-center text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
+                  className="w-3.5 h-3.5 rounded-full inline-flex items-center justify-center text-muted-foreground hover:text-foreground"
                 >
                   <X className="w-2 h-2" strokeWidth={1.5} />
                 </button>

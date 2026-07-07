@@ -13,8 +13,8 @@ import type { DiscLetter } from '../../types';
 export function Eyebrow({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <span
-      className={cn('block uppercase text-zinc-600 dark:text-zinc-400 mb-2', className)}
-      style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, fontWeight: 600, letterSpacing: '0.14em' }}
+      className={cn('block uppercase text-muted-foreground mb-2', className)}
+      style={{ fontFamily: 'var(--font-pixel)', fontSize: 10.5, fontWeight: 600, letterSpacing: '0.14em' }}
     >
       {children}
     </span>
@@ -32,11 +32,11 @@ export function DiscBadge({ d, className }: { d: DiscLetter; className?: string 
     <span
       className={cn(
         'inline-flex items-center rounded-full px-2 py-0.5 flex-shrink-0',
-        'text-zinc-800 dark:text-zinc-100',
+        'text-foreground',
         className,
       )}
       style={{
-        fontFamily: 'var(--font-mono)',
+        fontFamily: 'var(--font-pixel)',
         fontSize: 10,
         fontWeight: 700,
         backgroundColor: `${PR[d].col}1A`,

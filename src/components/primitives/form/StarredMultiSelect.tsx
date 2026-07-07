@@ -103,10 +103,10 @@ export function StarredMultiSelect({
                     aria-pressed={isPrimary}
                     title={isPrimary ? 'Primary' : 'Set as primary'}
                     className={cn(
-                      'transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 rounded-sm',
+                      'transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm',
                       isPrimary
                         ? 'text-yellow-500'
-                        : 'text-zinc-400 hover:text-yellow-500 dark:text-zinc-500 dark:hover:text-yellow-400',
+                        : 'text-muted-foreground hover:text-yellow-500 dark:hover:text-yellow-400',
                     )}
                   >
                     <Star className={cn('h-3 w-3', isPrimary && 'fill-current')} aria-hidden="true" />
@@ -115,7 +115,7 @@ export function StarredMultiSelect({
                 <span className="text-sm">
                   {opt.label}
                   {opt.description && (
-                    <span className="text-zinc-500 dark:text-zinc-400"> · {opt.description}</span>
+                    <span className="text-muted-foreground"> · {opt.description}</span>
                   )}
                 </span>
                 {!disabled && (
@@ -123,7 +123,7 @@ export function StarredMultiSelect({
                     type="button"
                     onClick={() => handleRemove(value)}
                     aria-label={`Remove ${opt.label}`}
-                    className="ml-1 text-zinc-500 hover:text-red-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 rounded-sm"
+                    className="ml-1 text-muted-foreground hover:text-red-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
                   >
                     <X className="h-3 w-3" aria-hidden="true" />
                   </button>

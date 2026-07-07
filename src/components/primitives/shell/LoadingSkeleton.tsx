@@ -17,7 +17,7 @@ export function LoadingSkeleton({ variant = 'row', rowCount = 5, className }: Lo
     return (
       <div
         className={cn(
-          'flex items-center gap-4 px-4 py-3 border-b border-zinc-100 dark:border-zinc-900',
+          'flex items-center gap-4 px-4 py-3 border-b border-border',
           className
         )}
       >
@@ -35,11 +35,11 @@ export function LoadingSkeleton({ variant = 'row', rowCount = 5, className }: Lo
     return (
       <div
         className={cn(
-          'bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden',
+          'bg-card border border-border rounded-lg overflow-hidden',
           className
         )}
       >
-        <div className="flex items-center gap-4 px-4 py-3 bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800">
+        <div className="flex items-center gap-4 px-4 py-3 bg-secondary border-b border-border">
           <Block w={14} h={14} r={2} />
           <Block w={70} h={9} />
           <Block w={100} h={9} />
@@ -58,7 +58,7 @@ export function LoadingSkeleton({ variant = 'row', rowCount = 5, className }: Lo
     return (
       <div
         className={cn(
-          'p-5 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg grid gap-3 w-[220px]',
+          'p-5 bg-card border border-border rounded-lg grid gap-3 w-[220px]',
           className
         )}
       >
@@ -85,7 +85,7 @@ export function LoadingSkeleton({ variant = 'row', rowCount = 5, className }: Lo
   return (
     <div
       className={cn(
-        'p-5 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg grid gap-3 w-[280px]',
+        'p-5 bg-card border border-border rounded-lg grid gap-3 w-[280px]',
         className
       )}
     >

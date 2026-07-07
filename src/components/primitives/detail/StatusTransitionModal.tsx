@@ -83,10 +83,10 @@ export function StatusTransitionModal({
       }
     >
       <div className="flex items-center gap-2 mt-1" style={{ fontFamily: 'var(--font-mono)' }}>
-        <span className="px-2 py-[3px] rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-[10.5px] uppercase tracking-wider">
+        <span className="px-2 py-[3px] rounded-full bg-secondary text-muted-foreground text-[10.5px] uppercase tracking-wider">
           {from}
         </span>
-        <svg width="14" height="10" viewBox="0 0 14 10" className="text-zinc-500" aria-hidden>
+        <svg width="14" height="10" viewBox="0 0 14 10" className="text-muted-foreground" aria-hidden>
           <path
             d="M1 5 H12 M9 2 L12 5 L9 8"
             stroke="currentColor"
@@ -108,12 +108,12 @@ export function StatusTransitionModal({
         </span>
       </div>
       {description && (
-        <div className="text-[12.5px] text-zinc-600 dark:text-zinc-300 leading-relaxed">{description}</div>
+        <div className="text-[12.5px] text-muted-foreground leading-relaxed">{description}</div>
       )}
 
       <div>
         <div
-          className="text-[10.5px] font-medium uppercase tracking-wider text-zinc-500 mb-1.5"
+          className="text-[10.5px] font-medium uppercase tracking-wider text-muted-foreground mb-1.5"
           style={{ fontFamily: 'var(--font-mono)' }}
         >
           {reasonLabel}
@@ -125,18 +125,18 @@ export function StatusTransitionModal({
           rows={4}
           className={cn(
             'w-full min-h-[88px] px-3 py-2.5 rounded-md resize-y',
-            'text-[13px] leading-relaxed text-zinc-900 dark:text-zinc-50',
-            'bg-white dark:bg-zinc-950',
-            'border border-zinc-200 dark:border-zinc-800',
-            'placeholder:text-zinc-400 dark:placeholder:text-zinc-600',
-            'focus:outline-none focus:border-red-700 dark:focus:border-red-400',
-            'focus:ring-[3px] focus:ring-red-700/15 dark:focus:ring-red-400/20',
-            'disabled:bg-zinc-50 dark:disabled:bg-zinc-900 disabled:cursor-not-allowed'
+            'text-[13px] leading-relaxed text-foreground',
+            'bg-card',
+            'border border-border',
+            'placeholder:text-muted-foreground',
+            'focus:outline-none focus:border-ring',
+            'focus:ring-[3px] focus:ring-ring/15',
+            'disabled:bg-secondary disabled:cursor-not-allowed'
           )}
           style={{ fontFamily: 'var(--font-sans)' }}
         />
         <div
-          className="mt-1.5 flex justify-between text-[10.5px] text-zinc-500"
+          className="mt-1.5 flex justify-between text-[10.5px] text-muted-foreground"
           style={{ fontFamily: 'var(--font-mono)' }}
         >
           <span>

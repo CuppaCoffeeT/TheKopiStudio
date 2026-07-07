@@ -47,7 +47,7 @@ export function BankHistoryTab({ clientId, readOnly, client, bankHistory }: Bank
         meta={
           <span data-testid="clients-bank-current-total">
             Current total{' '}
-            <span className="font-semibold text-zinc-900 dark:text-zinc-50">
+            <span className="font-semibold text-foreground">
               {formatCurrency(Number(client.totalBankBalance) || 0)}
             </span>{' '}
             · derived from the latest record
@@ -91,15 +91,15 @@ export function BankHistoryTab({ clientId, readOnly, client, bankHistory }: Bank
             data-testid={`clients-bank-row-${record.id}`}
           >
             <span
-              className="w-28 flex-shrink-0 text-[11.5px] text-zinc-500 dark:text-zinc-400"
+              className="w-28 flex-shrink-0 text-[11.5px] text-muted-foreground"
               style={{ fontFamily: 'var(--font-mono)' }}
             >
               {formatDisplayDateLong(record.date)}
             </span>
-            <span className="text-[13.5px] font-semibold tabular-nums text-zinc-900 dark:text-zinc-50">
+            <span className="text-[13.5px] font-semibold tabular-nums text-foreground">
               {formatCurrency(Number(record.balance) || 0)}
             </span>
-            <span className="min-w-0 flex-1 break-words text-[12.5px] text-zinc-600 dark:text-zinc-400">
+            <span className="min-w-0 flex-1 break-words text-[12.5px] text-muted-foreground">
               {record.notes}
             </span>
             {!readOnly && (

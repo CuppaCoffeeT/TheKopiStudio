@@ -156,15 +156,15 @@ export function ModalSection({ title, tone = 'default', testId, children }: Moda
         'rounded-lg border p-3.5 grid gap-3',
         tone === 'amber'
           ? 'border-amber-400/50 bg-amber-50/60 dark:bg-amber-950/20'
-          : 'border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40'
+          : 'border-border bg-secondary'
       )}
     >
       <span
         className={cn(
           'uppercase',
-          tone === 'amber' ? 'text-amber-700 dark:text-amber-500' : 'text-zinc-500 dark:text-zinc-400'
+          tone === 'amber' ? 'text-amber-700 dark:text-amber-500' : 'text-muted-foreground'
         )}
-        style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, fontWeight: 600, letterSpacing: '0.08em' }}
+        style={{ fontFamily: 'var(--font-pixel)', fontSize: 10.5, fontWeight: 600, letterSpacing: '0.08em' }}
       >
         {title}
       </span>

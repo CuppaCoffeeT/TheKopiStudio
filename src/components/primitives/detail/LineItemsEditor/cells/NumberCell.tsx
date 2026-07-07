@@ -18,7 +18,7 @@ export function Cell({
   return (
     <div
       className={cn(
-        'flex items-center px-2 py-1 rounded text-[12.5px] text-zinc-700 dark:text-zinc-300 tabular-nums',
+        'flex items-center px-2 py-1 rounded text-[12.5px] text-muted-foreground tabular-nums',
         align === 'right' && 'justify-end',
         align === 'center' && 'justify-center',
       )}
@@ -46,7 +46,7 @@ export function EditableCellWrap({ kind, children }: { kind: 'number' | 'dropdow
     <div
       className={cn(
         'group/cell w-full h-full min-h-[32px] flex items-center justify-center rounded',
-        'hover:bg-zinc-50/60 dark:hover:bg-zinc-900/40',
+        'hover:bg-secondary',
         'transition-colors duration-100',
         kind === 'number' ? 'cursor-text' : 'cursor-pointer'
       )}
@@ -106,7 +106,7 @@ export function NumberCell({ value, onCommit, step = 1, min, align = 'right', pr
   return (
     <div className="relative">
       {prefix && (
-        <span className="absolute left-1.5 top-1/2 -translate-y-1/2 text-[11px] text-zinc-500 pointer-events-none" style={{ fontFamily: 'var(--font-mono)' }}>{prefix}</span>
+        <span className="absolute left-1.5 top-1/2 -translate-y-1/2 text-[11px] text-muted-foreground pointer-events-none" style={{ fontFamily: 'var(--font-mono)' }}>{prefix}</span>
       )}
       <input
         type="number"
@@ -120,17 +120,17 @@ export function NumberCell({ value, onCommit, step = 1, min, align = 'right', pr
         className={cn(
           'w-full bg-transparent outline-none rounded',
           dense ? 'h-7 text-[12px]' : 'h-7 text-[12.5px]',
-          'tabular-nums text-zinc-700 dark:text-zinc-200',
+          'tabular-nums text-muted-foreground',
           align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left',
           prefix ? 'pl-5' : 'pl-2',
           suffix ? 'pr-5' : 'pr-2',
-          'focus-visible:ring-2 focus-visible:ring-red-700/30 focus-visible:bg-white dark:focus-visible:bg-zinc-900',
+          'focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:bg-card',
           '[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]',
         )}
         style={{ fontFamily: 'var(--font-mono)' }}
       />
       {suffix && (
-        <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[11px] text-zinc-500 pointer-events-none" style={{ fontFamily: 'var(--font-mono)' }}>{suffix}</span>
+        <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[11px] text-muted-foreground pointer-events-none" style={{ fontFamily: 'var(--font-mono)' }}>{suffix}</span>
       )}
     </div>
   );
@@ -140,12 +140,12 @@ export function MobileField({ label, children }: { label: string; children: Reac
   return (
     <div className="flex flex-col gap-1">
       <span
-        className="text-[9.5px] font-semibold uppercase tracking-widest text-zinc-500"
+        className="text-[9.5px] font-semibold uppercase tracking-widest text-muted-foreground"
         style={{ fontFamily: 'var(--font-mono)' }}
       >
         {label}
       </span>
-      <div className="border border-zinc-200 dark:border-zinc-800 rounded overflow-hidden">
+      <div className="border border-border rounded overflow-hidden">
         {children}
       </div>
     </div>

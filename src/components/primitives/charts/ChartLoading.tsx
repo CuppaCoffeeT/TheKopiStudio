@@ -115,7 +115,7 @@ export const ChartLoading = forwardRef<HTMLDivElement, ChartLoadingProps>(functi
       )}
 
       <div
-        className="text-center text-[11px] text-zinc-500 dark:text-zinc-400"
+        className="text-center text-[11px] text-muted-foreground"
         style={{ fontFamily: 'var(--font-mono)' }}
       >
         Loading data…

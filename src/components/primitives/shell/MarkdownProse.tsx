@@ -135,17 +135,17 @@ export interface MarkdownProseProps {
 // ---------------------------------------------------------------------------
 
 const PROSE_CLASSES = cn(
-  'text-[13px] leading-[1.6] text-zinc-700 dark:text-zinc-300',
+  'text-[13px] leading-[1.6] text-muted-foreground',
   '[&_p]:mb-2 [&_p]:mt-0',
-  '[&_strong]:text-zinc-900 [&_strong]:dark:text-zinc-100',
+  '[&_strong]:text-foreground',
   '[&_a]:text-blue-700 [&_a]:dark:text-blue-400 [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:text-blue-800 hover:[&_a]:dark:text-blue-300',
   '[&_img]:max-w-full [&_img]:h-auto [&_img]:rounded [&_img]:my-2',
-  '[&_blockquote]:border-l-2 [&_blockquote]:border-zinc-200 [&_blockquote]:dark:border-zinc-700 [&_blockquote]:pl-3 [&_blockquote]:text-zinc-500 [&_blockquote]:dark:text-zinc-400',
+  '[&_blockquote]:border-l-2 [&_blockquote]:border-border [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground',
   '[&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5',
-  '[&_table]:border-collapse [&_table]:w-full [&_td]:border [&_td]:border-zinc-200 [&_td]:dark:border-zinc-800 [&_td]:px-2 [&_td]:py-1 [&_th]:border [&_th]:border-zinc-200 [&_th]:dark:border-zinc-800 [&_th]:px-2 [&_th]:py-1 [&_th]:bg-zinc-50 [&_th]:dark:bg-zinc-900',
-  '[&_pre]:bg-zinc-100 [&_pre]:dark:bg-zinc-900 [&_pre]:rounded [&_pre]:px-3 [&_pre]:py-2 [&_pre]:overflow-x-auto',
-  '[&_code]:bg-zinc-100 [&_code]:dark:bg-zinc-900 [&_code]:rounded [&_code]:px-1 [&_code]:text-[12px]',
-  '[&_hr]:border-zinc-200 [&_hr]:dark:border-zinc-800',
+  '[&_table]:border-collapse [&_table]:w-full [&_td]:border [&_td]:border-border [&_td]:px-2 [&_td]:py-1 [&_th]:border [&_th]:border-border [&_th]:px-2 [&_th]:py-1 [&_th]:bg-secondary',
+  '[&_pre]:bg-secondary [&_pre]:rounded [&_pre]:px-3 [&_pre]:py-2 [&_pre]:overflow-x-auto',
+  '[&_code]:bg-secondary [&_code]:rounded [&_code]:px-1 [&_code]:text-[12px]',
+  '[&_hr]:border-border',
   'overflow-x-auto',
 );
 
@@ -196,7 +196,7 @@ export function MarkdownProse({ markdown, className, resolveImageSrc }: Markdown
             className="max-w-full h-auto rounded"
           />
           {alt && (
-            <span className="block text-[11.5px] text-zinc-400 dark:text-zinc-500 mt-1 text-center">
+            <span className="block text-[11.5px] text-muted-foreground mt-1 text-center">
               {alt}
             </span>
           )}
@@ -226,7 +226,7 @@ export function MarkdownProse({ markdown, className, resolveImageSrc }: Markdown
         return <code className={codeClass}>{children}</code>;
       }
       return (
-        <code className="bg-zinc-100 dark:bg-zinc-900 rounded px-1 text-[12px]">
+        <code className="bg-secondary rounded px-1 text-[12px]">
           {children}
         </code>
       );
@@ -235,7 +235,7 @@ export function MarkdownProse({ markdown, className, resolveImageSrc }: Markdown
     // ---- pre: code block wrapper -----------------------------------------
     pre({ children }) {
       return (
-        <pre className="bg-zinc-100 dark:bg-zinc-900 rounded px-3 py-2 overflow-x-auto my-2 text-[12px]">
+        <pre className="bg-secondary rounded px-3 py-2 overflow-x-auto my-2 text-[12px]">
           {children}
         </pre>
       );
@@ -251,14 +251,14 @@ export function MarkdownProse({ markdown, className, resolveImageSrc }: Markdown
     },
     th({ children }) {
       return (
-        <th className="border border-zinc-200 dark:border-zinc-800 px-2 py-1 bg-zinc-50 dark:bg-zinc-900 text-left font-semibold text-zinc-900 dark:text-zinc-100">
+        <th className="border border-border px-2 py-1 bg-secondary text-left font-semibold text-foreground">
           {children}
         </th>
       );
     },
     td({ children }) {
       return (
-        <td className="border border-zinc-200 dark:border-zinc-800 px-2 py-1">
+        <td className="border border-border px-2 py-1">
           {children}
         </td>
       );

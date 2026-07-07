@@ -21,7 +21,7 @@ export function Kbd({ children, className, invert = false }: KbdProps) {
         'border',
         invert
           ? 'bg-zinc-800 text-zinc-200 border-zinc-700'
-          : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800',
+          : 'bg-secondary text-muted-foreground border-border',
         className
       )}
       style={{ fontFamily: 'var(--font-mono)' }}

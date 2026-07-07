@@ -114,11 +114,11 @@ function QuickLinkCard({ icon: Icon, title, description, onOpen, testId }: Quick
           onOpen();
         }
       }}
-      className="flex min-h-[44px] items-center justify-between gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950"
+      className="flex min-h-[44px] items-center justify-between gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       data-testid={testId}
     >
       <span className="flex items-center gap-3">
-        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-600 dark:bg-zinc-900 dark:text-zinc-300">
+        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary text-muted-foreground">
           <Icon className="h-[18px] w-[18px]" strokeWidth={1.8} />
         </span>
         <span>
@@ -126,7 +126,7 @@ function QuickLinkCard({ icon: Icon, title, description, onOpen, testId }: Quick
           <CardDescription className="mt-0.5">{description}</CardDescription>
         </span>
       </span>
-      <ArrowRight className="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500" strokeWidth={1.8} />
+      <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={1.8} />
     </Card>
   );
 }

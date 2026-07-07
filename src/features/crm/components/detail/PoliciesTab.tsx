@@ -103,7 +103,7 @@ export function PoliciesTab({ clientId, readOnly, policies }: PoliciesTabProps) 
             data-testid={`clients-policy-row-${policy.id}`}
           >
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+              <span className="text-sm font-semibold text-foreground">
                 {policy.type}
               </span>
               <Badge tone={statusTone(policy.status)}>{policy.status}</Badge>
@@ -132,12 +132,12 @@ export function PoliciesTab({ clientId, readOnly, policies }: PoliciesTabProps) 
               )}
             </div>
             <div
-              className="text-[11.5px] text-zinc-500 dark:text-zinc-400"
+              className="text-[11.5px] text-muted-foreground"
               style={{ fontFamily: 'var(--font-mono)' }}
             >
               {policy.provider || '—'} · {policy.policyNumber || 'No policy number'}
             </div>
-            <div className="flex flex-wrap gap-x-5 gap-y-1 text-[12.5px] text-zinc-700 dark:text-zinc-300">
+            <div className="flex flex-wrap gap-x-5 gap-y-1 text-[12.5px] text-muted-foreground">
               <span>
                 Premium {formatCurrency(Number(policy.premium) || 0)} / {policy.frequency}
               </span>

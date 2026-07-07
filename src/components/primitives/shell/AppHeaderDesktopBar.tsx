@@ -44,18 +44,18 @@ interface AppHeaderDesktopBarProps {
 
 const SEARCH_PILL_CLASS = cn(
   'inline-flex items-center gap-2 h-7 px-2.5 rounded-md',
-  'border border-zinc-200 dark:border-zinc-800',
-  'text-zinc-600 dark:text-zinc-400',
-  'hover:bg-white dark:hover:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700',
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+  'border border-border',
+  'text-muted-foreground',
+  'hover:bg-secondary hover:border-zinc-300 dark:hover:border-zinc-700',
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
 );
 
 const ICON_BUTTON_CLASS =
-  'w-8 h-8 rounded-md inline-flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950';
+  'w-8 h-8 rounded-md inline-flex items-center justify-center text-foreground hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background';
 
 function SearchIconSvg() {
   return (
-    <svg width="11" height="11" viewBox="0 0 11 11" className="text-zinc-500">
+    <svg width="11" height="11" viewBox="0 0 11 11" className="text-muted-foreground">
       <circle cx="4.5" cy="4.5" r="3" stroke="currentColor" strokeWidth="1.2" fill="none" />
       <path d="M7 7 L9.5 9.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
     </svg>
@@ -127,7 +127,7 @@ export function AppHeaderDesktopBar({
           <button onClick={onNotificationsClick} aria-label="Notifications" className={cn('relative', ICON_BUTTON_CLASS)}>
             <Bell className="w-4 h-4" strokeWidth={1.3} />
             {unreadCount > 0 && (
-              <span className="absolute top-[3px] right-[3px] w-[7px] h-[7px] rounded-full bg-red-700 dark:bg-red-400 ring-[1.5px] ring-white dark:ring-zinc-950" />
+              <span className="absolute top-[3px] right-[3px] w-[7px] h-[7px] rounded-full bg-primary ring-[1.5px] ring-background" />
             )}
           </button>
         )}

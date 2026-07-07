@@ -34,7 +34,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
         'inline-flex items-center gap-2.5 select-none',
         disabled ? 'cursor-not-allowed opacity-70' : 'cursor-pointer',
         'text-[14px]',
-        disabled ? 'text-zinc-400 dark:text-zinc-500' : 'text-zinc-700 dark:text-zinc-300',
+        disabled ? 'text-muted-foreground' : 'text-muted-foreground',
         labelClassName
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
@@ -56,7 +56,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
             checked
               ? 'bg-slate-800 dark:bg-slate-100'
               : 'bg-zinc-300 dark:bg-zinc-700',
-            'peer-focus-visible:ring-2 peer-focus-visible:ring-red-700 dark:peer-focus-visible:ring-red-400 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-white dark:peer-focus-visible:ring-offset-zinc-950'
+            'peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background'
           )}
         >
           <span

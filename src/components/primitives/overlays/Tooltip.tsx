@@ -29,8 +29,8 @@ export const TooltipContent = ({
       className={cn(
         'z-50 px-2 py-[5px] rounded-[5px]',
         'inline-flex items-center gap-2',
-        'bg-zinc-900 dark:bg-zinc-100',
-        'text-zinc-50 dark:text-zinc-900',
+        'bg-foreground',
+        'text-background',
         'text-[11px] whitespace-nowrap',
         'shadow-lg',
         'data-[state=delayed-open]:animate-in data-[state=closed]:animate-out',

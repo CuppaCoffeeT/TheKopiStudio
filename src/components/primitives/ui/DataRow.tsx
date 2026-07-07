@@ -94,21 +94,21 @@ export const DataRow = forwardRef<HTMLDivElement, DataRowProps>(function DataRow
         'group relative flex items-center px-[14px]',
         DENSITY_MIN_H[density],
         DENSITY_PY[density],
-        'border-b border-zinc-100 dark:border-zinc-900',
+        'border-b border-border',
         // Surface default
-        'bg-white dark:bg-zinc-950',
+        'bg-card',
         // Hover (must contrast w/ page-bg zinc-100 — surface is white so zinc-100 hover is visible)
         !disabled &&
           effectiveState !== 'selected' &&
-          'hover:bg-zinc-100 dark:hover:bg-zinc-900/60',
-        effectiveState === 'hover' && 'bg-zinc-100 dark:bg-zinc-900/60',
+          'hover:bg-secondary',
+        effectiveState === 'hover' && 'bg-secondary',
         effectiveState === 'selected' &&
-          'bg-red-50 hover:bg-red-50 dark:bg-red-500/[0.06] dark:hover:bg-red-500/[0.08]',
+          'bg-primary/[0.06] hover:bg-primary/[0.08] dark:bg-primary/[0.08] dark:hover:bg-primary/[0.10]',
         effectiveState === 'focused' &&
           'shadow-[inset_0_0_0_2px] shadow-red-700 dark:shadow-red-400',
         disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
-        'text-[13px] text-zinc-900 dark:text-zinc-50',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+        'text-[13px] text-foreground',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         className
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
@@ -119,7 +119,7 @@ export const DataRow = forwardRef<HTMLDivElement, DataRowProps>(function DataRow
         className={cn(
           'absolute left-0 top-0 bottom-0 w-[2px]',
           effectiveState === 'selected' || effectiveState === 'focused'
-            ? 'bg-red-700 dark:bg-red-400'
+            ? 'bg-primary'
             : 'bg-transparent'
         )}
       />
@@ -155,8 +155,8 @@ export const DataRow = forwardRef<HTMLDivElement, DataRowProps>(function DataRow
                 ? 'whitespace-normal break-words min-w-0'
                 : 'whitespace-nowrap overflow-hidden text-ellipsis',
               cell.muted
-                ? 'text-zinc-700 dark:text-zinc-300'
-                : 'text-zinc-900 dark:text-zinc-50'
+                ? 'text-muted-foreground'
+                : 'text-foreground'
             )}
             style={{
               flex: `${grow} ${shrink} ${basis}px`,

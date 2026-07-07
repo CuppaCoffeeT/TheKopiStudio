@@ -106,11 +106,10 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
           : undefined
       }
       className={cn(
-        'relative overflow-hidden border border-zinc-200 bg-white shadow-[0_1px_2px_rgba(24,24,27,0.04),0_1px_0_rgba(24,24,27,0.02)]',
-        'dark:bg-zinc-950 dark:border-zinc-800',
+        'relative overflow-hidden border border-border bg-card shadow-[0_1px_2px_rgba(24,24,27,0.04),0_1px_0_rgba(24,24,27,0.02)]',
         compact ? 'px-4 py-[14px]' : 'p-5',
         interactive &&
-          'cursor-pointer transition-all hover:shadow-sm hover:border-zinc-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 active:scale-[0.99]',
+          'cursor-pointer transition-all hover:shadow-sm hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:scale-[0.99]',
         className,
       )}
       style={{ borderRadius: 'var(--kpi-radius)' }}
@@ -118,7 +117,7 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
       {alert && (
         <span
           aria-hidden
-          className="absolute top-3 left-3 h-1.5 w-1.5 rounded-full bg-red-700"
+          className="absolute top-3 left-3 h-1.5 w-1.5 rounded-full bg-primary"
           style={{ boxShadow: '0 0 0 3px #fef2f2' }}
         />
       )}
@@ -131,8 +130,8 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
           alert && 'pl-3',
         )}
       >
-        {Icon && <Icon className="h-3.5 w-3.5 text-zinc-500 flex-shrink-0" />}
-        <span className="flex-1 min-w-0 truncate text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-500">
+        {Icon && <Icon className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />}
+        <span className="flex-1 min-w-0 truncate text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
           {label}
         </span>
         {delta && <DeltaBadge {...delta} />}
@@ -141,12 +140,12 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
       {/* Row 2: value */}
       <div
         className={cn(
-          'font-mono font-bold tracking-tight tabular-nums text-zinc-900 dark:text-zinc-50 leading-[1.05]',
+          'font-mono font-bold tracking-tight tabular-nums text-foreground leading-[1.05]',
           compact ? 'text-[22px]' : 'text-[32px] mb-1.5',
         )}
       >
         {prefix && (
-          <span className="mr-1 font-medium text-zinc-500">{prefix}</span>
+          <span className="mr-1 font-medium text-muted-foreground">{prefix}</span>
         )}
         {animate ? (
           <NumberTicker value={value} decimalPlaces={decimals} format={formatValue} />
@@ -154,13 +153,13 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
           formatValue(value)
         )}
         {suffix && (
-          <span className="ml-0.5 font-medium text-zinc-500">{suffix}</span>
+          <span className="ml-0.5 font-medium text-muted-foreground">{suffix}</span>
         )}
       </div>
 
       {/* Row 3: subtitle */}
       {!compact && subtitle && (
-        <div className={cn('text-xs text-zinc-500 dark:text-zinc-400', sparkline && 'mb-2')}>
+        <div className={cn('text-xs text-muted-foreground', sparkline && 'mb-2')}>
           {subtitle}
         </div>
       )}
@@ -181,7 +180,7 @@ function DeltaBadge({ value, tone = 'auto', suffix = '%' }: KpiDelta) {
         'inline-flex flex-shrink-0 items-center gap-0.5 rounded px-1.5 py-0.5 text-xs font-medium',
         isPositive && 'text-[color:var(--delta-positive-fg)] bg-[color:var(--delta-positive-bg)]',
         isNegative && 'text-[color:var(--delta-negative-fg)] bg-[color:var(--delta-negative-bg)]',
-        !isPositive && !isNegative && 'text-zinc-600 bg-zinc-100',
+        !isPositive && !isNegative && 'text-muted-foreground bg-secondary',
       )}
     >
       {isPositive && <ArrowUpRight className="h-3 w-3" />}

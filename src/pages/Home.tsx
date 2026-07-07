@@ -29,7 +29,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-dvh bg-zinc-100 dark:bg-zinc-900 p-6">
+    <div className="min-h-dvh bg-background p-6">
       <div className="mx-auto max-w-3xl space-y-6">
         <div className="flex items-center justify-between gap-4">
           <PageTitle>
@@ -50,7 +50,7 @@ export default function Home() {
           </CardHeader>
           <CardContent>
             {modules.length === 0 ? (
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              <p className="text-sm text-muted-foreground">
                 No modules yet. Seed the <code>modules</code> table and grant them to your
                 role (see the foundation migration in <code>supabase/migrations/</code>).
               </p>

@@ -66,8 +66,8 @@ export function CalendarPanel({
     <div
       className={cn(
         'w-[296px] rounded-[10px] p-3.5',
-        'bg-white dark:bg-zinc-950',
-        'border border-zinc-200 dark:border-zinc-800',
+        'bg-card',
+        'border border-border',
         'shadow-[0_12px_40px_rgba(0,0,0,0.12)]',
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
@@ -76,7 +76,7 @@ export function CalendarPanel({
         <button
           type="button"
           onClick={goPrev}
-          className="w-7 h-7 rounded-md inline-flex items-center justify-center text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900"
+          className="w-7 h-7 rounded-md inline-flex items-center justify-center text-muted-foreground hover:bg-secondary"
         >
           <ChevronLeft size={14} />
         </button>
@@ -97,15 +97,15 @@ export function CalendarPanel({
         <button
           type="button"
           onClick={goNext}
-          className="w-7 h-7 rounded-md inline-flex items-center justify-center text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900"
+          className="w-7 h-7 rounded-md inline-flex items-center justify-center text-muted-foreground hover:bg-secondary"
         >
           <ChevronRight size={14} />
         </button>
       </div>
 
       <div
-        className="grid grid-cols-7 gap-1 mb-1 text-zinc-500 dark:text-zinc-400 uppercase"
-        style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.08em' }}
+        className="grid grid-cols-7 gap-1 mb-1 text-muted-foreground uppercase"
+        style={{ fontFamily: 'var(--font-pixel)', fontSize: 10, letterSpacing: '0.08em' }}
       >
         {WEEKDAYS.map((w, i) => (
           <span key={i} className="w-8 h-5 inline-flex items-center justify-center">{w}</span>
@@ -146,16 +146,16 @@ export function CalendarPanel({
               onMouseLeave={() => mode === 'range' && setRangeHover(null)}
               className={cn(
                 'w-8 h-8 rounded-md inline-flex items-center justify-center border tabular-nums',
-                muted && 'text-zinc-400 dark:text-zinc-600 cursor-not-allowed',
-                isDisabledDay && !muted && 'text-zinc-300 dark:text-zinc-700 cursor-not-allowed line-through',
+                muted && 'text-muted-foreground cursor-not-allowed',
+                isDisabledDay && !muted && 'text-muted-foreground cursor-not-allowed line-through',
                 !isInactive && 'cursor-pointer',
-                !isInactive && !isSelected && !isRangeStart && !isRangeEnd && !isInRange && 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800',
-                isInRange && 'bg-red-700/10 dark:bg-red-400/15 text-red-900 dark:text-red-200',
-                (isSelected || isRangeStart || isRangeEnd) && 'bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold',
+                !isInactive && !isSelected && !isRangeStart && !isRangeEnd && !isInRange && 'text-muted-foreground hover:bg-secondary',
+                isInRange && 'bg-primary/10 text-primary',
+                (isSelected || isRangeStart || isRangeEnd) && 'bg-primary text-primary-foreground font-semibold',
                 isToday && !isSelected && !isRangeStart && !isRangeEnd
-                  ? 'border-red-700 dark:border-red-400 font-semibold'
+                  ? 'border-primary font-semibold'
                   : 'border-transparent',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
               )}
               style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}
             >
@@ -165,12 +165,12 @@ export function CalendarPanel({
         })}
       </div>
 
-      <div className="flex items-center gap-2 mt-3 pt-2.5 border-t border-zinc-200 dark:border-zinc-800">
+      <div className="flex items-center gap-2 mt-3 pt-2.5 border-t border-border">
         <button
           type="button"
           onClick={onToday}
           data-testid={todayTestId}
-          className="h-[26px] px-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 text-red-700 dark:text-red-400 hover:bg-zinc-100 dark:hover:bg-zinc-900"
+          className="h-[26px] px-2.5 rounded-md border border-border text-primary hover:bg-secondary"
           style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}
         >
           Today
@@ -179,7 +179,7 @@ export function CalendarPanel({
           type="button"
           onClick={onClear}
           data-testid={clearTestId}
-          className="h-[26px] px-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900"
+          className="h-[26px] px-2.5 rounded-md border border-border text-muted-foreground hover:bg-secondary"
           style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}
         >
           Clear

@@ -20,14 +20,14 @@ export function CommandPaletteGroup({ heading, children, className }: CommandPal
 export function CommandPaletteSeparator({ className }: { className?: string }) {
   return (
     <CommandPrimitive.Separator
-      className={cn('h-px my-1 -mx-1 bg-zinc-200 dark:bg-zinc-800', className)}
+      className={cn('h-px my-1 -mx-1 bg-border', className)}
     />
   );
 }
 
 export function CommandPaletteEmpty({ children }: { children: ReactNode }) {
   return (
-    <CommandPrimitive.Empty className="py-4 px-3 text-center text-[12px] text-zinc-500">
+    <CommandPrimitive.Empty className="py-4 px-3 text-center text-[12px] text-muted-foreground">
       {children}
     </CommandPrimitive.Empty>
   );
@@ -71,8 +71,8 @@ export function CommandPaletteItem({
       onSelect={onSelect}
       className={cn(
         'flex items-start gap-2.5 px-2 py-2 rounded cursor-pointer outline-none select-none',
-        'data-[selected=true]:bg-slate-100 dark:data-[selected=true]:bg-white/5',
-        destructive ? 'text-red-700 dark:text-red-400' : 'text-zinc-900 dark:text-zinc-50'
+        'data-[selected=true]:bg-secondary',
+        destructive ? 'text-red-700 dark:text-red-400' : 'text-foreground'
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
     >
@@ -80,7 +80,7 @@ export function CommandPaletteItem({
         <span
           className={cn(
             'w-4 h-4 mt-[1px] flex-shrink-0 flex items-center justify-center',
-            destructive ? 'text-red-700 dark:text-red-400' : 'text-zinc-500'
+            destructive ? 'text-red-700 dark:text-red-400' : 'text-muted-foreground'
           )}
           aria-hidden
         >
@@ -91,8 +91,7 @@ export function CommandPaletteItem({
         <div className="text-[13px] font-medium leading-snug truncate">{label}</div>
         {description && (
           <div
-            className="text-[11px] text-zinc-500 leading-snug mt-0.5 truncate"
-            style={{ fontFamily: 'var(--font-mono)' }}
+            className="text-[11px] text-muted-foreground leading-snug mt-0.5 truncate"
           >
             {description}
           </div>

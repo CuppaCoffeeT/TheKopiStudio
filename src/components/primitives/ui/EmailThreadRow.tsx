@@ -73,13 +73,13 @@ export const EmailThreadRow = forwardRef<HTMLAnchorElement, EmailThreadRowProps>
         className={cn(
           'relative grid items-start gap-2.5 px-3.5 py-2.5',
           'grid-cols-[22px_16px_minmax(0,1fr)_auto]',
-          'border-b border-zinc-100 dark:border-zinc-800/60',
+          'border-b border-border',
           'cursor-pointer no-underline',
           'transition-colors',
-          'hover:bg-zinc-50 dark:hover:bg-zinc-900/60',
-          !isRead && 'bg-white dark:bg-zinc-950',
-          isSelected && 'bg-zinc-50 dark:bg-zinc-900',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-red-700 dark:focus-visible:ring-red-400',
+          'hover:bg-secondary',
+          !isRead && 'bg-card',
+          isSelected && 'bg-secondary',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring',
           className,
         )}
         style={{ fontFamily: 'var(--font-sans)' }}
@@ -89,13 +89,13 @@ export const EmailThreadRow = forwardRef<HTMLAnchorElement, EmailThreadRowProps>
         {!isRead && !isSelected && (
           <span
             aria-hidden
-            className="absolute left-0 top-0 bottom-0 w-[2px] bg-red-700/50"
+            className="absolute left-0 top-0 bottom-0 w-[2px] bg-primary/50"
           />
         )}
         {isSelected && (
           <span
             aria-hidden
-            className="absolute left-0 top-0 bottom-0 w-[3px] bg-red-700"
+            className="absolute left-0 top-0 bottom-0 w-[3px] bg-primary"
           />
         )}
 
@@ -105,9 +105,9 @@ export const EmailThreadRow = forwardRef<HTMLAnchorElement, EmailThreadRowProps>
           onClick={handleStarClick}
           aria-label={isStarred ? 'Unstar thread' : 'Star thread'}
           className={cn(
-            'pt-0.5 text-zinc-400 dark:text-zinc-500',
-            'hover:text-zinc-600 dark:hover:text-zinc-300',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 rounded-sm',
+            'pt-0.5 text-muted-foreground',
+            'hover:text-foreground',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm',
           )}
         >
           <Star
@@ -121,7 +121,7 @@ export const EmailThreadRow = forwardRef<HTMLAnchorElement, EmailThreadRowProps>
         {/* Read indicator */}
         <div className="pt-[3px]" aria-hidden>
           {isRead ? (
-            <MailOpen className="w-4 h-4 text-zinc-400 dark:text-zinc-500" />
+            <MailOpen className="w-4 h-4 text-muted-foreground" />
           ) : (
             <Mail className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           )}
@@ -129,24 +129,24 @@ export const EmailThreadRow = forwardRef<HTMLAnchorElement, EmailThreadRowProps>
 
         {/* Body */}
         <div className="min-w-0">
-          <div className="flex items-center gap-2 text-[13px] mb-[3px] text-zinc-800 dark:text-zinc-200">
+          <div className="flex items-center gap-2 text-[13px] mb-[3px] text-foreground">
             {fromName && (
               <span className="font-medium shrink-0 max-w-[140px] truncate">
                 {fromName}
               </span>
             )}
-            {fromName && <span className="text-zinc-400 dark:text-zinc-500" aria-hidden>·</span>}
+            {fromName && <span className="text-muted-foreground" aria-hidden>·</span>}
             <span
               className={cn(
                 'flex-1 truncate',
-                !isRead ? 'font-semibold text-zinc-900 dark:text-zinc-100' : 'text-zinc-700 dark:text-zinc-300 font-normal',
+                !isRead ? 'font-semibold text-foreground' : 'text-muted-foreground font-normal',
               )}
             >
               {subject || '(no subject)'}
             </span>
             {messageCount && messageCount > 1 && (
               <span
-                className="text-[10px] text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 rounded-sm tabular-nums shrink-0"
+                className="text-[10px] text-muted-foreground bg-secondary px-1.5 rounded-sm tabular-nums shrink-0"
                 style={{ fontFamily: 'var(--font-mono)' }}
               >
                 {messageCount}
@@ -154,13 +154,13 @@ export const EmailThreadRow = forwardRef<HTMLAnchorElement, EmailThreadRowProps>
             )}
             {hasAttachment && (
               <Paperclip
-                className="w-3 h-3 text-zinc-400 dark:text-zinc-500 shrink-0"
+                className="w-3 h-3 text-muted-foreground shrink-0"
                 aria-label="Has attachment"
               />
             )}
           </div>
           <p
-            className="text-[12px] text-zinc-500 dark:text-zinc-400 leading-[1.4] overflow-hidden"
+            className="text-[12px] text-muted-foreground leading-[1.4] overflow-hidden"
             style={{
               display: '-webkit-box',
               WebkitLineClamp: 2,
@@ -178,8 +178,8 @@ export const EmailThreadRow = forwardRef<HTMLAnchorElement, EmailThreadRowProps>
             className={cn(
               'text-[10.5px] tabular-nums whitespace-nowrap',
               !isRead
-                ? 'text-red-700 dark:text-red-400 font-medium'
-                : 'text-zinc-500 dark:text-zinc-400',
+                ? 'text-primary font-medium'
+                : 'text-muted-foreground',
             )}
             style={{ fontFamily: 'var(--font-mono)' }}
           >

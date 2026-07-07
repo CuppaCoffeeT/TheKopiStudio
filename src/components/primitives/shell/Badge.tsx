@@ -37,7 +37,7 @@ function normalizeVariant(variant: BadgeVariant, tone: BadgeTone): { kind: 'stat
 }
 
 const STATUS_TONE: Record<BadgeTone, string> = {
-  neutral: 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700',
+  neutral: 'bg-secondary text-muted-foreground border-border',
   success: 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900/40',
   warning: 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900/40',
   danger: 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border-red-200 dark:border-red-900/40',
@@ -73,7 +73,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
           'text-[10.5px] font-semibold tabular-nums',
           isCritical
             ? 'bg-red-700 text-white'
-            : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200',
+            : 'bg-secondary text-muted-foreground',
           className,
         )}
         style={{ fontFamily: 'var(--font-mono)' }}
@@ -91,7 +91,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
         className={cn(
           'inline-flex flex-row flex-nowrap items-center gap-1.5 px-2 py-0.5 rounded-full whitespace-nowrap',
           'text-[11px] font-medium',
-          'bg-transparent border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-300',
+          'bg-transparent border border-border text-muted-foreground',
           className,
         )}
         style={{ fontFamily: 'var(--font-sans)' }}

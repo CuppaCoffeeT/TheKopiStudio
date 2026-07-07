@@ -27,10 +27,10 @@ export function QuestionScreen({ batch, batchNumber, prospectName, answers, onSe
     <div className="flex flex-col gap-3" data-testid={`wizard-questions-screen-${batchNumber}`}>
       <div>
         <Eyebrow>Questions {batchNumber === 1 ? '1-4' : '5-8'}</Eyebrow>
-        <h2 className="m-0 text-[19px] font-normal text-zinc-900 dark:text-zinc-50">
+        <h2 className="m-0 text-[19px] font-normal text-foreground">
           Profiling {prospectName}
         </h2>
-        <p className="m-0 mt-1 text-[13px] leading-6 text-zinc-500 dark:text-zinc-400">
+        <p className="m-0 mt-1 text-[13px] leading-6 text-muted-foreground">
           Weave into conversation. Pick the best match.
         </p>
       </div>
@@ -47,12 +47,12 @@ export function QuestionScreen({ batch, batchNumber, prospectName, answers, onSe
                   ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400'
                   : 'bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-400',
               )}
-              style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, fontWeight: 700, letterSpacing: '0.12em' }}
+              style={{ fontFamily: 'var(--font-pixel)', fontSize: 9.5, fontWeight: 700, letterSpacing: '0.12em' }}
             >
               {isOpen ? 'Opening' : 'Discovery'}
             </span>
-            <p className="m-0 text-[12px] italic leading-5 text-zinc-500 dark:text-zinc-400">💡 {q.tip}</p>
-            <p className="m-0 mt-1.5 mb-3 text-[15px] leading-6 text-zinc-900 dark:text-zinc-50">{q.ask}</p>
+            <p className="m-0 text-[12px] italic leading-5 text-muted-foreground">💡 {q.tip}</p>
+            <p className="m-0 mt-1.5 mb-3 text-[15px] leading-6 text-foreground">{q.ask}</p>
 
             <div className="flex flex-col gap-2" role="radiogroup" aria-label={q.ask}>
               {q.opts.map((opt, oi) => {
@@ -64,7 +64,7 @@ export function QuestionScreen({ batch, batchNumber, prospectName, answers, onSe
                     className={cn(
                       'rounded-xl border transition-colors',
                       !selected &&
-                        'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700',
+                        'border-border hover:border-muted-foreground',
                     )}
                     style={
                       selected
@@ -80,7 +80,7 @@ export function QuestionScreen({ batch, batchNumber, prospectName, answers, onSe
                       labelClassName="flex w-full items-start gap-3 p-3 min-h-[44px] [&>span:last-child]:flex-1 [&>span:last-child]:min-w-0"
                       label={
                         <span className="flex w-full items-start justify-between gap-3">
-                          <span className="text-[13.5px] leading-5 text-zinc-700 dark:text-zinc-200">
+                          <span className="text-[13.5px] leading-5 text-muted-foreground">
                             {opt.t}
                           </span>
                           <DiscBadge d={opt.d} className="mt-0.5" />

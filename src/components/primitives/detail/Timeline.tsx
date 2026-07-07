@@ -51,7 +51,7 @@ export function Timeline({ events, variant = 'full', scrollProgress = 0, classNa
       {/* Beam fill */}
       <div
         aria-hidden
-        className="hidden md:block absolute top-3.5 w-px bg-gradient-to-b from-red-700 via-red-700 to-transparent dark:from-red-400 dark:via-red-400 shadow-[0_0_12px_rgba(185,28,28,0.28)] dark:shadow-[0_0_12px_rgba(248,113,113,0.45)]"
+        className="hidden md:block absolute top-3.5 w-px bg-gradient-to-b from-primary via-primary to-transparent shadow-[0_0_12px_rgba(185,28,28,0.28)] dark:shadow-[0_0_12px_rgba(248,113,113,0.45)]"
         style={{ left: beamInset, height: `calc(${fillPct}% - 28px)` }}
       />
 
@@ -75,36 +75,36 @@ export function Timeline({ events, variant = 'full', scrollProgress = 0, classNa
                   'rounded-full border-2',
                   compact ? 'w-2.5 h-2.5' : 'w-3.5 h-3.5',
                   passed
-                    ? 'bg-red-700 border-red-700 dark:bg-red-400 dark:border-red-400 shadow-[0_0_0_3px_rgba(185,28,28,0.10)] dark:shadow-[0_0_0_3px_rgba(248,113,113,0.14)]'
-                    : 'bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800'
+                    ? 'bg-primary border-primary shadow-[0_0_0_3px_rgba(185,28,28,0.10)] dark:shadow-[0_0_0_3px_rgba(248,113,113,0.14)]'
+                    : 'bg-card border-border'
                 )}
               />
             </div>
             {/* Mobile dot */}
-            <span className="md:hidden w-2.5 h-2.5 rounded-full mt-1.5 bg-red-700 dark:bg-red-400 flex-shrink-0" />
+            <span className="md:hidden w-2.5 h-2.5 rounded-full mt-1.5 bg-primary flex-shrink-0" />
 
             <div className="flex-1 min-w-0">
               <div
-                className="text-[10.5px] uppercase tracking-wide text-zinc-500"
+                className="text-[10.5px] uppercase tracking-wide text-muted-foreground"
                 style={{ fontFamily: 'var(--font-mono)' }}
               >
                 {ev.timestamp}
               </div>
-              <div className={cn('mt-1 font-medium text-zinc-900 dark:text-zinc-50 leading-snug', compact ? 'text-[12.5px]' : 'text-[13.5px]')}>
+              <div className={cn('mt-1 font-medium text-foreground leading-snug', compact ? 'text-[12.5px]' : 'text-[13.5px]')}>
                 {ev.title}
               </div>
               {ev.description && (
-                <div className={cn('mt-0.5 text-zinc-500 leading-relaxed', compact ? 'text-[11.5px]' : 'text-[12.5px]')}>
+                <div className={cn('mt-0.5 text-muted-foreground leading-relaxed', compact ? 'text-[11.5px]' : 'text-[12.5px]')}>
                   {ev.description}
                 </div>
               )}
               {ev.actor && !compact && (
                 <div
-                  className="mt-1.5 inline-flex items-center gap-1.5 text-[10.5px] text-zinc-400 dark:text-zinc-600 tracking-wide"
+                  className="mt-1.5 inline-flex items-center gap-1.5 text-[10.5px] text-muted-foreground tracking-wide"
                   style={{ fontFamily: 'var(--font-mono)' }}
                 >
                   <span
-                    className="w-3.5 h-3.5 rounded-full inline-flex items-center justify-center text-[8px] font-semibold bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900"
+                    className="w-3.5 h-3.5 rounded-full inline-flex items-center justify-center text-[8px] font-semibold bg-primary text-primary-foreground"
                     style={{ fontFamily: 'var(--font-sans)' }}
                   >
                     {ev.actor.charAt(0)}

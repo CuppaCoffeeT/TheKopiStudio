@@ -64,8 +64,8 @@ function CountPill({ count, critical }: { count: number; critical?: boolean }) {
       className={cn(
         'ml-auto text-[10px] px-1.5 rounded-sm tabular-nums shrink-0',
         critical
-          ? 'bg-red-700 text-white'
-          : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400',
+          ? 'bg-primary text-primary-foreground'
+          : 'bg-secondary text-muted-foreground',
       )}
       style={{ fontFamily: 'var(--font-mono)' }}
     >
@@ -98,7 +98,7 @@ export const EmailSidebar = forwardRef<HTMLElement, EmailSidebarProps>(
           ref={ref}
           className={cn(
             'w-[52px] flex flex-col shrink-0',
-            'bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800',
+            'bg-card border-r border-border',
             className,
           )}
           style={{ fontFamily: 'var(--font-sans)' }}
@@ -115,16 +115,16 @@ export const EmailSidebar = forwardRef<HTMLElement, EmailSidebarProps>(
                   aria-label={label.label}
                   className={cn(
                     'relative mx-2 w-9 h-9 rounded-lg inline-flex items-center justify-center',
-                    'text-zinc-500 dark:text-zinc-400',
-                    'hover:bg-zinc-100 dark:hover:bg-zinc-800',
-                    isActive && 'bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400',
+                    'text-muted-foreground',
+                    'hover:bg-secondary',
+                    isActive && 'bg-secondary text-foreground',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                   )}
                 >
                   {isActive && (
                     <span
                       aria-hidden
-                      className="absolute -left-2 top-2 bottom-2 w-[3px] rounded-sm bg-red-700"
+                      className="absolute -left-2 top-2 bottom-2 w-[3px] rounded-sm bg-primary"
                     />
                   )}
                   <span className="w-4 h-4">{label.icon}</span>
@@ -133,7 +133,7 @@ export const EmailSidebar = forwardRef<HTMLElement, EmailSidebarProps>(
                       className={cn(
                         'absolute top-1 right-1 min-w-[14px] h-[14px] px-1 rounded-full',
                         'inline-flex items-center justify-center text-[9px] text-white tabular-nums',
-                        label.critical || label.count >= 10 ? 'bg-red-700' : 'bg-zinc-500 dark:bg-zinc-600',
+                        label.critical || label.count >= 10 ? 'bg-primary' : 'bg-zinc-500 dark:bg-zinc-600',
                       )}
                       style={{ fontFamily: 'var(--font-mono)' }}
                     >
@@ -153,13 +153,13 @@ export const EmailSidebar = forwardRef<HTMLElement, EmailSidebarProps>(
         ref={ref}
         className={cn(
           'w-[240px] flex flex-col shrink-0',
-          'bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800',
+          'bg-card border-r border-border',
           className,
         )}
         style={{ fontFamily: 'var(--font-sans)' }}
       >
         {accountSelect && (
-          <div className="px-3 pt-3 pb-2 border-b border-zinc-100 dark:border-zinc-800/60">
+          <div className="px-3 pt-3 pb-2 border-b border-border">
             {accountSelect}
           </div>
         )}
@@ -220,18 +220,18 @@ export const EmailSidebar = forwardRef<HTMLElement, EmailSidebarProps>(
         </nav>
 
         {onSync && (
-          <div className="p-3 border-t border-zinc-100 dark:border-zinc-800/60">
+          <div className="p-3 border-t border-border">
             <button
               type="button"
               onClick={onSync}
               disabled={syncPending}
               className={cn(
                 'w-full h-8 inline-flex items-center justify-center gap-2 rounded-md',
-                'border border-zinc-200 dark:border-zinc-800',
-                'bg-white dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300',
-                'hover:bg-zinc-50 dark:hover:bg-zinc-900',
+                'border border-border',
+                'bg-card text-muted-foreground',
+                'hover:bg-secondary',
                 'text-[12px] font-medium',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
                 'disabled:opacity-60 disabled:cursor-wait',
               )}
             >
@@ -242,7 +242,7 @@ export const EmailSidebar = forwardRef<HTMLElement, EmailSidebarProps>(
               <span>{syncPending ? 'Syncing…' : 'Sync now'}</span>
               {lastSyncedLabel && !syncPending && (
                 <span
-                  className="text-[10px] text-zinc-400 dark:text-zinc-500 ml-1"
+                  className="text-[10px] text-muted-foreground ml-1"
                   style={{ fontFamily: 'var(--font-mono)' }}
                 >
                   {lastSyncedLabel}
@@ -270,7 +270,7 @@ export const EmailSidebar = forwardRef<HTMLElement, EmailSidebarProps>(
           className={cn(
             'flex items-center justify-between px-4 pt-2 pb-1.5',
             'text-[9.5px] uppercase tracking-[0.08em]',
-            'text-zinc-500 dark:text-zinc-400',
+            'text-muted-foreground',
           )}
           style={{ fontFamily: 'var(--font-mono)' }}
         >
@@ -281,8 +281,8 @@ export const EmailSidebar = forwardRef<HTMLElement, EmailSidebarProps>(
               onClick={onAction}
               aria-label={actionLabel}
               className={cn(
-                'text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 rounded-sm',
+                'text-muted-foreground hover:text-foreground',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm',
               )}
             >
               <Plus className="w-3 h-3" aria-hidden />
@@ -310,25 +310,25 @@ export const EmailSidebar = forwardRef<HTMLElement, EmailSidebarProps>(
           className={cn(
             'relative flex items-center gap-2.5 h-[30px] px-2 rounded-md',
             'text-[12.5px]',
-            'text-zinc-600 dark:text-zinc-400',
-            'hover:bg-zinc-100 dark:hover:bg-zinc-800/60',
+            'text-muted-foreground',
+            'hover:bg-secondary',
             isActive &&
-              'bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-medium',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400',
+              'bg-secondary text-foreground font-medium',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
           )}
         >
           {isActive && (
             <span
               aria-hidden
-              className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-sm bg-red-700"
+              className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-sm bg-primary"
             />
           )}
           <span
             className={cn(
               'w-3.5 h-3.5 shrink-0',
               isActive
-                ? 'text-zinc-700 dark:text-zinc-200'
-                : 'text-zinc-500 dark:text-zinc-400',
+                ? 'text-foreground'
+                : 'text-muted-foreground',
             )}
           >
             {labelDef.icon}

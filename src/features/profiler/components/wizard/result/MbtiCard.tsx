@@ -28,7 +28,7 @@ export function MbtiCard({ signals }: { signals: MbtiSignals }) {
           return (
             <div
               key={`${dim.a}${dim.b}`}
-              className="rounded-xl border border-zinc-200/80 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-900"
+              className="rounded-xl border border-border/80 bg-secondary p-3"
               data-testid={`result-mbti-dim-${dim.a}${dim.b}`}
             >
               <div className="mb-2 flex items-center justify-between gap-2">
@@ -40,13 +40,13 @@ export function MbtiCard({ signals }: { signals: MbtiSignals }) {
                     ? 'No signals yet'
                     : `${winLabel} → ${winScore} signal${winScore !== 1 ? 's' : ''}`}
                 </span>
-                <span className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 10 }}>
+                <span className="text-muted-foreground" style={{ fontSize: 10 }}>
                   vs {loseLabel}
                   {total === 0 ? '' : ` (${loseScore})`}
                 </span>
               </div>
               <div
-                className="h-2 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800"
+                className="h-2 overflow-hidden rounded-full bg-secondary"
                 role="progressbar"
                 aria-label={`${dim.la} vs ${dim.lb} strength`}
                 aria-valuenow={barPc}
@@ -58,7 +58,7 @@ export function MbtiCard({ signals }: { signals: MbtiSignals }) {
                   style={{ width: `${barPc}%` }}
                 />
               </div>
-              <div className="mt-1.5 text-zinc-500 dark:text-zinc-400" style={{ fontSize: 10 }}>
+              <div className="mt-1.5 text-muted-foreground" style={{ fontSize: 10 }}>
                 {total === 0 ? 'Answer questions to see this' : `Strength: ${barPc}%`}
               </div>
             </div>

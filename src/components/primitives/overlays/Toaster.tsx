@@ -54,8 +54,8 @@ export function AppBaseToast({ variant, title, description, action, cancel, onDi
         'w-[360px] rounded-[10px] p-[12px_14px]',
         'flex gap-3 items-start',
         'backdrop-blur-[16px] backdrop-saturate-[160%]',
-        'bg-white/95 dark:bg-zinc-950/92',
-        'border border-zinc-900/10 dark:border-white/10',
+        'bg-card/95',
+        'border border-border',
         'shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_rgba(24,24,27,0.08)]',
         'dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_12px_32px_rgba(0,0,0,0.35)]'
       )}
@@ -82,14 +82,14 @@ export function AppBaseToast({ variant, title, description, action, cancel, onDi
       </span>
       <div className="flex-1 min-w-0">
         <div
-          className="text-[13px] font-medium text-zinc-900 dark:text-zinc-50"
+          className="text-[13px] font-medium text-foreground"
           style={{ lineHeight: 1.35 }}
         >
           {title}
         </div>
         {description && (
           <div
-            className="text-[12px] text-zinc-500 dark:text-zinc-400 mt-0.5 whitespace-pre-line"
+            className="text-[12px] text-muted-foreground mt-0.5 whitespace-pre-line"
             style={{ lineHeight: 1.5 }}
           >
             {description}
@@ -104,7 +104,7 @@ export function AppBaseToast({ variant, title, description, action, cancel, onDi
                   action.onClick();
                   onDismiss();
                 }}
-                className="h-6 px-2 rounded text-[11px] font-medium bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900 hover:bg-slate-900 dark:hover:bg-white"
+                className="h-6 px-2 rounded text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90"
                 style={{ fontFamily: 'var(--font-sans)' }}
               >
                 {action.label}
@@ -117,7 +117,7 @@ export function AppBaseToast({ variant, title, description, action, cancel, onDi
                   cancel.onClick?.();
                   onDismiss();
                 }}
-                className="h-6 px-2 rounded text-[11px] text-zinc-500 dark:text-zinc-400 bg-transparent hover:text-zinc-700 dark:hover:text-zinc-200"
+                className="h-6 px-2 rounded text-[11px] text-muted-foreground bg-transparent hover:text-foreground"
                 style={{ fontFamily: 'var(--font-sans)' }}
               >
                 {cancel.label}
@@ -130,7 +130,7 @@ export function AppBaseToast({ variant, title, description, action, cancel, onDi
         type="button"
         aria-label="Dismiss"
         onClick={onDismiss}
-        className="w-6 h-6 rounded flex items-center justify-center text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-200 flex-shrink-0"
+        className="w-6 h-6 rounded flex items-center justify-center text-muted-foreground hover:text-foreground flex-shrink-0"
       >
         <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden>
           <path d="M3 3 L9 9 M9 3 L3 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />

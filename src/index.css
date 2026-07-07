@@ -83,23 +83,26 @@
      · --font-mono    (tabular-nums · code · Kbd)  = Geist Mono (explicit opt-in)
      Rationale: typing into Geist Mono fields feels typewriter-y. Sub-headers
      keep the technical/Linear aesthetic; body + inputs stay normal. */
-  --font-sans: "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-subheader: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-pixel: "Geist Pixel", ui-monospace, monospace;
+  /* Prospect Profiler original aesthetic (2026-07-07 de-AppBase):
+     UI/forms/labels = clean sans-serif · headings/titles/prose = Georgia serif.
+     Mono kept only for tabular numbers / Kbd. */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-subheader: system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-pixel: Georgia, "Times New Roman", serif;
   /* Display = giant moments (140px+): hero wordmarks, 404, splash. Uses the
      Grid variant because its pixel dots are visibly coarser — at display
      scale Square reads too smooth, losing the pixel-font character. Rule:
      h1 ≤ 48px → --font-pixel (Square). Display ≥ 140px → --font-pixel-display (Grid). */
-  --font-pixel-display: "Geist Pixel Grid", ui-monospace, monospace;
-  --font-prose: "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif;
-  /* All 5 Geist Pixel variants loaded below — pick the one that feels
-     right and set `--font-pixel` to that. */
-  --font-pixel-square: "Geist Pixel Square", ui-monospace, monospace;
-  --font-pixel-grid: "Geist Pixel Grid", ui-monospace, monospace;
-  --font-pixel-circle: "Geist Pixel Circle", ui-monospace, monospace;
-  --font-pixel-triangle: "Geist Pixel Triangle", ui-monospace, monospace;
-  --font-pixel-line: "Geist Pixel Line", ui-monospace, monospace;
+  --font-pixel-display: Georgia, "Times New Roman", serif;
+  --font-prose: Georgia, "Times New Roman", serif;
+  /* de-AppBase 2026-07-07: all pixel variants repointed to Georgia serif so
+     any lingering --font-pixel-* reference renders in the original serif. */
+  --font-pixel-square: Georgia, "Times New Roman", serif;
+  --font-pixel-grid: Georgia, "Times New Roman", serif;
+  --font-pixel-circle: Georgia, "Times New Roman", serif;
+  --font-pixel-triangle: Georgia, "Times New Roman", serif;
+  --font-pixel-line: Georgia, "Times New Roman", serif;
 
   /* ---------------------------------------------------------------------
    * Radix 1–12 scales (zinc + red) — exposed as tokens so W07 primitives
@@ -166,44 +169,43 @@
  * ------------------------------------------------------------------------- */
 
 :root {
-  /* --- shadcn HSL tokens (unchanged from v3) --- */
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
+  /* --- Prospect Profiler original palette (2026-07-07 de-AppBase) ---
+     Navy canvas · cream text · gold accent · DISC-derived semantics.
+     The app is always this warm dark aesthetic; :root and .dark match so
+     the theme toggle never breaks the look.
+       navy   #0D1B2A  hsl(210 53% 11%)   cream  #F0EAD6  hsl(43 48% 89%)
+       card   #12202F  hsl(209 44% 13%)   modal  #182638  hsl(213 42% 16%)
+       gold   #C9A84C  hsl(43 55% 55%)    muted  #8A8070  hsl(38 12% 49%) */
+  --background: 210 53% 11%;          /* navy #0D1B2A */
+  --foreground: 43 48% 89%;           /* cream #F0EAD6 */
 
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
+  --card: 209 44% 13%;                /* raised navy surface */
+  --card-foreground: 43 48% 89%;
 
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
+  --popover: 213 42% 16%;             /* bottom-sheet / modal navy #182638 */
+  --popover-foreground: 43 48% 89%;
 
-  /* W08 Phase 2 — shadcn semantic tokens remapped.
-     Primary = slate-800 (user final pick 2026-04-19 eod+14 — darker than
-              slate-700 for stronger near-black CTA presence)
-     Destructive = red-700 (darker, brand-aligned)
-     Ring = red-700 (brand focus).
-     Every component using `bg-primary` / `bg-destructive` / `ring-ring`
-     picks up the new look.
-     Contrast: slate-800 + white = 13.1:1 (AAA). */
-  --primary: 217 33% 17%;             /* slate-800 #1e293b — USER FINAL 2026-04-19 eod+14 */
-  --primary-foreground: 0 0% 100%;    /* white */
+  /* Primary CTA = gold gradient base; dark brown text sits on gold. */
+  --primary: 43 55% 55%;              /* gold #C9A84C */
+  --primary-foreground: 40 100% 6%;  /* near-black brown #1A1200 */
 
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 209 32% 18%;           /* translucent-white-on-navy → lighter navy */
+  --secondary-foreground: 43 48% 89%;
 
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215 25% 27%;
+  --muted: 209 32% 18%;
+  --muted-foreground: 38 12% 49%;     /* #8A8070 */
 
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
+  --accent: 43 55% 55%;               /* gold accent */
+  --accent-foreground: 40 100% 6%;
 
-  --destructive: 0 74% 42%;           /* red-700 #b91c1c — LOCKED_PICKS v3.1 */
-  --destructive-foreground: 0 0% 100%; /* white */
+  --destructive: 6 64% 47%;           /* DISC-D red #C0392B */
+  --destructive-foreground: 43 48% 89%;
 
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 0 74% 42%;                  /* red-700 — brand focus ring */
+  --border: 210 25% 24%;              /* hairline navy-gold border */
+  --input: 210 25% 24%;
+  --ring: 43 55% 55%;                 /* gold focus ring */
 
-  --radius: 0.5rem;
+  --radius: 0.75rem;
 
   --sidebar-background: 0 0% 98%;
   --sidebar-foreground: 240 5.3% 26.1%;
@@ -361,35 +363,34 @@
 }
 
 .dark {
-  /* --- shadcn HSL tokens (dark, unchanged from v3) --- */
-  --background: 240 6% 10%;          /* zinc-900 #18181b — matches --page-bg, lifted above cards */
-  --foreground: 210 40% 98%;
+  /* --- Prospect Profiler navy palette (mirrors :root — app is always dark) --- */
+  --background: 210 53% 11%;          /* navy #0D1B2A */
+  --foreground: 43 48% 89%;           /* cream #F0EAD6 */
 
-  --card: 240 10% 4%;                /* zinc-950 #09090b — recessed one step below page */
-  --card-foreground: 210 40% 98%;
+  --card: 209 44% 13%;
+  --card-foreground: 43 48% 89%;
 
-  --popover: 222.2 84% 4.9%;
-  --popover-foreground: 210 40% 98%;
+  --popover: 213 42% 16%;             /* modal navy #182638 */
+  --popover-foreground: 43 48% 89%;
 
-  /* W08 Phase 2 — dark-mode CTA = slate-100 on dark bg (flip of light mode). */
-  --primary: 210 40% 96%;             /* slate-100 #f1f5f9 */
-  --primary-foreground: 222 47% 11%;  /* slate-900 #0f172a */
+  --primary: 43 55% 55%;              /* gold #C9A84C */
+  --primary-foreground: 40 100% 6%;   /* #1A1200 */
 
-  --secondary: 217.2 32.6% 17.5%;
-  --secondary-foreground: 210 40% 98%;
+  --secondary: 209 32% 18%;
+  --secondary-foreground: 43 48% 89%;
 
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
+  --muted: 209 32% 18%;
+  --muted-foreground: 38 12% 49%;     /* #8A8070 */
 
-  --accent: 217.2 32.6% 17.5%;
-  --accent-foreground: 210 40% 98%;
+  --accent: 43 55% 55%;
+  --accent-foreground: 40 100% 6%;
 
-  --destructive: 0 74% 42%;           /* red-700 — same brand red across modes */
-  --destructive-foreground: 0 0% 100%;
+  --destructive: 6 64% 47%;           /* DISC-D red #C0392B */
+  --destructive-foreground: 43 48% 89%;
 
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --ring: 0 74% 42%;                  /* red-700 brand focus */
+  --border: 210 25% 24%;
+  --input: 210 25% 24%;
+  --ring: 43 55% 55%;                 /* gold focus ring */
 
   --sidebar-background: 240 5.9% 10%;
   --sidebar-foreground: 240 4.8% 95.9%;

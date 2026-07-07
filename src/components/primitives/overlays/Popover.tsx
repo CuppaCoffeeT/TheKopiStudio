@@ -49,7 +49,7 @@ export const PopoverContent = ({
         <PopoverPrimitive.Arrow
           width={10}
           height={5}
-          className="fill-white/75 dark:fill-zinc-950/75"
+          className="fill-card/75"
         />
       )}
     </PopoverPrimitive.Content>

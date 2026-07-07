@@ -95,7 +95,7 @@ export default function ClientReportPage() {
   const investmentPolicies = policyList.filter((p) => p.isInvestmentLinked);
 
   return (
-    <div className="min-h-dvh bg-zinc-100 px-3 py-4 sm:px-6 sm:py-6 dark:bg-zinc-950 print:bg-white">
+    <div className="min-h-dvh bg-background px-3 py-4 sm:px-6 sm:py-6 print:bg-white">
       <div className="report-print-root mx-auto w-full max-w-4xl">
         <div className="no-print mb-4 flex flex-wrap items-center justify-between gap-3">
           <Button

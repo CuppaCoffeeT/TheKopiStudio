@@ -44,7 +44,7 @@ export function NotificationsBell({ items, total, onPick }: NotificationsBellPro
         <button
           type="button"
           aria-label={total > 0 ? `Notifications — ${total} need attention` : 'Notifications — all caught up'}
-          className="relative w-8 h-8 rounded-md inline-flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950"
+          className="relative w-8 h-8 rounded-md inline-flex items-center justify-center text-muted-foreground hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           <Bell className="w-4 h-4" strokeWidth={1.3} />
           {total > 0 && (
@@ -57,7 +57,7 @@ export function NotificationsBell({ items, total, onPick }: NotificationsBellPro
       </PopoverTrigger>
 
       <PopoverContent align="end" sideOffset={8} className="w-[320px] p-0">
-        <div className="px-3 pt-3 pb-2 flex items-center gap-2 border-b border-zinc-100 dark:border-zinc-800">
+        <div className="px-3 pt-3 pb-2 flex items-center gap-2 border-b border-border">
           <AlertCircle className="h-3.5 w-3.5 text-red-500" />
           <span className="text-[11px] font-medium uppercase tracking-widest text-red-500">
             Needs your attention
@@ -70,7 +70,7 @@ export function NotificationsBell({ items, total, onPick }: NotificationsBellPro
         </div>
 
         {items.length === 0 ? (
-          <div className="px-3 py-6 flex items-center justify-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
+          <div className="px-3 py-6 flex items-center justify-center gap-2 text-sm text-muted-foreground">
             <Check className="w-4 h-4 text-green-500" />
             You're all caught up
           </div>
@@ -85,8 +85,8 @@ export function NotificationsBell({ items, total, onPick }: NotificationsBellPro
                   onClick={() => handlePick(item.path)}
                   className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-red-50/30 dark:hover:bg-red-950/20 focus-visible:outline-none focus-visible:bg-red-50/30 dark:focus-visible:bg-red-950/20 text-left"
                 >
-                  <Icon className="w-4 h-4 text-zinc-500 shrink-0" strokeWidth={1.5} />
-                  <span className="flex-1 text-sm text-zinc-700 dark:text-zinc-200 truncate">
+                  <Icon className="w-4 h-4 text-muted-foreground shrink-0" strokeWidth={1.5} />
+                  <span className="flex-1 text-sm text-muted-foreground truncate">
                     {item.name}
                   </span>
                   {item.count > 0 && (
@@ -94,7 +94,7 @@ export function NotificationsBell({ items, total, onPick }: NotificationsBellPro
                       {item.count}
                     </Badge>
                   )}
-                  <ChevronRight className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                  <ChevronRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                 </button>
               );
             })}

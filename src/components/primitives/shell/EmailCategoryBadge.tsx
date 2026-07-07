@@ -81,10 +81,10 @@ export const EmailCategoryBadge = forwardRef<HTMLSpanElement, EmailCategoryBadge
             'text-[11px] font-medium whitespace-nowrap',
             'border transition-colors cursor-pointer',
             toggled
-              ? 'bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-[inset_0_1px_1px_rgba(0,0,0,0.03)]'
-              : 'bg-zinc-100 dark:bg-zinc-800/60 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300',
+              ? 'bg-card border-border text-foreground shadow-[inset_0_1px_1px_rgba(0,0,0,0.03)]'
+              : 'bg-secondary border-border text-muted-foreground',
             'hover:border-zinc-400 dark:hover:border-zinc-600',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
             'disabled:opacity-40 disabled:cursor-not-allowed',
             className,
           )}

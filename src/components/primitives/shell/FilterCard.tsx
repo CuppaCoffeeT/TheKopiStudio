@@ -54,7 +54,7 @@ export function FilterCard({
             {showSearch && (
               <div className="flex-1 relative">
                 <Search
-                  className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 dark:text-zinc-400 z-10 pointer-events-none"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10 pointer-events-none"
                   aria-hidden="true"
                 />
                 <Input

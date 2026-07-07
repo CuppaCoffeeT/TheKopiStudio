@@ -126,8 +126,8 @@ export const EmailMessageCard = forwardRef<HTMLDivElement, EmailMessageCardProps
         ref={ref}
         className={cn(
           'relative overflow-hidden rounded-2xl border',
-          'bg-white dark:bg-zinc-950',
-          'border-zinc-200/80 dark:border-zinc-800/80',
+          'bg-card',
+          'border-border',
           'shadow-[0_1px_2px_rgb(0_0_0_/_0.04)]',
           className,
         )}
@@ -141,9 +141,9 @@ export const EmailMessageCard = forwardRef<HTMLDivElement, EmailMessageCardProps
           aria-expanded={expanded}
           className={cn(
             'w-full text-left flex items-start gap-3 px-4 py-3 cursor-pointer',
-            'hover:bg-zinc-50/60 dark:hover:bg-zinc-900/60 transition-colors',
-            expanded && 'border-b border-zinc-100 dark:border-zinc-800/60',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-red-700 dark:focus-visible:ring-red-400',
+            'hover:bg-secondary transition-colors',
+            expanded && 'border-b border-border',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring',
           )}
         >
           <span
@@ -155,23 +155,23 @@ export const EmailMessageCard = forwardRef<HTMLDivElement, EmailMessageCardProps
           </span>
           <div className="flex-1 min-w-0">
             <div className="flex items-baseline gap-2">
-              <span className="text-[13px] font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+              <span className="text-[13px] font-semibold text-foreground truncate">
                 {fromName}
               </span>
               <span
-                className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate"
+                className="text-[11px] text-muted-foreground truncate"
                 style={{ fontFamily: 'var(--font-mono)' }}
               >
                 &lt;{fromEmail}&gt;
               </span>
             </div>
             {!expanded && snippet && (
-              <p className="text-[12.5px] text-zinc-500 dark:text-zinc-400 mt-0.5 truncate">
+              <p className="text-[12.5px] text-muted-foreground mt-0.5 truncate">
                 {snippet}
               </p>
             )}
             {expanded && toList.length > 0 && (
-              <p className="text-[11.5px] text-zinc-500 dark:text-zinc-400 mt-0.5 truncate">
+              <p className="text-[11.5px] text-muted-foreground mt-0.5 truncate">
                 to {toList.map(formatParticipant).join(', ')}
                 {ccList.length > 0 && ` · cc ${ccList.map(formatParticipant).join(', ')}`}
                 {bccList.length > 0 && ` · bcc ${bccList.map(formatParticipant).join(', ')}`}
@@ -179,15 +179,15 @@ export const EmailMessageCard = forwardRef<HTMLDivElement, EmailMessageCardProps
             )}
           </div>
           <span
-            className="text-[10.5px] text-zinc-500 dark:text-zinc-400 shrink-0 mt-0.5 tabular-nums"
+            className="text-[10.5px] text-muted-foreground shrink-0 mt-0.5 tabular-nums"
             style={{ fontFamily: 'var(--font-mono)' }}
           >
             {formattedTime}
           </span>
           {expanded ? (
-            <ChevronUp className="w-4 h-4 text-zinc-400 dark:text-zinc-500 shrink-0 mt-0.5" aria-hidden />
+            <ChevronUp className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" aria-hidden />
           ) : (
-            <ChevronDown className="w-4 h-4 text-zinc-400 dark:text-zinc-500 shrink-0 mt-0.5" aria-hidden />
+            <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" aria-hidden />
           )}
         </button>
 
@@ -199,14 +199,14 @@ export const EmailMessageCard = forwardRef<HTMLDivElement, EmailMessageCardProps
                 className={cn(
                   'grid gap-x-2.5 gap-y-0.5 text-[11.5px] pb-2.5 mb-2.5',
                   'grid-cols-[40px_minmax(0,1fr)]',
-                  'border-b border-dashed border-zinc-100 dark:border-zinc-800/60',
-                  'text-zinc-600 dark:text-zinc-400',
+                  'border-b border-dashed border-border',
+                  'text-muted-foreground',
                 )}
               >
                 {toList.length > 0 && (
                   <>
                     <dt
-                      className="text-[10px] uppercase tracking-[0.06em] text-zinc-500 dark:text-zinc-500"
+                      className="text-[10px] uppercase tracking-[0.06em] text-muted-foreground"
                       style={{ fontFamily: 'var(--font-mono)' }}
                     >
                       To
@@ -219,7 +219,7 @@ export const EmailMessageCard = forwardRef<HTMLDivElement, EmailMessageCardProps
                 {ccList.length > 0 && (
                   <>
                     <dt
-                      className="text-[10px] uppercase tracking-[0.06em] text-zinc-500 dark:text-zinc-500"
+                      className="text-[10px] uppercase tracking-[0.06em] text-muted-foreground"
                       style={{ fontFamily: 'var(--font-mono)' }}
                     >
                       CC
@@ -232,7 +232,7 @@ export const EmailMessageCard = forwardRef<HTMLDivElement, EmailMessageCardProps
                 {bccList.length > 0 && (
                   <>
                     <dt
-                      className="text-[10px] uppercase tracking-[0.06em] text-zinc-500 dark:text-zinc-500"
+                      className="text-[10px] uppercase tracking-[0.06em] text-muted-foreground"
                       style={{ fontFamily: 'var(--font-mono)' }}
                     >
                       BCC
@@ -254,16 +254,16 @@ export const EmailMessageCard = forwardRef<HTMLDivElement, EmailMessageCardProps
                 onLoadImages={onLoadImages}
               />
             ) : (
-              <pre className="whitespace-pre-wrap text-[13px] leading-[1.6] text-zinc-700 dark:text-zinc-300 font-sans">
+              <pre className="whitespace-pre-wrap text-[13px] leading-[1.6] text-muted-foreground font-sans">
                 {bodyPlain ?? '(no content)'}
               </pre>
             )}
 
             {/* Attachments */}
             {attachmentsSlot && (
-              <div className="mt-3 pt-3 border-t border-dashed border-zinc-100 dark:border-zinc-800/60">
+              <div className="mt-3 pt-3 border-t border-dashed border-border">
                 <div
-                  className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.06em] text-zinc-500 dark:text-zinc-400 mb-2"
+                  className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.06em] text-muted-foreground mb-2"
                   style={{ fontFamily: 'var(--font-mono)' }}
                 >
                   <Paperclip className="w-3 h-3" aria-hidden />
@@ -275,7 +275,7 @@ export const EmailMessageCard = forwardRef<HTMLDivElement, EmailMessageCardProps
 
             {/* Reply actions */}
             {(onReply || onReplyAll || onForward) && (
-              <div className="mt-3.5 pt-3 border-t border-dashed border-zinc-100 dark:border-zinc-800/60 flex flex-wrap gap-1.5">
+              <div className="mt-3.5 pt-3 border-t border-dashed border-border flex flex-wrap gap-1.5">
                 {onReply && (
                   <MessageActionButton icon={<Reply className="w-3.5 h-3.5" />} onClick={onReply}>
                     Reply
@@ -321,11 +321,11 @@ function MessageActionButton({
       onClick={onClick}
       className={cn(
         'h-7 px-2.5 rounded-md inline-flex items-center gap-1.5',
-        'text-[12px] text-zinc-700 dark:text-zinc-300',
-        'border border-zinc-200 dark:border-zinc-800',
-        'bg-white dark:bg-zinc-950',
-        'hover:bg-zinc-50 dark:hover:bg-zinc-900',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+        'text-[12px] text-muted-foreground',
+        'border border-border',
+        'bg-card',
+        'hover:bg-secondary',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
     >

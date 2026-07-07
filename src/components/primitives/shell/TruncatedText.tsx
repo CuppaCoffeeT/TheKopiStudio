@@ -24,7 +24,7 @@ export function TruncatedText({
   className = '',
 }: TruncatedTextProps) {
   if (!text) {
-    return <span className={`text-zinc-500 dark:text-zinc-400 ${className}`}>-</span>;
+    return <span className={`text-muted-foreground ${className}`}>-</span>;
   }
 
   const truncated = smartTruncate(text, maxLength, minChars);

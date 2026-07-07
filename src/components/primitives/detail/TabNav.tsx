@@ -61,8 +61,8 @@ export function TabNav({ tabs, value, onChange, size = 'md', sticky = false, cla
       className={cn(
         'inline-flex items-center justify-center px-1.5 py-[1px] rounded-full text-[10.5px] font-medium tracking-wide',
         isActive
-          ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
-          : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500'
+          ? 'bg-primary/10 dark:bg-primary/15 text-primary'
+          : 'bg-secondary text-muted-foreground'
       )}
       style={{ fontFamily: 'var(--font-mono)' }}
     >
@@ -75,7 +75,7 @@ export function TabNav({ tabs, value, onChange, size = 'md', sticky = false, cla
       className={cn(
         sticky && 'sticky top-0 z-20',
         'relative bg-white/70 dark:bg-zinc-950/70 backdrop-blur-md backdrop-saturate-150',
-        'border-b border-zinc-100 dark:border-zinc-900',
+        'border-b border-border',
         className
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
@@ -114,10 +114,10 @@ export function TabNav({ tabs, value, onChange, size = 'md', sticky = false, cla
                 'px-3.5 -mb-px inline-flex items-center gap-2 flex-shrink-0 whitespace-nowrap',
                 'border-b-2 transition-colors',
                 isActive
-                  ? 'border-red-700 dark:border-red-400 font-semibold text-zinc-900 dark:text-zinc-50'
-                  : 'border-transparent font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50 hover:bg-white dark:hover:bg-zinc-900',
+                  ? 'border-primary font-semibold text-foreground'
+                  : 'border-transparent font-medium text-muted-foreground hover:text-foreground hover:bg-secondary',
                 'active:translate-y-[1px]',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:rounded',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:rounded',
                 isDisabled && 'opacity-50 cursor-not-allowed hover:bg-transparent'
               )}
             >
@@ -138,16 +138,16 @@ export function TabNav({ tabs, value, onChange, size = 'md', sticky = false, cla
                 rowH,
                 fontSize,
                 'w-full px-3 inline-flex items-center justify-between gap-2',
-                'border-b-2 border-red-700 dark:border-red-400 -mb-px',
-                'font-semibold text-zinc-900 dark:text-zinc-50',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400'
+                'border-b-2 border-primary -mb-px',
+                'font-semibold text-foreground',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
               )}
             >
               <span className="inline-flex items-center gap-2 min-w-0">
                 <span className="truncate">{activeTab?.label ?? 'Select…'}</span>
                 {activeTab?.count != null && renderCount(activeTab.count, true)}
               </span>
-              <ChevronDown className={cn('w-3.5 h-3.5 text-zinc-500 transition-transform', open && 'rotate-180')} />
+              <ChevronDown className={cn('w-3.5 h-3.5 text-muted-foreground transition-transform', open && 'rotate-180')} />
             </button>
           </PopoverTrigger>
           <PopoverContent
@@ -174,8 +174,8 @@ export function TabNav({ tabs, value, onChange, size = 'md', sticky = false, cla
                         'w-full px-3 py-2 inline-flex items-center justify-between gap-2 rounded',
                         fontSize,
                         isActive
-                          ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 font-semibold'
-                          : 'text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-900',
+                          ? 'bg-primary/10 dark:bg-primary/15 text-primary font-semibold'
+                          : 'text-muted-foreground hover:bg-secondary',
                         isDisabled && 'opacity-50 cursor-not-allowed'
                       )}
                     >

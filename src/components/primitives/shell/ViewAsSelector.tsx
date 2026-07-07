@@ -93,10 +93,10 @@ export function ViewAsSelector({
           className={cn(
             'w-8 h-8 rounded-md inline-flex items-center justify-center',
             'transition-colors',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-1',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
             isImpersonating
-              ? 'border border-red-700 dark:border-red-400 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/50'
-              : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900',
+              ? 'border border-primary bg-primary/10 dark:bg-primary/15 text-primary hover:bg-primary/15 dark:hover:bg-primary/20'
+              : 'text-muted-foreground hover:bg-secondary',
           )}
         >
           <Eye className="w-4 h-4" strokeWidth={1.3} />
@@ -106,27 +106,24 @@ export function ViewAsSelector({
       <PopoverContent align="end" sideOffset={8} className="w-[300px] p-0 overflow-hidden">
         <div className="px-3 pt-2 pb-2" style={{ fontFamily: 'var(--font-sans)' }}>
           <div
-            className="text-[9.5px] font-medium uppercase tracking-[0.08em] text-zinc-500 mb-1"
-            style={{ fontFamily: 'var(--font-mono)' }}
+            className="text-[9.5px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-1"
           >
             YOU
           </div>
           <div
-            className="text-[12.5px] text-zinc-900 dark:text-zinc-50"
-            style={{ fontFamily: 'var(--font-mono)' }}
+            className="text-[12.5px] text-foreground"
           >
             {realUser.email ?? 'Unknown'}
           </div>
-          <div className="mt-0.5 text-[10.5px] uppercase tracking-[0.06em] text-zinc-500">
+          <div className="mt-0.5 text-[10.5px] uppercase tracking-[0.06em] text-muted-foreground">
             {realUser.role ? formatRole(realUser.role) : ''}
           </div>
         </div>
 
-        <div className="h-px bg-zinc-100 dark:bg-zinc-900" />
+        <div className="h-px bg-secondary" />
 
         <div
-          className="px-3 pt-2 pb-1 text-[9.5px] font-medium uppercase tracking-[0.08em] text-zinc-500"
-          style={{ fontFamily: 'var(--font-mono)' }}
+          className="px-3 pt-2 pb-1 text-[9.5px] font-medium uppercase tracking-[0.08em] text-muted-foreground"
         >
           TEST AS — UI/UX + Playwright
         </div>
@@ -135,19 +132,19 @@ export function ViewAsSelector({
           <div
             className={cn(
               'flex items-center gap-2 h-8 px-2 rounded-md',
-              'bg-zinc-50 dark:bg-zinc-900',
-              'border border-zinc-200 dark:border-zinc-800',
-              'focus-within:border-red-700 dark:focus-within:border-red-400',
-              'focus-within:ring-[2px] focus-within:ring-red-700/15 dark:focus-within:ring-red-400/20',
+              'bg-secondary',
+              'border border-border',
+              'focus-within:border-primary',
+              'focus-within:ring-[2px] focus-within:ring-ring/15',
             )}
           >
-            <Search className="w-3.5 h-3.5 text-zinc-500 flex-shrink-0" strokeWidth={1.3} />
+            <Search className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" strokeWidth={1.3} />
             <input
               ref={inputRef}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search users…"
-              className="flex-1 bg-transparent border-none outline-none text-[12px] text-zinc-900 dark:text-zinc-50 placeholder:text-zinc-500"
+              className="flex-1 bg-transparent border-none outline-none text-[12px] text-foreground placeholder:text-muted-foreground"
               style={{ fontFamily: 'var(--font-sans)' }}
             />
             {query && (
@@ -157,7 +154,7 @@ export function ViewAsSelector({
                   setQuery('');
                   inputRef.current?.focus();
                 }}
-                className="w-3.5 h-3.5 flex items-center justify-center text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
+                className="w-3.5 h-3.5 flex items-center justify-center text-muted-foreground hover:text-foreground"
                 aria-label="Clear search"
               >
                 <X className="w-2.5 h-2.5" strokeWidth={1.5} />
@@ -168,7 +165,7 @@ export function ViewAsSelector({
 
         <div className="max-h-[300px] overflow-y-auto px-1.5 pb-1.5">
           {filtered.length === 0 && (
-            <div className="py-6 text-center text-[11.5px] text-zinc-500">
+            <div className="py-6 text-center text-[11.5px] text-muted-foreground">
               {q ? `No users match "${query}"` : 'No users'}
             </div>
           )}
@@ -185,9 +182,9 @@ export function ViewAsSelector({
                 className={cn(
                   'w-full flex items-start gap-2.5 px-2 py-1.5 rounded text-left',
                   'transition-colors',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-1',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
                   isSelf && 'opacity-40 cursor-not-allowed',
-                  !isSelf && 'hover:bg-zinc-100 dark:hover:bg-zinc-900 cursor-pointer',
+                  !isSelf && 'hover:bg-secondary cursor-pointer',
                 )}
                 title={isSelf ? 'This is your account' : undefined}
                 style={{ fontFamily: 'var(--font-sans)' }}
@@ -195,22 +192,21 @@ export function ViewAsSelector({
                 <span
                   className={cn(
                     'inline-block w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0',
-                    isActive ? 'bg-red-700 dark:bg-red-400' : 'bg-zinc-300 dark:bg-zinc-700',
+                    isActive ? 'bg-primary' : 'bg-zinc-300 dark:bg-zinc-700',
                   )}
                 />
                 <div className="flex-1 min-w-0">
                   <div
                     className={cn(
-                      'text-[12.5px] text-zinc-900 dark:text-zinc-50 truncate',
+                      'text-[12.5px] text-foreground truncate',
                       isActive && 'font-semibold',
                     )}
                   >
                     {u.name}{' '}
-                    <span className="text-zinc-500 font-normal">({formatRole(u.role)})</span>
+                    <span className="text-muted-foreground font-normal">({formatRole(u.role)})</span>
                   </div>
                   <div
-                    className="text-[10.5px] text-zinc-500 truncate mt-px"
-                    style={{ fontFamily: 'var(--font-mono)' }}
+                    className="text-[10.5px] text-muted-foreground truncate mt-px"
                   >
                     {u.email}
                   </div>
@@ -222,7 +218,7 @@ export function ViewAsSelector({
 
         {isImpersonating && (
           <>
-            <div className="h-px bg-zinc-100 dark:bg-zinc-900" />
+            <div className="h-px bg-secondary" />
             <div className="p-1">
               <button
                 type="button"
@@ -231,10 +227,10 @@ export function ViewAsSelector({
                 className={cn(
                   'w-full flex items-center justify-center gap-2 h-8 rounded',
                   'text-[12.5px] font-medium',
-                  'text-red-700 dark:text-red-400',
-                  'hover:bg-red-50 dark:hover:bg-red-950/30',
+                  'text-primary',
+                  'hover:bg-secondary',
                   'transition-colors',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-1',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
                 )}
                 style={{ fontFamily: 'var(--font-sans)' }}
               >

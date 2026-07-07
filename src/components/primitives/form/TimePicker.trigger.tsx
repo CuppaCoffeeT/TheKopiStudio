@@ -37,20 +37,20 @@ export const TimePickerTrigger = forwardRef<HTMLButtonElement, TimePickerTrigger
         data-testid={triggerTestId}
         style={{ fontFamily: 'var(--font-mono)' }}
         className={cn(
-          'w-full flex items-center gap-2 px-3 rounded-lg border bg-white dark:bg-zinc-950',
+          'w-full flex items-center gap-2 px-3 rounded-lg border bg-card',
           heightClass,
           textSizeClass,
           'tabular-nums text-left appearance-none transition-[box-shadow,border-color,background] duration-150',
-          error || open ? 'border-red-700 dark:border-red-400' : 'border-zinc-200 dark:border-zinc-800',
-          open && 'ring-[3px] ring-red-700/15 dark:ring-red-400/25',
-          'hover:border-zinc-400 dark:hover:border-zinc-600',
-          'active:bg-zinc-50 dark:active:bg-zinc-900',
-          'focus-visible:outline-none focus-visible:border-red-700 dark:focus-visible:border-red-400 focus-visible:ring-[3px] focus-visible:ring-red-700/15 dark:focus-visible:ring-red-400/25',
-          'disabled:bg-zinc-50 dark:disabled:bg-zinc-900 disabled:cursor-not-allowed disabled:opacity-80',
-          display ? 'text-zinc-900 dark:text-zinc-50' : 'text-zinc-400 dark:text-zinc-500',
+          error || open ? 'border-red-700 dark:border-red-400' : 'border-border',
+          open && 'ring-[3px] ring-ring/15',
+          'hover:border-border',
+          'active:bg-secondary',
+          'focus-visible:outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/15',
+          'disabled:bg-secondary disabled:cursor-not-allowed disabled:opacity-80',
+          display ? 'text-foreground' : 'text-muted-foreground',
         )}
       >
-        <Clock className={cn(size === 'lg' ? 'h-4 w-4' : size === 'sm' ? 'h-3 w-3' : 'h-[14px] w-[14px]', 'shrink-0 text-zinc-500 dark:text-zinc-400')} />
+        <Clock className={cn(size === 'lg' ? 'h-4 w-4' : size === 'sm' ? 'h-3 w-3' : 'h-[14px] w-[14px]', 'shrink-0 text-muted-foreground')} />
         <span className="flex-1 truncate text-center tracking-[0.04em]">{display || placeholder}</span>
         <span aria-hidden className={cn(size === 'lg' ? 'w-4' : size === 'sm' ? 'w-3' : 'w-[14px]', 'shrink-0')} />
       </button>

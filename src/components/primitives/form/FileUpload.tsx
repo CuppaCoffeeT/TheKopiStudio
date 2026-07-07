@@ -100,32 +100,32 @@ export function FileUpload({
           'rounded-[10px] px-5 py-[22px] w-full flex flex-col items-center gap-2 text-center',
           'border-[1.5px] border-dashed transition-[border-color,background-color] duration-150',
           drag
-            ? 'border-red-700 dark:border-red-400 bg-red-700/5 dark:bg-red-400/10'
+            ? 'border-primary bg-primary/5'
             : error
               ? 'border-red-700 dark:border-red-400'
-              : 'border-zinc-300 dark:border-zinc-700',
-          !drag && !error && !disabled && 'hover:border-zinc-400 dark:hover:border-zinc-600',
-          disabled ? 'bg-zinc-100 dark:bg-zinc-900 opacity-70 cursor-not-allowed' : 'bg-zinc-50/60 dark:bg-zinc-900/40 cursor-pointer',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950'
+              : 'border-border',
+          !drag && !error && !disabled && 'hover:border-border',
+          disabled ? 'bg-secondary opacity-70 cursor-not-allowed' : 'bg-secondary cursor-pointer',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background'
         )}
       >
         <span
           className={cn(
             'w-9 h-9 rounded-lg inline-flex items-center justify-center border',
-            'bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800',
-            drag ? 'text-red-700 dark:text-red-400' : 'text-zinc-500 dark:text-zinc-400'
+            'bg-card border-border',
+            drag ? 'text-primary' : 'text-muted-foreground'
           )}
         >
           <Upload size={18} />
         </span>
         <div
-          className="text-zinc-900 dark:text-zinc-50 font-medium"
+          className="text-foreground font-medium"
           style={{ fontFamily: 'var(--font-sans)', fontSize: 14 }}
         >
           {drag ? 'Drop files to upload' : 'Drop files here, or click to browse'}
         </div>
         <div
-          className="text-zinc-500 dark:text-zinc-400"
+          className="text-muted-foreground"
           style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}
         >
           {hint}
@@ -149,14 +149,14 @@ function FileRow({ item, onRemove }: { item: FileUploadItem; onRemove?: (id: str
     <div
       className={cn(
         'flex items-center gap-2.5 px-3 py-2.5 rounded-lg',
-        'bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800'
+        'bg-card border border-border'
       )}
     >
       <span
         className={cn(
           'w-7 h-8 rounded-sm inline-flex items-center justify-center flex-shrink-0 font-semibold',
-          'bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800',
-          'text-zinc-500 dark:text-zinc-400'
+          'bg-secondary border border-border',
+          'text-muted-foreground'
         )}
         style={{ fontFamily: 'var(--font-mono)', fontSize: 9 }}
       >
@@ -164,28 +164,28 @@ function FileRow({ item, onRemove }: { item: FileUploadItem; onRemove?: (id: str
       </span>
       <div className="flex-1 min-w-0">
         <div
-          className="truncate font-medium text-zinc-900 dark:text-zinc-50"
+          className="truncate font-medium text-foreground"
           style={{ fontFamily: 'var(--font-sans)', fontSize: 13 }}
         >
           {item.name}
         </div>
         <div className="mt-1 flex items-center gap-2">
           <span
-            className="tabular-nums text-zinc-500 dark:text-zinc-400"
+            className="tabular-nums text-muted-foreground"
             style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}
           >
             {item.size}
           </span>
           {item.state === 'uploading' && (
             <>
-              <span className="flex-1 max-w-[180px] h-1 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+              <span className="flex-1 max-w-[180px] h-1 rounded-full bg-secondary overflow-hidden">
                 <span
-                  className="block h-full bg-red-700 dark:bg-red-400"
+                  className="block h-full bg-primary"
                   style={{ width: `${item.progress ?? 0}%` }}
                 />
               </span>
               <span
-                className="tabular-nums text-red-700 dark:text-red-400"
+                className="tabular-nums text-primary"
                 style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}
               >
                 {item.progress ?? 0}%
@@ -227,8 +227,8 @@ function FileRow({ item, onRemove }: { item: FileUploadItem; onRemove?: (id: str
         onClick={() => onRemove?.(item.id)}
         className={cn(
           'w-6 h-6 rounded-md inline-flex items-center justify-center flex-shrink-0',
-          'text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400'
+          'text-muted-foreground hover:bg-secondary',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
         )}
         aria-label="Remove file"
       >

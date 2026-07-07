@@ -33,9 +33,9 @@ export const FilterPill = forwardRef<HTMLButtonElement, FilterPillProps>(functio
         'h-[30px] px-[10px] rounded-md border',
         'text-[12px]',
         active
-          ? 'bg-red-50 border-red-700 text-red-700 dark:bg-red-500/[0.10] dark:border-red-400 dark:text-red-400'
-          : 'bg-white border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:bg-zinc-950 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+          ? 'bg-primary/10 border-primary text-primary dark:bg-primary/15 dark:border-primary'
+          : 'bg-card border-zinc-300 text-muted-foreground hover:bg-secondary dark:border-zinc-700',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         'disabled:opacity-40 disabled:cursor-not-allowed',
         className
       )}
@@ -46,10 +46,9 @@ export const FilterPill = forwardRef<HTMLButtonElement, FilterPillProps>(functio
         className={cn(
           'text-[10.5px] font-semibold uppercase tracking-[0.08em]',
           active
-            ? 'text-red-700 dark:text-red-400'
-            : 'text-zinc-500 dark:text-zinc-400'
+            ? 'text-primary'
+            : 'text-muted-foreground'
         )}
-        style={{ fontFamily: 'var(--font-mono)' }}
       >
         {label}
       </span>
@@ -57,7 +56,7 @@ export const FilterPill = forwardRef<HTMLButtonElement, FilterPillProps>(functio
         <span
           className={cn(
             'font-medium',
-            active ? 'text-red-700 dark:text-red-400' : 'text-zinc-900 dark:text-zinc-50'
+            active ? 'text-primary' : 'text-foreground'
           )}
         >
           · {value}
@@ -70,8 +69,8 @@ export const FilterPill = forwardRef<HTMLButtonElement, FilterPillProps>(functio
             'min-w-[18px] h-[18px] px-[5px]',
             'text-[10px] font-semibold',
             active
-              ? 'bg-red-700 text-white dark:bg-red-400 dark:text-zinc-900'
-              : 'bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300'
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-zinc-200 text-muted-foreground dark:bg-zinc-800'
           )}
           style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}
         >

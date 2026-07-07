@@ -26,12 +26,12 @@ export const Label = forwardRef<HTMLLabelElement, LabelProps>(function Label(
       <label
         ref={ref}
         className={cn(
-          'inline-flex items-center gap-1 text-zinc-500 dark:text-zinc-400 uppercase',
+          'inline-flex items-center gap-1 text-muted-foreground uppercase',
           'peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
           className,
         )}
         style={{
-          fontFamily: 'var(--font-mono)',
+          fontFamily: 'var(--font-pixel)',
           fontSize: 10.5,
           fontWeight: 600,
           letterSpacing: '0.08em',
@@ -47,7 +47,7 @@ export const Label = forwardRef<HTMLLabelElement, LabelProps>(function Label(
     <label
       ref={ref}
       className={cn(
-        'text-[13px] font-medium text-zinc-700 dark:text-zinc-300',
+        'text-[13px] font-medium text-muted-foreground',
         'peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
         className,
       )}

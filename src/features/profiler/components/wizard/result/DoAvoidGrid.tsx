@@ -31,7 +31,7 @@ export function DoAvoidGrid({ profile }: { profile: DiscProfile }) {
       <Card className="border-green-200/80 dark:border-green-900/60">
         <div
           className="mb-2.5 uppercase text-green-700 dark:text-green-400"
-          style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.12em' }}
+          style={{ fontFamily: 'var(--font-pixel)', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.12em' }}
         >
           ✓ Do This
         </div>
@@ -40,7 +40,7 @@ export function DoAvoidGrid({ profile }: { profile: DiscProfile }) {
       <Card className="border-red-200/80 dark:border-red-900/60">
         <div
           className="mb-2.5 uppercase text-red-700 dark:text-red-400"
-          style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.12em' }}
+          style={{ fontFamily: 'var(--font-pixel)', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.12em' }}
         >
           ✕ Avoid
         </div>

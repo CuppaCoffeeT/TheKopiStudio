@@ -56,8 +56,8 @@ export function ActivityLogTimeline({
     <div
       className={cn(
         'rounded-[10px] overflow-hidden',
-        'border border-zinc-200 dark:border-zinc-800',
-        'bg-white dark:bg-zinc-950',
+        'border border-border',
+        'bg-card',
         className
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
@@ -67,10 +67,10 @@ export function ActivityLogTimeline({
           <div
             className={cn(
               'px-3 md:px-4 py-2 md:py-2.5',
-              'bg-zinc-50 dark:bg-zinc-900',
-              'border-b border-zinc-100 dark:border-zinc-900',
-              gi > 0 && 'border-t border-zinc-100 dark:border-zinc-900',
-              'text-[10.5px] font-semibold uppercase tracking-widest text-zinc-500'
+              'bg-secondary',
+              'border-b border-border',
+              gi > 0 && 'border-t border-border',
+              'text-[10.5px] font-semibold uppercase tracking-widest text-muted-foreground'
             )}
             style={{ fontFamily: 'var(--font-mono)' }}
           >
@@ -92,8 +92,8 @@ export function ActivityLogTimeline({
                   'flex items-start md:items-center gap-2.5',
                   'px-3 md:px-4 py-2.5',
                   'min-h-11 flex-wrap md:flex-nowrap',
-                  !isLast && 'border-b border-zinc-100 dark:border-zinc-900',
-                  'hover:bg-white hover:shadow-[inset_0_0_0_1px_#ececee,0_1px_2px_rgba(24,24,27,0.04)]',
+                  !isLast && 'border-b border-border',
+                  'hover:bg-card hover:shadow-[inset_0_0_0_1px_#ececee,0_1px_2px_rgba(24,24,27,0.04)]',
                   'dark:hover:bg-white/[0.04] dark:hover:shadow-none'
                 )}
               >
@@ -102,19 +102,19 @@ export function ActivityLogTimeline({
                     'w-6 h-6 rounded-full inline-flex items-center justify-center flex-shrink-0',
                     'text-[9.5px] font-semibold tracking-wide',
                     e.system
-                      ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-500'
-                      : 'bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900'
+                      ? 'bg-secondary text-muted-foreground'
+                      : 'bg-primary text-primary-foreground'
                   )}
                   style={{ fontFamily: 'var(--font-sans)' }}
                   aria-hidden
                 >
                   {e.initials ?? (e.actor.charAt(0) + (e.actor.split(' ')[1]?.charAt(0) ?? '')).toUpperCase()}
                 </span>
-                <span className="text-[13px] font-medium text-zinc-900 dark:text-zinc-50 flex-shrink-0">
+                <span className="text-[13px] font-medium text-foreground flex-shrink-0">
                   {e.actor}
                 </span>
                 <span
-                  className="text-[10px] uppercase tracking-widest px-1.5 py-0.5 rounded-[3px] bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 flex-shrink-0"
+                  className="text-[10px] uppercase tracking-widest px-1.5 py-0.5 rounded-[3px] bg-secondary text-muted-foreground flex-shrink-0"
                   style={{ fontFamily: 'var(--font-mono)' }}
                 >
                   {e.verb}
@@ -122,15 +122,15 @@ export function ActivityLogTimeline({
                 <ObjectTag
                   {...objectProps}
                   className={cn(
-                    'flex-1 min-w-0 text-[13px] text-zinc-600 dark:text-zinc-300 truncate no-underline',
+                    'flex-1 min-w-0 text-[13px] text-muted-foreground truncate no-underline',
                     e.objectHref &&
-                      'hover:border-b hover:border-dotted hover:border-zinc-400 dark:hover:border-zinc-600 pb-px'
+                      'hover:border-b hover:border-dotted hover:border-border pb-px'
                   )}
                 >
                   {e.object}
                 </ObjectTag>
                 <span
-                  className="text-[10.5px] text-zinc-500 tracking-wide flex-shrink-0 w-full pl-[34px] md:w-auto md:pl-0"
+                  className="text-[10.5px] text-muted-foreground tracking-wide flex-shrink-0 w-full pl-[34px] md:w-auto md:pl-0"
                   style={{ fontFamily: 'var(--font-mono)' }}
                 >
                   {e.rel}
@@ -142,15 +142,15 @@ export function ActivityLogTimeline({
       ))}
 
       {(onLoadMore || totalCount != null) && (
-        <div className="flex items-center gap-2 px-3 py-2 border-t border-zinc-100 dark:border-zinc-900 bg-zinc-50/40 dark:bg-white/[0.015]">
+        <div className="flex items-center gap-2 px-3 py-2 border-t border-border bg-zinc-50/40 dark:bg-white/[0.015]">
           {onLoadMore && (
             <button
               type="button"
               onClick={onLoadMore}
               className={cn(
-                'h-[26px] px-2.5 rounded-[5px] text-[12px] font-medium text-zinc-700 dark:text-zinc-300',
-                'hover:bg-zinc-100 dark:hover:bg-zinc-900',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700'
+                'h-[26px] px-2.5 rounded-[5px] text-[12px] font-medium text-muted-foreground',
+                'hover:bg-secondary',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
               )}
             >
               Load earlier
@@ -158,13 +158,13 @@ export function ActivityLogTimeline({
           )}
           <div className="flex-1" />
           {totalCount != null && (
-            <span className="text-[10.5px] text-zinc-500 tracking-wide" style={{ fontFamily: 'var(--font-mono)' }}>
+            <span className="text-[10.5px] text-muted-foreground tracking-wide" style={{ fontFamily: 'var(--font-mono)' }}>
               {totalCount} total{onFilter && ' · '}
               {onFilter && (
                 <button
                   type="button"
                   onClick={onFilter}
-                  className="hover:text-zinc-900 dark:hover:text-zinc-50 underline-offset-2 hover:underline"
+                  className="hover:text-foreground underline-offset-2 hover:underline"
                 >
                   filter
                 </button>

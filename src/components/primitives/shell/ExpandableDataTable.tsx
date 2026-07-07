@@ -168,7 +168,7 @@ function EDTChevron({ open, size = 12 }: { open: boolean; size?: number }) {
 function EDTSkeleton({ w = '60%', h = 10, style }: { w?: number | string; h?: number; style?: CSSProperties }) {
   return (
     <span
-      className="inline-block animate-pulse rounded-[3px] bg-zinc-200 dark:bg-zinc-800"
+      className="inline-block animate-pulse rounded-[3px] bg-secondary"
       style={{ width: w, height: h, ...style }}
     />
   );
@@ -403,7 +403,7 @@ function BodyRow<TRow, TKey extends string | number>({
         data-edt-selected={isSelected || undefined}
         data-edt-expanded={isExpanded || undefined}
         onClick={handleRowToggle}
-        className="transition-colors duration-[80ms] ease-linear hover:bg-zinc-50 dark:hover:bg-white/[0.02]"
+        className="transition-colors duration-[80ms] ease-linear hover:bg-secondary"
         style={{
           background: rowBg,
           borderBottom: isExpanded ? 'none' : '1px solid var(--border-faint)',

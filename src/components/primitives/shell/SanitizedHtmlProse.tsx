@@ -160,10 +160,10 @@ export function SanitizedHtmlProse({
             onClick={handleShowImages}
             className={cn(
               'h-6 px-2 rounded border text-[11px] font-medium whitespace-nowrap',
-              'border-amber-300 dark:border-amber-800 bg-white dark:bg-zinc-950',
+              'border-amber-300 dark:border-amber-800 bg-card',
               'text-amber-800 dark:text-amber-200',
               'hover:bg-amber-100 dark:hover:bg-amber-900/40',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
             )}
           >
             Show images
@@ -172,17 +172,17 @@ export function SanitizedHtmlProse({
       )}
       <div
         className={cn(
-          'text-[13px] leading-[1.6] text-zinc-700 dark:text-zinc-300',
+          'text-[13px] leading-[1.6] text-muted-foreground',
           '[&_p]:mb-2 [&_p]:mt-0',
-          '[&_strong]:text-zinc-900 [&_strong]:dark:text-zinc-100',
+          '[&_strong]:text-foreground',
           '[&_a]:text-blue-700 [&_a]:dark:text-blue-400 [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:text-blue-800 hover:[&_a]:dark:text-blue-300',
           '[&_img]:max-w-full [&_img]:h-auto [&_img]:rounded [&_img]:my-2',
-          '[&_blockquote]:border-l-2 [&_blockquote]:border-zinc-200 [&_blockquote]:dark:border-zinc-700 [&_blockquote]:pl-3 [&_blockquote]:text-zinc-500 [&_blockquote]:dark:text-zinc-400',
+          '[&_blockquote]:border-l-2 [&_blockquote]:border-border [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground',
           '[&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5',
-          '[&_table]:border-collapse [&_table]:w-full [&_td]:border [&_td]:border-zinc-200 [&_td]:dark:border-zinc-800 [&_td]:px-2 [&_td]:py-1 [&_th]:border [&_th]:border-zinc-200 [&_th]:dark:border-zinc-800 [&_th]:px-2 [&_th]:py-1 [&_th]:bg-zinc-50 [&_th]:dark:bg-zinc-900',
-          '[&_pre]:bg-zinc-100 [&_pre]:dark:bg-zinc-900 [&_pre]:rounded [&_pre]:px-3 [&_pre]:py-2 [&_pre]:overflow-x-auto',
-          '[&_code]:bg-zinc-100 [&_code]:dark:bg-zinc-900 [&_code]:rounded [&_code]:px-1 [&_code]:text-[12px]',
-          '[&_hr]:border-zinc-200 [&_hr]:dark:border-zinc-800',
+          '[&_table]:border-collapse [&_table]:w-full [&_td]:border [&_td]:border-border [&_td]:px-2 [&_td]:py-1 [&_th]:border [&_th]:border-border [&_th]:px-2 [&_th]:py-1 [&_th]:bg-secondary',
+          '[&_pre]:bg-secondary [&_pre]:rounded [&_pre]:px-3 [&_pre]:py-2 [&_pre]:overflow-x-auto',
+          '[&_code]:bg-secondary [&_code]:rounded [&_code]:px-1 [&_code]:text-[12px]',
+          '[&_hr]:border-border',
           'overflow-x-auto',
         )}
         style={{ fontFamily: 'var(--font-sans)' }}

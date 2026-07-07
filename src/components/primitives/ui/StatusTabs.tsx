@@ -60,12 +60,12 @@ function CountPill({ count, tone, active }: { count: number; tone?: StatusTabTon
       className={cn(
         'inline-flex items-center justify-center rounded-full border px-1.5 py-px text-[10px]',
         alert
-          ? 'bg-red-700 text-white border-red-700 dark:bg-red-400 dark:text-zinc-900 dark:border-red-400'
+          ? 'bg-primary text-primary-foreground border-primary'
           : warn
             ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/30'
             : active
-              ? 'bg-zinc-100 text-zinc-700 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:border-zinc-700'
-              : 'bg-zinc-100 text-zinc-600 border-zinc-200 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800'
+              ? 'bg-secondary text-foreground border-border'
+              : 'bg-secondary text-muted-foreground border-border'
       )}
       style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}
     >
@@ -86,7 +86,7 @@ export const StatusTabs = forwardRef<HTMLDivElement, StatusTabsProps>(function S
     <div
       ref={ref}
       className={cn(
-        'relative border-b border-zinc-200 dark:border-zinc-800',
+        'relative border-b border-border',
         className
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
@@ -124,9 +124,9 @@ export const StatusTabs = forwardRef<HTMLDivElement, StatusTabsProps>(function S
                 'inline-flex items-center gap-1.5 px-3 py-2 text-[12.5px] flex-shrink-0 whitespace-nowrap',
                 '-mb-px border-b-2 transition-colors',
                 isActive
-                  ? 'border-zinc-900 dark:border-zinc-50 text-zinc-900 dark:text-zinc-50 font-semibold'
-                  : 'border-transparent text-zinc-600 dark:text-zinc-300 font-medium hover:text-zinc-900 dark:hover:text-zinc-50',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+                  ? 'border-foreground text-foreground font-semibold'
+                  : 'border-transparent text-muted-foreground font-medium hover:text-foreground',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
                 'disabled:opacity-40 disabled:cursor-not-allowed'
               )}
             >
@@ -145,16 +145,16 @@ export const StatusTabs = forwardRef<HTMLDivElement, StatusTabsProps>(function S
               type="button"
               className={cn(
                 'w-full px-3 py-2 inline-flex items-center justify-between gap-2',
-                'border-b-2 border-zinc-900 dark:border-zinc-50 -mb-px',
-                'text-[12.5px] font-semibold text-zinc-900 dark:text-zinc-50',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400'
+                'border-b-2 border-foreground -mb-px',
+                'text-[12.5px] font-semibold text-foreground',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
               )}
             >
               <span className="inline-flex items-center gap-1.5 min-w-0">
                 <span className="truncate">{active?.label ?? 'Select…'}</span>
                 {active?.count != null && <CountPill count={active.count} tone={active.tone} active />}
               </span>
-              <ChevronDown className={cn('w-3.5 h-3.5 text-zinc-500 transition-transform', open && 'rotate-180')} />
+              <ChevronDown className={cn('w-3.5 h-3.5 text-muted-foreground transition-transform', open && 'rotate-180')} />
             </button>
           </PopoverTrigger>
           <PopoverContent
@@ -178,8 +178,8 @@ export const StatusTabs = forwardRef<HTMLDivElement, StatusTabsProps>(function S
                       className={cn(
                         'w-full px-3 py-2 inline-flex items-center justify-between gap-2 rounded text-[12.5px]',
                         isActive
-                          ? 'bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 font-semibold'
-                          : 'text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-900'
+                          ? 'bg-secondary text-foreground font-semibold'
+                          : 'text-muted-foreground hover:bg-secondary'
                       )}
                     >
                       <span className="inline-flex items-center gap-1.5 min-w-0">

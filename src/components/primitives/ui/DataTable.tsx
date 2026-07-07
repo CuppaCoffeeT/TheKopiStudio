@@ -87,17 +87,17 @@ function EmptyState({
     <div
       className={cn(
         'flex flex-col items-center gap-[10px] text-center',
-        'px-5 py-14 bg-white dark:bg-zinc-950'
+        'px-5 py-14 bg-card'
       )}
       role={isError ? 'alert' : 'status'}
     >
       <span
         className={cn(
           'inline-flex items-center justify-center w-9 h-9 rounded-full',
-          'border border-dashed border-zinc-200 dark:border-zinc-800',
+          'border border-dashed border-border',
           isError
             ? 'text-red-700 dark:text-red-400'
-            : 'text-zinc-500 dark:text-zinc-400'
+            : 'text-muted-foreground'
         )}
       >
         {isError ? (
@@ -107,14 +107,13 @@ function EmptyState({
         )}
       </span>
       <div
-        className="text-[14px] font-medium text-zinc-900 dark:text-zinc-50"
+        className="text-[14px] font-medium text-foreground"
         style={{ fontFamily: 'var(--font-sans)' }}
       >
         {message}
       </div>
       <div
-        className="text-[11px] text-zinc-500 dark:text-zinc-400"
-        style={{ fontFamily: 'var(--font-mono)' }}
+        className="text-[11px] text-muted-foreground"
       >
         {sub}
       </div>
@@ -143,15 +142,15 @@ function LoadingBody({
               : density === 'cozy'
                 ? 'min-h-[56px]'
                 : 'min-h-[44px]',
-            'border-b border-zinc-100 dark:border-zinc-900',
-            'bg-white dark:bg-zinc-950'
+            'border-b border-border',
+            'bg-card'
           )}
         >
-          <span className="w-4 h-4 rounded-[4px] bg-zinc-100 dark:bg-zinc-900 animate-pulse" />
+          <span className="w-4 h-4 rounded-[4px] bg-secondary animate-pulse" />
           {Array.from({ length: cols }).map((_, j) => (
             <span
               key={j}
-              className="flex-1 h-[10px] rounded-[3px] bg-zinc-100 dark:bg-zinc-900 animate-pulse"
+              className="flex-1 h-[10px] rounded-[3px] bg-secondary animate-pulse"
               style={{ opacity: 0.9 - j * 0.1 }}
             />
           ))}
@@ -214,8 +213,8 @@ export function DataTable({
             role="row"
             data-row-expanded={row.id}
             className={cn(
-              'border-b border-zinc-100 dark:border-zinc-900',
-              'bg-zinc-50/60 dark:bg-zinc-900/40',
+              'border-b border-border',
+              'bg-secondary',
               // Indent under the checkbox column so the panel aligns with
               // the first content cell.
               selectable ? 'pl-[44px]' : 'pl-[14px]',
@@ -238,8 +237,8 @@ export function DataTable({
       data-variant={variant}
       className={cn(
         'rounded-[10px] overflow-hidden',
-        'border border-zinc-200 dark:border-zinc-800',
-        'bg-white dark:bg-zinc-950',
+        'border border-border',
+        'bg-card',
         'shadow-[0_1px_2px_rgba(0,0,0,0.04)]',
         className
       )}

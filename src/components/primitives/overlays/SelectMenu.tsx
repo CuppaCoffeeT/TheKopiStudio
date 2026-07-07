@@ -47,15 +47,14 @@ export const SelectMenuTrigger = forwardRef<
       className={cn(
         'flex w-full items-center justify-between gap-2 rounded-lg border px-3 cursor-pointer',
         SIZE_CLASSES[size],
-        'bg-white dark:bg-zinc-950',
-        'border-zinc-300 dark:border-zinc-700',
-        'text-zinc-900 dark:text-zinc-50',
-        'placeholder:text-zinc-400 dark:placeholder:text-zinc-500',
-        'hover:border-zinc-400 dark:hover:border-zinc-600',
-        'focus:outline-none focus:border-red-700 dark:focus:border-red-400 focus:ring-[3px] focus:ring-red-700/15 dark:focus:ring-red-400/25',
+        'bg-card',
+        'border-border',
+        'text-foreground',
+        'placeholder:text-muted-foreground',
+        'hover:border-border',
+        'focus:outline-none focus:border-ring focus:ring-[3px] focus:ring-ring/15',
         'disabled:cursor-not-allowed disabled:opacity-60',
-        // zinc-600 on the white trigger meets WCAG AA 4.5:1 (zinc-400 is 2.6:1).
-        'data-[placeholder]:text-zinc-600 dark:data-[placeholder]:text-zinc-400',
+        'data-[placeholder]:text-muted-foreground',
         className,
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
@@ -145,10 +144,10 @@ export const SelectMenuLabel = forwardRef<
     <SelectPrimitive.Label
       ref={ref}
       className={cn(
-        'px-2 py-1.5 text-[10.5px] font-semibold uppercase tracking-widest text-zinc-500',
+        'px-2 py-1.5 text-[10.5px] font-semibold uppercase tracking-widest text-muted-foreground',
         className,
       )}
-      style={{ fontFamily: 'var(--font-mono)' }}
+      style={{ fontFamily: 'var(--font-pixel)' }}
       {...props}
     />
   );
@@ -163,9 +162,9 @@ export const SelectMenuItem = forwardRef<
       ref={ref}
       className={cn(
         'relative flex w-full cursor-pointer select-none items-center rounded py-1.5 pl-7 pr-2',
-        'text-[13px] text-zinc-800 dark:text-zinc-100',
+        'text-[13px] text-foreground',
         'outline-none',
-        'focus:bg-zinc-100 dark:focus:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800',
+        'focus:bg-secondary hover:bg-secondary',
         'data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed',
         'data-[state=checked]:font-medium',
         className,
@@ -189,7 +188,7 @@ export const SelectMenuSeparator = forwardRef<
   return (
     <SelectPrimitive.Separator
       ref={ref}
-      className={cn('-mx-1 my-1 h-px bg-zinc-200 dark:bg-zinc-800', className)}
+      className={cn('-mx-1 my-1 h-px bg-border', className)}
       {...props}
     />
   );

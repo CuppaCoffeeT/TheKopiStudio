@@ -50,7 +50,7 @@ export function HistoryTrailList({
     <div
       className={cn(
         'flex items-center gap-1.5 text-[9.5px] uppercase tracking-[0.08em]',
-        'text-zinc-500 dark:text-zinc-400 mb-1.5',
+        'text-muted-foreground mb-1.5',
       )}
       style={{ fontFamily: 'var(--font-mono)' }}
     >
@@ -59,8 +59,8 @@ export function HistoryTrailList({
           type="button"
           onClick={() => setOpen((o) => !o)}
           className={cn(
-            'inline-flex items-center gap-1.5 hover:text-zinc-700 dark:hover:text-zinc-200',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 rounded-sm',
+            'inline-flex items-center gap-1.5 hover:text-foreground',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm',
           )}
           aria-expanded={open}
         >
@@ -85,10 +85,10 @@ export function HistoryTrailList({
     <div className={cn('history-trail-list', className)}>
       {headerNode}
       {isOpen && (
-        <ul className="divide-y divide-zinc-100 dark:divide-zinc-800/60 border-t border-zinc-100 dark:border-zinc-800/60">
+        <ul className="divide-y divide-border border-t border-border">
           {entries.length === 0 ? (
             <li
-              className="py-2 text-[11.5px] italic text-zinc-500 dark:text-zinc-400"
+              className="py-2 text-[11.5px] italic text-muted-foreground"
               style={{ fontFamily: 'var(--font-sans)' }}
             >
               {emptyLabel}
@@ -100,30 +100,30 @@ export function HistoryTrailList({
                 className={cn(
                   'grid items-center gap-x-2.5 gap-y-1 py-1.5',
                   'grid-cols-[auto_auto_minmax(0,1fr)_auto]',
-                  'text-[11.5px] text-zinc-600 dark:text-zinc-400',
+                  'text-[11.5px] text-muted-foreground',
                 )}
                 style={{ fontFamily: 'var(--font-sans)' }}
               >
                 {entry.from}
-                <span className="text-zinc-400 dark:text-zinc-500" aria-hidden>
+                <span className="text-muted-foreground" aria-hidden>
                   →
                 </span>
-                <span className="italic truncate text-zinc-700 dark:text-zinc-300">
+                <span className="italic truncate text-muted-foreground">
                   {entry.reason ? `"${entry.reason}"` : ''}
                   {!entry.reason && entry.to}
                 </span>
                 <span
-                  className="text-zinc-400 dark:text-zinc-500 text-[10px] tabular-nums shrink-0"
+                  className="text-muted-foreground text-[10px] tabular-nums shrink-0"
                   style={{ fontFamily: 'var(--font-mono)' }}
                 >
                   {entry.at}
                 </span>
                 {entry.reason && (
                   <div className="col-span-4 flex items-center gap-2 pl-0">
-                    <span className="text-zinc-500 dark:text-zinc-500">{entry.to}</span>
+                    <span className="text-muted-foreground">{entry.to}</span>
                     {entry.by && (
                       <span
-                        className="text-[10px] text-zinc-400 dark:text-zinc-500 ml-auto"
+                        className="text-[10px] text-muted-foreground ml-auto"
                         style={{ fontFamily: 'var(--font-mono)' }}
                       >
                         by {entry.by}

@@ -48,11 +48,11 @@ export function ListSection({
 }: ListSectionProps) {
   return (
     <Card padding="p-0" data-testid={testId}>
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-100 px-5 py-4 dark:border-zinc-900">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4">
         <div className="min-w-0">
           <CardTitle as="h2">{title}</CardTitle>
           {meta && (
-            <div className="mt-1 text-[12.5px] text-zinc-500 dark:text-zinc-400">{meta}</div>
+            <div className="mt-1 text-[12.5px] text-muted-foreground">{meta}</div>
           )}
         </div>
         {action}
@@ -76,17 +76,17 @@ export function ListSection({
 
       {!isLoading && !isError && isEmpty && (
         <div className="px-6 py-10 text-center" data-testid={`${testId}-empty`}>
-          <p className="m-0 text-[14px] font-semibold text-zinc-900 dark:text-zinc-50">
+          <p className="m-0 text-[14px] font-semibold text-foreground">
             {emptyTitle}
           </p>
-          <p className="m-0 mt-1 text-[12.5px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+          <p className="m-0 mt-1 text-[12.5px] leading-relaxed text-muted-foreground">
             {emptySubtext}
           </p>
         </div>
       )}
 
       {!isLoading && !isError && !isEmpty && (
-        <ul className="m-0 list-none divide-y divide-zinc-100 p-0 dark:divide-zinc-900">
+        <ul className="m-0 list-none divide-y divide-border p-0">
           {children}
         </ul>
       )}

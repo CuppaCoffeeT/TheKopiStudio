@@ -53,7 +53,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
         aria-hidden="true"
       />
       {label && (
-        <span className="text-sm font-medium text-zinc-700">
+        <span className="text-sm font-medium text-muted-foreground">
           {label}
         </span>
       )}

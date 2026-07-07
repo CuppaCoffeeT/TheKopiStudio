@@ -38,15 +38,13 @@ interface RichTextEditorProps {
 
 const TOOLBAR_BTN_BASE =
   'inline-flex h-7 min-w-[1.75rem] items-center justify-center gap-1 rounded-[5px] px-1.5 text-[12px] leading-none ' +
-  'text-zinc-700 transition-colors duration-150 cursor-pointer ' +
-  'hover:bg-zinc-100 active:bg-zinc-200 ' +
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 ' +
-  'disabled:cursor-not-allowed disabled:bg-transparent disabled:text-zinc-400 disabled:hover:bg-transparent ' +
-  'dark:text-zinc-300 dark:hover:bg-white/5 dark:active:bg-white/10 ' +
-  'dark:focus-visible:ring-red-400 dark:disabled:text-zinc-600';
+  'text-muted-foreground transition-colors duration-150 cursor-pointer ' +
+  'hover:bg-secondary active:bg-secondary ' +
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ' +
+  'disabled:cursor-not-allowed disabled:bg-transparent disabled:text-muted-foreground disabled:hover:bg-transparent';
 
 const TOOLBAR_BTN_ACTIVE =
-  'bg-zinc-200 text-zinc-900 dark:bg-white/10 dark:text-zinc-50';
+  'bg-secondary text-foreground';
 
 function ToolbarButton({
   ariaLabel,
@@ -107,7 +105,7 @@ function NasLinkPopoverContent({
 
   return (
     <div className="flex w-72 flex-col gap-3 p-1">
-      <div className="text-[12px] font-medium text-zinc-700 dark:text-zinc-200">Insert NAS link</div>
+      <div className="text-[12px] font-medium text-foreground">Insert NAS link</div>
       <Field label="URL">
         <Input
           autoFocus
@@ -168,8 +166,7 @@ function Toolbar({ editor, disabled }: { editor: Editor; disabled?: boolean }) {
   return (
     <div
       className={cn(
-        'flex items-center gap-0.5 border-b border-zinc-200 bg-zinc-50 px-2 py-1.5',
-        'dark:border-zinc-800 dark:bg-zinc-900/60',
+        'flex items-center gap-0.5 border-b border-border bg-secondary px-2 py-1.5',
       )}
     >
       <ToolbarButton
@@ -209,7 +206,7 @@ function Toolbar({ editor, disabled }: { editor: Editor; disabled?: boolean }) {
         <ListOrdered className="h-3.5 w-3.5" />
       </ToolbarButton>
 
-      <span aria-hidden className="mx-1 h-4 w-px self-center bg-zinc-200 dark:bg-zinc-800" />
+      <span aria-hidden className="mx-1 h-4 w-px self-center bg-border" />
 
       <ToolbarButton
         ariaLabel="Insert link"
@@ -301,9 +298,9 @@ export function RichTextEditor({
     <div
       data-state={disabled ? 'disabled' : hasFocus ? 'focused' : 'default'}
       className={cn(
-        'w-full min-w-0 overflow-hidden rounded-lg border bg-white transition-[box-shadow,border-color] duration-150',
-        'border-zinc-200 dark:border-zinc-800 dark:bg-zinc-950',
-        hasFocus && !disabled && 'border-red-700 shadow-[0_0_0_3px_rgba(185,28,28,0.14)] dark:border-red-400 dark:shadow-[0_0_0_3px_rgba(248,113,113,0.22)]',
+        'w-full min-w-0 overflow-hidden rounded-lg border bg-card transition-[box-shadow,border-color] duration-150',
+        'border-border',
+        hasFocus && !disabled && 'border-ring shadow-[0_0_0_3px_rgba(185,28,28,0.14)] dark:shadow-[0_0_0_3px_rgba(248,113,113,0.22)]',
         disabled && 'pointer-events-none opacity-55',
         className,
       )}
@@ -313,17 +310,16 @@ export function RichTextEditor({
         editor={editor}
         style={{ minHeight: minHeightCss, maxHeight: maxHeightCss }}
         className={cn(
-          'prose prose-sm dark:prose-invert max-w-none w-full overflow-y-auto px-3.5 py-3 text-zinc-900 dark:text-zinc-50',
+          'prose prose-sm dark:prose-invert max-w-none w-full overflow-y-auto px-3.5 py-3 text-foreground',
           '[&_.tiptap]:outline-none [&_.tiptap]:break-words [&_.tiptap]:min-h-[inherit]',
           '[&_.tiptap_p]:my-0 [&_.tiptap_p]:mb-2.5 [&_.tiptap_p:last-child]:mb-0',
           '[&_.tiptap_strong]:font-semibold',
-          '[&_.tiptap_em]:italic [&_.tiptap_em]:text-zinc-700 [&_.dark_.tiptap_em]:text-zinc-300',
-          '[&_.tiptap_a]:text-red-700 [&_.tiptap_a]:underline [&_.tiptap_a]:underline-offset-2 [&_.tiptap_a]:decoration-1 hover:[&_.tiptap_a]:decoration-2',
-          '[&_.dark_.tiptap_a]:text-red-300',
+          '[&_.tiptap_em]:italic [&_.tiptap_em]:text-muted-foreground',
+          '[&_.tiptap_a]:text-primary [&_.tiptap_a]:underline [&_.tiptap_a]:underline-offset-2 [&_.tiptap_a]:decoration-1 hover:[&_.tiptap_a]:decoration-2',
           '[&_.tiptap_ul]:list-disc [&_.tiptap_ol]:list-decimal',
           '[&_.tiptap_ul]:pl-[22px] [&_.tiptap_ol]:pl-[22px] [&_.tiptap_ul]:mb-2.5 [&_.tiptap_ol]:mb-2.5',
           '[&_.tiptap_li]:my-0.5',
-          '[&_.tiptap_p.is-editor-empty:first-child]:before:text-zinc-400 [&_.dark_.tiptap_p.is-editor-empty:first-child]:before:text-zinc-600',
+          '[&_.tiptap_p.is-editor-empty:first-child]:before:text-muted-foreground',
           '[&_.tiptap_p.is-editor-empty:first-child]:before:content-[attr(data-placeholder)]',
           '[&_.tiptap_p.is-editor-empty:first-child]:before:float-left',
           '[&_.tiptap_p.is-editor-empty:first-child]:before:h-0',

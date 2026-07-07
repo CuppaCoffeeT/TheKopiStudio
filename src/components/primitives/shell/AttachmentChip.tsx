@@ -45,9 +45,9 @@ export const AttachmentChip = forwardRef<HTMLButtonElement, AttachmentChipProps>
           'transition-colors',
           isError
             ? 'border-red-200 dark:border-red-900/40 bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-300'
-            : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900',
+            : 'border-border bg-card text-muted-foreground hover:bg-secondary',
           isLoading && 'opacity-70 cursor-wait',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
           'disabled:opacity-40 disabled:cursor-not-allowed',
           className,
         )}
@@ -57,14 +57,14 @@ export const AttachmentChip = forwardRef<HTMLButtonElement, AttachmentChipProps>
         <LeadingIcon
           className={cn(
             'w-4 h-4 shrink-0',
-            isError ? 'text-red-700 dark:text-red-300' : 'text-zinc-500 dark:text-zinc-400',
+            isError ? 'text-red-700 dark:text-red-300' : 'text-muted-foreground',
           )}
           aria-hidden
         />
         <span className="truncate max-w-[220px]">{filename}</span>
         {size && (
           <span
-            className="text-[10px] text-zinc-500 dark:text-zinc-400 tabular-nums"
+            className="text-[10px] text-muted-foreground tabular-nums"
             style={{ fontFamily: 'var(--font-mono)' }}
           >
             {size}

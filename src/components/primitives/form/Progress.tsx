@@ -40,7 +40,7 @@ export function Progress({
 
   const fillClass = {
     neutral: 'bg-slate-800 dark:bg-slate-100',
-    active: 'bg-red-700 dark:bg-red-400',
+    active: 'bg-primary',
     success: 'bg-green-700 dark:bg-green-400',
     error: 'bg-red-700 dark:bg-red-400',
   }[tone];
@@ -50,15 +50,15 @@ export function Progress({
       {label && (
         <div className="flex items-center gap-2">
           <span
-            className="uppercase text-zinc-500 dark:text-zinc-400"
-            style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.08em' }}
+            className="uppercase text-muted-foreground"
+            style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, letterSpacing: '0.08em' }}
           >
             {label}
           </span>
           <div className="flex-1" />
           {!indeterminate && (
             <span
-              className="tabular-nums text-zinc-700 dark:text-zinc-300"
+              className="tabular-nums text-muted-foreground"
               style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}
             >
               {Math.round(pct)}%
@@ -70,7 +70,7 @@ export function Progress({
         className={cn(
           'w-full rounded-full overflow-hidden relative',
           h,
-          'bg-zinc-100 dark:bg-zinc-800'
+          'bg-secondary'
         )}
         role="progressbar"
         aria-label={ariaLabel ?? (typeof label === 'string' ? label : undefined)}

@@ -112,7 +112,7 @@ export function IntakeForm({ intake, onChange, onStart }: IntakeFormProps) {
 
       <Card className="border-amber-400/30 bg-amber-50/60 dark:bg-amber-950/20">
         <Eyebrow className="text-amber-700 dark:text-amber-500">How it works</Eyebrow>
-        <ol className="m-0 list-decimal pl-4 text-[13px] leading-7 text-zinc-600 dark:text-zinc-300">
+        <ol className="m-0 list-decimal pl-4 text-[13px] leading-7 text-muted-foreground">
           <li>Answer 8 profiling questions</li>
           <li>Tick body language signals</li>
           <li>Get instant DISC + MBTI profile</li>

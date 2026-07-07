@@ -65,8 +65,8 @@ export const DialogContent = forwardRef<
           className={cn(
             'pointer-events-auto relative z-50',
             'w-[min(560px,92vw)]',
-            'rounded-xl bg-white dark:bg-zinc-950',
-            'border border-zinc-200 dark:border-zinc-800',
+            'rounded-xl bg-card',
+            'border border-border',
             'shadow-[0_1px_2px_rgba(0,0,0,0.04),0_24px_64px_rgba(24,24,27,0.14)]',
             'dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_24px_64px_rgba(0,0,0,0.5)]',
             'px-5 py-5',
@@ -81,7 +81,7 @@ export const DialogContent = forwardRef<
           {children}
           {showClose && (
             <DialogPrimitive.Close
-              className="absolute right-3 top-3 w-6 h-6 inline-flex items-center justify-center rounded text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700"
+              className="absolute right-3 top-3 w-6 h-6 inline-flex items-center justify-center rounded text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               aria-label="Close"
             >
               <X className="w-3 h-3" />
@@ -102,7 +102,7 @@ export function DialogFooter({ className, ...props }: React.HTMLAttributes<HTMLD
     <div
       className={cn(
         'mt-4 pt-3 flex flex-col-reverse sm:flex-row sm:justify-end gap-2',
-        'border-t border-zinc-100 dark:border-zinc-900',
+        'border-t border-border',
         className,
       )}
       {...props}
@@ -118,7 +118,7 @@ export const DialogTitle = forwardRef<
     <DialogPrimitive.Title
       ref={ref}
       className={cn(
-        'text-[22px] leading-tight m-0 font-normal text-zinc-900 dark:text-zinc-50',
+        'text-[22px] leading-tight m-0 font-normal text-foreground',
         className,
       )}
       style={{
@@ -138,7 +138,7 @@ export const DialogDescription = forwardRef<
   return (
     <DialogPrimitive.Description
       ref={ref}
-      className={cn('text-[12.5px] text-zinc-500 dark:text-zinc-400', className)}
+      className={cn('text-[12.5px] text-muted-foreground', className)}
       {...props}
     />
   );
@@ -182,8 +182,8 @@ export const AlertDialogContent = forwardRef<
           className={cn(
             'pointer-events-auto relative z-50',
             'w-[min(460px,92vw)]',
-            'rounded-xl bg-white dark:bg-zinc-950',
-            'border border-zinc-200 dark:border-zinc-800',
+            'rounded-xl bg-card',
+            'border border-border',
             'shadow-[0_1px_2px_rgba(0,0,0,0.04),0_24px_64px_rgba(24,24,27,0.14)]',
             'dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_24px_64px_rgba(0,0,0,0.5)]',
             'px-5 py-5',
@@ -209,7 +209,7 @@ export function AlertDialogFooter({ className, ...props }: React.HTMLAttributes<
     <div
       className={cn(
         'mt-4 pt-3 flex flex-col-reverse sm:flex-row sm:justify-end gap-2',
-        'border-t border-zinc-100 dark:border-zinc-900',
+        'border-t border-border',
         className,
       )}
       {...props}
@@ -225,7 +225,7 @@ export const AlertDialogTitle = forwardRef<
     <AlertDialogPrimitive.Title
       ref={ref}
       className={cn(
-        'text-[22px] leading-tight m-0 font-normal text-zinc-900 dark:text-zinc-50',
+        'text-[22px] leading-tight m-0 font-normal text-foreground',
         className,
       )}
       style={{
@@ -245,7 +245,7 @@ export const AlertDialogDescription = forwardRef<
   return (
     <AlertDialogPrimitive.Description
       ref={ref}
-      className={cn('text-[12.5px] text-zinc-500 dark:text-zinc-400 leading-relaxed', className)}
+      className={cn('text-[12.5px] text-muted-foreground leading-relaxed', className)}
       {...props}
     />
   );
@@ -260,8 +260,8 @@ export const AlertDialogAction = forwardRef<
       ref={ref}
       className={cn(
         'h-8 px-3.5 rounded-md text-[13px] font-medium inline-flex items-center justify-center gap-2',
-        'bg-slate-800 hover:bg-slate-900 text-white dark:bg-slate-100 dark:hover:bg-white dark:text-slate-900',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2',
+        'bg-primary hover:bg-primary/90 text-primary-foreground',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
         'disabled:opacity-40 disabled:cursor-not-allowed',
         className,
       )}
@@ -280,10 +280,10 @@ export const AlertDialogCancel = forwardRef<
       ref={ref}
       className={cn(
         'h-8 px-3 rounded-md text-xs font-medium inline-flex items-center justify-center gap-2',
-        'border border-zinc-200 dark:border-zinc-800',
-        'text-zinc-600 dark:text-zinc-300',
-        'hover:bg-zinc-50 dark:hover:bg-zinc-900',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2',
+        'border border-border',
+        'text-muted-foreground',
+        'hover:bg-secondary',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
         className,
       )}
       style={{ fontFamily: 'var(--font-sans)' }}

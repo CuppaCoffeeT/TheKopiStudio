@@ -30,7 +30,7 @@ export function PageDescription({ children, className }: PageDescriptionProps) {
   return (
     <p
       className={cn(
-        'mt-2 text-sm sm:text-base text-zinc-600 dark:text-zinc-400',
+        'mt-2 text-sm sm:text-base text-muted-foreground',
         className,
       )}
       style={{ fontFamily: 'var(--font-sans)' }}

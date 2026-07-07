@@ -32,10 +32,10 @@ export function WizardStepperHeader({
   return (
     <div className={cn('flex flex-col gap-2', className)}>
       <p
-        className="text-[10.5px] uppercase tracking-widest text-zinc-500 dark:text-zinc-400"
-        style={{ fontFamily: 'var(--font-mono)' }}
+        className="text-[10.5px] uppercase tracking-widest text-muted-foreground"
+        style={{ fontFamily: 'var(--font-pixel)' }}
       >
-        Step {currentStep + 1} of {steps.length} · <span className="text-zinc-900 dark:text-zinc-50 font-medium normal-case tracking-normal">{labelForStep}</span>
+        Step {currentStep + 1} of {steps.length} · <span className="text-foreground font-medium normal-case tracking-normal">{labelForStep}</span>
       </p>
       {compact ? (
         <div className="flex items-center gap-1.5" role="list" aria-label="Progress">
@@ -47,8 +47,8 @@ export function WizardStepperHeader({
               className={cn(
                 'h-2 w-2 rounded-full transition-colors',
                 idx < currentStep && 'bg-green-600',
-                idx === currentStep && 'bg-red-700 dark:bg-red-400 ring-2 ring-red-200 dark:ring-red-900/40',
-                idx > currentStep && 'bg-zinc-300 dark:bg-zinc-700',
+                idx === currentStep && 'bg-primary ring-2 ring-primary/30',
+                idx > currentStep && 'bg-border',
               )}
             />
           ))}

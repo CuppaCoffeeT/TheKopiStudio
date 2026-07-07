@@ -24,7 +24,7 @@ export function MonoDropdown({ label, value, options, onChange }: MonoDropdownPr
         ))}
       </select>
       <span
-        className="inline-flex items-center gap-1 h-[26px] px-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 pointer-events-none"
+        className="inline-flex items-center gap-1 h-[26px] px-2.5 rounded-md border border-border text-muted-foreground pointer-events-none"
         style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}
       >
         {label} <ChevronDown size={9} />

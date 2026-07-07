@@ -32,8 +32,8 @@ export function Alert({
       role="alert"
       className={cn(
         'w-full rounded-lg border',
-        'bg-white/[0.88] dark:bg-zinc-900/[0.55]',
-        'border-zinc-200 dark:border-zinc-800',
+        'bg-card/[0.88]',
+        'border-border',
         'px-4 py-3.5 flex items-start gap-3.5',
         className
       )}
@@ -41,9 +41,9 @@ export function Alert({
     >
       <VariantIcon variant={variant} />
       <div className="flex-1 min-w-0">
-        <div className="text-[13px] font-medium text-zinc-900 dark:text-zinc-50">{title}</div>
+        <div className="text-[13px] font-medium text-foreground">{title}</div>
         {description && (
-          <div className="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5 leading-relaxed">
+          <div className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
             {description}
           </div>
         )}
@@ -56,7 +56,7 @@ export function Alert({
                   'h-7 px-2.5 rounded text-xs font-medium',
                   variant === 'error'
                     ? 'bg-red-700 hover:bg-red-800 text-white'
-                    : 'bg-slate-800 hover:bg-slate-900 text-white dark:bg-slate-100 dark:hover:bg-white dark:text-slate-900'
+                    : 'bg-primary hover:bg-primary/90 text-primary-foreground'
                 )}
                 style={{ fontFamily: 'var(--font-sans)' }}
               >
@@ -66,7 +66,7 @@ export function Alert({
             {dismissAction && (
               <button
                 onClick={dismissAction.onClick}
-                className="h-7 px-2.5 rounded text-xs border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900"
+                className="h-7 px-2.5 rounded text-xs border border-border text-muted-foreground hover:bg-secondary"
                 style={{ fontFamily: 'var(--font-sans)' }}
               >
                 {dismissAction.label}
@@ -79,7 +79,7 @@ export function Alert({
         <button
           aria-label="Dismiss"
           onClick={onClose}
-          className="w-6 h-6 flex items-center justify-center rounded text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-200"
+          className="w-6 h-6 flex items-center justify-center rounded text-muted-foreground hover:text-foreground"
         >
           <X className="w-3 h-3" />
         </button>

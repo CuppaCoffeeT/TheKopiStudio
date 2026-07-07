@@ -18,7 +18,7 @@ export function OpeningLineCard({ profile }: { profile: DiscProfile }) {
       {/* Eyebrow keeps its zinc text — the brand hex fails WCAG AA 4.5:1 on
           the tinted card; the border/background tint carries the identity. */}
       <Eyebrow className="mb-1.5">Try This Opening Line</Eyebrow>
-      <p className="m-0 text-[14px] italic leading-7 text-zinc-800 dark:text-zinc-100">{profile.op}</p>
+      <p className="m-0 text-[14px] italic leading-7 text-foreground">{profile.op}</p>
     </Card>
   );
 }
@@ -33,7 +33,7 @@ export function TraitsCard({ profile }: { profile: DiscProfile }) {
             key={trait}
             // Zinc text + tinted bg/border (DiscChip pattern) — the brand hex
             // as text fails WCAG AA 4.5:1 on its own tint.
-            className="rounded-full px-3 py-1 text-zinc-800 dark:text-zinc-100"
+            className="rounded-full px-3 py-1 text-foreground"
             style={{
               fontFamily: 'var(--font-sans)',
               fontSize: 12,
@@ -54,11 +54,11 @@ export function StyleCard({ profile }: { profile: DiscProfile }) {
   return (
     <Card data-testid="result-style">
       <Eyebrow>How to Run This Conversation</Eyebrow>
-      <p className="m-0 text-[13px] leading-6 text-zinc-600 dark:text-zinc-300">{profile.st}</p>
+      <p className="m-0 text-[13px] leading-6 text-muted-foreground">{profile.st}</p>
       <div className="mt-3 rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-900/60 dark:bg-red-950/30">
         <div
           className="mb-1 uppercase text-red-700 dark:text-red-400"
-          style={{ fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em' }}
+          style={{ fontFamily: 'var(--font-pixel)', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em' }}
         >
           ⚠ Watch For — Act Immediately
         </div>
@@ -72,7 +72,7 @@ export function FollowUpCard({ profile }: { profile: DiscProfile }) {
   return (
     <Card className="border-amber-400/30 bg-amber-50/50 dark:bg-amber-950/15" data-testid="result-follow-up">
       <Eyebrow>Follow-Up Style</Eyebrow>
-      <p className="m-0 text-[13px] leading-6 text-zinc-600 dark:text-zinc-300">{profile.fu}</p>
+      <p className="m-0 text-[13px] leading-6 text-muted-foreground">{profile.fu}</p>
     </Card>
   );
 }
@@ -81,7 +81,7 @@ export function NotesCard({ notes }: { notes: string }) {
   return (
     <Card data-testid="result-notes-card">
       <Eyebrow>Notes</Eyebrow>
-      <p className="m-0 whitespace-pre-wrap text-[13px] italic leading-6 text-zinc-500 dark:text-zinc-400">
+      <p className="m-0 whitespace-pre-wrap text-[13px] italic leading-6 text-muted-foreground">
         {notes || 'No notes added yet.'}
       </p>
     </Card>

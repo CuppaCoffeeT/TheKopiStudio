@@ -27,16 +27,16 @@ export function NoResultsState({
       className={cn('max-w-[460px] mx-auto py-10 px-7 text-center', className)}
       style={{ fontFamily: 'var(--font-sans)' }}
     >
-      <div className="w-11 h-11 mx-auto mb-5 rounded-full bg-zinc-100 dark:bg-zinc-900 inline-flex items-center justify-center text-zinc-500 dark:text-zinc-400">
+      <div className="w-11 h-11 mx-auto mb-5 rounded-full bg-secondary inline-flex items-center justify-center text-muted-foreground">
         <Search className="w-5 h-5" strokeWidth={1.5} />
       </div>
-      <div className="text-base font-semibold text-zinc-900 dark:text-zinc-50 mb-2">
+      <div className="text-base font-semibold text-foreground mb-2">
         {query ? (
           <>
             No matches for{' '}
             <span
               className="font-medium"
-              style={{ fontFamily: 'var(--font-mono)' }}
+              style={{ fontFamily: 'var(--font-sans)' }}
             >
               "{query}"
             </span>
@@ -45,7 +45,7 @@ export function NoResultsState({
           'No results'
         )}
       </div>
-      <div className="text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed mb-5">
+      <div className="text-[13px] text-muted-foreground leading-relaxed mb-5">
         Try a broader search or clear active filters
       </div>
 
@@ -65,8 +65,8 @@ export function NoResultsState({
       {activeFilters.length > 0 && (
         <div>
           <div
-            className="text-[10px] text-zinc-500 dark:text-zinc-400 tracking-[0.1em] uppercase mb-2"
-            style={{ fontFamily: 'var(--font-mono)' }}
+            className="text-[10px] text-muted-foreground tracking-[0.1em] uppercase mb-2"
+            style={{ fontFamily: 'var(--font-sans)' }}
           >
             ACTIVE FILTERS
           </div>
@@ -74,15 +74,15 @@ export function NoResultsState({
             {activeFilters.map((f, i) => (
               <span
                 key={i}
-                className="inline-flex items-center gap-1.5 h-6 pl-2.5 pr-2 rounded-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300"
-                style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5 }}
+                className="inline-flex items-center gap-1.5 h-6 pl-2.5 pr-2 rounded-full bg-secondary border border-border text-muted-foreground"
+                style={{ fontFamily: 'var(--font-sans)', fontSize: 10.5 }}
               >
                 {f.label}
                 {f.onRemove && (
                   <button
                     onClick={f.onRemove}
                     aria-label={`Remove ${f.label}`}
-                    className="w-3 h-3 inline-flex items-center justify-center text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
+                    className="w-3 h-3 inline-flex items-center justify-center text-muted-foreground hover:text-foreground"
                   >
                     <X className="w-2 h-2" strokeWidth={1.5} />
                   </button>

@@ -33,10 +33,10 @@ export const LinkedEntityPill = forwardRef<HTMLElement, LinkedEntityPillProps>(
         className: cn(
           'inline-flex items-center gap-1.5 h-[22px] px-2 rounded-full border',
           'text-[11px] font-medium whitespace-nowrap',
-          'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300',
-          href && 'hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors cursor-pointer',
+          'border-border bg-card text-muted-foreground',
+          href && 'hover:bg-secondary transition-colors cursor-pointer',
           href &&
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
           className,
         ),
         style: { fontFamily: 'var(--font-sans)' },

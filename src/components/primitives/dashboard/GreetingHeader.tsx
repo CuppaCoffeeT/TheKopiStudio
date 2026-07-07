@@ -30,9 +30,9 @@ export function GreetingHeader({
   return (
     <div className={cn('w-full', className)} style={{ fontFamily: 'var(--font-sans)' }}>
       <PageTitle>Good {timeOfDay}, {name}.</PageTitle>
-      <div className="mt-1.5 text-[12.5px] text-zinc-600 dark:text-zinc-400">{dateText}</div>
+      <div className="mt-1.5 text-[12.5px] text-muted-foreground">{dateText}</div>
       <div className="mt-2.5">
-        <span className="inline-block px-2.5 py-[3px] rounded-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-[11px] text-zinc-700 dark:text-zinc-300">
+        <span className="inline-block px-2.5 py-[3px] rounded-full bg-card border border-border text-[11px] text-muted-foreground">
           {role}
         </span>
       </div>

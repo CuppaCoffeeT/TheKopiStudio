@@ -73,26 +73,26 @@ export function InboxChip({
       title={title}
       className={cn(
         'inline-flex items-center gap-2.5 rounded-[10px] px-3.5 py-2.5 h-10',
-        'border border-zinc-200 dark:border-zinc-800',
-        'bg-white dark:bg-zinc-950',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700',
+        'border border-border',
+        'bg-card',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
         disabled
           ? 'opacity-60 cursor-not-allowed'
-          : 'hover:bg-zinc-50 dark:hover:bg-white/[0.03] active:bg-zinc-100 dark:active:bg-white/[0.05]',
+          : 'hover:bg-secondary active:bg-zinc-100 dark:active:bg-white/[0.05]',
         className,
       )}
     >
-      <Inbox className={cn('w-3.5 h-3.5 flex-shrink-0', hasBlocker ? 'text-red-700' : 'text-zinc-500')} aria-hidden />
+      <Inbox className={cn('w-3.5 h-3.5 flex-shrink-0', hasBlocker ? 'text-primary' : 'text-muted-foreground')} aria-hidden />
       <span
         className={cn(
           'inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full text-[11px] tabular-nums',
-          hasBlocker ? 'bg-red-700 text-white' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200',
+          hasBlocker ? 'bg-primary text-primary-foreground' : 'bg-secondary text-foreground',
         )}
         style={{ fontFamily: 'var(--font-mono)' }}
       >
         {count}
       </span>
-      <ChevronLeft className="w-3.5 h-3.5 text-zinc-500" aria-hidden />
+      <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" aria-hidden />
     </button>
   );
 }
@@ -176,21 +176,21 @@ export function SituationBar({
           <div
             className={cn(
               'flex-1 min-w-0 flex items-center gap-2.5 rounded-[10px] h-10',
-              'border border-zinc-200 dark:border-zinc-800',
-              'bg-white dark:bg-zinc-950',
+              'border border-border',
+              'bg-card',
               'px-3.5 py-2.5',
-              isBlocker && 'border-l-[3px] border-l-red-700',
+              isBlocker && 'border-l-[3px] border-l-primary',
             )}
             role="note"
             aria-label="Situation summary"
             title={sentence}
           >
             <Info
-              className={cn('w-3.5 h-3.5 flex-shrink-0', isBlocker ? 'text-red-700' : 'text-zinc-500')}
+              className={cn('w-3.5 h-3.5 flex-shrink-0', isBlocker ? 'text-primary' : 'text-muted-foreground')}
               aria-hidden
             />
             <p
-              className="flex-1 min-w-0 truncate text-[13px] leading-snug text-zinc-700 dark:text-zinc-300"
+              className="flex-1 min-w-0 truncate text-[13px] leading-snug text-muted-foreground"
               style={{ fontFamily: 'var(--font-sans)' }}
             >
               {sentence}
@@ -286,25 +286,25 @@ export function InboxRailPanel({
           // sticky desktop layouts). z-10 sits above task rows.
           'sticky top-0 z-10',
           'flex items-center gap-2.5 rounded-[10px] px-3.5 py-2.5 w-full h-10',
-          'border border-zinc-200 dark:border-zinc-800',
-          'bg-white dark:bg-zinc-950',
-          'hover:bg-zinc-50 dark:hover:bg-white/[0.03] active:bg-zinc-100 dark:active:bg-white/[0.05]',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700',
+          'border border-border',
+          'bg-card',
+          'hover:bg-secondary active:bg-zinc-100 dark:active:bg-white/[0.05]',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
         )}
       >
-        <Inbox className="w-3.5 h-3.5 text-zinc-500 flex-shrink-0" aria-hidden />
+        <Inbox className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" aria-hidden />
         <h3
-          className="flex-1 text-left text-[11px] font-semibold uppercase tracking-widest text-zinc-500"
+          className="flex-1 text-left text-[11px] font-semibold uppercase tracking-widest text-muted-foreground"
           style={{ fontFamily: 'var(--font-mono)' }}
         >
           {title} · {count}
         </h3>
-        <ChevronRight className="w-3.5 h-3.5 text-zinc-500" aria-hidden />
+        <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" aria-hidden />
       </button>
 
       {isEmpty ? (
-        <div className="rounded-[10px] border border-dashed border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-6 text-center">
-          <p className="text-[12px] text-zinc-500" style={{ fontFamily: 'var(--font-sans)' }}>
+        <div className="rounded-[10px] border border-dashed border-border bg-card px-4 py-6 text-center">
+          <p className="text-[12px] text-muted-foreground" style={{ fontFamily: 'var(--font-sans)' }}>
             {emptyLabel}
           </p>
         </div>

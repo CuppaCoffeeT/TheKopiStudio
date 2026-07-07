@@ -121,8 +121,8 @@ export function AIDraftReplyPanel({
       }
     >
       {draftSubject && mode === 'view' && (
-        <p className="text-[12px] text-zinc-600 dark:text-zinc-400 mb-2">
-          <span className="font-medium text-zinc-700 dark:text-zinc-300">Subject · </span>
+        <p className="text-[12px] text-muted-foreground mb-2">
+          <span className="font-medium text-muted-foreground">Subject · </span>
           {draftSubject}
         </p>
       )}
@@ -131,8 +131,8 @@ export function AIDraftReplyPanel({
         <div
           className={cn(
             'px-3 py-2.5 rounded-lg border whitespace-pre-wrap',
-            'bg-zinc-50 dark:bg-zinc-900/60 border-zinc-100 dark:border-zinc-800/60',
-            'text-[12.5px] text-zinc-700 dark:text-zinc-300',
+            'bg-secondary border-border',
+            'text-[12.5px] text-muted-foreground',
           )}
           style={{ fontFamily: 'var(--font-sans)' }}
         >
@@ -147,10 +147,10 @@ export function AIDraftReplyPanel({
           rows={8}
           className={cn(
             'w-full min-h-[160px] px-3 py-2 rounded-lg border resize-y text-[12.5px] leading-[1.55]',
-            'bg-white dark:bg-zinc-950',
-            'border-zinc-200 dark:border-zinc-800',
-            'text-zinc-900 dark:text-zinc-100',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+            'bg-card',
+            'border-border',
+            'text-foreground',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
           )}
           style={{ fontFamily: 'var(--font-sans)' }}
         />
@@ -164,11 +164,11 @@ export function AIDraftReplyPanel({
           placeholder="Reason for declining (optional)"
           className={cn(
             'w-full h-8 px-2.5 rounded-md border text-[12px]',
-            'bg-white dark:bg-zinc-950',
-            'border-zinc-200 dark:border-zinc-800',
-            'text-zinc-900 dark:text-zinc-100',
-            'placeholder:text-zinc-400 dark:placeholder:text-zinc-500',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+            'bg-card',
+            'border-border',
+            'text-foreground',
+            'placeholder:text-muted-foreground',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
           )}
           style={{ fontFamily: 'var(--font-sans)' }}
         />

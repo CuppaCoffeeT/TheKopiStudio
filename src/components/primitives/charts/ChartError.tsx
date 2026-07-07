@@ -41,11 +41,11 @@ export const ChartError = forwardRef<HTMLDivElement, ChartErrorProps>(function C
       >
         <AlertCircle size={18} strokeWidth={1.6} />
       </span>
-      <div className="text-[14px] font-medium text-zinc-900 dark:text-zinc-50">
+      <div className="text-[14px] font-medium text-foreground">
         {message}
       </div>
       <div
-        className="text-[11px] text-zinc-500 dark:text-zinc-400"
+        className="text-[11px] text-muted-foreground"
         style={{ fontFamily: 'var(--font-mono)' }}
       >
         Error {code} · chart service unreachable
@@ -55,10 +55,9 @@ export const ChartError = forwardRef<HTMLDivElement, ChartErrorProps>(function C
         onClick={onRetry}
         className={cn(
           'mt-1.5 inline-flex items-center rounded-md border bg-transparent text-[12px] font-medium',
-          'border-zinc-300 text-zinc-700 hover:bg-zinc-50',
-          'dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-900',
+          'border-border text-muted-foreground hover:bg-secondary',
           'disabled:cursor-not-allowed disabled:opacity-40',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950'
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background'
         )}
         style={{ height: 30, padding: '0 14px' }}
       >

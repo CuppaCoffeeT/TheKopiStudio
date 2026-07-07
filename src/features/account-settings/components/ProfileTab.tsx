@@ -76,7 +76,7 @@ export function ProfileTab() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Email" hint="Change it from the Security tab.">
           <span
-            className="text-[14px] text-zinc-900 dark:text-zinc-50 break-all"
+            className="text-[14px] text-foreground break-all"
             data-testid="account-profile-email"
           >
             {profile.email}
@@ -91,7 +91,7 @@ export function ProfileTab() {
         </Field>
         <Field label="Member since">
           <span
-            className="text-[14px] text-zinc-900 dark:text-zinc-50"
+            className="text-[14px] text-foreground"
             data-testid="account-profile-member-since"
           >
             {profile.createdAt ? formatDisplayDateLong(profile.createdAt) : '—'}
@@ -100,7 +100,7 @@ export function ProfileTab() {
         {profile.legacyUsername && (
           <Field label="Legacy username" hint="From the original profiler app — display only.">
             <span
-              className="text-[14px] text-zinc-900 dark:text-zinc-50"
+              className="text-[14px] text-foreground"
               data-testid="account-profile-legacy-username"
             >
               {profile.legacyUsername}
@@ -109,7 +109,7 @@ export function ProfileTab() {
         )}
       </div>
 
-      <div className="border-t border-zinc-100 dark:border-zinc-900 pt-5 flex flex-col gap-4">
+      <div className="border-t border-border pt-5 flex flex-col gap-4">
         <Field label="Name" required error={nameValid ? undefined : 'Name is required.'}>
           <Input
             size="lg"

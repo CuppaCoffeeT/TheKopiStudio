@@ -126,7 +126,7 @@ export function DrawingStatusBar({
         {/* Progress bar */}
         <div
           className={cn(
-            'flex w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800',
+            'flex w-full overflow-hidden rounded-full bg-secondary',
             barHeight,
           )}
           role="progressbar"
@@ -151,7 +151,7 @@ export function DrawingStatusBar({
                 </TooltipTrigger>
                 <TooltipContent side="top" className="text-[11px]">
                   <span className="font-medium">{s.label}</span>
-                  <span className="ml-1 tabular-nums text-zinc-300 dark:text-zinc-600">
+                  <span className="ml-1 tabular-nums text-muted-foreground">
                     {count} · {pctLabel}%
                   </span>
                 </TooltipContent>

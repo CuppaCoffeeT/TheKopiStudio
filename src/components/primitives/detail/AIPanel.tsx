@@ -72,8 +72,8 @@ export const AIPanel = forwardRef<HTMLDivElement, AIPanelProps>(function AIPanel
       ref={ref}
       className={cn(
         'relative overflow-hidden rounded-2xl border',
-        'bg-white dark:bg-zinc-950',
-        'border-zinc-200/80 dark:border-zinc-800/80',
+        'bg-card',
+        'border-border',
         'shadow-[0_1px_2px_rgb(0_0_0_/_0.04)]',
         className,
       )}
@@ -86,15 +86,15 @@ export const AIPanel = forwardRef<HTMLDivElement, AIPanelProps>(function AIPanel
       <header
         className={cn(
           'flex items-center gap-2 px-4 pl-5 pr-3 py-2.5',
-          !effectiveCollapsed && 'border-b border-zinc-100 dark:border-zinc-800/60',
+          !effectiveCollapsed && 'border-b border-border',
         )}
       >
-        <span className="w-3.5 h-3.5 shrink-0 text-zinc-500 dark:text-zinc-400">{icon}</span>
-        <h3 className="text-[12px] font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight shrink-0">
+        <span className="w-3.5 h-3.5 shrink-0 text-muted-foreground">{icon}</span>
+        <h3 className="text-[12px] font-semibold text-foreground tracking-tight shrink-0">
           {title}
         </h3>
         {effectiveCollapsed && summary && (
-          <div className="flex-1 min-w-0 flex items-center gap-2 text-[12px] text-zinc-600 dark:text-zinc-400 overflow-hidden">
+          <div className="flex-1 min-w-0 flex items-center gap-2 text-[12px] text-muted-foreground overflow-hidden">
             {summary}
           </div>
         )}
@@ -107,9 +107,9 @@ export const AIPanel = forwardRef<HTMLDivElement, AIPanelProps>(function AIPanel
             aria-label={collapsed ? 'Expand panel' : 'Collapse panel'}
             className={cn(
               'w-6 h-6 inline-flex items-center justify-center rounded-md shrink-0',
-              'text-zinc-500 dark:text-zinc-400',
-              'hover:bg-zinc-100 dark:hover:bg-zinc-800',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400',
+              'text-muted-foreground',
+              'hover:bg-secondary',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
             )}
           >
             {collapsed ? (
@@ -122,14 +122,14 @@ export const AIPanel = forwardRef<HTMLDivElement, AIPanelProps>(function AIPanel
       </header>
       {!effectiveCollapsed && (
         <>
-          <div className="px-4 pl-5 py-3 text-[12.5px] leading-[1.55] text-zinc-700 dark:text-zinc-300">
+          <div className="px-4 pl-5 py-3 text-[12.5px] leading-[1.55] text-muted-foreground">
             {children}
           </div>
           {actions && (
             <div
               className={cn(
                 'flex items-center gap-1.5 px-4 pl-5 py-2.5',
-                'border-t border-dashed border-zinc-100 dark:border-zinc-800/60',
+                'border-t border-dashed border-border',
               )}
             >
               {actions}
@@ -139,7 +139,7 @@ export const AIPanel = forwardRef<HTMLDivElement, AIPanelProps>(function AIPanel
             <div
               className={cn(
                 'px-4 pl-5 py-2.5',
-                'border-t border-dashed border-zinc-100 dark:border-zinc-800/60',
+                'border-t border-dashed border-border',
               )}
             >
               {footer}
@@ -161,7 +161,7 @@ const STATUS_TONE: Record<AIPanelStatusTone, string> = {
   green: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300',
   blue: 'bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300',
   amber: 'bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300',
-  neutral: 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400',
+  neutral: 'bg-secondary text-muted-foreground',
 };
 
 export function AIPanelStatusPill({
@@ -194,13 +194,13 @@ export const AIPanelActionButton = forwardRef<HTMLButtonElement, AIPanelActionBu
   function AIPanelActionButton({ kind = 'outline', className, children, type = 'button', ...props }, ref) {
     const variantClass = {
       outline:
-        'bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900',
+        'bg-card border border-border text-muted-foreground hover:bg-secondary',
       primary:
-        'bg-slate-800 hover:bg-slate-900 text-white border border-transparent font-medium dark:bg-slate-100 dark:hover:bg-white dark:text-slate-900',
+        'bg-primary text-primary-foreground hover:bg-primary/90 border border-transparent font-medium',
       danger:
         'bg-red-700 hover:bg-red-800 text-white border border-transparent font-medium',
       ghost:
-        'bg-transparent border border-transparent text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800',
+        'bg-transparent border border-transparent text-muted-foreground hover:bg-secondary',
     }[kind];
     return (
       <button
@@ -210,7 +210,7 @@ export const AIPanelActionButton = forwardRef<HTMLButtonElement, AIPanelActionBu
           'h-7 px-2.5 rounded-md inline-flex items-center gap-1.5 text-[12px]',
           variantClass,
           'disabled:opacity-40 disabled:cursor-not-allowed',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
           className,
         )}
         style={{ fontFamily: 'var(--font-sans)' }}

@@ -93,10 +93,10 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(functi
         heightClass,
         widthClass,
         'px-2.5 pl-9 rounded-md',
-        'bg-white dark:bg-zinc-950',
-        'border border-zinc-200 dark:border-zinc-800',
-        'focus-within:border-red-700 dark:focus-within:border-red-400',
-        'focus-within:ring-[3px] focus-within:ring-red-700/15 dark:focus-within:ring-red-400/20',
+        'bg-card',
+        'border border-border',
+        'focus-within:border-ring',
+        'focus-within:ring-[3px] focus-within:ring-ring/15',
         'transition-colors',
         disabled && 'opacity-50 cursor-not-allowed',
         className,
@@ -104,7 +104,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(functi
     >
       <Search
         aria-hidden="true"
-        className={cn('absolute left-3 w-3.5 h-3.5 text-zinc-500', iconTop)}
+        className={cn('absolute left-3 w-3.5 h-3.5 text-muted-foreground', iconTop)}
         strokeWidth={1.3}
       />
       <input
@@ -119,15 +119,15 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(functi
         autoFocus={autoFocus}
         aria-label={ariaLabel ?? placeholder}
         data-testid={inputTestId}
-        className="flex-1 bg-transparent border-none outline-none text-[12.5px] pointer-coarse:text-[16px] text-zinc-900 dark:text-zinc-50 placeholder:text-zinc-500 disabled:cursor-not-allowed [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none"
-        style={{ fontFamily: 'var(--font-mono)' }}
+        className="flex-1 bg-transparent border-none outline-none text-[12.5px] pointer-coarse:text-[16px] text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none"
+        style={{ fontFamily: 'var(--font-sans)' }}
       />
       {clearable && hasQuery && !disabled && (
         <button
           type="button"
           onClick={() => onQueryChange('')}
           aria-label="Clear search"
-          className="ml-1 w-4 h-4 rounded-full inline-flex items-center justify-center text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400"
+          className="ml-1 w-4 h-4 rounded-full inline-flex items-center justify-center text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <X className="w-2.5 h-2.5" strokeWidth={1.5} />
         </button>

@@ -29,9 +29,9 @@ export function Field({ label, required, hint, error, className, children }: Fie
     <Wrapper className={cn('flex flex-col gap-1.5', className)}>
       {label && (
         <span
-          className="inline-flex items-center gap-1 text-zinc-500 dark:text-zinc-400 uppercase"
+          className="inline-flex items-center gap-1 text-muted-foreground uppercase"
           style={{
-            fontFamily: 'var(--font-mono)',
+            fontFamily: 'var(--font-pixel)',
             fontSize: 10.5,
             fontWeight: 600,
             letterSpacing: '0.08em',
@@ -41,7 +41,7 @@ export function Field({ label, required, hint, error, className, children }: Fie
           {required && (
             <>
               {' '}
-              <span className="text-red-700 dark:text-red-400 font-semibold">*</span>
+              <span className="text-primary font-semibold">*</span>
             </>
           )}
         </span>
@@ -53,7 +53,7 @@ export function Field({ label, required, hint, error, className, children }: Fie
             'flex items-center gap-1 leading-[1.4]',
             error
               ? 'text-red-700 dark:text-red-400'
-              : 'text-zinc-500 dark:text-zinc-400'
+              : 'text-muted-foreground'
           )}
           style={{ fontFamily: 'var(--font-sans)', fontSize: 12 }}
         >

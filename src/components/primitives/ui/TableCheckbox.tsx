@@ -41,9 +41,9 @@ export const TableCheckbox = forwardRef<HTMLButtonElement, TableCheckboxProps>(
           'inline-flex items-center justify-center shrink-0',
           'w-4 h-4 rounded-[4px] border-[1.5px] transition-colors',
           on
-            ? 'bg-slate-800 border-slate-800 dark:bg-slate-100 dark:border-slate-100'
-            : 'bg-white border-zinc-300 hover:border-zinc-400 dark:bg-zinc-950 dark:border-zinc-700 dark:hover:border-zinc-600',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+            ? 'bg-primary border-primary'
+            : 'bg-card border-border hover:border-border',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
           disabled && 'opacity-40 cursor-not-allowed',
           className
         )}
@@ -53,7 +53,7 @@ export const TableCheckbox = forwardRef<HTMLButtonElement, TableCheckboxProps>(
           <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden>
             <path
               d="M2 5.2 L4.2 7.4 L8 3.2"
-              className="stroke-white dark:stroke-slate-900"
+              className="stroke-primary-foreground"
               strokeWidth="1.8"
               fill="none"
               strokeLinecap="round"
@@ -65,7 +65,7 @@ export const TableCheckbox = forwardRef<HTMLButtonElement, TableCheckboxProps>(
           <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden>
             <path
               d="M2.5 5 H7.5"
-              className="stroke-white dark:stroke-slate-900"
+              className="stroke-primary-foreground"
               strokeWidth="1.8"
               strokeLinecap="round"
             />

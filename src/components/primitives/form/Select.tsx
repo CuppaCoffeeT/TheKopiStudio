@@ -48,13 +48,13 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
         heightCls,
         error
           ? 'border-red-700 dark:border-red-400'
-          : 'border-zinc-300 dark:border-zinc-700',
-        !disabled && !error && 'hover:border-zinc-400 dark:hover:border-zinc-600',
+          : 'border-border',
+        !disabled && !error && 'hover:border-border',
         !error &&
-          'focus-within:border-red-700 dark:focus-within:border-red-400 focus-within:ring-[3px] focus-within:ring-red-700/15 dark:focus-within:ring-red-400/25',
+          'focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/15',
         error &&
           'focus-within:ring-[3px] focus-within:ring-red-700/15 dark:focus-within:ring-red-400/25',
-        disabled ? 'bg-zinc-100 dark:bg-zinc-900 opacity-80 cursor-not-allowed' : 'bg-white dark:bg-zinc-950',
+        disabled ? 'bg-secondary opacity-80 cursor-not-allowed' : 'bg-card',
         containerClassName
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
@@ -66,7 +66,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
         defaultValue={defaultValue}
         className={cn(
           'appearance-none w-full h-full pl-3 pr-9 bg-transparent outline-none',
-          isEmpty ? 'text-zinc-600 dark:text-zinc-300' : 'text-zinc-900 dark:text-zinc-50',
+          isEmpty ? 'text-muted-foreground' : 'text-foreground',
           disabled ? 'cursor-not-allowed' : 'cursor-pointer',
           className
         )}
@@ -80,7 +80,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
         {children}
       </select>
       <ChevronDown
-        className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500 dark:text-zinc-400"
+        className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground"
         size={14}
       />
     </div>

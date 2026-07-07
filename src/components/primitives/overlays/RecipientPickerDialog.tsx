@@ -86,7 +86,7 @@ export function RecipientPickerDialog({
           className={cn(
             'fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2',
             'flex w-[560px] max-w-[calc(100vw-32px)] max-h-[80vh] flex-col overflow-hidden rounded-xl',
-            'border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950',
+            'border border-border bg-card',
             'shadow-[0_24px_64px_rgba(24,24,27,0.14)] dark:shadow-[0_24px_64px_rgba(0,0,0,0.5)]',
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
             'data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95',
@@ -94,10 +94,10 @@ export function RecipientPickerDialog({
           )}
           style={{ fontFamily: 'var(--font-sans)' }}
         >
-          <div className="flex items-start justify-between gap-3 border-b border-zinc-100 px-[22px] pb-3.5 pt-4.5 dark:border-zinc-900">
+          <div className="flex items-start justify-between gap-3 border-b border-border px-[22px] pb-3.5 pt-4.5">
             <div className="flex-1 min-w-0">
               <DialogPrimitive.Title
-                className="m-0 text-[22px] font-normal leading-[1.1] text-zinc-900 dark:text-zinc-50"
+                className="m-0 text-[22px] font-normal leading-[1.1] text-foreground"
                 style={{
                   fontFamily: 'var(--font-pixel)',
                   letterSpacing: '-0.01em',
@@ -108,14 +108,14 @@ export function RecipientPickerDialog({
                 {title}
               </DialogPrimitive.Title>
               {description && (
-                <DialogPrimitive.Description className="mt-1 text-[12px] text-zinc-500 dark:text-zinc-400">
+                <DialogPrimitive.Description className="mt-1 text-[12px] text-muted-foreground">
                   {description}
                 </DialogPrimitive.Description>
               )}
             </div>
             <DialogPrimitive.Close
               aria-label="Close"
-              className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-200"
+              className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded text-muted-foreground hover:text-foreground"
             >
               <X className="h-3 w-3" />
             </DialogPrimitive.Close>
@@ -124,32 +124,32 @@ export function RecipientPickerDialog({
           {actions && <div className="flex flex-wrap gap-2 px-[22px] pt-3">{actions}</div>}
 
           <div className="flex items-center gap-2.5 px-[22px] py-3">
-            <div className="flex h-[34px] flex-1 items-center gap-2 rounded-md border border-zinc-200 bg-white px-2.5 dark:border-zinc-800 dark:bg-zinc-950">
-              <Search className="h-3.5 w-3.5 text-zinc-400" />
+            <div className="flex h-[34px] flex-1 items-center gap-2 rounded-md border border-border bg-card px-2.5">
+              <Search className="h-3.5 w-3.5 text-muted-foreground" />
               <input
                 type="search"
                 value={searchValue}
                 onChange={(e) => onSearchChange(e.target.value)}
                 placeholder={searchPlaceholder}
-                className="flex-1 bg-transparent text-[12.5px] text-zinc-900 placeholder:text-zinc-400 focus:outline-none dark:text-zinc-50 dark:placeholder:text-zinc-600"
+                className="flex-1 bg-transparent text-[12.5px] text-foreground placeholder:text-muted-foreground focus:outline-none"
               />
             </div>
             <RecipientTypeToggle value={recipientType} onChange={onRecipientTypeChange} />
           </div>
 
-          <div className="flex-1 min-h-[240px] max-h-[380px] overflow-y-auto bg-white dark:bg-zinc-950">
+          <div className="flex-1 min-h-[240px] max-h-[380px] overflow-y-auto bg-card">
             {children}
           </div>
 
-          <div className="flex items-center gap-2.5 border-t border-zinc-100 bg-zinc-50 px-[22px] pb-4 pt-3 dark:border-zinc-900 dark:bg-white/[0.015]">
-            <span className="font-mono text-[12px] text-zinc-500 dark:text-zinc-400">
+          <div className="flex items-center gap-2.5 border-t border-border bg-secondary px-[22px] pb-4 pt-3">
+            <span className="font-mono text-[12px] text-muted-foreground">
               {selectedCount > 0 ? `${selectedCount} selected` : 'No recipients selected'}
             </span>
             <span className="flex-1" />
             <button
               type="button"
               onClick={onCancel}
-              className="h-8 cursor-pointer rounded-md border-none bg-transparent px-3 text-[12.5px] font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-white/5"
+              className="h-8 cursor-pointer rounded-md border-none bg-transparent px-3 text-[12.5px] font-medium text-muted-foreground transition-colors hover:bg-secondary"
             >
               Cancel
             </button>
@@ -160,8 +160,8 @@ export function RecipientPickerDialog({
               className={cn(
                 'h-8 rounded-md border-none px-3.5 text-[12.5px] font-medium transition-colors',
                 submitBlocked
-                  ? 'cursor-not-allowed bg-zinc-200 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-600'
-                  : 'cursor-pointer bg-slate-800 text-white hover:bg-slate-700 dark:bg-zinc-200 dark:text-slate-900 dark:hover:bg-white',
+                  ? 'cursor-not-allowed bg-muted text-muted-foreground'
+                  : 'cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90',
               )}
             >
               Add {selectedCount > 0 ? `(${selectedCount}) ` : ''}Recipient{selectedCount === 1 ? '' : 's'}
@@ -181,7 +181,7 @@ function RecipientTypeToggle({
   onChange: (next: 'to' | 'cc') => void;
 }) {
   return (
-    <div className="flex items-center gap-0 rounded-md border border-zinc-200 bg-zinc-50 p-0.5 dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="flex items-center gap-0 rounded-md border border-border bg-secondary p-0.5">
       {(['to', 'cc'] as const).map((opt) => {
         const active = value === opt;
         return (
@@ -190,10 +190,10 @@ function RecipientTypeToggle({
             type="button"
             onClick={() => onChange(opt)}
             className={cn(
-              'cursor-pointer rounded px-3 py-1 font-mono text-[12px] font-medium uppercase tracking-[0.06em] transition-colors',
+              'cursor-pointer rounded px-3 py-1 text-[12px] font-medium uppercase tracking-[0.06em] transition-colors',
               active
-                ? 'bg-white text-zinc-900 shadow-[0_0_0_1px_var(--tw-shadow-color)] shadow-zinc-200 dark:bg-zinc-950 dark:text-zinc-50 dark:shadow-zinc-800'
-                : 'bg-transparent text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50',
+                ? 'bg-card text-foreground shadow-[0_0_0_1px_var(--tw-shadow-color)] shadow-border'
+                : 'bg-transparent text-muted-foreground hover:text-foreground',
             )}
           >
             {opt}
@@ -222,14 +222,13 @@ export function RecipientActionButton({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        'inline-flex h-8 items-center gap-1.5 rounded-md border border-zinc-200 bg-white px-3 text-[12px] font-medium text-zinc-700 transition-colors',
-        'hover:bg-zinc-50 hover:border-zinc-300',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700',
+        'inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-card px-3 text-[12px] font-medium text-muted-foreground transition-colors',
+        'hover:bg-secondary hover:border-border',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
         'disabled:cursor-not-allowed disabled:opacity-50',
-        'dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-900 dark:focus-visible:ring-red-400',
       )}
     >
-      {icon ?? <Plus className="h-3.5 w-3.5 text-zinc-500 dark:text-zinc-400" />}
+      {icon ?? <Plus className="h-3.5 w-3.5 text-muted-foreground" />}
       {children}
     </button>
   );
@@ -280,13 +279,12 @@ export function RecipientRow({
         }
       }}
       className={cn(
-        'group flex min-h-[52px] cursor-pointer items-center gap-2.5 border-b border-zinc-100 px-3.5 py-2.5 transition-colors',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-red-700',
-        'dark:border-zinc-900 dark:focus-visible:ring-red-400',
+        'group flex min-h-[52px] cursor-pointer items-center gap-2.5 border-b border-border px-3.5 py-2.5 transition-colors',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring',
         crossCompany
           ? 'hover:bg-orange-50 hover:shadow-[inset_0_0_0_1px_rgb(254_215_170)] dark:hover:bg-orange-950/20 dark:hover:shadow-[inset_0_0_0_1px_rgba(217,119,6,0.30)]'
-          : 'hover:bg-zinc-50 dark:hover:bg-white/[0.04]',
-        selected && 'bg-zinc-50 shadow-[inset_2px_0_0_var(--tw-shadow-color)] shadow-red-700 dark:bg-zinc-900 dark:shadow-red-400',
+          : 'hover:bg-secondary',
+        selected && 'bg-secondary shadow-[inset_2px_0_0_var(--tw-shadow-color)] shadow-primary',
       )}
     >
       <span
@@ -294,8 +292,8 @@ export function RecipientRow({
         className={cn(
           'inline-flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center rounded-[3px] border-[1.5px] transition-colors',
           selected
-            ? 'border-red-700 bg-red-700 dark:border-red-400 dark:bg-red-400'
-            : 'border-zinc-400 bg-transparent dark:border-zinc-600',
+            ? 'border-primary bg-primary'
+            : 'border-border bg-transparent',
         )}
       >
         {selected && <Check className="h-2.5 w-2.5 text-white" strokeWidth={2.5} />}
@@ -303,22 +301,22 @@ export function RecipientRow({
 
       <span
         aria-hidden
-        className="inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md border border-zinc-200 bg-zinc-50 text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400"
+        className="inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md border border-border bg-secondary text-muted-foreground"
       >
         <Icon className="h-3.5 w-3.5" />
       </span>
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 min-w-0">
-          <span className="truncate text-[13px] font-medium text-zinc-900 dark:text-zinc-50">
+          <span className="truncate text-[13px] font-medium text-foreground">
             {name}
           </span>
-          <span className="truncate font-mono text-[11.5px] text-zinc-500 dark:text-zinc-400">
+          <span className="truncate font-mono text-[11.5px] text-muted-foreground">
             {email}
           </span>
         </div>
         {subtitle && (
-          <div className="mt-0.5 truncate text-[11px] text-zinc-400 dark:text-zinc-500">
+          <div className="mt-0.5 truncate text-[11px] text-muted-foreground">
             {subtitle}
           </div>
         )}
@@ -353,11 +351,11 @@ export function RecipientPickerEmpty({
 }) {
   return (
     <div className="px-5 py-12 text-center">
-      <div className="mx-auto mb-2.5 inline-flex h-9 w-9 items-center justify-center rounded-md border border-zinc-200 bg-zinc-50 text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
+      <div className="mx-auto mb-2.5 inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-secondary text-muted-foreground">
         <Mail className="h-4.5 w-4.5" />
       </div>
-      <div className="text-[13px] font-medium text-zinc-900 dark:text-zinc-50">{title}</div>
-      <p className="mt-1 text-[12px] leading-[1.5] text-zinc-500 dark:text-zinc-400">{description}</p>
+      <div className="text-[13px] font-medium text-foreground">{title}</div>
+      <p className="mt-1 text-[12px] leading-[1.5] text-muted-foreground">{description}</p>
     </div>
   );
 }
@@ -369,13 +367,13 @@ export function RecipientPickerLoading() {
       {[0, 1, 2, 3, 4].map((i) => (
         <div
           key={i}
-          className="flex min-h-[52px] items-center gap-2.5 border-b border-zinc-100 px-3.5 py-2.5 dark:border-zinc-900"
+          className="flex min-h-[52px] items-center gap-2.5 border-b border-border px-3.5 py-2.5"
         >
-          <span className="h-3.5 w-3.5 rounded-[3px] bg-zinc-100 dark:bg-zinc-800" />
-          <span className="h-7 w-7 rounded-md bg-zinc-100 dark:bg-zinc-800" />
+          <span className="h-3.5 w-3.5 rounded-[3px] bg-secondary" />
+          <span className="h-7 w-7 rounded-md bg-secondary" />
           <div className="flex-1 grid gap-1">
-            <span className="h-2.5 rounded-[3px] bg-zinc-100 dark:bg-zinc-800" style={{ width: `${60 - i * 5}%` }} />
-            <span className="h-2 rounded-[3px] bg-zinc-100 dark:bg-zinc-800" style={{ width: `${40 - i * 4}%` }} />
+            <span className="h-2.5 rounded-[3px] bg-secondary" style={{ width: `${60 - i * 5}%` }} />
+            <span className="h-2 rounded-[3px] bg-secondary" style={{ width: `${40 - i * 4}%` }} />
           </div>
         </div>
       ))}
@@ -387,12 +385,12 @@ export function RecipientPickerLoading() {
 export function RecipientPickerNoResults({ query }: { query?: string }) {
   return (
     <div className="px-5 py-12 text-center">
-      <div className="text-[13px] font-medium text-zinc-900 dark:text-zinc-50">
+      <div className="text-[13px] font-medium text-foreground">
         No matches for &ldquo;{query || 'your search'}&rdquo;
       </div>
-      <p className="mt-1 text-[12px] leading-[1.5] text-zinc-500 dark:text-zinc-400">
+      <p className="mt-1 text-[12px] leading-[1.5] text-muted-foreground">
         Try a shorter query, or use{' '}
-        <strong className="text-zinc-900 dark:text-zinc-50">Add Custom Email</strong> for a one-off
+        <strong className="text-foreground">Add Custom Email</strong> for a one-off
         address.
       </p>
     </div>

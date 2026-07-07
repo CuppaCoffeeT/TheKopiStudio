@@ -57,21 +57,21 @@ export function RelatedRecordsCard({
     <section
       className={cn(
         'rounded-[10px] overflow-hidden',
-        'border border-zinc-200 dark:border-zinc-800',
-        'bg-white dark:bg-zinc-950',
+        'border border-border',
+        'bg-card',
         className
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
     >
       {/* Header */}
       <header
-        className="px-3.5 pt-3 pb-2.5 flex items-center gap-2 border-b border-zinc-100 dark:border-zinc-900"
+        className="px-3.5 pt-3 pb-2.5 flex items-center gap-2 border-b border-border"
         style={{ fontFamily: 'var(--font-mono)' }}
       >
-        <span className="text-[10.5px] font-semibold uppercase tracking-widest text-zinc-700 dark:text-zinc-300">
+        <span className="text-[10.5px] font-semibold uppercase tracking-widest text-muted-foreground">
           {title}
         </span>
-        <span className="text-[10.5px] text-zinc-500 tracking-wide">· {effectiveCount}</span>
+        <span className="text-[10.5px] text-muted-foreground tracking-wide">· {effectiveCount}</span>
         <div className="flex-1" />
         {onMenu && (
           <button
@@ -79,9 +79,9 @@ export function RelatedRecordsCard({
             aria-label={`${title} menu`}
             onClick={onMenu}
             className={cn(
-              'w-5.5 h-5.5 rounded inline-flex items-center justify-center text-zinc-500',
-              'hover:bg-zinc-100 dark:hover:bg-zinc-900',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700'
+              'w-5.5 h-5.5 rounded inline-flex items-center justify-center text-muted-foreground',
+              'hover:bg-secondary',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
             )}
           >
             <MoreHorizontal className="w-3 h-3" />
@@ -92,7 +92,7 @@ export function RelatedRecordsCard({
       {/* Rows */}
       <div>
         {items.length === 0 ? (
-          <div className="px-3.5 py-6 text-center text-[12.5px] text-zinc-500">{emptyLabel}</div>
+          <div className="px-3.5 py-6 text-center text-[12.5px] text-muted-foreground">{emptyLabel}</div>
         ) : (
           items.map((item, i) => {
             const isLast = i === items.length - 1;
@@ -108,17 +108,17 @@ export function RelatedRecordsCard({
                 className={cn(
                   'group flex items-center gap-2.5 w-full text-left',
                   'min-h-11 px-3.5 py-2 no-underline',
-                  !isLast && 'border-b border-zinc-100 dark:border-zinc-900',
-                  'text-zinc-900 dark:text-zinc-50',
-                  'hover:bg-white hover:shadow-[inset_0_0_0_1px_#ececee,0_1px_2px_rgba(24,24,27,0.04)]',
+                  !isLast && 'border-b border-border',
+                  'text-foreground',
+                  'hover:bg-card hover:shadow-[inset_0_0_0_1px_#ececee,0_1px_2px_rgba(24,24,27,0.04)]',
                   'dark:hover:bg-white/[0.04] dark:hover:shadow-none',
                   'active:translate-x-[1px]',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:-ring-offset-2',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:-ring-offset-2',
                   item.disabled && 'opacity-50 cursor-not-allowed pointer-events-none'
                 )}
               >
                 <span
-                  className="w-7 h-7 rounded-full inline-flex items-center justify-center flex-shrink-0 text-[10.5px] font-semibold bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900"
+                  className="w-7 h-7 rounded-full inline-flex items-center justify-center flex-shrink-0 text-[10.5px] font-semibold bg-primary text-primary-foreground"
                   style={{ fontFamily: 'var(--font-sans)' }}
                 >
                   {item.initials ?? '•'}
@@ -127,14 +127,14 @@ export function RelatedRecordsCard({
                   <div className="text-[13px] font-medium truncate">{item.name}</div>
                   {item.subLabel && (
                     <div
-                      className="mt-px text-[10.5px] text-zinc-500 tracking-wide"
+                      className="mt-px text-[10.5px] text-muted-foreground tracking-wide"
                       style={{ fontFamily: 'var(--font-mono)' }}
                     >
                       {item.subLabel}
                     </div>
                   )}
                 </div>
-                <ChevronRight className="w-2.5 h-2.5 text-zinc-400 dark:text-zinc-600 flex-shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:text-zinc-600 dark:group-hover:text-zinc-300" />
+                <ChevronRight className="w-2.5 h-2.5 text-muted-foreground flex-shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:text-muted-foreground" />
               </Tag>
             );
           })
@@ -143,16 +143,16 @@ export function RelatedRecordsCard({
 
       {/* Footer */}
       {(onAdd || viewAllHref) && (
-        <footer className="flex items-center gap-1.5 px-2.5 py-2 border-t border-zinc-100 dark:border-zinc-900">
+        <footer className="flex items-center gap-1.5 px-2.5 py-2 border-t border-border">
           {onAdd && (
             <button
               type="button"
               onClick={onAdd}
               className={cn(
                 'h-7 px-2.5 rounded-[5px] inline-flex items-center gap-1.5',
-                'text-[12px] font-medium text-zinc-700 dark:text-zinc-300',
-                'hover:bg-zinc-100 dark:hover:bg-zinc-900',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700'
+                'text-[12px] font-medium text-muted-foreground',
+                'hover:bg-secondary',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
               )}
             >
               <Plus className="w-2.5 h-2.5" />
@@ -164,14 +164,14 @@ export function RelatedRecordsCard({
             isExternal(viewAllHref) ? (
               <a
                 href={viewAllHref}
-                className="px-1.5 text-[11.5px] text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50 no-underline"
+                className="px-1.5 text-[11.5px] text-muted-foreground hover:text-foreground no-underline"
               >
                 {viewAllLabel ?? `View all ${effectiveCount}`} →
               </a>
             ) : (
               <Link
                 to={viewAllHref}
-                className="px-1.5 text-[11.5px] text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50 no-underline"
+                className="px-1.5 text-[11.5px] text-muted-foreground hover:text-foreground no-underline"
               >
                 {viewAllLabel ?? `View all ${effectiveCount}`} →
               </Link>

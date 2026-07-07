@@ -89,14 +89,14 @@ export function LineItemRow({
       className={cn(
         'grid gap-1 md:gap-2.5',
         'px-3 py-2 md:py-2',
-        !isLast && 'border-b border-zinc-100 dark:border-zinc-900',
+        !isLast && 'border-b border-border',
         isDrag
           ? 'bg-red-50/60 dark:bg-red-900/10 shadow-[0_0_0_1.5px_theme(colors.red.700)] dark:shadow-[0_0_0_1.5px_theme(colors.red.400)]'
           : isPLifted
           ? 'bg-white/35 dark:bg-zinc-950/35 backdrop-blur-md shadow-2xl ring-1 ring-zinc-300 dark:ring-zinc-700'
           : isNotes
           ? 'bg-zinc-50/40 dark:bg-white/[0.015]'
-          : 'hover:bg-zinc-50 dark:hover:bg-white/[0.03]',
+          : 'hover:bg-secondary dark:hover:bg-white/[0.03]',
         pDragIndex !== null && !isPLifted && 'transition-transform duration-200 ease-out',
       )}
       style={{
@@ -124,12 +124,12 @@ export function LineItemRow({
             className={cn(
               'w-5 h-5 mx-auto rounded inline-flex items-center justify-center',
               isNotes
-                ? 'cursor-default text-zinc-300 dark:text-zinc-700'
+                ? 'cursor-default text-muted-foreground'
                 : isPLifted
                   ? 'cursor-grabbing text-red-700 dark:text-red-400'
-                  : 'cursor-grab text-zinc-400 dark:text-zinc-600 hover:text-zinc-700 dark:hover:text-zinc-300',
+                  : 'cursor-grab text-muted-foreground hover:text-muted-foreground',
               isDrag && 'text-red-700 dark:text-red-400',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
               'touch-none select-none',
             )}
           >
@@ -137,7 +137,7 @@ export function LineItemRow({
           </button>
         ) : (
           <span
-            className="w-5 h-5 mx-auto inline-flex items-center justify-center text-[11px] tabular-nums text-zinc-500"
+            className="w-5 h-5 mx-auto inline-flex items-center justify-center text-[11px] tabular-nums text-muted-foreground"
             style={{ fontFamily: 'var(--font-mono)' }}
           >
             {isNotes ? '' : itemNumber}
@@ -148,7 +148,7 @@ export function LineItemRow({
         {isNotes ? (
           <div className="flex items-start gap-1.5">
             <span
-              className="mt-[3px] text-[9.5px] uppercase tracking-widest px-1 py-px rounded-[3px] bg-zinc-100 dark:bg-zinc-800 text-zinc-500 flex-shrink-0"
+              className="mt-[3px] text-[9.5px] uppercase tracking-widest px-1 py-px rounded-[3px] bg-secondary text-muted-foreground flex-shrink-0"
               style={{ fontFamily: 'var(--font-mono)' }}
             >
               note
@@ -157,7 +157,7 @@ export function LineItemRow({
         ) : renderItemCell ? (
           renderItemCell(ctx)
         ) : (
-          <div className="text-[13px] text-zinc-900 dark:text-zinc-50 leading-snug flex items-start gap-1.5 min-w-0">
+          <div className="text-[13px] text-foreground leading-snug flex items-start gap-1.5 min-w-0">
             {item.protected && (
               <TooltipProvider>
                 <Tooltip>
@@ -178,7 +178,7 @@ export function LineItemRow({
             <div className="flex-1 min-w-0">
               {item.code && (
                 <div
-                  className="text-[10.5px] text-zinc-500 tracking-wider uppercase break-words"
+                  className="text-[10.5px] text-muted-foreground tracking-wider uppercase break-words"
                   style={{ fontFamily: 'var(--font-mono)' }}
                 >
                   {item.code}
@@ -198,7 +198,7 @@ export function LineItemRow({
             zones above/below the textarea. */}
         {editable && !isNotes ? (
           <div
-            className="w-full h-full min-h-[32px] flex items-stretch cursor-text rounded hover:bg-zinc-50/60 dark:hover:bg-zinc-900/40"
+            className="w-full h-full min-h-[32px] flex items-stretch cursor-text rounded hover:bg-secondary"
             onClick={(e) => {
               const ta = (e.currentTarget.querySelector('textarea') as HTMLTextAreaElement | null);
               if (ta && document.activeElement !== ta) ta.focus();
@@ -212,10 +212,10 @@ export function LineItemRow({
               rows={1}
               className={cn(
                 'w-full resize-none bg-transparent outline-none cursor-text',
-                'text-[12.5px] leading-snug text-zinc-700 dark:text-zinc-200',
+                'text-[12.5px] leading-snug text-muted-foreground',
                 'whitespace-pre-wrap break-words',
                 'px-2 py-1.5 rounded',
-                'focus-visible:ring-2 focus-visible:ring-red-700/30 focus-visible:bg-white dark:focus-visible:bg-zinc-900',
+                'focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:bg-card',
               )}
             />
           </div>
@@ -224,8 +224,8 @@ export function LineItemRow({
             className={cn(
               'text-[12.5px] leading-snug min-w-0 whitespace-pre-wrap break-words py-1',
               isNotes
-                ? 'italic text-zinc-500 dark:text-zinc-400'
-                : 'text-zinc-600 dark:text-zinc-300'
+                ? 'italic text-muted-foreground'
+                : 'text-muted-foreground'
             )}
           >
             {isNotes
@@ -293,7 +293,7 @@ export function LineItemRow({
           className={cn(
             'flex items-center justify-center',
             'text-center text-[12.5px] font-medium tabular-nums',
-            isNotes ? 'text-zinc-400 dark:text-zinc-600' : 'text-zinc-900 dark:text-zinc-50'
+            isNotes ? 'text-muted-foreground' : 'text-foreground'
           )}
           style={{ fontFamily: 'var(--font-mono)' }}
         >
@@ -311,24 +311,24 @@ export function LineItemRow({
                   onClick={() => onRemoveItem(item.id)}
                   className={cn(
                     'w-5 h-5 rounded inline-flex items-center justify-center cursor-pointer',
-                    'text-zinc-400 hover:text-red-700 hover:bg-zinc-100 dark:hover:bg-zinc-800',
+                    'text-muted-foreground hover:text-red-700 hover:bg-secondary',
                     'opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100',
                     'transition-opacity duration-150',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700'
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
                   )}
                 >
                   <X className="w-2.5 h-2.5" />
                 </button>
               )
             ) : (
-              <Lock className="w-2.5 h-2.5 text-zinc-400 dark:text-zinc-600" aria-label="Locked" />
+              <Lock className="w-2.5 h-2.5 text-muted-foreground" aria-label="Locked" />
             )}
           </div>
         )}
       </div>
 
       {/* Mobile row — stacked card. Editable variant shows inline number inputs + slot cells. */}
-      <div className="md:hidden text-[13px] text-zinc-900 dark:text-zinc-50 leading-snug">
+      <div className="md:hidden text-[13px] text-foreground leading-snug">
         {isNotes ? (
           editable ? (
             <DescriptionCell
@@ -336,10 +336,10 @@ export function LineItemRow({
               onCommit={(v) => patch(item.id, { label: v })}
               placeholder="Note text…"
               rows={2}
-              className="w-full resize-none bg-transparent outline-none italic text-zinc-600 text-[12.5px] px-2 py-1 rounded focus-visible:ring-2 focus-visible:ring-red-700/30 focus-visible:bg-white"
+              className="w-full resize-none bg-transparent outline-none italic text-muted-foreground text-[12.5px] px-2 py-1 rounded focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:bg-card"
             />
           ) : (
-            <div className="italic text-zinc-500">{displayLabel}</div>
+            <div className="italic text-muted-foreground">{displayLabel}</div>
           )
         ) : editable ? (
           <div className="space-y-2">
@@ -347,7 +347,7 @@ export function LineItemRow({
             {renderItemCell ? renderItemCell(ctx) : (
               <div className="min-w-0">
                 {item.code && (
-                  <div className="text-[10.5px] text-zinc-500 tracking-wider uppercase truncate" style={{ fontFamily: 'var(--font-mono)' }}>
+                  <div className="text-[10.5px] text-muted-foreground tracking-wider uppercase truncate" style={{ fontFamily: 'var(--font-mono)' }}>
                     {item.code}
                   </div>
                 )}
@@ -364,7 +364,7 @@ export function LineItemRow({
                 onCommit={(v) => patch(item.id, { description: v })}
                 placeholder="Description…"
                 rows={2}
-                className="w-full resize-none bg-transparent outline-none text-[12.5px] leading-snug text-zinc-700 px-2 py-1 rounded focus-visible:ring-2 focus-visible:ring-red-700/30 focus-visible:bg-white border border-zinc-200"
+                className="w-full resize-none bg-transparent outline-none text-[12.5px] leading-snug text-muted-foreground px-2 py-1 rounded focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:bg-card border border-border"
               />
             )}
             {/* 4-col grid: qty · unit · price · tax */}
@@ -374,7 +374,7 @@ export function LineItemRow({
                   <NumberCell value={item.qty} step={0.1} min={0} align="left" onCommit={(v) => patch(item.id, { qty: v })} placeholder={item.unit ? '1.0' : 'Rate'} dense testId={fieldTestId?.({ field: 'qty', index: ri, item })} />
                 </MobileField>
                 <MobileField label="unit">
-                  {renderUnitCell ? renderUnitCell(ctx) : <div className="text-[12px] text-zinc-700 px-2">{item.unit ?? '—'}</div>}
+                  {renderUnitCell ? renderUnitCell(ctx) : <div className="text-[12px] text-muted-foreground px-2">{item.unit ?? '—'}</div>}
                 </MobileField>
                 <MobileField label="unit $">
                   <NumberCell value={item.price} step={0.01} align="left" prefix="$" onCommit={(v) => patch(item.id, { price: v })} placeholder="0.00" dense testId={fieldTestId?.({ field: 'price', index: ri, item })} />
@@ -385,8 +385,8 @@ export function LineItemRow({
               </div>
             )}
             {/* Totals + actions row */}
-            <div className="flex items-center justify-between pt-1 border-t border-zinc-100">
-              <span className="text-[10.5px] uppercase tracking-widest text-zinc-500" style={{ fontFamily: 'var(--font-mono)' }}>line $</span>
+            <div className="flex items-center justify-between pt-1 border-t border-border">
+              <span className="text-[10.5px] uppercase tracking-widest text-muted-foreground" style={{ fontFamily: 'var(--font-mono)' }}>line $</span>
               <div className="flex items-center gap-2">
                 <span className="text-[13px] font-semibold tabular-nums" style={{ fontFamily: 'var(--font-mono)' }}>${fmt(lineTotal)}</span>
                 {!item.protected && onRemoveItem && (
@@ -394,12 +394,12 @@ export function LineItemRow({
                     type="button"
                     aria-label="Remove row"
                     onClick={() => onRemoveItem(item.id)}
-                    className="w-6 h-6 rounded text-zinc-400 hover:text-red-700 hover:bg-zinc-100 inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700"
+                    className="w-6 h-6 rounded text-muted-foreground hover:text-red-700 hover:bg-secondary inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <X className="w-3 h-3" />
                   </button>
                 )}
-                {item.protected && <Lock className="w-3 h-3 text-zinc-400" aria-label="Locked" />}
+                {item.protected && <Lock className="w-3 h-3 text-muted-foreground" aria-label="Locked" />}
               </div>
             </div>
           </div>
@@ -407,7 +407,7 @@ export function LineItemRow({
           <>
             {item.code && (
               <div
-                className="text-[10.5px] text-zinc-500 tracking-wider uppercase"
+                className="text-[10.5px] text-muted-foreground tracking-wider uppercase"
                 style={{ fontFamily: 'var(--font-mono)' }}
               >
                 {item.code}
@@ -417,15 +417,15 @@ export function LineItemRow({
               <div className="font-medium">{item.name ?? item.label}</div>
             )}
             {item.description && (
-              <div className="text-[12px] text-zinc-500 mt-0.5">{item.description}</div>
+              <div className="text-[12px] text-muted-foreground mt-0.5">{item.description}</div>
             )}
             <div
-              className="mt-0.5 text-[11px] text-zinc-500 tracking-wide"
+              className="mt-0.5 text-[11px] text-muted-foreground tracking-wide"
               style={{ fontFamily: 'var(--font-mono)' }}
             >
               {item.qty} {item.unit} × ${fmt(item.price ?? 0)}
-              <span className="text-zinc-400 dark:text-zinc-600 mx-1.5">·</span>
-              <span className="text-zinc-900 dark:text-zinc-50 font-medium">${fmt(lineTotal)}</span>
+              <span className="text-muted-foreground mx-1.5">·</span>
+              <span className="text-foreground font-medium">${fmt(lineTotal)}</span>
             </div>
           </>
         )}

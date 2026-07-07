@@ -56,7 +56,7 @@ export function ConvertResultModal({
         </>
       }
     >
-      <ul className="m-0 list-disc space-y-1 pl-5 text-[13px] text-zinc-700 dark:text-zinc-300">
+      <ul className="m-0 list-disc space-y-1 pl-5 text-[13px] text-muted-foreground">
         <li>Creates a client named {prospectName} with the prospect&apos;s occupation.</li>
         <li>
           The client&apos;s notes start with a provenance line (result id, age range, DISC, MBTI)

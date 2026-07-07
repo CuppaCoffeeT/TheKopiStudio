@@ -37,19 +37,19 @@ export function ErrorState({
     <div
       className={cn(
         'relative w-full py-12 px-6 flex flex-col items-center text-center',
-        'bg-zinc-100 dark:bg-zinc-950',
+        'bg-background',
         className
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
     >
-      {/* red-700 accent dot top-right */}
+      {/* brand accent dot top-right */}
       <span
         aria-hidden
-        className="absolute top-4 right-4 w-2 h-2 rounded-full bg-red-700 dark:bg-red-400"
+        className="absolute top-4 right-4 w-2 h-2 rounded-full bg-primary"
       />
 
       <h1
-        className="font-pixel-crisp font-pixel-display m-0 text-zinc-900 dark:text-zinc-50 select-none mb-4"
+        className="font-pixel-crisp font-pixel-display m-0 text-foreground select-none mb-4"
         style={{
           fontFamily: 'var(--font-pixel-display)',
           fontSize: 'clamp(110px, 16vw, 180px)',
@@ -61,22 +61,22 @@ export function ErrorState({
       </h1>
 
       <div
-        className="text-xs uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400 mb-2"
+        className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2"
         style={{ fontFamily: 'var(--font-mono)' }}
       >
         {subhead}
       </div>
 
-      <p className="text-[15px] text-zinc-700 dark:text-zinc-300 leading-relaxed max-w-[420px] mb-4">
+      <p className="text-[15px] text-muted-foreground leading-relaxed max-w-[420px] mb-4">
         {body}
       </p>
 
       {(path || requestId) && (
         <div
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border max-w-full mb-7 bg-zinc-50 dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400"
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border max-w-full mb-7 bg-secondary border-border text-muted-foreground"
           style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}
         >
-          <span className="text-red-700 dark:text-red-400 font-medium">×</span>
+          <span className="text-primary font-medium">×</span>
           {path && (
             <span
               className="truncate max-w-[280px]"
@@ -85,7 +85,7 @@ export function ErrorState({
               {path}
             </span>
           )}
-          {path && requestId && <span className="text-zinc-400 dark:text-zinc-600">·</span>}
+          {path && requestId && <span className="text-muted-foreground">·</span>}
           {requestId && <span>{requestId}</span>}
         </div>
       )}
@@ -104,7 +104,7 @@ export function ErrorState({
       </div>
 
       <div
-        className="mt-9 text-xs text-zinc-500 dark:text-zinc-400"
+        className="mt-9 text-xs text-muted-foreground"
         style={{ fontFamily: 'var(--font-mono)' }}
       >
         AppBase · error {code}

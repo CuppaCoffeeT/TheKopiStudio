@@ -32,8 +32,8 @@ export const DrawerContent = ({
       className={cn(
         'fixed left-0 right-0 bottom-0 z-50',
         'rounded-t-2xl overflow-hidden',
-        'bg-white dark:bg-zinc-950',
-        'border-t border-x border-zinc-200 dark:border-zinc-800',
+        'bg-card',
+        'border-t border-x border-border',
         'shadow-[0_-12px_40px_rgba(24,24,27,0.12)]',
         'dark:shadow-[0_-12px_40px_rgba(0,0,0,0.45)]',
         'flex flex-col max-h-[90dvh]',
@@ -43,16 +43,16 @@ export const DrawerContent = ({
       {...props}
     >
       <div className="relative flex justify-center pt-2.5 pb-0.5">
-        <span className="h-1.5 w-10 rounded-full bg-zinc-400 dark:bg-zinc-600 relative">
+        <span className="h-1.5 w-10 rounded-full bg-muted-foreground relative">
           {handlePulse && (
             <>
               <span
                 aria-hidden
-                className="absolute -inset-1.5 rounded-full border-[1.5px] border-zinc-500/35 dark:border-zinc-500/25 animate-[ping_1.4s_ease-out_infinite]"
+                className="absolute -inset-1.5 rounded-full border-[1.5px] border-muted-foreground/35 animate-[ping_1.4s_ease-out_infinite]"
               />
               <span
                 aria-hidden
-                className="absolute -inset-2.5 rounded-full border-[1.5px] border-zinc-500/20 dark:border-zinc-500/15 animate-[ping_1.4s_ease-out_0.4s_infinite]"
+                className="absolute -inset-2.5 rounded-full border-[1.5px] border-muted-foreground/20 animate-[ping_1.4s_ease-out_0.4s_infinite]"
               />
             </>
           )}
@@ -74,7 +74,7 @@ export const DrawerHeader = ({
 }) => (
   <div className="px-4.5 pb-3 pt-1">
     <VaulDrawer.Title
-      className="text-[20px] text-zinc-900 dark:text-zinc-50 block"
+      className="text-[20px] text-foreground block"
       style={{
         fontFamily: 'var(--font-pixel)',
         letterSpacing: '-0.01em',
@@ -84,7 +84,7 @@ export const DrawerHeader = ({
       {title}
     </VaulDrawer.Title>
     {subtitle && (
-      <VaulDrawer.Description className="text-[11px] text-zinc-500 mt-0.5 block">
+      <VaulDrawer.Description className="text-[11px] text-muted-foreground mt-0.5 block">
         {subtitle}
       </VaulDrawer.Description>
     )}
@@ -92,7 +92,7 @@ export const DrawerHeader = ({
 );
 
 export const DrawerFooter = ({ children }: { children: React.ReactNode }) => (
-  <div className="px-4.5 py-3.5 border-t border-zinc-100 dark:border-zinc-900 flex gap-2.5 items-center bg-white dark:bg-zinc-950">
+  <div className="px-4.5 py-3.5 border-t border-border flex gap-2.5 items-center bg-card">
     {children}
   </div>
 );

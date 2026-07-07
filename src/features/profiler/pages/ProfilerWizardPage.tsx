@@ -36,12 +36,12 @@ export default function ProfilerWizardPage() {
   const { wizard, info, screen, inFlow, isQuestionScreen } = c;
 
   return (
-    <div className="min-h-dvh bg-zinc-100 dark:bg-zinc-900">
+    <div className="min-h-dvh bg-background">
       <SEO title="Prospect Profiler" description="Run a DISC × MBTI prospect profile" />
       <WizardTopBar subtitle={c.subtitle} isAuthenticated={Boolean(c.user)} />
 
       {inFlow && (
-        <div className="print-hide sticky top-[53px] z-30 border-b border-zinc-200/80 bg-white/85 backdrop-blur-md dark:border-zinc-800/80 dark:bg-zinc-950/85">
+        <div className="print-hide sticky top-[53px] z-30 border-b border-border/80 bg-card/85 backdrop-blur-md">
           <div className="mx-auto w-full max-w-2xl px-4 py-2.5" data-testid="wizard-progress">
             <Progress
               value={screen as number}
@@ -90,7 +90,7 @@ export default function ProfilerWizardPage() {
       </main>
 
       {inFlow && (
-        <div className="print-hide fixed inset-x-0 bottom-0 z-40 border-t border-zinc-200/80 bg-white/90 backdrop-blur-md dark:border-zinc-800/80 dark:bg-zinc-950/90 pb-[env(safe-area-inset-bottom)]">
+        <div className="print-hide fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-card/90 backdrop-blur-md pb-[env(safe-area-inset-bottom)]">
           <div className="mx-auto flex w-full max-w-2xl gap-2.5 px-4 py-3">
             <Button size="lg" variant="outline" onClick={c.handleBack} data-testid="wizard-back-btn">
               ← Back
@@ -126,7 +126,7 @@ export default function ProfilerWizardPage() {
           </>
         }
       >
-        <p className="m-0 text-[13px] leading-6 text-zinc-600 dark:text-zinc-300">
+        <p className="m-0 text-[13px] leading-6 text-muted-foreground">
           Your answers and ticked observations will be discarded. The prospect details stay filled
           in so you can restart quickly.
         </p>

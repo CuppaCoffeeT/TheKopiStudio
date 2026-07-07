@@ -63,24 +63,24 @@ export const FilterDropdown = forwardRef<HTMLButtonElement, FilterDropdownProps>
           data-testid={triggerTestId}
           className={cn(
             'h-9 px-2.5 inline-flex items-center gap-2 rounded-md whitespace-nowrap cursor-pointer',
-            'bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800',
-            'text-[12.5px] font-medium text-zinc-700 dark:text-zinc-300',
-            'hover:bg-zinc-100 dark:hover:bg-zinc-900',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
+            'bg-card border border-border',
+            'text-[12.5px] font-medium text-muted-foreground',
+            'hover:bg-secondary',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
             'disabled:opacity-40 disabled:cursor-not-allowed',
-            'data-[state=open]:bg-zinc-100 dark:data-[state=open]:bg-zinc-900',
+            'data-[state=open]:bg-secondary',
             className
           )}
           style={{ fontFamily: 'var(--font-sans)' }}
         >
-          {isDate && <Calendar className="w-3 h-3 text-zinc-500 dark:text-zinc-400" strokeWidth={1.3} aria-hidden />}
+          {isDate && <Calendar className="w-3 h-3 text-muted-foreground" strokeWidth={1.3} aria-hidden />}
           <span>{label}</span>
           {value && (
-            <span className="text-zinc-500 dark:text-zinc-400">· {value}</span>
+            <span className="text-muted-foreground">· {value}</span>
           )}
           {hasCount && (
             <span
-              className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-[5px] rounded-full bg-red-700 dark:bg-red-400 text-white dark:text-zinc-900 text-[10px] font-semibold"
+              className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-[5px] rounded-full bg-primary text-primary-foreground text-[10px] font-semibold"
               style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}
               aria-label={`${count} selected`}
             >
@@ -88,7 +88,7 @@ export const FilterDropdown = forwardRef<HTMLButtonElement, FilterDropdownProps>
             </span>
           )}
           <ChevronDown
-            className={cn('w-3 h-3 text-zinc-500 dark:text-zinc-400 transition-transform', isOpen && 'rotate-180')}
+            className={cn('w-3 h-3 text-muted-foreground transition-transform', isOpen && 'rotate-180')}
             strokeWidth={1.4}
             aria-hidden
           />

@@ -117,7 +117,7 @@ export function SendEmailDialog(props: SendEmailDialogProps) {
           {recordLabel}
           {recipientOrganization && (
             <>
-              <span className="text-zinc-400 dark:text-zinc-600 mx-1.5">·</span>
+              <span className="text-muted-foreground mx-1.5">·</span>
               {recipientOrganization}
             </>
           )}
@@ -132,10 +132,10 @@ export function SendEmailDialog(props: SendEmailDialogProps) {
               onClick={onPreview}
               className={cn(
                 'h-8 px-3 rounded-md inline-flex items-center gap-1.5',
-                'text-[12.5px] font-medium text-zinc-700 dark:text-zinc-300',
-                'bg-transparent border border-zinc-200 dark:border-zinc-800',
-                'hover:bg-white dark:hover:bg-zinc-900',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700'
+                'text-[12.5px] font-medium text-muted-foreground',
+                'bg-transparent border border-border',
+                'hover:bg-secondary',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
               )}
             >
               <Eye className="w-3 h-3" />
@@ -155,10 +155,9 @@ export function SendEmailDialog(props: SendEmailDialogProps) {
             disabled={sending}
             className={cn(
               'h-8 px-3.5 rounded-md inline-flex items-center gap-1.5 text-[13px] font-medium',
-              'bg-slate-800 hover:bg-slate-900 text-white',
-              'dark:bg-slate-100 dark:hover:bg-white dark:text-slate-900',
+              'bg-primary text-primary-foreground hover:bg-primary/90',
               'disabled:opacity-40 disabled:cursor-not-allowed',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2'
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
             )}
             style={{ fontFamily: 'var(--font-sans)' }}
           >
@@ -176,19 +175,19 @@ export function SendEmailDialog(props: SendEmailDialogProps) {
             onClick={onTemplateClick}
             className={cn(
               'w-full h-[34px] px-2.5 flex items-center gap-2',
-              'rounded-md border border-zinc-200 dark:border-zinc-800',
-              'bg-zinc-50 dark:bg-zinc-900 text-[13px] text-zinc-900 dark:text-zinc-50',
-              'hover:border-zinc-300 dark:hover:border-zinc-700',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700'
+              'rounded-md border border-border',
+              'bg-secondary text-[13px] text-foreground',
+              'hover:border-border',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
             )}
           >
             <span
-              className="text-[10.5px] px-1.5 py-0.5 rounded-[3px] bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 tracking-wider"
+              className="text-[10.5px] px-1.5 py-0.5 rounded-[3px] bg-secondary text-muted-foreground tracking-wider"
               style={{ fontFamily: 'var(--font-mono)' }}
             >
               {template.key}
             </span>
-            <span className="text-zinc-500 text-[12.5px]">{template.label}</span>
+            <span className="text-muted-foreground text-[12.5px]">{template.label}</span>
           </button>
         </Field>
       )}
@@ -201,7 +200,7 @@ export function SendEmailDialog(props: SendEmailDialogProps) {
           <button
             type="button"
             onClick={() => setCcOpen((v) => !v)}
-            className="text-[10.5px] text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50 tracking-wide"
+            className="text-[10.5px] text-muted-foreground hover:text-foreground tracking-wide"
             style={{ fontFamily: 'var(--font-mono)' }}
           >
             {ccOpen ? '− hide cc/bcc' : '+ cc / bcc'}
@@ -223,9 +222,9 @@ export function SendEmailDialog(props: SendEmailDialogProps) {
           onChange={(e) => onSubjectChange?.(e.target.value)}
           className={cn(
             'w-full h-9 px-3 rounded-md text-[13px]',
-            'text-zinc-900 dark:text-zinc-50 bg-white dark:bg-zinc-950',
-            'border border-zinc-200 dark:border-zinc-800',
-            'focus:outline-none focus:border-red-700 focus:ring-[3px] focus:ring-red-700/15 dark:focus:ring-red-400/20'
+            'text-foreground bg-card',
+            'border border-border',
+            'focus:outline-none focus:border-ring focus:ring-[3px] focus:ring-ring/15'
           )}
           style={{ fontFamily: 'var(--font-sans)' }}
         />
@@ -239,9 +238,9 @@ export function SendEmailDialog(props: SendEmailDialogProps) {
           rows={6}
           className={cn(
             'w-full min-h-[140px] px-3 py-2.5 rounded-md text-[14px] leading-relaxed resize-y',
-            'text-zinc-900 dark:text-zinc-50 bg-white dark:bg-zinc-950',
-            'border border-zinc-200 dark:border-zinc-800',
-            'focus:outline-none focus:border-red-700 focus:ring-[3px] focus:ring-red-700/15 dark:focus:ring-red-400/20'
+            'text-foreground bg-card',
+            'border border-border',
+            'focus:outline-none focus:border-ring focus:ring-[3px] focus:ring-ring/15'
           )}
           style={{ fontFamily: 'var(--font-sans)' }}
         />
@@ -254,17 +253,17 @@ export function SendEmailDialog(props: SendEmailDialogProps) {
             {attachments.map((a) => (
               <div
                 key={a.id}
-                className="flex items-center gap-2.5 px-2.5 py-2 rounded-md border border-zinc-100 dark:border-zinc-900 bg-zinc-50 dark:bg-zinc-900"
+                className="flex items-center gap-2.5 px-2.5 py-2 rounded-md border border-border bg-secondary"
               >
                 <div
-                  className="w-6 h-6 rounded inline-flex items-center justify-center bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-[8px] font-semibold tracking-wider text-red-700 dark:text-red-400"
+                  className="w-6 h-6 rounded inline-flex items-center justify-center bg-card border border-border text-[8px] font-semibold tracking-wider text-red-700 dark:text-red-400"
                   style={{ fontFamily: 'var(--font-mono)' }}
                 >
                   {(a.kind ?? 'pdf').toUpperCase()}
                 </div>
-                <span className="flex-1 text-[13px] text-zinc-900 dark:text-zinc-50 truncate">{a.name}</span>
+                <span className="flex-1 text-[13px] text-foreground truncate">{a.name}</span>
                 <span
-                  className="text-[10.5px] text-zinc-500 tracking-wide flex-shrink-0"
+                  className="text-[10.5px] text-muted-foreground tracking-wide flex-shrink-0"
                   style={{ fontFamily: 'var(--font-mono)' }}
                 >
                   {a.size}
@@ -274,7 +273,7 @@ export function SendEmailDialog(props: SendEmailDialogProps) {
                     type="button"
                     aria-label={`Remove ${a.name}`}
                     onClick={() => onRemoveAttachment(a.id)}
-                    className="w-5 h-5 rounded text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 inline-flex items-center justify-center"
+                    className="w-5 h-5 rounded text-muted-foreground hover:text-foreground hover:bg-secondary inline-flex items-center justify-center"
                   >
                     <X className="w-2.5 h-2.5" />
                   </button>
@@ -293,7 +292,7 @@ export function SendEmailDialog(props: SendEmailDialogProps) {
             'border border-dashed',
             updateDate
               ? 'border-red-200 dark:border-red-900/40 bg-red-50/60 dark:bg-red-900/10'
-              : 'border-zinc-200 dark:border-zinc-800'
+              : 'border-border'
           )}
         >
           <input
@@ -308,7 +307,7 @@ export function SendEmailDialog(props: SendEmailDialogProps) {
               'border-[1.5px]',
               updateDate
                 ? 'border-red-700 bg-red-700 text-white'
-                : 'border-zinc-400 dark:border-zinc-600 bg-transparent'
+                : 'border-border bg-transparent'
             )}
             aria-hidden
           >
@@ -326,10 +325,10 @@ export function SendEmailDialog(props: SendEmailDialogProps) {
             )}
           </span>
           <div className="flex-1">
-            <div className="text-[13px] font-medium text-zinc-900 dark:text-zinc-50">{updateDateLabel}</div>
+            <div className="text-[13px] font-medium text-foreground">{updateDateLabel}</div>
             {updateDateDescription && (
               <div
-                className="mt-0.5 text-[10.5px] text-zinc-500 tracking-wide"
+                className="mt-0.5 text-[10.5px] text-muted-foreground tracking-wide"
                 style={{ fontFamily: 'var(--font-mono)' }}
               >
                 {updateDateDescription}
@@ -354,7 +353,7 @@ function Field({ label, children }: { label: ReactNode; children: ReactNode }) {
 function FieldLabel({ children }: { children: ReactNode }) {
   return (
     <div
-      className="text-[10.5px] font-medium uppercase tracking-widest text-zinc-500 mb-1.5"
+      className="text-[10.5px] font-medium uppercase tracking-widest text-muted-foreground mb-1.5"
       style={{ fontFamily: 'var(--font-mono)' }}
     >
       {children}
@@ -378,14 +377,14 @@ function RecipientRow({
     <div
       className={cn(
         'min-h-9 px-2 py-1 rounded-md flex items-center gap-1.5 flex-wrap',
-        'border border-zinc-200 dark:border-zinc-800',
-        'bg-white dark:bg-zinc-950',
-        'focus-within:border-red-700 focus-within:ring-[3px] focus-within:ring-red-700/15'
+        'border border-border',
+        'bg-card',
+        'focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/15'
       )}
     >
       {field !== 'to' && (
         <span
-          className="text-[10.5px] uppercase tracking-widest text-zinc-500 px-1"
+          className="text-[10.5px] uppercase tracking-widest text-muted-foreground px-1"
           style={{ fontFamily: 'var(--font-mono)' }}
         >
           {field}
@@ -394,7 +393,7 @@ function RecipientRow({
       {list.map((r) => (
         <span
           key={r.value}
-          className="inline-flex items-center gap-1.5 pl-2 pr-1 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-[11px]"
+          className="inline-flex items-center gap-1.5 pl-2 pr-1 py-0.5 rounded bg-secondary text-muted-foreground text-[11px]"
           style={{ fontFamily: 'var(--font-mono)' }}
         >
           <span title={r.sub}>{r.label}</span>
@@ -403,7 +402,7 @@ function RecipientRow({
               type="button"
               onClick={() => onRemove(field, r.value)}
               aria-label={`Remove ${r.label}`}
-              className="w-4 h-4 rounded-sm text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 inline-flex items-center justify-center"
+              className="w-4 h-4 rounded-sm text-muted-foreground hover:text-foreground inline-flex items-center justify-center"
             >
               <X className="w-2 h-2" />
             </button>
@@ -420,7 +419,7 @@ function RecipientRow({
           }
         }}
         placeholder={list.length === 0 ? 'Add recipient…' : ''}
-        className="flex-1 min-w-[120px] h-6 bg-transparent border-none outline-none text-[13px] text-zinc-900 dark:text-zinc-50"
+        className="flex-1 min-w-[120px] h-6 bg-transparent border-none outline-none text-[13px] text-foreground"
         style={{ fontFamily: 'var(--font-sans)' }}
       />
     </div>

@@ -47,7 +47,7 @@ export const HBarChart = forwardRef<HTMLDivElement, HBarChartProps>(function HBa
               <span
                 className={cn(
                   'inline-flex flex-shrink-0 items-center justify-center rounded-full text-[10px] font-semibold',
-                  'bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300'
+                  'bg-secondary text-muted-foreground'
                 )}
                 style={{ width: 22, height: 22, fontFamily: 'var(--font-mono)' }}
               >
@@ -55,12 +55,12 @@ export const HBarChart = forwardRef<HTMLDivElement, HBarChartProps>(function HBa
               </span>
             )}
             <span
-              className="flex-shrink-0 truncate text-[13px] text-zinc-900 dark:text-zinc-50"
+              className="flex-shrink-0 truncate text-[13px] text-foreground"
               style={{ width: 140 }}
             >
               {r.label}
             </span>
-            <div className="relative h-4 flex-1 overflow-hidden rounded bg-zinc-100 dark:bg-zinc-800">
+            <div className="relative h-4 flex-1 overflow-hidden rounded bg-secondary">
               <div
                 className="absolute inset-y-0 left-0 rounded dark:hidden"
                 style={{
@@ -77,7 +77,7 @@ export const HBarChart = forwardRef<HTMLDivElement, HBarChartProps>(function HBa
               />
             </div>
             <span
-              className="flex-shrink-0 text-right text-[12px] tabular-nums text-zinc-700 dark:text-zinc-300"
+              className="flex-shrink-0 text-right text-[12px] tabular-nums text-muted-foreground"
               style={{ width: 56, fontFamily: 'var(--font-mono)' }}
             >
               {valueFormat(r.value)}

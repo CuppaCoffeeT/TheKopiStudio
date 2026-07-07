@@ -71,41 +71,41 @@ export const ModuleCard = forwardRef<HTMLButtonElement, ModuleCardProps>(functio
         onClick={onClick}
         className={cn(
           'group relative w-full rounded-[10px] border text-left',
-          'bg-white dark:bg-zinc-950',
-          'border-zinc-200 dark:border-zinc-800',
+          'bg-card',
+          'border-border',
           'transition-all duration-[120ms] ease-out',
-          !disabled && 'hover:-translate-y-px hover:shadow-[0_4px_14px_rgba(24,24,27,0.06)] hover:bg-zinc-50 dark:hover:bg-zinc-800/60 hover:border-slate-800 dark:hover:border-zinc-600',
+          !disabled && 'hover:-translate-y-px hover:shadow-[0_4px_14px_rgba(24,24,27,0.06)] hover:bg-secondary hover:border-primary',
           compact ? 'h-14 px-3.5 flex items-center gap-2.5' : 'min-h-[92px] py-3.5 px-4 flex flex-col items-start gap-2',
           disabled && 'opacity-50 cursor-not-allowed',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 dark:focus-visible:ring-red-400',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
         )}
         style={{ fontFamily: 'var(--font-sans)' }}
       >
         {compact ? (
           <>
-            <Icon className="w-4 h-4 text-zinc-500 flex-shrink-0" strokeWidth={1.6} />
-            <span className="flex-1 min-w-0 truncate text-[13px] font-medium text-zinc-900 dark:text-zinc-50">
+            <Icon className="w-4 h-4 text-muted-foreground flex-shrink-0" strokeWidth={1.6} />
+            <span className="flex-1 min-w-0 truncate text-[13px] font-medium text-foreground">
               {name}
             </span>
             {starFav && <Star className="w-[13px] h-[13px] text-yellow-500 fill-yellow-500 flex-shrink-0" strokeWidth={1} />}
             {count != null && <CountBadge count={count} urgent={urgent} compact />}
-            <ChevronRight className="w-2.5 h-2.5 text-zinc-400 flex-shrink-0" strokeWidth={1.3} />
+            <ChevronRight className="w-2.5 h-2.5 text-muted-foreground flex-shrink-0" strokeWidth={1.3} />
           </>
         ) : (
           <>
             <div className="flex items-start w-full gap-2.5">
-              <Icon className="w-[18px] h-[18px] text-zinc-500" strokeWidth={1.6} />
+              <Icon className="w-[18px] h-[18px] text-muted-foreground" strokeWidth={1.6} />
               <div className="flex-1" />
               {starFav && <Star className="w-[13px] h-[13px] text-yellow-500 fill-yellow-500" strokeWidth={1} />}
               {/* Reserve space when a pin button will be rendered as a sibling */}
               {pinButtonVisible && <span className="w-3 h-3 flex-shrink-0" aria-hidden />}
               {count != null && <CountBadge count={count} urgent={urgent} />}
             </div>
-            <div className="text-[14px] font-medium text-zinc-900 dark:text-zinc-50 leading-tight">
+            <div className="text-[14px] font-medium text-foreground leading-tight">
               {name}
             </div>
             {showDesc && (
-              <div className="w-full truncate text-[11.5px] text-zinc-600 dark:text-zinc-400 leading-tight">
+              <div className="w-full truncate text-[11.5px] text-muted-foreground leading-tight">
                 {description}
               </div>
             )}
@@ -123,14 +123,14 @@ export const ModuleCard = forwardRef<HTMLButtonElement, ModuleCardProps>(functio
           aria-pressed={pinned}
           className={cn(
             'absolute top-3 right-4 z-10 flex items-center justify-center w-5 h-5 rounded',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
             !pinned && 'opacity-0 group-hover:opacity-100 hover:opacity-100 transition-opacity',
           )}
         >
           <Pin
             className={cn(
               'w-3 h-3',
-              pinned ? 'text-zinc-700 dark:text-zinc-300 fill-zinc-700 dark:fill-zinc-300' : 'text-zinc-500',
+              pinned ? 'text-foreground fill-foreground' : 'text-muted-foreground',
             )}
             strokeWidth={1.3}
           />
