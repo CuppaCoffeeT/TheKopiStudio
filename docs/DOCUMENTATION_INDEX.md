@@ -20,11 +20,12 @@ Layer-3 reference docs shipped with the AppBase template (01/02/03/04/06/99 cate
 
 ## 05 — Implementation (Layer 4: active → completed)
 
-**Active: 1**
+**Active: 2**
 
 | Doc | Status | Purpose |
 |---|---|---|
 | [active/DATA_SPINE_PRD.md](05-implementation/active/DATA_SPINE_PRD.md) | 🟡 In Progress (P4 import blocked on user key) | CRM schema + RLS Pattern D + role-sync edge fn + cross-project data import |
+| [active/INSURANCE_CRM_REDESIGN_PRD.md](05-implementation/active/INSURANCE_CRM_REDESIGN_PRD.md) | 🔵 Planning | Navy/gold/serif restyle + card dashboard home + "Insurance CRM" rebrand |
 | [MERGE_PLAN_2026-06-11.md](05-implementation/MERGE_PLAN_2026-06-11.md) | 📋 Reference | Master plan: merge Prospect Profiler + Insurance CRM onto AppBase |
 
 **Completed: 3**
