@@ -2,7 +2,7 @@
 
 Append-only. Newest at the bottom. Format authority: [DECISIONS_LESSONS_PATTERN.md](/Volumes/YourVolume/META_FOLDER_STRUCTURE/DECISIONS_LESSONS_PATTERN.md).
 
-Last Updated: 2026-07-14 (pushgate no-tests-found discovery)
+Last Updated: 2026-07-14 (E2E_PORT foreign-dev-server lesson)
 
 ---
 
@@ -143,3 +143,9 @@ Last Updated: 2026-07-14 (pushgate no-tests-found discovery)
 **What happened**: `git push` rejected by husky pre-push; `npm run test:e2e:pushgate` exits 1 with "Error: No tests found".
 **Root cause**: no spec under tests/ is tagged `@pushgate` (only CONTEXT/decisions/lessons mention it), so `playwright test --grep @pushgate` finds zero tests and Playwright treats that as failure. Pre-existing on main; also note fresh worktrees lack the gitignored `.env` (global-setup hard-fails without it — copy it in).
 **Fix**: tag the intended fast-gate specs `@pushgate` (or point the script at an existing tag); until then docs-only pushes use the hook's documented `SKIP_E2E=1 git push` bypass.
+
+## 2026-07-14 — reuseExistingServer silently reused ANOTHER project's dev server
+**What happened**: Playwright runs with `reuseExistingServer: true` attached to a dev server on 8080/8081 belonging to a DIFFERENT project (JLCMS trench-trace-portal holds both ports), so specs ran against the wrong app and failed confusingly.
+**Root cause**: `reuseExistingServer` only checks that the port answers — it cannot tell whose app is listening; both ports were already taken by another repo's servers.
+**Fix**: `E2E_PORT` env override added to `playwright.config.ts` (drives `baseURL` + webServer command `--port <n> --strictPort`); run suites with `E2E_PORT=<free port>` whenever 8080 is taken. `--strictPort` makes Vite fail loudly instead of drifting to the occupied port.
+**How to apply**: before a run, check who owns 8080/8081 (`lsof -i :8080`); if foreign, export `E2E_PORT`. Also: fresh worktrees need BOTH gitignored env files copied in — `.env` AND `.env.secrets` — or global-setup fails.

@@ -1,69 +1,89 @@
 # Colors
 
+**Created**: 2026-04-19 SGT
+**Last Updated**: 2026-07-14 SGT
+**Status**: 🟢 Production
+
 👉 Parent: [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md)
 
-## Brand + semantic
+Always-dark navy/gold system (2026-07-14 reversal — see [PHILOSOPHY.md](./PHILOSOPHY.md)). Runtime source: [src/index.css](../../../src/index.css) `:root` (`.dark` mirrors it — the app never renders light).
 
-| Role | Hex | Token | Used for |
+## Core palette
+
+| Role | Hex | HSL token | Used for |
 |---|---|---|---|
-| **Primary CTA bg** | `#1e293b` slate-800 | `--cta-primary-bg` | Primary button bg — the everyday clickable |
-| **Primary CTA hover** | `#0f172a` slate-900 | `--cta-primary-bg-hover` | Button :hover |
-| **Primary CTA fg** | `#ffffff` white | `--cta-primary-fg` | Text on primary CTA (10.7:1 AAA contrast) |
-| **Destructive bg** | `#b91c1c` red-700 | `--cta-destructive-bg` / `--brand-red` | Delete · confirm-danger buttons |
-| **Focus ring** | `#b91c1c` red-700 + `#fecaca` red-200 offset | `--ring-color` + `--shadow-focus` | `focus-visible` outline (3px offset) |
+| **Page canvas** | `#0D1B2A` navy | `--background: 210 53% 11%` | Body bg, `--page-bg` |
+| **Card surface** | `#12202F` raised navy | `--card: 209 44% 13%` / `--surface` | Cards, tiles, sidebar — one step LIGHTER than page |
+| **Modal / popover** | `#182638` | `--popover: 213 42% 16%` / `--surface-subtle` | Modals, popovers, filter bars, skeleton base |
+| **Text** | `#F0EAD6` cream | `--foreground: 43 48% 89%` / `--fg` | Body + primary text |
+| **Text muted** | `#8A8070` warm grey | `--muted-foreground: 38 12% 49%` / `--fg-muted` | Labels, meta, placeholders |
+| **Primary / accent** | `#C9A84C` gold | `--primary` / `--accent` / `--ring: 43 55% 55%` | CTA bg, links, focus ring, brand accent |
+| **On-gold text** | `#1A1200` near-black brown | `--primary-foreground: 40 100% 6%` | Text on gold CTAs |
+| **Secondary surface** | lighter navy | `--secondary` / `--muted: 209 32% 18%` | Hover fills, secondary buttons |
+| **Destructive** | `#C0392B` DISC-D red | `--destructive: 6 64% 47%` | Delete / danger only — never brand accent |
+| **Border / input** | navy hairline | `--border` / `--input: 210 25% 24%` | All hairlines |
 
-**Locked 2026-04-19** (v3): CTA is slate-800, not solid black and not red. Red is reserved — destructive actions, focus ring, critical alert dots, timeline beam, brand accent only. See [LOCKED_PICKS.md](../../99-refactor/_system/LOCKED_PICKS.md).
+## Semantic CTA tokens (LOCKED_PICKS v3.1, retuned 2026-07-14)
 
-## Zinc scale (neutral foundation)
-
-Radix zinc 1–12, defined in `src/index.css:73–102`. Used for surfaces, borders, text, disabled states.
-
-| Token | Hex | Typical use |
+| Role | Hex | Token |
 |---|---|---|
-| `--zinc-1` / `--surface-subtle` | `#fafafa` | Page bg, subtle card |
-| `--zinc-2` / `--page-bg` | `#f4f4f5` | Main page background, row :hover |
-| `--zinc-3` / `--border-faint` | `#f1f1f3` | Barely-there dividers |
-| `--zinc-4` / `--border-soft` | `#ececee` | Card edges, table rows |
-| `--zinc-5` | `#e4e4e7` | Input borders |
-| `--zinc-8` | `#52525b` | Muted text :hover |
-| `--zinc-9` / `--fg-muted` | `#71717a` | Placeholders, tertiary text |
-| `--zinc-11` / `--fg-dim` | `#27272a` | Body text |
-| `--zinc-12` / `--fg` | `#18181b` | Primary text, title |
+| Primary CTA bg | `#C9A84C` gold | `--cta-primary-bg` |
+| Primary CTA hover | `#D9BC6A` lighter gold | `--cta-primary-bg-hover` |
+| Primary CTA fg | `#1A1200` | `--cta-primary-fg` |
+| Destructive bg | `#C0392B` | `--cta-destructive-bg` — the only solid red allowed |
+| Brand accent (links, badges, focus) | `#C9A84C` gold | `--brand-red` — **legacy NAME, now holds gold** (name frozen; 80+ consumers) |
+| Soft accent tint | gold @ 12% | `--accent-red-soft-bg` / `-fg` — also legacy names, gold values |
+| Focus ring shadow | gold @ 35% | `--shadow-focus` |
 
-## Red scale (Radix red 1–12)
+**Supersedes** slate-800 CTA / red-700 accent (2026-04-19 lock) — user reversal 2026-07-14, recorded in [LOCKED_PICKS.md](../../99-refactor/_system/LOCKED_PICKS.md).
 
-Defined same block. Pale tints (`--red-1` `#fef2f2`) for backgrounds; mid-tones (`red-6` `#ef4444`) for icons; deep (`red-7` `#b91c1c`) for brand / destructive.
+## Text hierarchy (v4 cream scale)
 
-## Status palette (LOCKED v4, Session 1)
+| Token | Hex | Use |
+|---|---|---|
+| `--fg` | `#F0EAD6` cream | Body text, titles |
+| `--fg-dim` | `#D6CCB4` dim cream | Secondary content |
+| `--fg-muted` | `#8A8070` warm muted | Labels, meta, placeholders |
 
-6-tone status vocabulary. Every status badge across the app draws from this table only.
+## Surfaces + borders (v4)
 
-| Status | Bg | Fg | Meaning |
+| Token | Value | Role |
+|---|---|---|
+| `--surface` | `#12202F` | Card / table body (== `--card`) |
+| `--surface-subtle` | `#182638` | Filter bar, pagination bg |
+| `--border-soft` | `hsl(210 25% 24%)` | Filter bar, row-hover separator |
+| `--border-faint` | `hsl(210 25% 20%)` | Per-row hairline divider |
+| `--row-hover` | cream @ 4% | Table row :hover wash |
+| `--row-selected` | gold @ 10% | Selected row tint |
+| `--skeleton` / `--skeleton-hi` | `#182638` / `#21324A` | Loading shimmer |
+
+## Status palette (v4 — translucent tints on navy)
+
+Hue semantics preserved from the AppBase lock; values retuned to translucent tints + lifted fg for navy contrast. Tokens: `--status-<tone>-bg/-fg/-border/-dot` in `src/index.css`. Consumed by `StatusBadge`.
+
+| Status | Bg | Fg | Dot |
 |---|---|---|---|
-| **draft** | `#fef3c7` amber-100 | `#92400e` amber-900 | In progress, unsent, unsaved |
-| **sent** | `#dbeafe` blue-100 | `#1e3a8a` blue-900 | Dispatched, awaiting response |
-| **accepted** | `#dcfce7` green-100 | `#166534` green-900 | Approved, signed off |
-| **rejected** | `#fee2e2` red-100 | `#991b1b` red-900 | Declined, failed |
-| **expired** | `#f3e8ff` purple-100 | `#6b21a8` purple-900 | Out of window, stale |
-| **revised** | `#fce7f3` pink-100 | `#9d174d` pink-900 | Updated, superseded |
-
-Token names: `--status-<tone>-bg` + `--status-<tone>-fg`. Defined `src/index.css:248–260`. Consumed by `StatusBadge` + `Chip kind="status"`.
+| **draft** | cream @ 8% | `#B8AE96` | `#8A8070` |
+| **sent** | blue @ 15% | `#7EB3F5` | `#3B82F6` |
+| **accepted** | green @ 15% | `#4ADE80` | `#16A34A` |
+| **rejected** | DISC-D red @ 15% | `#E8836F` | `#C0392B` |
+| **expired** | orange @ 15% | `#FB923C` | `#EA580C` |
+| **revised** | purple @ 15% | `#C084FC` | `#9333EA` |
 
 ## Chart palette
 
 | Role | Hex | Token |
 |---|---|---|
-| Pipeline / primary series | `#b91c1c` red-700 | `--chart-pipeline` |
-| Accepted / secondary series | `#16a34a` green-600 | `--chart-accepted` |
-| Grid dashes | zinc-300, dash-array `2 4` | `--chart-grid-dasharray` |
+| Primary series | `#C9A84C` gold | `--chart-pipeline` |
+| Secondary / positive series | `#4ADE80` green-400 | `--chart-accepted` |
+| Grid dashes | dash-array `2 4` | `--chart-grid-dasharray` |
 
 ## Delta badge (KpiTile)
 
 | Direction | Bg | Fg |
 |---|---|---|
-| Positive (up) | `#dcfce7` green-50 | `#15803d` green-700 |
-| Negative (down) | `#fee2e2` red-50 | `#b91c1c` red-700 |
-| Neutral | zinc-100 | zinc-600 |
+| Positive | green @ 15% | `#4ADE80` |
+| Negative | DISC-D red @ 15% | `#E8836F` |
 
 Tokens: `--delta-positive-bg/fg`, `--delta-negative-bg/fg`.
 
@@ -71,23 +91,18 @@ Tokens: `--delta-positive-bg/fg`, `--delta-negative-bg/fg`.
 
 | Property | Value | Token |
 |---|---|---|
-| Background | `rgba(255,255,255,0.72)` | `--surface-translucent-bg` |
+| Background | navy `rgb(13 27 42 / 0.72)` | `--surface-translucent-bg` / `--glass-bg` |
 | Backdrop blur | `8px` | `--surface-translucent-blur` |
-| Border | `rgba(255,255,255,0.6)` | `--surface-translucent-border` |
+| Border | navy hairline @ 60% | `--surface-translucent-border` |
 
-Applied to sticky `AppHeader` — gives the Linear / Vercel-style frosted feel.
+## Zinc + red Radix scales (legacy, still defined)
 
-## Dark mode
-
-Overrides live at `src/index.css:359–476`. Inverted zinc (fg ↔ bg), status palette intensifies (bg-900/40 + fg-300). Red / green accents hold constant for legibility. Currently scoped behind ThemeProvider; W08 Phase 2 plan.
-
-## Preview references
-
-- [`color-zinc.html`](../../99-refactor/_system/design/) · [`color-red.html`](../../99-refactor/_system/design/) · [`color-semantic.html`](../../99-refactor/_system/design/) · [`color-status.html`](../../99-refactor/_system/design/)
+The `@theme` block still exposes `--color-zinc-1..12` and `--color-red-1..12` (AppBase-era). They remain for any lingering utility references but are **not** part of the navy/gold vocabulary — do not use them in new code; use the semantic tokens above.
 
 ## 📚 Related
 
 - [TOKENS.md](./TOKENS.md) — full token value table
 - [TYPOGRAPHY.md](./TYPOGRAPHY.md) — text-color pairings
-- [src/index.css](../../../src/index.css) — runtime `@theme`
-- [LOCKED_PICKS.md](../../99-refactor/_system/LOCKED_PICKS.md) — v3 CTA + v4 status locks
+- [DARK_MODE.md](./DARK_MODE.md) — always-dark surface contract
+- [src/index.css](../../../src/index.css) — runtime tokens
+- [LOCKED_PICKS.md](../../99-refactor/_system/LOCKED_PICKS.md) — 2026-07-14 reversal entry

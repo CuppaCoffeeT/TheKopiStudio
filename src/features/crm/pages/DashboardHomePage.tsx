@@ -178,8 +178,17 @@ function ClientProgressWidget() {
         )}
 
         {!isLoading && rows.length === 0 && (
-          <div data-testid="home-client-progress-empty">
-            <NoResultsState />
+          <div
+            data-testid="home-client-progress-empty"
+            className="flex flex-col items-center gap-3 py-8 text-center"
+          >
+            <p className="text-sm font-medium text-foreground">No clients yet</p>
+            <p className="max-w-sm text-sm text-muted-foreground">
+              Your book is empty — add your first client to start tracking profile completeness.
+            </p>
+            <Button variant="outline" onClick={() => navigate('/clients')}>
+              Go to clients
+            </Button>
           </div>
         )}
 
