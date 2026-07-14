@@ -230,3 +230,27 @@ report's per-client interaction tables. PDF export stays `window.print()` —
 no PDF library. PRD-resolved ("Scope cut", open question closed); reversible
 later by porting the corresponding legacy JSX blocks into new
 `components/report/*` sections backed by lib functions + oracle tests.
+
+## 2026-07-14 — Client "profile completeness" is DERIVED client-side, no DB column
+
+**Decision**: dashboard/client-list "profile completeness" is computed in the
+client (% of non-null values over 9 raw `ClientRow` fields), and the
+"Profiled" badge is derived by linking `results.client_id` to the client —
+no `completeness` column or DB view is added.
+**Why**: the value is pure presentation over data already fetched; a stored
+column would need triggers/backfill to stay consistent, and the 9-field
+definition is still likely to change with the CRM redesign.
+**Impact**: zero migrations; definition changes are a one-file TS edit; any
+future server-side sort/filter on completeness would require promoting the
+formula to a DB view at that point.
+
+## 2026-07-14 — Dashboard home page lives in features/crm, not pages/
+
+**Decision**: the new dashboard home (`DashboardHomePage.tsx`) sits at
+`src/features/crm/pages/`, not `src/pages/`.
+**Why**: dep-cruiser rule `no-pages-to-features` forbids `pages/` importing
+from `features/`; the page composes CRM feature hooks/components, so it must
+live inside the feature folder.
+**Impact**: route registration lazy-imports from `features/crm/pages/`; any
+future cross-feature dashboard widgets must be promoted to primitives/hooks
+rather than imported across features.

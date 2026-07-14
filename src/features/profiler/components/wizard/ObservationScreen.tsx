@@ -37,7 +37,7 @@ export function ObservationScreen({ groupIndex, nv, onToggle }: ObservationScree
         Tick everything you observed.
       </p>
       <p
-        className="m-0 text-amber-700 dark:text-amber-500"
+        className="m-0 text-accent"
         style={{ fontFamily: 'var(--font-pixel)', fontSize: 11 }}
         data-testid="wizard-observations-count"
       >

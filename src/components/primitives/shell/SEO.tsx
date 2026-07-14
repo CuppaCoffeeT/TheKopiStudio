@@ -23,7 +23,7 @@ export const SEO = ({
     <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
     <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
 
-    <title>{title} - Prospect Profiler</title>
+    <title>{title} - Insurance CRM</title>
     <meta name="description" content={description} />
 
     <meta property="og:robots" content="noindex, nofollow" />

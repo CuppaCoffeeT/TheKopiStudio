@@ -87,6 +87,7 @@ export default function AccountSettingsPage() {
             <Button
               size="lg"
               variant="outline"
+              className="w-full sm:w-auto"
               leadingIcon={<LogOut className="w-4 h-4" aria-hidden="true" />}
               onClick={handleSignOut}
               loading={signingOut}

@@ -7,8 +7,7 @@
  */
 import { useState } from 'react';
 import { AlertCircle, Bell, Check, ChevronRight } from 'lucide-react';
-import * as LucideIcons from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+import { getModuleIcon } from '@/lib/iconLookup';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/primitives/overlays/Popover';
 import { Badge } from './Badge';
 
@@ -24,10 +23,6 @@ export interface NotificationsBellProps {
   /** Sum of `items[].count`. Passed in (not derived) so the bell-dot rule and the header badge stay consistent with the caller's truth. */
   total: number;
   onPick: (path: string) => void;
-}
-
-function getIcon(name: string): LucideIcon {
-  return (LucideIcons as unknown as Record<string, LucideIcon>)[name] ?? LucideIcons.ClipboardList;
 }
 
 export function NotificationsBell({ items, total, onPick }: NotificationsBellProps) {
@@ -77,7 +72,7 @@ export function NotificationsBell({ items, total, onPick }: NotificationsBellPro
         ) : (
           <div className="max-h-[60vh] overflow-y-auto py-1">
             {items.map((item) => {
-              const Icon = getIcon(item.icon_name);
+              const Icon = getModuleIcon(item.icon_name);
               return (
                 <button
                   key={item.path}

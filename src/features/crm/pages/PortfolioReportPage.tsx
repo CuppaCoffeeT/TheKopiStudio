@@ -14,7 +14,7 @@
  */
 
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Printer } from 'lucide-react';
+import { Printer } from 'lucide-react';
 import { AppHeaderShell } from '@/components/primitives/shell/AppHeaderShell';
 import { Button } from '@/components/primitives/shell/Button';
 import { Card, CardDescription, CardTitle } from '@/components/primitives/shell/Card';
@@ -80,16 +80,6 @@ export default function PortfolioReportPage() {
       testId="crm-portfolio-report"
     >
       <div className="no-print mb-4 flex flex-wrap items-center gap-3">
-        <Button
-          variant="outline"
-          size="lg"
-          className="min-h-[44px]"
-          onClick={() => navigate('/crm')}
-          leadingIcon={<ArrowLeft className="h-4 w-4" strokeWidth={1.8} />}
-          data-testid="portfolio-report-back-btn"
-        >
-          Back to dashboard
-        </Button>
         <Button
           variant="primary"
           size="lg"

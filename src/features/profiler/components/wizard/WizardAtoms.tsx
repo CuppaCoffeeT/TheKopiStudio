@@ -24,8 +24,8 @@ export function Eyebrow({ children, className }: { children: ReactNode; classNam
 /**
  * "DISC-X" pill tinted with the profile colour (legacy `.dbg`). The colour
  * identity lives in the tinted background/border only — the text stays on the
- * zinc scale because the mid-tone brand hexes fail WCAG AA 4.5:1 as text
- * (same rationale as DiscChip).
+ * cream foreground token because the mid-tone brand hexes fail WCAG AA 4.5:1
+ * as text (same rationale as DiscChip).
  */
 export function DiscBadge({ d, className }: { d: DiscLetter; className?: string }) {
   return (

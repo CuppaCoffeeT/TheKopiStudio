@@ -70,7 +70,7 @@ function KpiGrid({ stats, onClientsClick }: { stats: CrmDashboardStats; onClient
 /** Empty book — the import has not landed yet, or the advisor is starting fresh. */
 function EmptyBookCard({ onAddClick }: { onAddClick: () => void }) {
   return (
-    <Card className="mt-6 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <Card className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <CardTitle as="h2">No clients yet</CardTitle>
         <CardDescription className="mt-1.5">
@@ -114,7 +114,7 @@ function QuickLinkCard({ icon: Icon, title, description, onOpen, testId }: Quick
           onOpen();
         }
       }}
-      className="flex min-h-[44px] items-center justify-between gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="flex min-h-[44px] items-center justify-between gap-4 active:translate-y-0 active:shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       data-testid={testId}
     >
       <span className="flex items-center gap-3">
@@ -160,12 +160,12 @@ export default function CrmDashboardPage() {
       )}
 
       {stats && (
-        <>
+        <div className="space-y-6">
           <KpiGrid stats={stats} onClientsClick={goToClients} />
           {stats.totalClients === 0 ? (
             <EmptyBookCard onAddClick={goToClients} />
           ) : (
-            <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
               <QuickLinkCard
                 icon={Contact}
                 title="Clients"
@@ -182,7 +182,7 @@ export default function CrmDashboardPage() {
               />
             </div>
           )}
-        </>
+        </div>
       )}
     </AppHeaderShell>
   );

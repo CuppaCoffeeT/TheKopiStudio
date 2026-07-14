@@ -34,7 +34,7 @@
  * Selectors: real data-testids from src/features/crm/pages/CrmDashboardPage
  * (crm-dashboard, crm-kpi-*, crm-add-first-client-btn, crm-quick-link-clients,
  * crm-dashboard-loading), ClientsListPage (clients-table via the ClientsPage
- * POM) and src/pages/Home.tsx (home-module-grid + home-module-tile-<path> —
+ * POM) and src/features/crm/pages/DashboardHomePage.tsx (home-module-grid + home-module-tile-<path> —
  * ADDED with this spec).
  *
  * Run: npx playwright test tests/workflows/crm/dashboard.spec.ts \
@@ -330,5 +330,92 @@ test.describe('advisor /dashboard home — module grid', () => {
     await page.getByTestId('home-module-tile-crm').click();
     await page.waitForURL('**/crm', { timeout: 30_000 });
     await page.getByTestId('crm-dashboard').waitFor({ state: 'visible', timeout: 30_000 });
+  });
+});
+
+// ── (4) Advisor: /dashboard home KPI row + client-progress widget ────────────
+
+test.describe('advisor /dashboard home — KPI row + client progress', () => {
+  test.use({ storageState: authFileFor('advisor') });
+
+  test('KPI row renders all four labels; client-progress shows rows or the empty state @p0 @mobile', async ({
+    page,
+  }) => {
+    await page.goto('/dashboard');
+    await expect(page.getByTestId('home-module-grid')).toBeVisible({ timeout: 30_000 });
+
+    await test.step('KPI row (advisor holds /crm) renders the four KpiTile labels', async () => {
+      const kpiRow = page.getByTestId('home-kpi-row');
+      // Row only mounts once useDashboardStats resolves (skeleton replaces it).
+      await expect(kpiRow).toBeVisible({ timeout: 30_000 });
+      for (const label of [
+        'Total clients',
+        'Active policies',
+        'Annual premium',
+        'Upcoming follow-ups',
+      ]) {
+        await expect(kpiRow).toContainText(label);
+      }
+    });
+
+    await test.step('client-progress widget settles to rows OR the empty state', async () => {
+      const widget = page.getByTestId('home-client-progress');
+      await widget.scrollIntoViewIfNeeded();
+      await expect(widget).toBeVisible({ timeout: 30_000 });
+
+      // Read-only: no book lock held, so the advisor's book may be empty OR
+      // hold rows left mid-run by the clients-advisor journey — both are valid.
+      const rows = widget.locator('[data-testid^="home-client-progress-row-"]');
+      const empty = page.getByTestId('home-client-progress-empty');
+      await expect
+        .poll(
+          async () => {
+            if ((await rows.count()) > 0) return 'rows';
+            return (await empty.count()) > 0 ? 'empty' : 'pending';
+          },
+          { timeout: 30_000, message: 'client-progress widget must settle (rows or empty state)' },
+        )
+        .not.toBe('pending');
+
+      if ((await rows.count()) === 0) {
+        await expect(empty).toContainText('No clients yet');
+        const cta = empty.getByRole('button', { name: 'Go to clients' });
+        await expect(cta).toBeVisible();
+        await cta.click();
+        await page.waitForURL(/\/clients(\?.*)?$/, { timeout: 30_000 });
+        await expect(page.getByTestId('clients-table')).toBeVisible({ timeout: 30_000 });
+      }
+    });
+  });
+});
+
+// ── (5) Advisor: /dashboard home module search filter ────────────────────────
+
+test.describe('advisor /dashboard home — module search', () => {
+  test.use({ storageState: authFileFor('advisor') });
+
+  test('non-matching query shows the no-results state; clearing restores the grid @p0 @mobile', async ({
+    page,
+  }) => {
+    await page.goto('/dashboard');
+    const grid = page.getByTestId('home-module-grid');
+    await expect(grid).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByTestId('home-module-tile-crm')).toBeVisible();
+
+    const searchInput = page.getByPlaceholder('Search modules...');
+    const noMatchQuery = 'zzz-no-module-matches-this';
+
+    await test.step('non-matching query filters every tile out → NoResultsState', async () => {
+      await searchInput.fill(noMatchQuery);
+      await expect(grid).toContainText(`No matches for "${noMatchQuery}"`, { timeout: 30_000 });
+      await expect(page.getByTestId('home-module-tile-crm')).toHaveCount(0);
+    });
+
+    await test.step('clearing the query restores the module grid', async () => {
+      await searchInput.fill('');
+      await expect(page.getByTestId('home-module-tile-crm')).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByTestId('home-module-tile-clients')).toBeVisible();
+      await expect(grid).not.toContainText(`No matches for "${noMatchQuery}"`);
+    });
   });
 });

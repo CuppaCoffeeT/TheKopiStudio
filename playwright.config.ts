@@ -1,6 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
 import 'dotenv/config';
 
+// E2E_PORT lets parallel worktrees/agent runs use a non-default dev-server port
+// (8080 may be held by another project's dev server). Default unchanged.
+const E2E_PORT = process.env.E2E_PORT ?? '8080';
+
 const isCI = !!process.env.CI;
 
 export default defineConfig({
@@ -28,7 +32,7 @@ export default defineConfig({
   expect: { timeout: 10_000 },
 
   use: {
-    baseURL: 'http://localhost:8080',
+    baseURL: `http://localhost:${E2E_PORT}`,
     // Headless by default so test runs (incl. pre-push) don't steal macOS focus.
     // Opt in to a visible browser with `HEADED=1 npx playwright test ...`.
     headless: !process.env.HEADED,
@@ -62,8 +66,8 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:8080',
+    command: `npm run dev -- --port ${E2E_PORT} --strictPort`,
+    url: `http://localhost:${E2E_PORT}`,
     reuseExistingServer: !isCI,
     timeout: 120_000,
     stdout: 'ignore',

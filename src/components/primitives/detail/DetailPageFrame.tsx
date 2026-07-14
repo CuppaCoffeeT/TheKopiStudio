@@ -36,7 +36,6 @@
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { useTheme } from '@/lib/design/ThemeProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { clearAuthStorage } from '@/utils/authStorage';
 import { showError, showSuccess } from '@/utils/toastHelper';
@@ -128,7 +127,6 @@ export function DetailPageFrame({
   testId,
 }: DetailPageFrameProps) {
   const navigate = useNavigate();
-  const { preference, setPreference } = useTheme();
   const { user, profile, isImpersonating, realUser, stopImpersonation } = useAuth();
   const impersonation = useViewAs();
   const notifications = useNotificationsBell();
@@ -181,8 +179,6 @@ export function DetailPageFrame({
         userRole={userRole}
         viewAsSlot={<ViewAsSelector {...impersonation} />}
         notificationsSlot={<NotificationsBell {...notifications} />}
-        themeMode={preference}
-        onThemeChange={(m) => setPreference(m)}
         onSignOut={handleSignOut}
       />
 

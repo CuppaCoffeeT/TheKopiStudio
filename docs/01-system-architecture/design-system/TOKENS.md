@@ -1,118 +1,142 @@
 # Tokens — Full Reference
 
+**Created**: 2026-04-19 SGT
+**Last Updated**: 2026-07-14 SGT
+**Status**: 🟢 Production
+
 👉 Parent: [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md)
 
-**Runtime source of truth**: [src/index.css](../../../src/index.css) `@theme` block + [src/lib/design/tokens.ts](../../../src/lib/design/tokens.ts). Table below mirrors for reference; always consume from CSS vars in components.
+**Runtime source of truth**: [src/index.css](../../../src/index.css) `:root` block + [src/lib/design/tokens.ts](../../../src/lib/design/tokens.ts). Table mirrors for reference; always consume CSS vars in components.
 
-## 11 token groups
+**2026-07-14**: LOCKED_PICKS v1–v4 var **names** are frozen (primitives consume them); **values** were retuned to the navy/gold system per the user-approved reversal ([LOCKED_PICKS.md](../../99-refactor/_system/LOCKED_PICKS.md)). `.dark` carries no overrides — `:root` already holds the dark-tuned values (the app is always dark).
 
-Each group maps to one locked primitive. Edit the primitive → edit its token group only.
+## Token groups
 
-| Group | TS export | Primary consumer | Section below |
-|---|---|---|---|
-| Card | `cardTokens` | `Card` | #card |
-| DataTable | `dataTableTokens` | `DataTable` / `DataRow` | #datatable |
-| KpiTile | `kpiTileTokens` | `KpiTile` + `NumberTicker` | #kpitile |
-| Drawer | `drawerTokens` | `DrawerRoot` (vaul) | #drawer |
-| Stepper | `stepperTokens` | `Stepper` | #stepper |
-| Timeline | `timelineTokens` | `Timeline` (scroll-beam) | #timeline |
-| Chart | `chartTokens` | `AreaChart` / `BarChart` / `HBarChart` | #chart |
-| CTA | `ctaTokens` | `Button variant="primary/destructive"` | #cta |
-| Glass | `glassTokens` | `AppHeader` sticky | #glass |
-| Mobile | `mobileTokens` | `MobileListCard` · `FloatingCTA` | #mobile |
-| Motion | `motionTokens` | all animated primitives | #motion |
+| Group | TS export | Primary consumer |
+|---|---|---|
+| Card | `cardTokens` | `Card` |
+| DataTable | `dataTableTokens` | `DataTable` / `DataRow` |
+| KpiTile | `kpiTileTokens` | `KpiTile` + `NumberTicker` |
+| Drawer | `drawerTokens` | `DrawerRoot` (vaul) |
+| Stepper | `stepperTokens` | `Stepper` |
+| Timeline | `timelineTokens` | `Timeline` |
+| Chart | `chartTokens` | chart primitives |
+| CTA | `ctaTokens` | `Button variant="primary/destructive"` |
+| Glass | `glassTokens` | `AppHeader` sticky |
+| Mobile | `mobileTokens` | `MobileListCard` · `FloatingCTA` |
+| Motion | `motionTokens` | all animated primitives |
 
-## Card { #card }
-
-| Token | Value |
-|---|---|
-| `--card-radius` | 1rem (16px) |
-| `--card-border` | #e4e4e7 zinc-200 |
-| `--card-shadow-rest` | `0 1px 2px rgba(0,0,0,0.04)` |
-| `--card-shadow-hover` | `0 4px 12px rgba(0,0,0,0.08)` |
-| `--card-padding` | 1.25rem (20px) |
-
-## DataTable { #datatable }
+## v1 — Card
 
 | Token | Value |
 |---|---|
-| `--row-hover-bg` | #f4f4f5 zinc-50 |
-| `--row-enter-duration-ms` | 180 |
+| `--card-radius` | 1rem |
+| `--card-border` | navy hairline `hsl(210 25% 24% / 0.8)` |
+| `--card-shadow-rest` | `0 1px 2px rgb(0 0 0 / 0.25)` |
+| `--card-shadow-hover` | `0 4px 16px rgb(0 0 0 / 0.35)` |
+| `--card-padding` | 1.25rem |
+
+## v1 — DataTable
+
+| Token | Value |
+|---|---|
+| `--row-hover-bg` | lighter navy `hsl(209 32% 18% / 0.6)` |
+| `--row-enter-duration` | 180ms |
 | `--sort-icon-opacity-rest` | 0.4 |
 
-## KpiTile { #kpitile }
+## v1 — KpiTile
 
 | Token | Value |
 |---|---|
 | `--kpi-radius` | 1rem |
-| `--delta-positive-bg` / `--delta-positive-fg` | #dcfce7 / #15803d |
-| `--delta-negative-bg` / `--delta-negative-fg` | #fee2e2 / #b91c1c |
-| `--ticker-spring-stiffness` | 100 |
-| `--ticker-spring-damping` | 60 |
+| `--delta-positive-bg` / `-fg` | green @ 15% / `#4ADE80` |
+| `--delta-negative-bg` / `-fg` | DISC-D red @ 15% / `#E8836F` |
+| `--ticker-spring-stiffness` / `-damping` | 100 / 60 |
 
-## Drawer { #drawer }
+## v2 — Drawer
 
 | Token | Value |
 |---|---|
 | `--drawer-radius` | 1rem (top corners) |
-| `--drawer-handle-w` / `--drawer-handle-h` | 40px / 6px |
-| `--drawer-overlay` | `rgba(0,0,0,0.4)` |
-| `--handle-pulse-duration-ms` | 1600 |
+| `--drawer-handle-w` / `-h` | 40px / 6px |
+| `--drawer-overlay` | `rgb(0 0 0 / 0.6)` — deeper scrim over navy |
+| `--handle-pulse-duration` | 1.6s |
 
-## Stepper { #stepper }
+## v2 — Stepper
 
 | Token | Value |
 |---|---|
 | `--chip-size` / `--chip-size-compact` | 28px / 24px |
-| `--chip-active` | #b91c1c red-700 |
-| `--chip-done` | #16a34a green-600 |
+| `--chip-active` | `#C9A84C` gold |
+| `--chip-done` | `#4ADE80` green-400 |
 | `--chip-spring-stiffness` / `-damping` | 320 / 24 |
 
-## Timeline { #timeline }
+## v2 — Timeline
 
 | Token | Value |
 |---|---|
-| `--timeline-rail-color` | #e4e4e7 zinc-200 |
-| `--timeline-beam-from` / `-to` | #ef4444 / #b91c1c |
+| `--timeline-rail-color` | `hsl(210 25% 24%)` navy rail |
+| `--timeline-beam` | gold → transparent gradient |
 | `--timeline-dot-size` | 28px |
 | `--timeline-step-gap` | 20px |
 
-## Chart { #chart }
+## v2 — Chart
 
 | Token | Value |
 |---|---|
-| `--chart-pipeline` | #b91c1c |
-| `--chart-accepted` | #16a34a |
+| `--chart-pipeline` | `#C9A84C` gold |
+| `--chart-accepted` | `#4ADE80` green-400 |
 | `--chart-grid-dasharray` | `2 4` |
-| `--chart-anim-duration-ms` / `-stagger-ms` | 800 / 200 |
+| `--chart-anim-duration` / `-stagger` | 800ms / 200ms |
 
-## CTA { #cta }
-
-| Token | Value |
-|---|---|
-| `--cta-primary-bg` / `-hover` | #1e293b slate-800 / #0f172a slate-900 |
-| `--cta-primary-fg` | #ffffff |
-| `--cta-destructive-bg` / `--brand-red` | #b91c1c red-700 |
-| `--ring-color` | #b91c1c red-700 (focus) |
-
-## Glass { #glass }
+## v3.1 — CTA
 
 | Token | Value |
 |---|---|
-| `--surface-translucent-bg` | `rgba(255,255,255,0.72)` |
+| `--cta-primary-bg` / `-hover` | `#C9A84C` gold / `#D9BC6A` lighter gold |
+| `--cta-primary-fg` | `#1A1200` near-black brown |
+| `--cta-destructive-bg` | `#C0392B` DISC-D red — only solid red allowed |
+| `--brand-red` | `#C9A84C` — **legacy NAME, gold value** |
+| `--accent-red-soft-bg` / `-fg` | gold @ 12% / gold — legacy names |
+| `--ring` (shadcn) | gold `43 55% 55%` |
+
+## v3.2 — Glass / page
+
+| Token | Value |
+|---|---|
+| `--surface-translucent-bg` / `--glass-bg` | navy `rgb(13 27 42 / 0.72)` |
 | `--surface-translucent-blur` | 8px |
-| `--surface-translucent-border` | `rgba(255,255,255,0.6)` |
-| `--page-bg` | #f4f4f5 zinc-100 |
+| `--surface-translucent-border` | navy hairline @ 60% |
+| `--page-bg` | `#0D1B2A` navy — flat, always dark |
+| `--page-gradient-light` / `-dark` | `#0D1B2A` — back-compat aliases, both navy |
 
-## Mobile { #mobile }
+## v3.3 — Mobile
 
-| Token | Purpose |
+| Token | Value |
 |---|---|
-| `--page-padding` | mobile page edge inset |
-| `--row-card-gap` | gap between stacked list cards |
-| `--row-card-border` | card row edge color |
+| `--mobile-page-padding` | 12px |
+| `--row-card-gap` | 6px |
+| `--row-card-border` | navy hairline `hsl(210 25% 24%)` |
 
-## Motion { #motion }
+## v4 — List/table archetype semantics
+
+| Token | Value | Role |
+|---|---|---|
+| `--surface` | `#12202F` | Card / table bg (== `--card`) |
+| `--surface-subtle` | `#182638` | Filter bar / pagination bg |
+| `--border-soft` / `--border-faint` | `hsl(210 25% 24%)` / `hsl(210 25% 20%)` | Divider tiers |
+| `--fg` / `--fg-dim` / `--fg-muted` | `#F0EAD6` / `#D6CCB4` / `#8A8070` | Text hierarchy |
+| `--row-hover` | cream @ 4% | Row :hover |
+| `--row-selected` | gold @ 10% | Row :selected |
+| `--red-soft` | DISC-D red @ 18% | Error bg / badge bg |
+| `--skeleton` / `--skeleton-hi` | `#182638` / `#21324A` | Shimmer |
+| `--card-shadow` / `--floating-shadow` | deep black layered shadows | Card / floating elevation |
+
+## v4 — Status palette
+
+`--status-<tone>-bg/-fg/-border/-dot` × 6 tones — see [COLORS.md](./COLORS.md#status-palette-v4--translucent-tints-on-navy).
+
+## Motion
 
 | Token | Value |
 |---|---|
@@ -121,28 +145,11 @@ Each group maps to one locked primitive. Edit the primitive → edit its token g
 | `--motion-duration-smooth` | 400ms |
 | `--motion-ease-out-expo` | `cubic-bezier(0.16, 1, 0.3, 1)` |
 | `--motion-ease-spring` | `cubic-bezier(0.34, 1.56, 0.64, 1)` |
-| `--shadow-focus` | `0 0 0 3px #fecaca` red-200 |
-
-## v4 list / table archetype semantics
-
-Broader semantic aliases applied across surfaces — not a locked primitive but used everywhere.
-
-| Token | Value | Role |
-|---|---|---|
-| `--surface` | #ffffff | Card / table bg |
-| `--surface-subtle` | #fafafa zinc-50 | Subtle bg |
-| `--border-soft` / `--border-faint` | #ececee / #f1f1f3 | Divider tiers |
-| `--fg` / `--fg-dim` / `--fg-muted` | #18181b / #27272a / #71717a | Text hierarchy |
-| `--row-hover` | #f4f4f5 | Table row :hover |
-| `--row-selected` | red-50 tinted | Table row :selected |
-
-## Status palette
-
-6 status tones × (bg + fg) — see [COLORS.md](./COLORS.md#status-palette).
+| `--shadow-focus` | `0 0 0 3px rgb(201 168 76 / 0.35)` — gold @ 35% |
 
 ## 📚 Related
 
-- [src/index.css](../../../src/index.css) — canonical `@theme` block
+- [src/index.css](../../../src/index.css) — canonical runtime block
 - [src/lib/design/tokens.ts](../../../src/lib/design/tokens.ts) — TS mirror
-- [LOCKED_PICKS.md](../../99-refactor/_system/LOCKED_PICKS.md) — per-slot lock rationale
+- [LOCKED_PICKS.md](../../99-refactor/_system/LOCKED_PICKS.md) — lock rationale + 2026-07-14 reversal entry
 - [COLORS.md](./COLORS.md) · [SPACING_MOTION.md](./SPACING_MOTION.md) · [TYPOGRAPHY.md](./TYPOGRAPHY.md)

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCommandState } from 'cmdk';
 import { useAuth } from '@/contexts/AuthContext';
-import * as LucideIcons from 'lucide-react';
+import { getModuleIcon } from '@/lib/iconLookup';
 import {
   CommandPalette,
   CommandPaletteEmpty,
@@ -119,9 +119,7 @@ function ModuleItem({
   module: DashboardModule;
   onSelect: (path: string) => void;
 }) {
-  const Icon =
-    (LucideIcons as unknown as Record<string, LucideIcons.LucideIcon>)[mod.icon_name] ??
-    LucideIcons.ClipboardList;
+  const Icon = getModuleIcon(mod.icon_name);
   return (
     <CommandPaletteItem
       value={`${sectionKey}:${mod.path}:${mod.name}`}

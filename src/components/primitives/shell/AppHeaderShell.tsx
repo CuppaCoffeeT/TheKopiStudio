@@ -3,7 +3,7 @@
  * + page-bg backdrop + content frame + PageTitle/PageDescription header block.
  * Internalises the ViewAsSelector + NotificationsBell slot fillers (via the
  * `useViewAs` + `useNotificationsBell` connector hooks) +
- * useAuth/useTheme/sign-out wiring.
+ * useAuth/sign-out wiring. (Theme is pinned dark navy/gold — no toggle wired.)
  *
  * Spec: docs/99-refactor/_system/design/handoffs/2026-04-29-aNOsBrg/project/project/src/AppHeaderShell.jsx
  * Showcase: docs/99-refactor/_system/design/handoffs/2026-04-29-aNOsBrg/project/project/AppHeaderShell.html
@@ -24,7 +24,6 @@
 import { type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { useTheme } from '@/lib/design/ThemeProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { clearAuthStorage } from '@/utils/authStorage';
 import { showError, showSuccess } from '@/utils/toastHelper';
@@ -119,7 +118,6 @@ export function AppHeaderShell({
   onNotificationsClick,
 }: AppHeaderShellProps) {
   const navigate = useNavigate();
-  const { preference, setPreference } = useTheme();
   const { user, profile, isImpersonating, realUser, stopImpersonation } = useAuth();
   const impersonation = useViewAs();
   const notifications = useNotificationsBell();
@@ -178,8 +176,6 @@ export function AppHeaderShell({
         userRole={userRole}
         viewAsSlot={viewAsSlot}
         notificationsSlot={notificationsSlot}
-        themeMode={preference}
-        onThemeChange={(m) => setPreference(m)}
         onSignOut={handleSignOut}
         onCmdKClick={onCmdKClick}
         onGlobalSearchClick={onGlobalSearchClick}

@@ -54,13 +54,13 @@ export function ResultActions({ onPdf, onCsv, onOpenNotes, isAuthenticated, save
         </p>
       )}
       {isAuthenticated && (saveState === 'saved' || saveState === 'skipped') && (
-        <p className="m-0 text-center text-[12px] text-green-700 dark:text-green-400" data-testid="result-save-status">
+        <p className="m-0 text-center text-[12px] text-green-400" data-testid="result-save-status">
           ✓ Saved to your results
         </p>
       )}
 
       {showLoginCta && (
-        <Card className="border-amber-400/40 bg-amber-50/60 dark:bg-amber-950/20" data-testid="result-login-cta">
+        <Card className="border-accent/40 bg-accent/10" data-testid="result-login-cta">
           <div className="flex flex-col items-start gap-2">
             <p className="m-0 text-[13px] leading-6 text-muted-foreground">
               This profile was saved anonymously. Log in to keep your results and view your history.

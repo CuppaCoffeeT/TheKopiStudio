@@ -15,8 +15,8 @@ export function OpeningLineCard({ profile }: { profile: DiscProfile }) {
       style={{ borderColor: `${profile.col}44`, backgroundColor: `${profile.col}12` }}
       data-testid="result-opening-line"
     >
-      {/* Eyebrow keeps its zinc text — the brand hex fails WCAG AA 4.5:1 on
-          the tinted card; the border/background tint carries the identity. */}
+      {/* Eyebrow keeps its muted token text — the brand hex fails WCAG AA 4.5:1
+          on the tinted card; the border/background tint carries the identity. */}
       <Eyebrow className="mb-1.5">Try This Opening Line</Eyebrow>
       <p className="m-0 text-[14px] italic leading-7 text-foreground">{profile.op}</p>
     </Card>
@@ -31,8 +31,8 @@ export function TraitsCard({ profile }: { profile: DiscProfile }) {
         {profile.tr.map((trait) => (
           <span
             key={trait}
-            // Zinc text + tinted bg/border (DiscChip pattern) — the brand hex
-            // as text fails WCAG AA 4.5:1 on its own tint.
+            // Foreground text + tinted bg/border (DiscChip pattern) — the brand
+            // hex as text fails WCAG AA 4.5:1 on its own tint.
             className="rounded-full px-3 py-1 text-foreground"
             style={{
               fontFamily: 'var(--font-sans)',
@@ -55,14 +55,14 @@ export function StyleCard({ profile }: { profile: DiscProfile }) {
     <Card data-testid="result-style">
       <Eyebrow>How to Run This Conversation</Eyebrow>
       <p className="m-0 text-[13px] leading-6 text-muted-foreground">{profile.st}</p>
-      <div className="mt-3 rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-900/60 dark:bg-red-950/30">
+      <div className="mt-3 rounded-xl border border-red-900/60 bg-red-950/30 p-3">
         <div
-          className="mb-1 uppercase text-red-700 dark:text-red-400"
+          className="mb-1 uppercase text-red-400"
           style={{ fontFamily: 'var(--font-pixel)', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em' }}
         >
           ⚠ Watch For — Act Immediately
         </div>
-        <p className="m-0 text-[12.5px] leading-6 text-red-900 dark:text-red-200">{profile.wf}</p>
+        <p className="m-0 text-[12.5px] leading-6 text-red-200">{profile.wf}</p>
       </div>
     </Card>
   );
@@ -70,7 +70,7 @@ export function StyleCard({ profile }: { profile: DiscProfile }) {
 
 export function FollowUpCard({ profile }: { profile: DiscProfile }) {
   return (
-    <Card className="border-amber-400/30 bg-amber-50/50 dark:bg-amber-950/15" data-testid="result-follow-up">
+    <Card className="border-accent/30 bg-accent/10" data-testid="result-follow-up">
       <Eyebrow>Follow-Up Style</Eyebrow>
       <p className="m-0 text-[13px] leading-6 text-muted-foreground">{profile.fu}</p>
     </Card>

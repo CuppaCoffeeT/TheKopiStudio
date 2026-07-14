@@ -1,63 +1,65 @@
 # Typography
 
+**Created**: 2026-04-19 SGT
+**Last Updated**: 2026-07-14 SGT
+**Status**: 🟢 Production
+
 👉 Parent: [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md)
 
-## Font families
+Serif-display + system-sans stack (2026-07-07 de-AppBase, confirmed by the 2026-07-14 Editorial lock). No webfonts are required — everything resolves to system-installed families.
 
-| Family | CSS var | When to use | Examples |
+## Font families (actual stacks)
+
+| Role | CSS var | Stack | When to use |
 |---|---|---|---|
-| **Roboto** | `--font-sans` | Body text, UI labels, form inputs, paragraphs | `<p>`, `<label>`, form fields, toast text |
-| **Geist Mono** | `--font-mono` (alias `--font-subheader`) | Table headers, numeric labels, keyboard chips, code | `<kbd>`, `<code>`, column names, tabular numbers, KPI value |
-| **Geist Pixel Square** | `--font-pixel` | Display headings ≤48px (h1–h6) | `<h1>` page titles, section heroes |
-| **Geist Pixel Grid** | `--font-pixel-display` | Oversized displays ≥140px | 404 hero, error codes, full-page stats |
+| **Body / UI sans** | `--font-sans` (alias `--font-subheader`) | `system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif` | Body text, labels, form inputs, h2–h6, toasts |
+| **Serif display** | `--font-pixel` (see alias note) | `Georgia, "Times New Roman", serif` | `<h1>` / page titles — the editorial signature |
+| **Serif prose** | `--font-prose` | `Georgia, "Times New Roman", serif` | Long-form text (`.prose`, `[data-font="prose"]`) |
+| **Serif giant display** | `--font-pixel-display` | `Georgia, "Times New Roman", serif` | Oversized displays (404, splash) — same face as `--font-pixel` now |
+| **Mono** | `--font-mono` | `ui-monospace, SFMono-Regular, Menlo, monospace` | `<code>`/`<kbd>`/`<pre>`, tabular numbers, KPI values |
 
-Source: [src/index.css](../../../src/index.css) `@font-face` block (lines ~483–540). Geist Pixel font files live in `public/fonts/`.
+Source: [src/index.css](../../../src/index.css) `@theme` font block.
 
-## The pixel-size rule (LOCKED)
+## The `--font-pixel` alias situation (read this honestly)
 
-Per [DESIGN_REUSE_PRINCIPLES.md](../../99-refactor/_system/DESIGN_REUSE_PRINCIPLES.md) rule 7:
+The var **names** date from the AppBase era, when `--font-pixel` = Geist Pixel Square and `--font-pixel-display` = Geist Pixel Grid. On 2026-07-07 (de-AppBase) every `--font-pixel*` variant — including `-square/-grid/-circle/-triangle/-line` — was **repointed to Georgia serif** so all existing consumers (the global `h1` rule, `PageTitle`, `.font-pixel-display` utility) render serif without a rename sweep.
 
-| Size | Font | Why |
-|---|---|---|
-| ≤48px | **Geist Pixel Square** (`--font-pixel`) | Crisp pixel shapes at UI sizes; never pixelated-look |
-| ≥140px | **Geist Pixel Grid** (`--font-pixel-display`) | Grid shows off at hero scale only |
-| 49–139px | **Avoid** — redesign the hierarchy | This gap is a deliberate anti-pattern |
-
-**Common mistake**: using Grid for the dashboard greeting (~32px) — produces a "retro game" feel the user didn't want. Square renders clean at that size.
+Consequences:
+- `--font-pixel` ≠ pixel font. It is the **serif display token**. Treat the name as a frozen compat alias.
+- The Geist Pixel `@font-face` declarations + `public/fonts/` files + `.font-pixel-crisp` / `.font-pixel-bold` utilities still exist in `index.css` but are dead weight for the current design — don't add new usages.
+- New code should prefer `--font-prose` for serif prose and rely on the global `h1` / heading rules for display; only reach for `--font-pixel` when matching an existing primitive's pattern.
+- The old "Square ≤48px / Grid ≥140px" pixel-size rule is **obsolete** — both vars are Georgia now.
 
 ## Heading scale
 
-Defaults set in `src/index.css`; primitives apply them via `PageTitle` / `PageDescription`. Avoid raw `<h1>` (blocked by the primitives-only compliance gate 6e — see [MODULE_COMPLIANCE_CHECKLIST.md](../../06-operations/MODULE_COMPLIANCE_CHECKLIST.md)).
+Defaults in `src/index.css` `@layer base`; primitives apply them via `PageTitle` / `PageDescription`. Avoid raw `<h1>` (compliance gate 6e).
 
-| Element | Size | Line-height | Font | Used by |
-|---|---|---|---|---|
-| h1 | 30–36px | 1.1 | Geist Pixel Square | `PageTitle` · `DetailPageFrame` hero |
-| h2 | 24–28px | 1.15 | Geist Pixel Square | `CategoryHeader` · section heads |
-| h3 | 20–22px | 1.2 | Geist Pixel Square | Card titles · sub-sections |
-| h4–h6 | 16–18px | 1.25 | Roboto medium | Inline section breaks |
+| Element | Size | Font | Notes |
+|---|---|---|---|
+| h1 | 2.75rem (44px), lh 1 | Georgia serif (`--font-pixel`) | Global rule; ships with legacy crisp-render props (harmless on serif) |
+| h2 | 1.5rem, lh 1.2, 500 | system sans (`--font-subheader`) | Section heads |
+| h3 | 1.25rem, lh 1.25, 500 | system sans | Card titles |
+| h4–h5 | 1.125–1rem, 500 | system sans | Inline breaks |
+| h6 | 0.875rem, 500, uppercase | system sans | Micro-labels |
 
 ## Body + label
 
 | Role | Size | Font | Color token |
 |---|---|---|---|
-| Body | 14–15px | Roboto 400 | `--fg-dim` (zinc-800) |
-| Label | 13px | Geist Mono 500 uppercase | `--fg-muted` (zinc-500) |
-| Caption / hint | 12px | Roboto 400 | `--fg-muted` |
-| KPI value | 28–48px | Geist Mono 600 tabular-nums | `--fg` (zinc-900) |
-| Kbd chip | 11px | Geist Mono 500 | `--fg-dim` on zinc-100 bg |
+| Body | 14–15px | system sans 400 | `--fg` (cream) |
+| Secondary | 13–14px | system sans 400 | `--fg-dim` |
+| Label / meta | 12–13px | system sans 500 | `--fg-muted` |
+| Prose | 15–16px | Georgia serif (`--font-prose`) | `--fg` |
+| KPI value | 28–48px | mono 600 tabular-nums | `--fg` |
+| Kbd chip | 11px | mono 500 | `--fg-dim` |
 
-## Preview references
+## Links
 
-- [`type-families.html`](../../99-refactor/_system/design/) — all four families side-by-side
-- [`type-headings.html`](../../99-refactor/_system/design/) — h1–h6 scale with line-heights
-- [`type-body.html`](../../99-refactor/_system/design/) — paragraph + label examples
-- [`type-pixel.html`](../../99-refactor/_system/design/) — Square vs Grid at all sizes (the 48px cutoff demo)
-
-Full handoff catalog: [DESIGN_LAB_CATALOG.md](./DESIGN_LAB_CATALOG.md).
+Global `a` rule: gold (`--brand-red` — legacy name, gold value), hover → `--cta-primary-bg-hover` (lighter gold). Focus-visible outline = 2px gold.
 
 ## 📚 Related
 
 - [COLORS.md](./COLORS.md) — text-color tokens
-- [PHILOSOPHY.md](./PHILOSOPHY.md) rule 7 — font roles
-- [src/index.css](../../../src/index.css) — runtime `@font-face` + CSS variables
+- [PHILOSOPHY.md](./PHILOSOPHY.md) — the 2026-07-14 direction
+- [src/index.css](../../../src/index.css) — runtime font vars + heading rules
 - [src/components/primitives/shell/PageTitle.tsx](../../../src/components/primitives/shell/PageTitle.tsx) — heading primitive

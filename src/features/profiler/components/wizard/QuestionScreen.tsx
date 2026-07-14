@@ -44,8 +44,8 @@ export function QuestionScreen({ batch, batchNumber, prospectName, answers, onSe
               className={cn(
                 'inline-flex rounded-full px-2.5 py-0.5 uppercase mb-2',
                 isOpen
-                  ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400'
-                  : 'bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-400',
+                  ? 'bg-accent/15 text-accent'
+                  : 'bg-sky-950/60 text-sky-400',
               )}
               style={{ fontFamily: 'var(--font-pixel)', fontSize: 9.5, fontWeight: 700, letterSpacing: '0.12em' }}
             >

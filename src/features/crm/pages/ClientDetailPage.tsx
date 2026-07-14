@@ -14,12 +14,10 @@
  */
 
 import { useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { DestructiveConfirmDialog } from '@/components/primitives/detail/DestructiveConfirmDialog';
 import { DetailPageFrame } from '@/components/primitives/detail/DetailPageFrame';
 import type { TabNavItem } from '@/components/primitives/detail/TabNav';
-import { Button } from '@/components/primitives/shell/Button';
-import { Card } from '@/components/primitives/shell/Card';
 import { ErrorState } from '@/components/primitives/shell/ErrorState';
 import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
 import { NoResultsState } from '@/components/primitives/shell/NoResultsState';
@@ -41,7 +39,6 @@ type DetailTab = 'overview' | 'policies' | 'interactions' | 'bank';
 
 export default function ClientDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const { user } = useAuth();
   const { client, policies, interactions, bankHistory, linkedResults } = useClientDetail(id);
   const removeClient = useSoftDeleteClient(id ?? '');
@@ -129,18 +126,9 @@ export default function ClientDetailPage() {
       )}
 
       {!client.isLoading && !client.isError && !model && (
-        <Card data-testid="clients-detail-not-found">
+        <div data-testid="clients-detail-not-found">
           <NoResultsState query={id} />
-          <div className="flex justify-center pb-2">
-            <Button
-              variant="outline"
-              onClick={() => navigate('/clients')}
-              data-testid="clients-detail-back-link"
-            >
-              ← Back to clients
-            </Button>
-          </div>
-        </Card>
+        </div>
       )}
 
       {model && id && tab === 'overview' && (

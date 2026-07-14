@@ -54,6 +54,8 @@ const crmClientsKeys = {
   interactions: (id: string) => [...crmClientsBase.detail(id), 'interactions'] as const,
   bankHistory: (id: string) => [...crmClientsBase.detail(id), 'bank-history'] as const,
   linkedResults: (id: string) => [...crmClientsBase.detail(id), 'linked-results'] as const,
+  /** Batched "has a linked profiler result" flags for one page of client ids (/dashboard progress widget). */
+  profiledFlags: (clientIds: string[]) => [...crmClientsBase.all, 'profiled-flags', clientIds] as const,
 };
 
 const crmDashboardBase = createQueryKeys('crmDashboard');

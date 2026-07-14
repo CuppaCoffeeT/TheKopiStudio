@@ -33,7 +33,7 @@ export function MbtiCard({ signals }: { signals: MbtiSignals }) {
             >
               <div className="mb-2 flex items-center justify-between gap-2">
                 <span
-                  className="text-amber-700 dark:text-amber-500"
+                  className="text-accent"
                   style={{ fontFamily: 'var(--font-sans)', fontSize: 12, fontWeight: 700 }}
                 >
                   {total === 0
@@ -46,7 +46,7 @@ export function MbtiCard({ signals }: { signals: MbtiSignals }) {
                 </span>
               </div>
               <div
-                className="h-2 overflow-hidden rounded-full bg-secondary"
+                className="h-2 overflow-hidden rounded-full bg-background/60"
                 role="progressbar"
                 aria-label={`${dim.la} vs ${dim.lb} strength`}
                 aria-valuenow={barPc}
@@ -54,7 +54,7 @@ export function MbtiCard({ signals }: { signals: MbtiSignals }) {
                 aria-valuemax={100}
               >
                 <div
-                  className="h-full rounded-full bg-amber-600 dark:bg-amber-500"
+                  className="h-full rounded-full bg-accent"
                   style={{ width: `${barPc}%` }}
                 />
               </div>
