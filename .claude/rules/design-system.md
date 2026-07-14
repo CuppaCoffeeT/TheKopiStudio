@@ -8,7 +8,7 @@ paths:
 
 # Rule: Design System — Visual Verification Before Commit (MANDATORY)
 
-**Last Updated**: 2026-05-30 SGT
+**Last Updated**: 2026-07-14 SGT — token references updated to the Editorial navy/gold/serif dark theme (user reversal recorded in `docs/99-refactor/_system/LOCKED_PICKS.md`): CTA = gold `--cta-primary-bg`, focus ring = gold `--ring`, `--page-bg` = navy #0D1B2A, app is always dark.
 
 ## Summary
 
@@ -29,7 +29,7 @@ Before writing a new primitive:
 1. **Grep first** — check `primitives/CONTEXT.md` + `DESIGN_CATALOG_PRIMITIVES.md`; a half-built version probably exists.
 2. **Require a spec** — no Claude Design spec, no build. Run `/design-prompt` → export → THEN implement.
 3. **Place in group** — `shell/` · `overlays/` · `dashboard/` · `detail/` · `form/` · `ui/` · `charts/` · root atom. Barrel-export from group's `index.ts`.
-4. **Consume v4 tokens** — no raw hex. Fonts `--font-*`, CTA slate-800, focus red-700, per-primitive tokens in `src/index.css` + `src/lib/design/tokens.ts`.
+4. **Consume v4 tokens** — no raw hex. Fonts `--font-*`, CTA gold (`--cta-primary-bg` #C9A84C), focus ring gold (`--ring` / `--brand-red` — legacy name, holds gold since 2026-07-14), per-primitive tokens in `src/index.css` + `src/lib/design/tokens.ts`.
 5. **All 5 states** — default / hover / active / focus-visible / disabled (see table below).
 6. **Register in 3 places** — (a) `primitives/CONTEXT.md` inventory, (b) `DESIGN_CATALOG_PRIMITIVES.md` row (flip Impl) + `DESIGN_CATALOG_MATRIX.md` column if module adoption changed, (c) group's `index.ts`. Bonus: add row to [universal-components.md](./universal-components.md) "Need → Import" matrix.
 7. **JSDoc header** cites the spec path so future agents can grep it in one shot.
@@ -41,9 +41,9 @@ For every interactive element, explicitly implement **all 5 states**:
 | State | What to check |
 |---|---|
 | **Default** | Correct fg/bg/border for the container context |
-| **Hover** | Must VISUALLY differ from container bg. If parent is `var(--page-bg)` (= zinc-100), use `hover:bg-zinc-200` or `hover:bg-white` + shadow — NOT `hover:bg-zinc-100` (invisible) |
+| **Hover** | Must VISUALLY differ from container bg. If parent is `var(--page-bg)` (= navy #0D1B2A), use a lighter navy step — `hover:bg-secondary` / `hover:bg-[hsl(var(--secondary))]` or `var(--row-hover)` cream wash — NOT a bg that matches the navy canvas (invisible) |
 | **Active / press** | Stronger bg · scale-95 on CTAs · immediate (no transition) |
-| **Focus-visible** | `focus-visible:ring-2 ring-red-700` + offset · never silent |
+| **Focus-visible** | `focus-visible:ring-2 ring-ring` (gold) + offset · never silent |
 | **Disabled** | `opacity-40 cursor-not-allowed` · no hover response |
 
 ### Before commit — visual verify
@@ -71,7 +71,7 @@ The bundles are gzipped tarballs — already unpacked in `export/` so you can gr
 
 | Failure | Root cause | Fix |
 |---|---|---|
-| Hover appears broken — no highlight on buttons | `hover:bg-zinc-100` matches `--page-bg` (zinc-100) — invisible | `hover:bg-zinc-200` or `hover:bg-white` + shadow |
+| Hover appears broken — no highlight on buttons | hover bg matches `--page-bg` (navy #0D1B2A) — invisible | lighter navy step (`bg-secondary`) or `var(--row-hover)` cream wash + shadow |
 | Greeting uses pixelated look I didn't want | `--font-pixel-display` (Grid) used for ≤ 48px text | Use `--font-pixel` (Square) for h1 ≤ 48px. Grid only for ≥ 140px (404 hero, ErrorState code) |
 | Description text clipped in ModuleCard | Fixed `h-[92px]` can't grow | Use `min-h-[92px]` instead |
 | Subsection doesn't look clickable | Static button — no hover/active/cursor feedback | Add `group` utility + `hover:bg-*` + `hover:shadow-sm` + `active:*` + `cursor-pointer` + `transition-all` |
@@ -88,9 +88,9 @@ Rules observed across CompanyDetail and subsequent migrations. Catch before writ
 | 2 | **Single hero action bar** — all primary actions (Edit · Save · Deactivate) go in `<DetailPageFrame actions={…}>` only; no floating `<Button>` inside sections. |
 | 3 | **Title once** — record name in `<DetailPageFrame title>` only; strip any `<h2>{name}</h2>` inside body. |
 | 4 | **Replace legacy wrappers** — check `primitives/CONTEXT.md` before keeping a legacy sub-component; use the primitive equivalent unless it genuinely can't express the workflow. |
-| 5 | **No shadow-md/lg on body** — body sections: `border border-zinc-200 rounded-lg` at most; `<DetailPageFrame>` provides hero elevation. |
+| 5 | **No shadow-md/lg on body** — body sections: `border border-border rounded-lg` at most; `<DetailPageFrame>` provides hero elevation. |
 | 6 | **Color tokens only** — `bg-background` / `text-foreground` / `border-border`; never `bg-gray-50`, `bg-[#fafafa]`, or inline `style={{ color: '#…' }}`. |
-| 7 | **Hover-bg must differ from page-bg** — `var(--page-bg)` = zinc-100; `hover:bg-zinc-100` is invisible; use `hover:bg-zinc-200` or `hover:bg-white + shadow-sm`. _(also in 5-states table above)_ |
+| 7 | **Hover-bg must differ from page-bg** — `var(--page-bg)` = navy #0D1B2A; a navy-matching hover is invisible; use a lighter navy step (`bg-secondary`) or `var(--row-hover)` cream wash + shadow-sm. _(also in 5-states table above)_ |
 | 8 | **No duplicate activity display** — if `<ActivityLogTimeline>` is in main, omit any "Recent changes" card elsewhere. |
 | 9 | **Side-rail = supporting context; main = primary workflow** — contacts/stats in `<DetailPageFrame sideRail>`; line-item editors in main. Don't invert. |
 | 10 | **No "Back to X" button** — breadcrumb is the only back-nav affordance across all archetypes. Never pass `showBack={true}` to `<DashboardHeader>` or render an inline `<ArrowLeft>` button. |

@@ -1,7 +1,7 @@
 # AppBase_REFACTOR — Locked Component Picks (W17)
 
 **Created**: 2026-04-19 SGT
-**Last Updated**: 2026-04-19 SGT — **🟢 W17 closed · X6 ✅ committed.** v1+v2+v3 all locked. Picks + new patterns (CTA = strong-grey near-black; brand red as accent only; glass header on every page; subtle gradient page backdrop; optional translucent card variant) handed off to W07 (primitives) + W08 (tokens). User said "looks good roughly there, let the rest of the design in W08" 2026-04-19.
+**Last Updated**: 2026-07-14 SGT — **🔁 Aesthetic reversal recorded** (see "2026-07-14 — Editorial navy/gold/serif" entry at the end of this file): the navy/gold dark theme supersedes the slate-CTA/red-accent/zinc-page visual values. Token NAMES remain locked. Previous: 2026-04-19 — **🟢 W17 closed · X6 ✅ committed.** v1+v2+v3 all locked. Picks + new patterns (CTA = strong-grey near-black; brand red as accent only; glass header on every page; subtle gradient page backdrop; optional translucent card variant) handed off to W07 (primitives) + W08 (tokens). User said "looks good roughly there, let the rest of the design in W08" 2026-04-19.
 **Status**: 🟢 W17 closed · X6 ✅ · W07 + W08 unblocked
 **Priority**: 🔴 Critical
 
@@ -155,3 +155,21 @@ Cascade:
 - W07 (primitives) — unblocked, can start writing primitives that wrap the locked picks
 - W08 (tokens) — unblocked, can extract token values from the spec rows above
 - DESIGN_SYSTEM.md — formally deprecated (the Tadao Ando minimalism rule is now superseded by W17's "calm shadcnblocks-clean + Linear/Vercel-style premium accents" direction)
+
+---
+
+## 2026-07-14 — Editorial navy/gold/serif dark theme (USER-APPROVED REVERSAL)
+
+**Decision**: the Prospect Profiler / Insurance CRM "Editorial" aesthetic — navy `#0D1B2A` canvas · raised-navy surfaces (`#12202F` card, `#182638` modal) · gold `#C9A84C` primary CTA + accent + focus ring · cream `#F0EAD6` text · Georgia serif display — is now the system of record. This is the explicit user reversal (2026-07-14 redesign PRD) that this file's "not re-litigated except by explicit user reversal" clause anticipated.
+
+**Superseded visual locks** (values only — see "What remains" below):
+- v3.1 CTA: slate-800 `#1e293b` primary (slate-700 final pick) → **gold `#C9A84C`** with near-black-brown `#1A1200` text; hover slate-900 → **lighter gold `#D9BC6A`**.
+- v3.1 brand accent + focus ring: red-700 `#b91c1c` → **gold `#C9A84C`** (`--brand-red` keeps its NAME but holds gold; solid red is destructive-only, now DISC-D `#C0392B`).
+- v3.2 page backdrop: zinc-100 light / zinc-900 dark `--page-bg` → **flat navy `#0D1B2A`**, always dark (ThemeProvider pins `resolved='dark'`).
+- v1 Card / DataTable / KpiTile, v2 Drawer / Stepper / Timeline / Charts, v3.3 mobile, v4.x surface/text/row/skeleton/shadow/status-badge values: zinc/white/red-green light-era values → navy/gold/cream equivalents (semantic meaning preserved: positive deltas stay green, negative stay red, tuned for navy contrast; borders from `hsl(210 25% 24%)`).
+- Sidebar tokens: light `0 0% 98%` → navy/gold set.
+- W08 font locks (Roboto body · Geist Mono subheaders · Geist Pixel display): superseded 2026-07-07 de-AppBase → system-ui body + Georgia serif display (recorded here for completeness).
+
+**What remains locked**: every token NAME (`--cta-primary-bg`, `--brand-red`, `--page-bg`, `--status-*`, v1/v2 structural tokens, radii, motion durations, spring constants) — primitives consume names, not values. Structural picks (Card/DataTable/KpiTile/Drawer/Stepper/Timeline/Charts component choices) also stand.
+
+**Source of truth**: `src/index.css` `:root` (LOCKED_PICKS blocks retuned in place; `.dark` no longer overrides them — app is always dark) + `src/lib/design/tokens.ts`. Rule digest updated in `.claude/rules/design-system.md`.

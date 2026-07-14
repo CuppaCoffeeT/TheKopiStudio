@@ -2,8 +2,10 @@
  * useDashboardChrome — shared chrome state for every page that composes
  * `<AppHeader>` directly (replacing the legacy `<DashboardHeader>` shim).
  *
- * Returns the props AppHeader needs, derived from AuthContext + ThemeProvider,
- * plus an impersonation sub-object for rendering `<ImpersonationBanner>`.
+ * Returns the props AppHeader needs, derived from AuthContext, plus an
+ * impersonation sub-object for rendering `<ImpersonationBanner>`.
+ * Theme is pinned dark (navy/gold) by ThemeProvider, so no theme-toggle
+ * props are passed — AppHeader hides the toggle when `onThemeChange` is absent.
  *
  * Usage:
  *   const chrome = useDashboardChrome();
@@ -23,7 +25,6 @@
 
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { useTheme } from '@/lib/design/ThemeProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { clearAuthStorage } from '@/utils/authStorage';
 import { showError, showSuccess } from '@/utils/toastHelper';
@@ -45,8 +46,6 @@ export interface DashboardChrome {
     userRole: string;
     viewAsSlot: React.ReactNode;
     notificationsSlot: React.ReactNode;
-    themeMode: 'light' | 'dark' | 'system';
-    onThemeChange: (m: 'light' | 'dark' | 'system') => void;
     onSignOut: () => Promise<void>;
   };
   impersonation: {
@@ -61,7 +60,6 @@ export interface DashboardChrome {
 
 export function useDashboardChrome(): DashboardChrome {
   const navigate = useNavigate();
-  const { preference, setPreference } = useTheme();
   const { user, profile, isImpersonating, realUser, stopImpersonation } = useAuth();
   const impersonation = useViewAs();
   const notifications = useNotificationsBell();
@@ -91,8 +89,6 @@ export function useDashboardChrome(): DashboardChrome {
       userRole,
       viewAsSlot: <ViewAsSelector {...impersonation} />,
       notificationsSlot: <NotificationsBell {...notifications} />,
-      themeMode: preference,
-      onThemeChange: (m) => setPreference(m),
       onSignOut: handleSignOut,
     },
     impersonation: {

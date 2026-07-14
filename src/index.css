@@ -207,38 +207,41 @@
 
   --radius: 0.75rem;
 
-  --sidebar-background: 0 0% 98%;
-  --sidebar-foreground: 240 5.3% 26.1%;
-  --sidebar-primary: 240 5.9% 10%;
-  --sidebar-primary-foreground: 0 0% 98%;
-  --sidebar-accent: 240 4.8% 95.9%;
-  --sidebar-accent-foreground: 240 5.9% 10%;
-  --sidebar-border: 220 13% 91%;
-  --sidebar-ring: 217.2 91.2% 59.8%;
+  /* Sidebar — navy surface, gold accent (aligned 2026-07-14 P1 token consolidation). */
+  --sidebar-background: 209 44% 13%;                  /* raised navy — matches --card */
+  --sidebar-foreground: 43 48% 89%;                   /* cream */
+  --sidebar-primary: 43 55% 55%;                      /* gold */
+  --sidebar-primary-foreground: 40 100% 6%;           /* near-black brown on gold */
+  --sidebar-accent: 209 32% 18%;                      /* lighter navy hover/active */
+  --sidebar-accent-foreground: 43 48% 89%;
+  --sidebar-border: 210 25% 24%;                      /* navy hairline border */
+  --sidebar-ring: 43 55% 55%;                         /* gold focus ring */
 
   /* =====================================================================
    * LOCKED_PICKS v1 — Card · DataTable · KpiTile
-   * Locked 2026-04-19. See docs/99-refactor/_system/LOCKED_PICKS.md.
+   * Locked 2026-04-19. Values retuned 2026-07-14 to the navy/gold system
+   * (user-approved reversal — see docs/99-refactor/_system/LOCKED_PICKS.md).
+   * Var NAMES are frozen (primitives consume them); values are navy/gold.
    * ================================================================== */
 
-  /* v1 — Card (shadcnblocks-clean) */
+  /* v1 — Card (raised navy surface) */
   --card-radius: 1rem;
-  --card-border: rgb(228 228 231 / 0.8);              /* zinc-200/80 */
-  --card-shadow-rest: 0 1px 2px rgb(0 0 0 / 0.04);
-  --card-shadow-hover: 0 4px 16px rgb(0 0 0 / 0.06);
+  --card-border: hsl(210 25% 24% / 0.8);              /* navy hairline @ 80% */
+  --card-shadow-rest: 0 1px 2px rgb(0 0 0 / 0.25);
+  --card-shadow-hover: 0 4px 16px rgb(0 0 0 / 0.35);
   --card-padding: 1.25rem;
 
   /* v1 — DataTable (TanStack + Motion row enter/exit) */
-  --row-hover-bg: #fafafa;                            /* zinc-50 */
+  --row-hover-bg: hsl(209 32% 18% / 0.6);             /* lighter navy — visible on card navy */
   --row-enter-duration: 180ms;
   --sort-icon-opacity-rest: 0.4;
 
-  /* v1 — KpiTile (Tremor + NumberTicker) */
+  /* v1 — KpiTile (deltas keep green/red semantics, tuned for navy contrast) */
   --kpi-radius: 1rem;
-  --delta-positive-bg: #f0fdf4;                       /* green-50 */
-  --delta-positive-fg: #15803d;                       /* green-700 */
-  --delta-negative-bg: #fef2f2;                       /* red-50 */
-  --delta-negative-fg: #b91c1c;                       /* red-700 */
+  --delta-positive-bg: rgb(22 163 74 / 0.15);         /* green tint on navy */
+  --delta-positive-fg: #4ade80;                       /* green-400 — readable on navy */
+  --delta-negative-bg: rgb(192 57 43 / 0.15);         /* DISC-D red tint */
+  --delta-negative-fg: #e8836f;                       /* soft red — readable on navy */
   --ticker-spring-stiffness: 100;
   --ticker-spring-damping: 60;
 
@@ -250,26 +253,26 @@
   --drawer-radius: 1rem;
   --drawer-handle-w: 40px;
   --drawer-handle-h: 6px;
-  --drawer-overlay: rgb(0 0 0 / 0.4);
+  --drawer-overlay: rgb(0 0 0 / 0.6);                 /* deeper scrim over navy */
   --handle-pulse-duration: 1.6s;
 
   /* v2 — Stepper (animated chip) */
   --chip-size: 28px;
   --chip-size-compact: 24px;
-  --chip-active: #b91c1c;                             /* red-700 */
-  --chip-done: #16a34a;                               /* green-600 */
+  --chip-active: #c9a84c;                             /* gold */
+  --chip-done: #4ade80;                               /* green-400 — done state on navy */
   --chip-spring-stiffness: 320;
   --chip-spring-damping: 24;
 
-  /* v2 — Timeline (scroll-beam, Aceternity-style) */
-  --timeline-rail-color: #e4e4e7;                     /* zinc-200 */
-  --timeline-beam: linear-gradient(to bottom, #b91c1c, transparent);
+  /* v2 — Timeline (scroll-beam) */
+  --timeline-rail-color: hsl(210 25% 24%);            /* navy border rail */
+  --timeline-beam: linear-gradient(to bottom, #c9a84c, transparent);
   --timeline-dot-size: 28px;
   --timeline-step-gap: 20px;
 
-  /* v2 — Charts (Tremor + Motion entrance) */
-  --chart-pipeline: #b91c1c;                          /* red-700 */
-  --chart-accepted: #16a34a;                          /* green-600 */
+  /* v2 — Charts */
+  --chart-pipeline: #c9a84c;                          /* gold — primary series */
+  --chart-accepted: #4ade80;                          /* green-400 */
   --chart-grid-dasharray: 2 4;
   --chart-anim-duration: 800ms;
   --chart-anim-stagger: 200ms;
@@ -278,30 +281,30 @@
    * LOCKED_PICKS v3 — cross-cutting patterns
    * ================================================================== */
 
-  /* v3.1 — CTA pattern (strong grey near-black, red as accent only) */
-  --cta-primary-bg: #1e293b;                          /* slate-800 — USER FINAL 2026-04-19 eod+14 */
-  --cta-primary-bg-hover: #0f172a;                    /* slate-900 — hover step */
-  --cta-primary-fg: #ffffff;
-  --cta-destructive-bg: #b91c1c;                      /* red-700 — only solid red allowed */
-  --brand-red: #b91c1c;                               /* red-700 — accent, badge, focus ring */
-  --accent-red-soft-bg: #fef2f2;                      /* red-50 */
-  --accent-red-soft-fg: #b91c1c;                      /* red-700 */
+  /* v3.1 — CTA pattern (gold CTA, dark-brown text; red reserved for destructive).
+     Supersedes slate-800 CTA / red-700 accent — user reversal 2026-07-14. */
+  --cta-primary-bg: #c9a84c;                          /* gold */
+  --cta-primary-bg-hover: #d9bc6a;                    /* lighter gold — hover step */
+  --cta-primary-fg: #1a1200;                          /* near-black brown */
+  --cta-destructive-bg: #c0392b;                      /* DISC-D red — only solid red allowed */
+  --brand-red: #c9a84c;                               /* legacy NAME — now the gold brand accent (links, badges, focus) */
+  --accent-red-soft-bg: rgb(201 168 76 / 0.12);       /* soft gold tint */
+  --accent-red-soft-fg: #c9a84c;                      /* gold */
 
-  /* v3.2 — Glass surface pattern */
-  --surface-translucent-bg: rgb(255 255 255 / 0.72);
+  /* v3.2 — Glass surface pattern (navy glass) */
+  --surface-translucent-bg: rgb(13 27 42 / 0.72);     /* navy @ 72% */
   --surface-translucent-blur: 8px;
-  --surface-translucent-border: rgb(255 255 255 / 0.6);
-  --glass-bg: rgb(255 255 255 / 0.72);                /* alias — matches design export */
-  /* Page backdrop — FLATTENED 2026-04-19 Session 1 (was gradient).
-     Canvas reads zinc-100 (light) / zinc-900 (dark) per design decision. */
-  --page-bg: #f4f4f5;                                 /* zinc-100 */
-  --page-gradient-light: #f4f4f5;                     /* alias, kept for back-compat */
-  --page-gradient-dark: #18181b;                      /* alias, kept for back-compat */
+  --surface-translucent-border: hsl(210 25% 24% / 0.6);
+  --glass-bg: rgb(13 27 42 / 0.72);                   /* alias */
+  /* Page backdrop — flat navy canvas (always dark since 2026-07-07 de-AppBase). */
+  --page-bg: #0d1b2a;                                 /* navy */
+  --page-gradient-light: #0d1b2a;                     /* alias, kept for back-compat */
+  --page-gradient-dark: #0d1b2a;                      /* alias, kept for back-compat */
 
   /* v3.3 — Mobile data-table pattern */
   --mobile-page-padding: 12px;
   --row-card-gap: 6px;
-  --row-card-border: #e4e4e7;                         /* zinc-200 */
+  --row-card-border: hsl(210 25% 24%);                /* navy hairline */
 
   /* =====================================================================
    * v4 — List/Table archetype (Session 1 · 2026-04-19)
@@ -310,38 +313,39 @@
    * Full handoff bundle: docs/99-refactor/_system/design/session-01-list-table/
    * ================================================================== */
 
-  /* v4.1 — Surface + border layering (finer than shadcn's single border) */
-  --surface: #ffffff;                                 /* main card body */
-  --surface-subtle: #fafafa;                          /* filter bar + pagination bg */
-  --border-soft: #ececee;                             /* filter bar + row hover separator */
-  --border-faint: #f1f1f3;                            /* per-row hairline divider */
+  /* v4.1 — Surface + border layering (raised navy over navy canvas) */
+  --surface: #12202f;                                 /* main card body — matches --card */
+  --surface-subtle: #182638;                          /* filter bar + pagination bg — modal navy */
+  --border-soft: hsl(210 25% 24%);                    /* filter bar + row hover separator */
+  --border-faint: hsl(210 25% 20%);                   /* per-row hairline divider */
 
-  /* v4.2 — Text hierarchy (intermediate between fg + muted) */
-  --fg: #18181b;                                      /* zinc-900 — body text */
-  --fg-dim: #3f3f46;                                  /* zinc-800 — secondary content */
-  --fg-muted: #71717a;                                /* zinc-500 — labels, meta */
+  /* v4.2 — Text hierarchy (cream scale) */
+  --fg: #f0ead6;                                      /* cream — body text */
+  --fg-dim: #d6ccb4;                                  /* dim cream — secondary content */
+  --fg-muted: #8a8070;                                /* warm muted — labels, meta */
 
   /* v4.3 — Row states (list/table archetype) */
-  --row-hover: #fafafa;                               /* zinc-50 — existing, new name */
-  --row-selected: #fef7f7;                            /* red-50/50 tint — selected row */
-  --red-soft: #fef2f2;                                /* red-50 — error bg, badge bg */
+  --row-hover: rgb(240 234 214 / 0.04);               /* cream wash — visible on navy */
+  --row-selected: rgb(201 168 76 / 0.10);             /* gold tint — selected row */
+  --red-soft: rgb(192 57 43 / 0.18);                  /* DISC-D red tint — error bg, badge bg */
 
   /* v4.4 — Skeleton shimmer (loading state) */
-  --skeleton: #ececee;
-  --skeleton-hi: #f6f6f7;
+  --skeleton: #182638;
+  --skeleton-hi: #21324a;
 
-  /* v4.5 — Shadow layering (card + floating) */
-  --card-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(24 24 27 / 0.04);
-  --floating-shadow: 0 8px 24px rgb(15 23 42 / 0.18), 0 1px 3px rgb(15 23 42 / 0.12);
+  /* v4.5 — Shadow layering (card + floating — deeper on dark navy) */
+  --card-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.25);
+  --floating-shadow: 0 8px 24px rgb(0 0 0 / 0.45), 0 1px 3px rgb(0 0 0 / 0.3);
 
   /* v4.6 — Status badge palette (draft · sent · accepted · rejected · expired · revised)
-     Each: bg + fg + border + dot. Consumed by <StatusBadge>. */
-  --status-draft-bg: #f4f4f5;        --status-draft-fg: #52525b;  --status-draft-border: #e4e4e7;  --status-draft-dot: #a1a1aa;
-  --status-sent-bg: #eff6ff;         --status-sent-fg: #1d4ed8;   --status-sent-border: #dbeafe;   --status-sent-dot: #3b82f6;
-  --status-accepted-bg: #f0fdf4;     --status-accepted-fg: #15803d; --status-accepted-border: #dcfce7; --status-accepted-dot: #16a34a;
-  --status-rejected-bg: #fef2f2;     --status-rejected-fg: #b91c1c; --status-rejected-border: #fecaca; --status-rejected-dot: #b91c1c;
-  --status-expired-bg: #fff7ed;      --status-expired-fg: #c2410c; --status-expired-border: #fed7aa; --status-expired-dot: #ea580c;
-  --status-revised-bg: #faf5ff;      --status-revised-fg: #7e22ce; --status-revised-border: #e9d5ff; --status-revised-dot: #9333ea;
+     Each: bg + fg + border + dot. Consumed by <StatusBadge>.
+     Hue semantics preserved; translucent tints + lifted fg for navy contrast. */
+  --status-draft-bg: rgb(240 234 214 / 0.08);     --status-draft-fg: #b8ae96;   --status-draft-border: hsl(210 25% 24%);     --status-draft-dot: #8a8070;
+  --status-sent-bg: rgb(59 130 246 / 0.15);       --status-sent-fg: #7eb3f5;    --status-sent-border: rgb(59 130 246 / 0.3); --status-sent-dot: #3b82f6;
+  --status-accepted-bg: rgb(22 163 74 / 0.15);    --status-accepted-fg: #4ade80; --status-accepted-border: rgb(22 163 74 / 0.3); --status-accepted-dot: #16a34a;
+  --status-rejected-bg: rgb(192 57 43 / 0.15);    --status-rejected-fg: #e8836f; --status-rejected-border: rgb(192 57 43 / 0.3); --status-rejected-dot: #c0392b;
+  --status-expired-bg: rgb(234 88 12 / 0.15);     --status-expired-fg: #fb923c;  --status-expired-border: rgb(234 88 12 / 0.3);  --status-expired-dot: #ea580c;
+  --status-revised-bg: rgb(147 51 234 / 0.15);    --status-revised-fg: #c084fc;  --status-revised-border: rgb(147 51 234 / 0.3); --status-revised-dot: #9333ea;
 
   /* =====================================================================
    * Motion tokens — Q-W08-b RESERVED philosophy
@@ -356,10 +360,9 @@
   --motion-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* --- Focus-ring shadow token (spec parity with tokens.css) ---
-   * Used by primitives that want a CSS-var-driven focus ring instead of the
-   * Tailwind focus-visible:ring-red-700 utility. Both approaches coexist;
-   * utility is preferred for shell-level primitives, token for composition-level. */
-  --shadow-focus: 0 0 0 3px #fecdd3;                  /* red-200, 3px offset */
+   * Used by primitives that want a CSS-var-driven focus ring instead of a
+   * Tailwind ring utility. Focus accent = gold (matches --ring). */
+  --shadow-focus: 0 0 0 3px rgb(201 168 76 / 0.35);   /* gold @ 35% */
 }
 
 .dark {
@@ -392,96 +395,18 @@
   --input: 210 25% 24%;
   --ring: 43 55% 55%;                 /* gold focus ring */
 
-  --sidebar-background: 240 5.9% 10%;
-  --sidebar-foreground: 240 4.8% 95.9%;
-  --sidebar-primary: 224.3 76.3% 48%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 240 3.7% 15.9%;
-  --sidebar-accent-foreground: 240 4.8% 95.9%;
-  --sidebar-border: 240 3.7% 15.9%;
-  --sidebar-ring: 217.2 91.2% 59.8%;
+  --sidebar-background: 209 44% 13%;
+  --sidebar-foreground: 43 48% 89%;
+  --sidebar-primary: 43 55% 55%;
+  --sidebar-primary-foreground: 40 100% 6%;
+  --sidebar-accent: 209 32% 18%;
+  --sidebar-accent-foreground: 43 48% 89%;
+  --sidebar-border: 210 25% 24%;
+  --sidebar-ring: 43 55% 55%;
 
-  /* LOCKED_PICKS dark variants */
-
-  /* v1 Card */
-  --card-border: rgb(39 39 42 / 0.8);                 /* zinc-800/80 */
-  --card-shadow-rest: 0 1px 2px rgb(0 0 0 / 0.25);
-  --card-shadow-hover: 0 4px 16px rgb(0 0 0 / 0.35);
-
-  /* v1 DataTable */
-  --row-hover-bg: rgb(24 24 27 / 0.5);                /* zinc-900/50 */
-
-  /* v1 KpiTile deltas */
-  --delta-positive-bg: rgb(20 83 45 / 0.2);           /* green-900/20 */
-  --delta-positive-fg: #4ade80;                       /* green-400 */
-  --delta-negative-bg: rgb(127 29 29 / 0.2);          /* red-900/20 */
-  --delta-negative-fg: #f87171;                       /* red-400 */
-
-  /* v2 Timeline */
-  --timeline-rail-color: #27272a;                     /* zinc-800 */
-  --timeline-beam: linear-gradient(to bottom, #dc2626, transparent);
-
-  /* v3.1 CTA (dark flip — light grey CTA on dark bg) */
-  --cta-primary-bg: #f1f5f9;                          /* slate-100 — dark-mode flip */
-  --cta-primary-bg-hover: #ffffff;
-  --cta-primary-fg: #0f172a;                          /* slate-900 */
-  --accent-red-soft-bg: rgb(127 29 29 / 0.2);
-  --accent-red-soft-fg: #f87171;
-
-  /* v3.2 Glass */
-  --surface-translucent-bg: rgb(9 9 11 / 0.7);        /* zinc-950/70 */
-  --surface-translucent-border: rgb(39 39 42 / 0.6);  /* zinc-800/60 */
-  --glass-bg: rgb(9 9 11 / 0.70);                     /* alias */
-  --page-bg: #18181b;                                 /* zinc-900 — flat dark */
-
-  /* v3.3 Mobile */
-  --row-card-border: #27272a;                         /* zinc-800 */
-
-  /* =====================================================================
-   * v4 dark variants — List/Table archetype
-   * CRITICAL: --brand-red FLIPS to red-400 in dark for proper contrast
-   * (was red-700 inherited from :root; too dark on zinc-950 bg).
-   * ================================================================== */
-  --brand-red: #f87171;                               /* red-400 — dark-mode flip */
-
-  /* v4.1 — Surface + border layering
-   *   Aligned 2026-05-23 with the cardinal dark-mode rule + DataTable/Card primitives:
-   *     - card surface = zinc-950 (was #0c0c0e — silently mismatched zinc-950)
-   *     - card-recessed accent = zinc-900 (matches page bg → reads as "recessed inside card")
-   *     - border = zinc-800 (matches `border-zinc-800` Tailwind class used everywhere else) */
-  --surface: #09090b;                                 /* zinc-950 */
-  --surface-subtle: #18181b;                          /* zinc-900 */
-  --border-soft: #27272a;                             /* zinc-800 */
-  --border-faint: #27272a;                            /* zinc-800 — keep subtle, but token-aligned */
-
-  /* v4.2 — Text hierarchy */
-  --fg: #fafafa;                                      /* zinc-50 */
-  --fg-dim: #d4d4d8;                                  /* zinc-300 */
-  --fg-muted: #71717a;                                /* zinc-500 — unchanged both modes */
-
-  /* v4.3 — Row states */
-  --row-hover: rgb(255 255 255 / 0.02);
-  --row-selected: rgb(185 28 28 / 0.08);              /* red-700 @ 8% */
-  --red-soft: rgb(127 29 29 / 0.28);
-
-  /* v4.4 — Skeleton shimmer */
-  --skeleton: #1c1c20;
-  --skeleton-hi: #27272a;
-
-  /* v4.5 — Shadows (darker base) */
-  --card-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.25);
-  --floating-shadow: 0 8px 24px rgb(0 0 0 / 0.45), 0 1px 3px rgb(0 0 0 / 0.3);
-
-  /* v4.6 — Status badges (same fg hues, darker bg/border) */
-  --status-draft-bg: rgb(39 39 42 / 0.6);         --status-draft-fg: #a1a1aa;   --status-draft-border: #27272a;    --status-draft-dot: #71717a;
-  --status-sent-bg: rgb(29 78 216 / 0.15);        --status-sent-fg: #60a5fa;    --status-sent-border: rgb(29 78 216 / 0.3); --status-sent-dot: #3b82f6;
-  --status-accepted-bg: rgb(22 163 74 / 0.15);    --status-accepted-fg: #4ade80; --status-accepted-border: rgb(22 163 74 / 0.3); --status-accepted-dot: #16a34a;
-  --status-rejected-bg: rgb(185 28 28 / 0.15);    --status-rejected-fg: #f87171; --status-rejected-border: rgb(185 28 28 / 0.3); --status-rejected-dot: #f87171;
-  --status-expired-bg: rgb(194 65 12 / 0.15);     --status-expired-fg: #fb923c;  --status-expired-border: rgb(194 65 12 / 0.3); --status-expired-dot: #ea580c;
-  --status-revised-bg: rgb(126 34 206 / 0.15);    --status-revised-fg: #c084fc;  --status-revised-border: rgb(126 34 206 / 0.3); --status-revised-dot: #9333ea;
-
-  /* v4.6 — Focus-ring shadow (dark flip to red-400 tint) */
-  --shadow-focus: 0 0 0 3px rgb(248 113 113 / 0.35);  /* red-400 @ 35% for dark backgrounds */
+  /* LOCKED_PICKS + v4 tokens: no dark overrides needed — the app is always
+     the navy/gold dark aesthetic, so :root already holds the dark-tuned
+     values and .dark inherits them unchanged (2026-07-14 P1 consolidation). */
 }
 
 /* ---------------------------------------------------------------------------
@@ -597,7 +522,8 @@
   h6 { font-size: 0.875rem; line-height: 1.5;  font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
 
   /* W08 Phase 2 — link colour + focus ring per LOCKED_PICKS v3.1
-     (red accents, never solid CTA). Only :focus-visible styled — mouse
+     (gold accent since the 2026-07-14 navy/gold reversal; --brand-red keeps
+     its legacy NAME but now holds gold). Only :focus-visible styled — mouse
      users never see the ring. */
   a {
     color: var(--brand-red);

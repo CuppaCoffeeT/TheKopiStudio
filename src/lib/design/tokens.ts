@@ -10,6 +10,11 @@
  *
  * Source of truth: docs/99-refactor/_system/LOCKED_PICKS.md + src/index.css.
  * If you change a token value, change BOTH files in the same commit.
+ *
+ * 2026-07-14 P1 token consolidation: all values now resolve to the Editorial
+ * navy/gold/serif dark theme (navy #0D1B2A canvas · raised-navy surfaces ·
+ * gold #C9A84C accent/CTA · cream #F0EAD6 text). Var NAMES are frozen for
+ * adopter stability — e.g. `--brand-red` now holds the GOLD brand accent.
  */
 
 // ===========================================================================
@@ -84,7 +89,8 @@ export const chartTokens = {
 // v3 — cross-cutting patterns
 // ===========================================================================
 
-/** v3.1 — CTA pattern. Primary = strong grey near-black; red is ACCENT ONLY. */
+/** v3.1 — CTA pattern. Primary = gold on navy; solid red = destructive only.
+ *  Key names are legacy (`brandRed` etc.) — values resolve to the gold accent. */
 export const ctaTokens = {
   primaryBg: 'var(--cta-primary-bg)',
   primaryBgHover: 'var(--cta-primary-bg-hover)',
