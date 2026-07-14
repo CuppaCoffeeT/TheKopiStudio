@@ -16,7 +16,7 @@ export function AppHeaderLogo({ mobile = false }: { mobile?: boolean }) {
         'inline-flex items-center flex-shrink-0 text-foreground',
         mobile ? 'text-[17px]' : 'text-[19px]',
       )}
-      aria-label="Prospect Profiler — Home"
+      aria-label="Insurance CRM — Home"
       style={{
         fontFamily: 'var(--font-pixel)',
         fontWeight: 400,
@@ -24,7 +24,7 @@ export function AppHeaderLogo({ mobile = false }: { mobile?: boolean }) {
         letterSpacing: '0.01em',
       }}
     >
-      Prospect Profiler
+      Insurance CRM
     </Link>
   );
 }

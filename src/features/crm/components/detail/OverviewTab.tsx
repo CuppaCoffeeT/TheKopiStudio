@@ -178,7 +178,7 @@ export function OverviewTab({ client, linkedResults }: OverviewTabProps) {
                 </span>
                 <Link
                   to={`/profiler-results/${result.id}`}
-                  className="inline-flex min-h-11 items-center text-[12.5px] font-medium text-blue-700 underline-offset-2 hover:underline dark:text-blue-400 sm:ml-auto"
+                  className="inline-flex min-h-11 items-center text-[12.5px] font-medium text-primary underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:ml-auto"
                   data-testid={`clients-detail-view-playbook-${result.id}`}
                 >
                   View full playbook

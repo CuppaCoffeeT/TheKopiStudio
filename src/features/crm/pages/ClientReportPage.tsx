@@ -139,15 +139,6 @@ export default function ClientReportPage() {
         {!loading && !failed && !model && (
           <Card data-testid="report-not-found">
             <NoResultsState query={id} />
-            <div className="flex justify-center pb-2">
-              <Button
-                variant="outline"
-                onClick={() => navigate('/clients')}
-                data-testid="report-back-to-clients-list"
-              >
-                ← Back to clients
-              </Button>
-            </div>
           </Card>
         )}
 

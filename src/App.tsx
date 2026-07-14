@@ -8,7 +8,6 @@ import { ProtectedRoute } from "@/components/shared/app-shell/ProtectedRoute";
 import DashboardLayout from "@/components/shared/app-shell/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/app-shell/ErrorBoundary";
 import Login from "@/pages/Login";
-import Home from "@/pages/Home";
 import NotFound from "@/pages/NotFound";
 import RouteError from "@/pages/RouteError";
 
@@ -24,6 +23,7 @@ const ResultsListPage = lazy(() => import("@/features/profiler/pages/ResultsList
 const ResultDetailPage = lazy(() => import("@/features/profiler/pages/ResultDetailPage"));
 const AccountSettingsPage = lazy(() => import("@/features/account-settings/pages/AccountSettingsPage"));
 const ManageAccountsPage = lazy(() => import("@/features/manage-accounts/pages/ManageAccountsPage"));
+const DashboardHomePage = lazy(() => import("@/features/crm/pages/DashboardHomePage"));
 const CrmDashboardPage = lazy(() => import("@/features/crm/pages/CrmDashboardPage"));
 const ClientsListPage = lazy(() => import("@/features/crm/pages/ClientsListPage"));
 const ClientDetailPage = lazy(() => import("@/features/crm/pages/ClientDetailPage"));
@@ -80,7 +80,7 @@ function App() {
           path: "/dashboard",
           element: (
             <ProtectedRoute>
-              <Home />
+              <DashboardHomePage />
             </ProtectedRoute>
           ),
         },

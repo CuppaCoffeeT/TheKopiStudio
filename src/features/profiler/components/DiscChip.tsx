@@ -3,7 +3,7 @@
  *
  * Colour identity comes from the legacy profile palette (`PR[letter].col`)
  * applied to the dot + tinted background/border only; the letter itself stays
- * on the standard zinc text scale so contrast passes AA in both modes (the
+ * on the cream foreground token so contrast passes AA on the navy canvas (the
  * mid-tone brand hexes fail 4.5:1 as text on dark surfaces).
  */
 

@@ -10,6 +10,7 @@ import {
   CardDescription,
   CardContent,
   Button,
+  PageTitle,
 } from '@/components/primitives/shell';
 import { Field, Input } from '@/components/primitives/form';
 
@@ -43,7 +44,10 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-dvh flex items-center justify-center bg-background p-4">
+    <div className="min-h-dvh flex flex-col items-center justify-center bg-background px-4 py-10">
+      <header className="mb-8 text-center">
+        <PageTitle>Insurance CRM</PageTitle>
+      </header>
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Sign in</CardTitle>

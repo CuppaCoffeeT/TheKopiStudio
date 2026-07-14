@@ -34,7 +34,7 @@
  * Selectors: real data-testids from src/features/crm/pages/CrmDashboardPage
  * (crm-dashboard, crm-kpi-*, crm-add-first-client-btn, crm-quick-link-clients,
  * crm-dashboard-loading), ClientsListPage (clients-table via the ClientsPage
- * POM) and src/pages/Home.tsx (home-module-grid + home-module-tile-<path> —
+ * POM) and src/features/crm/pages/DashboardHomePage.tsx (home-module-grid + home-module-tile-<path> —
  * ADDED with this spec).
  *
  * Run: npx playwright test tests/workflows/crm/dashboard.spec.ts \

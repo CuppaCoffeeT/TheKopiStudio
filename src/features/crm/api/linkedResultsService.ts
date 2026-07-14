@@ -31,3 +31,24 @@ export async function listLinkedResultsByClient(
   if (error) throw error;
   return data ?? [];
 }
+
+/**
+ * Batched "profiled" flags for one page of clients (/dashboard progress
+ * widget): which of `clientIds` have at least one linked `results` row.
+ * ONE query for the whole page; bounded to 10 results per client (same
+ * realistic ceiling as `listLinkedResultsByClient`).
+ */
+export async function getProfiledClientIds(clientIds: string[]): Promise<Set<string>> {
+  if (clientIds.length === 0) return new Set();
+  const { data, error } = await supabase
+    .from('results')
+    .select('client_id')
+    .in('client_id', clientIds)
+    .limit(clientIds.length * 10);
+  if (error) throw error;
+  return new Set(
+    (data ?? [])
+      .map((row) => row.client_id)
+      .filter((id): id is string => id != null),
+  );
+}

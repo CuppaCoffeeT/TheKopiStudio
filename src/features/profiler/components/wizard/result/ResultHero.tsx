@@ -82,15 +82,15 @@ export function ResultHero({
           </HeroBadge>
         </div>
       </div>
-      {/* Fixed solid dark backing (not translucent) so the gold/cream text passes WCAG AA in light mode too. */}
-      <div className="bg-zinc-950 px-4 py-3">
+      {/* Solid navy backing (page token) recesses the strip under the gradient band. */}
+      <div className="bg-background px-4 py-3">
         <div
-          className="uppercase mb-1"
-          style={{ fontFamily: 'var(--font-pixel)', fontSize: 9, letterSpacing: '0.25em', color: '#C9A84C' }}
+          className="uppercase mb-1 text-accent"
+          style={{ fontFamily: 'var(--font-pixel)', fontSize: 9, letterSpacing: '0.25em' }}
         >
           Advisor Quick Read
         </div>
-        <div className="italic" style={{ fontSize: 13, lineHeight: 1.7, color: '#E8E0D0' }}>
+        <div className="italic text-foreground/90" style={{ fontSize: 13, lineHeight: 1.7 }}>
           “{p.sg}”
         </div>
       </div>

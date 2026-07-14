@@ -57,6 +57,7 @@ export function SecurityEmailForm({ currentEmail }: SecurityEmailFormProps) {
       <div className="flex justify-end">
         <Button
           size="lg"
+          className="w-full sm:w-auto"
           onClick={handleSubmit}
           disabled={!canSubmit}
           loading={updateEmail.isPending}

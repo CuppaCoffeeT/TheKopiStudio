@@ -20,7 +20,7 @@ export function ScoreCard({ profile }: { profile: ProfileResult }) {
     <Card data-testid="result-score-card">
       {profile.occUsed && (
         <span
-          className="mb-2.5 inline-flex items-center rounded-full border border-amber-400/40 bg-amber-100/60 px-2.5 py-0.5 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400"
+          className="mb-2.5 inline-flex items-center rounded-full border border-accent/40 bg-accent/15 px-2.5 py-0.5 text-accent"
           style={{ fontFamily: 'var(--font-sans)', fontSize: 10.5, fontWeight: 600 }}
           data-testid="result-occupation-chip"
         >
@@ -37,8 +37,8 @@ export function ScoreCard({ profile }: { profile: ProfileResult }) {
           return (
             <div key={d} data-testid={`result-score-row-${d}`}>
               <div className="mb-1 flex items-baseline justify-between gap-2">
-                {/* Zinc text — the brand hex fails WCAG AA 4.5:1 as text on the
-                    card (the coloured bar below carries the DISC identity). */}
+                {/* Foreground token — the brand hex fails WCAG AA 4.5:1 as text
+                    on the card (the coloured bar carries the DISC identity). */}
                 <span
                   className="text-foreground"
                   style={{ fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600 }}

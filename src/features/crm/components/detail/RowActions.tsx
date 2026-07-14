@@ -41,7 +41,7 @@ export function RowActions({
       <Button
         variant="ghost"
         size="sm"
-        className="min-h-11 text-red-700 dark:text-red-400 md:min-h-0"
+        className="min-h-11 text-destructive md:min-h-0"
         leadingIcon={<Trash2 className="h-3.5 w-3.5" aria-hidden="true" />}
         onClick={onDelete}
         aria-label={deleteLabel}

@@ -135,6 +135,7 @@ export function ProfileTab() {
         <div className="flex justify-end">
           <Button
             size="lg"
+            className="w-full sm:w-auto"
             onClick={handleSave}
             disabled={!dirty || !nameValid}
             loading={updateProfile.isPending}

@@ -58,7 +58,7 @@ export function ClientDetailActions({
           <Button
             variant="ghost"
             size={size}
-            className={`text-red-700 dark:text-red-400 ${grow ?? ''}`}
+            className={`text-destructive ${grow ?? ''}`}
             leadingIcon={<Trash2 className="h-3.5 w-3.5" aria-hidden="true" />}
             onClick={onDelete}
             loading={deleting}
