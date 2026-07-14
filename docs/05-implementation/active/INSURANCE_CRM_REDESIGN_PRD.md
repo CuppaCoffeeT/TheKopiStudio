@@ -112,12 +112,15 @@ tsc 0 · `npm run build` · Gate-3 five greps zero in every touched feature fold
 ## 🔐 Permissions Matrix
 No new gated actions or roles. Dashboard renders strictly from `useAuth().modules` (existing RPC); KPI/client widget render is additionally gated on the `/crm` (or `/clients`) module being present. Negative check (P3 gate): a user lacking `/crm` sees module cards only.
 
+## ✅ Resolved Decisions (2026-07-14, execution start — provisional defaults, all reversible)
+1. **Wizard naming**: public `/profiler` wizard keeps "Prospect Profiler" as the *tool* name inside the Insurance CRM app. Reverse = 2-file edit (WizardTopBar, ProfilerWizardPage).
+2. **Theme toggle**: hide the no-op toggle (ThemeProvider stays pinned dark); no light navy theme built.
+3. **Completeness formula**: % non-null over key CrmClient fields + "Profiled" badge from `results.client_id`. Re-weight when real data exists.
+
 ## ❓ Open Questions / Risks
-1. **Wizard naming** — default: public `/profiler` wizard keeps "Prospect Profiler" as the *tool* name inside the Insurance CRM app. Reverse = 2-file edit (WizardTopBar, ProfilerWizardPage).
-2. **Theme toggle** — ThemeProvider pins dark; default: hide the no-op toggle rather than build a light navy theme.
-3. **Completeness formula** — default: % non-null over key CrmClient fields + "Profiled" badge from `results.client_id`; user may want a different weighting once real data exists.
-4. Naming collision: a separate `~/Documents/Projects/Insurance CRM` folder exists — this PRD renames in-app branding only; never touch that folder.
-5. Prod tables nearly empty — widget verified via seeded/test data and empty states, not production data.
+1. Naming collision: a separate `~/Documents/Projects/Insurance CRM` folder exists — this PRD renames in-app branding only; never touch that folder.
+2. Prod tables nearly empty — widget verified via seeded/test data and empty states, not production data.
+3. E2E role coverage: `.env.secrets` lacks passwords for advisor/manager/super_admin (global-setup warning) — per-role negatives limited to configured roles; caveat recorded if unpassable.
 
 ## 🗒️ Execution Log
 | Date | Phase | Result |
