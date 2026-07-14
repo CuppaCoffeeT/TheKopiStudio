@@ -2,7 +2,7 @@
 
 👉 Parent: [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md)
 
-Every design sub-guide for AppBase. Scoped routers — each file covers one slice. Read the parent router first for the topic matrix.
+Every design sub-guide for Insurance CRM (navy/gold/serif Editorial system, locked 2026-07-14). Scoped routers — each file covers one slice. Read the parent router first for the topic matrix.
 
 ## Scope
 
@@ -13,12 +13,13 @@ Every design sub-guide for AppBase. Scoped routers — each file covers one slic
 
 | File | Purpose |
 |---|---|
-| [PHILOSOPHY.md](./PHILOSOPHY.md) | Design intent, direction shift (Tadao-Ando → shadcnblocks-clean + Linear/Vercel premium), 11 reuse principles |
-| [TYPOGRAPHY.md](./TYPOGRAPHY.md) | Font families, when to use each, h1-h6 scale, locks |
-| [COLORS.md](./COLORS.md) | Brand red, zinc scale, semantic tokens, 6-status palette, dark-mode plan |
+| [PHILOSOPHY.md](./PHILOSOPHY.md) | Editorial navy/gold/serif direction (2026-07-14 reversal), what it supersedes, 11 reuse principles |
+| [TYPOGRAPHY.md](./TYPOGRAPHY.md) | System sans + Georgia serif stacks, `--font-pixel` alias situation, h1-h6 scale |
+| [COLORS.md](./COLORS.md) | Navy/cream/gold palette, semantic tokens, 6-status palette, always-dark contract |
 | [SPACING_MOTION.md](./SPACING_MOTION.md) | Spacing scale, radii, shadow variants, motion durations + easings |
 | [TOKENS.md](./TOKENS.md) | All 11 `@theme` token groups with exact values + source line numbers |
 | [PRIMITIVES.md](./PRIMITIVES.md) | 79-primitive inventory by group, import paths, adoption state |
+| [DARK_MODE.md](./DARK_MODE.md) | Always-dark contract — raised-card layering, token chain, verification protocol |
 | [ARCHETYPES.md](./ARCHETYPES.md) | 6 page archetypes (list · detail · form · dashboard · settings · tool) with folder shape |
 | [DESIGN_LAB_CATALOG.md](./DESIGN_LAB_CATALOG.md) | Handoff HTML preview catalog — how to open, what's inside each session |
 

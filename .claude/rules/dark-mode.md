@@ -9,65 +9,66 @@ paths:
 
 ## Summary
 
-Dark mode is class-based (`document.documentElement.classList.add('dark')`) and Tailwind's `dark:` variant is `@custom-variant dark (&:where(.dark, .dark *))`. **The cardinal rule**: in dark mode, the **page sits ONE STEP LIGHTER than the cards on it** (page `zinc-900` ← card `zinc-950`). If page bg equals card bg, every card on the page disappears. Always pair a light bg utility with a `dark:` variant. Authoritative spec lives in [DARK_MODE.md](../../docs/01-system-architecture/design-system/DARK_MODE.md).
+**The app is permanently dark (navy/gold Editorial theme, locked 2026-07-14).** `:root` and `.dark` in `src/index.css` hold identical navy values and `ThemeProvider` pins `resolved='dark'` — the theme toggle is a no-op. The class-based `dark:` machinery (`@custom-variant dark (&:where(.dark, .dark *))`) remains for legacy compat only; new code should not need `dark:` variants. **The cardinal rule (INVERTED from the zinc era)**: cards are **RAISED — one step LIGHTER than the navy page** (page `#0D1B2A` → card `#12202F` → modal/popover `#182638`). If page bg equals card bg, every card disappears. Authoritative spec lives in [DARK_MODE.md](../../docs/01-system-architecture/design-system/DARK_MODE.md).
 
 ## Detailed Patterns
 
-### Surface contract (must be applied per surface)
+### Surface contract (must be applied per surface — always-dark)
 
-| Surface | Light | Dark |
+| Surface | Use | Value |
 |---|---|---|
-| Page bg | `bg-zinc-100` | `bg-zinc-900` |
-| Card / tile / panel | `bg-white` | `bg-zinc-950` |
-| Card hover (interactive) | `hover:bg-zinc-50` | `dark:hover:bg-zinc-900` |
-| Subtle accent inside card (table header, row hover, badge) | `bg-zinc-50` / `bg-zinc-100` | `dark:bg-zinc-900` |
-| Border | `border-zinc-200` | `dark:border-zinc-800` |
-| Text primary | `text-zinc-900` | `dark:text-zinc-50` |
-| Text secondary | `text-zinc-500/600` | `dark:text-zinc-400` |
-| Primary CTA bg | `bg-slate-800` | `dark:bg-slate-100` (flipped) |
-| Primary CTA text | `text-white` | `dark:text-slate-900` (flipped) |
-| Focus ring | `ring-red-700` | `dark:ring-red-400` (flipped — red-700 reads as black on zinc-950) |
-| Focus ring offset | `ring-offset-white` | `dark:ring-offset-zinc-950` |
+| Page bg | `bg-background` / `var(--page-bg)` | navy `#0D1B2A` |
+| Card / tile / panel | `bg-card` / `var(--surface)` | raised navy `#12202F` (LIGHTER than page) |
+| Modal / popover / filter bar | `bg-popover` / `var(--surface-subtle)` | `#182638` (another step lighter) |
+| Hover fill | `var(--row-hover)` (cream @ 4%) or `bg-secondary` | must contrast resting bg |
+| Border | `border-border` | navy hairline `hsl(210 25% 24%)` |
+| Text primary / secondary / muted | `text-foreground` / `var(--fg-dim)` / `text-muted-foreground` | cream `#F0EAD6` / `#D6CCB4` / `#8A8070` |
+| Primary CTA | `--cta-primary-bg` / `--cta-primary-fg` | gold `#C9A84C` bg + near-black brown `#1A1200` text — never flips |
+| Destructive CTA | `--cta-destructive-bg` | DISC-D red `#C0392B` — only solid red allowed |
+| Focus ring | `--ring` / `--shadow-focus` | gold, 3px @ 35% — never red, never silent |
 
 ### Token chain (`src/index.css`)
 
 ```
-:root  --background: 0 0% 100%    → body bg light = white
-       --card:       0 0% 100%
-.dark  --background: 240 6% 10%   → body bg dark  = zinc-900 #18181b (== --page-bg)
-       --card:       240 10% 4%   → card bg dark  = zinc-950 #09090b (recessed)
+:root  --background: 210 53% 11%   → body bg = navy #0D1B2A (== --page-bg)
+       --card:       209 44% 13%   → card bg = #12202F (RAISED lighter)
+       --popover:    213 42% 16%   → modal/popover = #182638
+.dark  (identical values — no overrides needed; app is always dark)
 ```
 
-`body` reads `bg-background`. Primitive Card paints `bg-white dark:bg-zinc-950` directly (does NOT read `--card` — Tailwind class wins). Both layers must stay in sync with the cardinal rule.
+`body` reads `bg-background`. Cards must paint `bg-card` (or `var(--surface)`), never the page token — the raised-lighter contract depends on it.
 
-### Activation
+### Activation (legacy machinery)
 
 ```ts
-// Canonical — owned by ThemeProvider
+// ThemeProvider still wraps the app but resolves 'dark' permanently.
 import { ThemeProvider } from '@/lib/design/ThemeProvider';
 <ThemeProvider>{children}</ThemeProvider>
 ```
 
-Do NOT bypass with `prefers-color-scheme` media queries. Do NOT toggle the class outside `ThemeProvider`. State must remain reactive across the app.
+Do NOT build light-mode variants. Do NOT bypass with `prefers-color-scheme` media queries. Do NOT toggle the class — there is no light mode to flip to.
 
 ### Verification checklist (run before commit on any UI change)
 
-1. Toggle the `dark` class on `<html>` in DevTools.
-2. Every card-shaped surface is **visibly darker** than the page around it.
-3. Every interactive surface has a visible hover state in dark.
-4. Every focusable element shows a `red-400` ring on Tab, never silent.
-5. Primary CTA buttons flip light-on-dark (`slate-100` bg, `slate-900` text).
+1. Open the dev server — no toggle needed; the app is always the navy theme.
+2. Every card-shaped surface is **visibly LIGHTER** than the navy page around it.
+3. Every interactive surface has a visible hover state (cream wash / secondary lift).
+4. Every focusable element shows a **gold** ring on Tab, never silent.
+5. Primary CTA buttons read gold with dark-brown text — no light/dark flipping anywhere.
 
 ## Anti-patterns (will be caught in review)
 
-- ❌ `bg-white` without `dark:bg-zinc-950` on a card-shaped surface
-- ❌ `dark:bg-zinc-900` on a card-shaped surface (matches page bg → invisible)
-- ❌ Hover that stays the same color in dark (`hover:bg-zinc-50` without `dark:hover:bg-zinc-900`)
-- ❌ Focus ring without `dark:ring-red-400` (red-700 alone reads as black)
-- ❌ Hardcoded hex (`#18181b`) when a zinc class exists
-- ❌ Using `(prefers-color-scheme: dark)` media query — class-based only
+- ❌ Page bg == card bg (cards must be RAISED lighter than navy)
+- ❌ `bg-white` / `bg-zinc-*` light-era classes on any surface — use token utilities
+- ❌ New `dark:` variants (redundant — `:root` already holds the dark values)
+- ❌ Hover that matches the resting bg (invisible on navy)
+- ❌ Red focus rings — focus accent is gold (`--ring`)
+- ❌ Hardcoded hex (`#0d1b2a`) when a token utility exists
+- ❌ Using `(prefers-color-scheme: dark)` media query or building light-mode variants
 
 ## Known Patterns
+
+> Historical — recorded during the zinc light/dark era (retired 2026-07-07). Values are stale; the LESSONS (page == card ⇒ invisible; trace which element actually paints) still apply.
 
 ### Same-color page/card bug (2026-04-29 sweep)
 

@@ -1,5 +1,9 @@
 # Spacing · Radius · Shadow · Motion
 
+**Created**: 2026-04-19 SGT
+**Last Updated**: 2026-07-14 SGT
+**Status**: 🟢 Production
+
 👉 Parent: [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md)
 
 ## Spacing scale
@@ -28,11 +32,15 @@ Tailwind v4 default — no custom additions. Locked primitives settle at these c
 
 ## Shadow
 
+Retuned 2026-07-14 for the always-dark navy canvas — deeper blacks so elevation still reads on `#0D1B2A`.
+
 | Name | CSS | Token | Usage |
 |---|---|---|---|
-| Card rest | `0 1px 2px rgba(0,0,0,0.04)` | `--card-shadow-rest` | Default surface |
-| Card hover | `0 4px 12px rgba(0,0,0,0.08)` | `--card-shadow-hover` | Interactive card :hover |
-| Focus ring | `0 0 0 3px #fecaca` red-200 | `--shadow-focus` | a11y focus-visible outline |
+| Card rest | `0 1px 2px rgb(0 0 0 / 0.25)` | `--card-shadow-rest` | Default surface |
+| Card hover | `0 4px 16px rgb(0 0 0 / 0.35)` | `--card-shadow-hover` | Interactive card :hover |
+| Card (v4 layered) | `0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.25)` | `--card-shadow` | List/table card elevation |
+| Floating | `0 8px 24px rgb(0 0 0 / 0.45), 0 1px 3px rgb(0 0 0 / 0.3)` | `--floating-shadow` | Popovers, floating panels |
+| Focus ring | `0 0 0 3px rgb(201 168 76 / 0.35)` gold @ 35% | `--shadow-focus` | a11y focus-visible outline |
 | Elevation (modal / popover) | Tailwind `shadow-2xl` | — | Floating surfaces only |
 
 **Rule**: shadows are used sparingly — glass surfaces + tokens carry most of the depth signal. Never stack shadow layers.
@@ -61,7 +69,7 @@ Tailwind v4 default — no custom additions. Locked primitives settle at these c
 
 ### Hover rule (DESIGN_REUSE_PRINCIPLES rule 11)
 
-Hover bg **must** visually differ from `--page-bg` (zinc-100). Common failure: `hover:bg-zinc-100` on a zinc-100 page = invisible. Use `hover:bg-zinc-200` or `hover:bg-white` + soft shadow.
+Hover bg **must** visually differ from `--page-bg` (navy `#0D1B2A`). Common failure: hover fill equal to the navy page/card resting bg = invisible. Use the cream wash `var(--row-hover)` (cream @ 4%), `bg-secondary` (lighter navy), or a shadow lift.
 
 ## Preview references
 

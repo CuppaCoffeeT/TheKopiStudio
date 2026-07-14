@@ -1,14 +1,14 @@
 # Insurance CRM Redesign — PRD
 
-**Created**: 2026-07-14 · **Last Updated**: 2026-07-14 · **Status**: 🔵 Planning · **Priority**: High
+**Created**: 2026-07-14 · **Last Updated**: 2026-07-14 · **Status**: 🟢 Complete · **Priority**: High
 **Work type**: feature (app-wide restyle + dashboard home + rebrand — no new module, no new tables)
 
-🤖 Build via: `/prd-execute docs/05-implementation/active/INSURANCE_CRM_REDESIGN_PRD.md`
-✅ Completion gate: all phase gates green (tsc 0 · build · Gate-3 greps zero in touched folders · @p0 Playwright green · visual verify per phase) → PRD moves to `completed/`
+🤖 Built via: `/prd-execute` — completed 2026-07-14 (this file lived in `active/` during the run)
+✅ Completion gate: all phase gates green (tsc 0 · build · Gate-3 greps zero in touched folders · @p0 Playwright green · visual verify per phase) → MET 2026-07-14; final scorecard in the Execution Log
 
 ## 📊 Progress / State
 
-Current phase: 0 · Blockers: none
+Current phase: done · Blockers: none
 
 | Phase | Status | Notes |
 |---|---|---|
@@ -16,7 +16,7 @@ Current phase: 0 · Blockers: none
 | P2 Layout & primitive restyle pass | ✅ | 5 agents · tsc 0 · Gate-3 zero (report-canvas `<h1>`s pre-existing print contract, untouched) |
 | P3 Dashboard home (`/dashboard` module cards + widgets) | ✅ | Home → `features/crm/pages/DashboardHomePage.tsx` (no-pages-to-features); testids preserved; drift 0 |
 | P4 Rebrand user-facing → "Insurance CRM" | ✅ | index.html · SEO suffix · AppHeaderLogo · Login wordmark; remaining grep hits all sanctioned |
-| P5 Docs refresh + gates + E2E | ⬜ | depends P1–P4 |
+| P5 Docs refresh + gates + E2E | ✅ | design-system docs + dark-mode rule rewritten to navy/gold; lessons/decisions logged; full @p0 56 passed |
 
 ## 📋 Definition
 
@@ -126,5 +126,6 @@ No new gated actions or roles. Dashboard renders strictly from `useAuth().module
 | Date | Phase | Result |
 |---|---|---|
 | 2026-07-14 | — | PRD authored (research workflow: 5 readers, live DB verified) |
+| 2026-07-14 | P5+close | Docs: PHILOSOPHY/COLORS/TYPOGRAPHY/TOKENS/DARK_MODE/SPACING_MOTION + design-system CONTEXT + `.claude/rules/dark-mode.md` rewritten to navy/gold always-dark (history sections preserved); crm CONTEXT.md + DESIGN_CATALOG_PRIMITIVES updated; lessons/decisions appended. Widget empty state fixed ("No clients yet" + CTA). New @p0 home specs (KPI row · progress widget · module search) — 13/13. **Final scorecard**: tsc 0 · lint 0 errors · drift 0 · build ✓ · Gate-3 greps zero (report-canvas `<h1>`s = pre-existing print contract) · full @p0 56 passed/1 flaky-passed/0 failed · visual sweep 9 routes (screenshots, coherent navy/gold/serif) · rebrand grep = sanctioned hits only. E2E caveat: role passwords exist for advisor/manager/super_admin only (management/supervisor have no test accounts — pre-existing). Suites must run with `E2E_PORT=<free port>` while another project holds 8080/8081. |
 | 2026-07-14 | P2–P4 | 7-agent parallel build. P2: editorial polish across login/crm/clients/profiler/admin (light-era class pairs collapsed to tokens, anti-patterns removed, mobile stacking; report-canvas print contract deliberately untouched). P3: DashboardHomePage (greeting + ModuleSearch + category ModuleCard grid + KPI row gated on /crm + client-progress widget with derived completeness + Profiled badge; new `iconLookup.ts`, `getProfiledClientIds`, `crmClients.profiledFlags` queryKey); relocated from pages/ into features/crm (dep-cruiser no-pages-to-features), route updated. P4: rebrand hits applied; profiler wizard keeps tool name. Gates: tsc 0 · lint 0 errors · drift 0 · build ✓ · Gate-3 greps zero. |
 | 2026-07-14 | P1 | Navy/gold token consolidation: LOCKED_PICKS v1–v4 var blocks + sidebar tokens rewritten dark; `.dark` override section deleted (`:root` = always-dark source of truth); tokens.ts docs aligned; LOCKED_PICKS.md reversal entry; design-system.md inline refs retargeted; no-op theme toggle unwired (useDashboardChrome/AppHeaderShell/DetailPageFrame). 1 agent. tsc 0 · build ✓. Radix zinc/red utility scales deferred to P2; design-system docs to P5. |
