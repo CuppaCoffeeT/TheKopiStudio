@@ -35,8 +35,11 @@ export async function listLinkedResultsByClient(
 /**
  * Batched "profiled" flags for one page of clients (/dashboard progress
  * widget): which of `clientIds` have at least one linked `results` row.
- * ONE query for the whole page; bounded to 10 results per client (same
- * realistic ceiling as `listLinkedResultsByClient`).
+ * ONE query for the whole page, capped at `clientIds.length × 10` rows IN
+ * AGGREGATE (not per client); ordered by client_id so truncation is
+ * deterministic. A single client with more than 10×N linked results can
+ * crowd out later client_ids' flags — acceptable for the 8-row home widget;
+ * revisit with a distinct-client_id RPC if this ever feeds a bigger surface.
  */
 export async function getProfiledClientIds(clientIds: string[]): Promise<Set<string>> {
   if (clientIds.length === 0) return new Set();
@@ -44,6 +47,7 @@ export async function getProfiledClientIds(clientIds: string[]): Promise<Set<str
     .from('results')
     .select('client_id')
     .in('client_id', clientIds)
+    .order('client_id', { ascending: true })
     .limit(clientIds.length * 10);
   if (error) throw error;
   return new Set(

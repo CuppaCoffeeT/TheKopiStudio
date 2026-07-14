@@ -1,9 +1,9 @@
 /**
- * AppHeaderLogo — Prospect Profiler wordmark; links to /dashboard.
+ * AppHeaderLogo — Insurance CRM wordmark; links to /dashboard.
  *
  * Extracted from AppHeader.tsx (W09 decomposition · ≤200 LOC primitive rule).
- * 2026-07-07 de-AppBase: Georgia serif wordmark in the original Prospect
- * Profiler style (cream text on navy), replacing the Geist-Mono lockup + flame.
+ * 2026-07-07 de-AppBase: serif wordmark (cream text on navy), replacing the
+ * Geist-Mono lockup + flame. 2026-07-14: text rebranded to "Insurance CRM".
  */
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';

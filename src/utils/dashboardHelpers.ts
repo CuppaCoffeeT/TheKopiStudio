@@ -1,7 +1,9 @@
-// Dashboard helpers — module grouping, greeting, localStorage prefs.
+// Dashboard helpers — module grouping, SGT greeting, localStorage prefs.
 // Generic base version: category labels are derived from the module's
 // `category` string (no hardcoded business categories). Extend `CATEGORY_META`
 // per project if you want custom labels / ordering / icons.
+
+import { SINGAPORE_TIMEZONE } from '@/utils/timezoneUtils';
 
 // ---- Types ----
 
@@ -33,23 +35,36 @@ export const CATEGORY_META: Record<string, { label: string; order: number; icon:
   general: { label: 'General', order: 1, icon: 'LayoutGrid' },
 };
 
-// ---- Time-Aware Greeting ----
+// ---- Time-Aware Greeting (SGT) ----
 
-export function getGreeting(): string {
-  const hour = new Date().toLocaleString('en-US', { hour: 'numeric', hour12: false });
-  const h = parseInt(hour, 10);
-  if (h < 12) return 'Good morning';
-  if (h < 18) return 'Good afternoon';
-  return 'Good evening';
+export interface SingaporeGreeting {
+  timeOfDay: 'morning' | 'afternoon' | 'evening';
+  dateText: string;
 }
 
-export function getFormattedDate(): string {
-  return new Date().toLocaleDateString('en-GB', {
+/**
+ * Greeting parts for the dashboard hero, computed in Asia/Singapore regardless
+ * of the browser's timezone (timezone rule: display strings are SGT). Single
+ * source for BOTH the time-of-day bucket and the long date line — pages import
+ * this instead of re-deriving either locally.
+ */
+export function getSingaporeGreeting(now: Date = new Date()): SingaporeGreeting {
+  const hour = Number(
+    new Intl.DateTimeFormat('en-GB', {
+      hour: 'numeric',
+      hourCycle: 'h23',
+      timeZone: SINGAPORE_TIMEZONE,
+    }).format(now),
+  );
+  const timeOfDay = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
+  const dateText = new Intl.DateTimeFormat('en-GB', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
     year: 'numeric',
-  });
+    timeZone: SINGAPORE_TIMEZONE,
+  }).format(now);
+  return { timeOfDay, dateText };
 }
 
 // ---- localStorage Keys ----

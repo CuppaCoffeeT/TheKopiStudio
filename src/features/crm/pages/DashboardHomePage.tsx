@@ -21,8 +21,7 @@ import { clearAuthStorage } from '@/utils/authStorage';
 import { showError, showSuccess } from '@/utils/toastHelper';
 import { queryKeys } from '@/utils/queryKeys';
 import { getModuleIcon } from '@/lib/iconLookup';
-import { getCurrentSingaporeTime } from '@/utils/timezoneUtils';
-import { getFormattedDate, groupModulesByCategory } from '@/utils/dashboardHelpers';
+import { getSingaporeGreeting, groupModulesByCategory } from '@/utils/dashboardHelpers';
 import {
   Badge,
   Button,
@@ -31,6 +30,7 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
+  ErrorState,
   LoadingSkeleton,
   NoResultsState,
 } from '@/components/primitives/shell';
@@ -50,13 +50,6 @@ import type { ClientRow } from '../types';
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-function timeOfDayInSingapore(): 'morning' | 'afternoon' | 'evening' {
-  const hour = getCurrentSingaporeTime().getHours();
-  if (hour < 12) return 'morning';
-  if (hour < 18) return 'afternoon';
-  return 'evening';
-}
 
 function formatRole(role: string): string {
   return role
@@ -99,7 +92,7 @@ const PROGRESS_WIDGET_ROWS = 8;
 // ---------------------------------------------------------------------------
 
 function CrmKpiRow() {
-  const { data: stats, isLoading } = useDashboardStats();
+  const { data: stats, isLoading, isError, refetch } = useDashboardStats();
 
   if (isLoading) {
     return (
@@ -108,6 +101,17 @@ function CrmKpiRow() {
           <LoadingSkeleton key={key} variant="kpi-tile" className="w-full" />
         ))}
       </div>
+    );
+  }
+  if (isError && !stats) {
+    return (
+      <ErrorState
+        subhead="STATS UNAVAILABLE"
+        body="The dashboard stats could not be loaded. Check your connection and retry."
+        path="/dashboard"
+        onRetry={() => refetch()}
+        className="py-8"
+      />
     );
   }
   if (!stats) return null;
@@ -145,7 +149,7 @@ function CrmKpiRow() {
 
 function ClientProgressWidget() {
   const navigate = useNavigate();
-  const { data: page, isLoading } = useClientsList({
+  const { data: page, isLoading, isError, refetch } = useClientsList({
     search: '',
     page: 1,
     rowsPerPage: PROGRESS_WIDGET_ROWS,
@@ -177,7 +181,17 @@ function ClientProgressWidget() {
           </div>
         )}
 
-        {!isLoading && rows.length === 0 && (
+        {!isLoading && isError && rows.length === 0 && (
+          <ErrorState
+            subhead="CLIENTS UNAVAILABLE"
+            body="Your client list could not be loaded. Check your connection and retry."
+            path="/dashboard"
+            onRetry={() => refetch()}
+            className="py-8"
+          />
+        )}
+
+        {!isLoading && !isError && rows.length === 0 && (
           <div
             data-testid="home-client-progress-empty"
             className="flex flex-col items-center gap-3 py-8 text-center"
@@ -186,7 +200,11 @@ function ClientProgressWidget() {
             <p className="max-w-sm text-sm text-muted-foreground">
               Your book is empty — add your first client to start tracking profile completeness.
             </p>
-            <Button variant="outline" onClick={() => navigate('/clients')}>
+            <Button
+              variant="outline"
+              className="pointer-coarse:min-h-11"
+              onClick={() => navigate('/clients')}
+            >
               Go to clients
             </Button>
           </div>
@@ -238,11 +256,12 @@ function ClientProgressWidget() {
           </ul>
         )}
 
-        {!isLoading && (page?.count ?? 0) > PROGRESS_WIDGET_ROWS && (
+        {!isLoading && !isError && (page?.count ?? 0) > PROGRESS_WIDGET_ROWS && (
           <div className="mt-3">
             <Button
               variant="outline"
               size="sm"
+              className="pointer-coarse:min-h-11"
               onClick={() => navigate('/clients')}
               data-testid="home-client-progress-view-all"
             >
@@ -263,6 +282,7 @@ export default function DashboardHomePage() {
   const navigate = useNavigate();
   const { user, profile, modules } = useAuth();
   const [search, setSearch] = useState('');
+  const { timeOfDay, dateText } = getSingaporeGreeting();
 
   const hasCrm = modules.some((m) => m.path === '/crm');
   const hasClients = modules.some((m) => m.path === '/clients');
@@ -302,10 +322,10 @@ export default function DashboardHomePage() {
           <GreetingHeader
             name={profile?.name || user?.email?.split('@')[0] || 'there'}
             role={formatRole(profile?.role || '')}
-            dateText={getFormattedDate()}
-            timeOfDay={timeOfDayInSingapore()}
+            dateText={dateText}
+            timeOfDay={timeOfDay}
           />
-          <Button variant="outline" onClick={signOut}>
+          <Button variant="outline" className="pointer-coarse:min-h-11" onClick={signOut}>
             Sign out
           </Button>
         </div>
