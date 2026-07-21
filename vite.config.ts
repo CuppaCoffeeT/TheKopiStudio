@@ -3,36 +3,11 @@ import react from "@vitejs/plugin-react-swc";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import fs from "fs";
-import { buildPrimitivesManifest } from "./scripts/primitives-manifest-builder.mjs";
-
-const REPO_ROOT = path.resolve(__dirname, ".");
 
 const HANDOFFS_ROOT = path.resolve(
   __dirname,
   "docs/99-refactor/_system/design/handoffs",
 );
-
-// W11.03 — serve live-computed primitives adoption manifest at /api/primitives-manifest.
-// Dev-only. Runs the scanner on every request (fast — file system only).
-function primitivesManifestPlugin() {
-  return {
-    name: "primitives-manifest-api",
-    configureServer(server: { middlewares: { use: (path: string, handler: (req: unknown, res: { statusCode?: number; setHeader: (n: string, v: string) => void; end: (b?: string) => void }, next?: () => void) => void) => void } }) {
-      server.middlewares.use("/api/primitives-manifest", (_req, res) => {
-        try {
-          const manifest = buildPrimitivesManifest(REPO_ROOT);
-          res.setHeader("Content-Type", "application/json");
-          res.setHeader("Cache-Control", "no-cache");
-          res.end(JSON.stringify(manifest));
-        } catch (err) {
-          res.statusCode = 500;
-          res.setHeader("Content-Type", "application/json");
-          res.end(JSON.stringify({ error: String(err) }));
-        }
-      });
-    },
-  };
-}
 
 // W23 — serve docs/99-refactor/_system/design/handoffs/** read-only at
 // /docs-assets/handoffs/** + expose a manifest index at /docs-assets/handoffs-index.
@@ -137,7 +112,6 @@ export default defineConfig(({ mode }) => ({
     react(),
     tailwindcss(),
     mode === 'development' && docsAssetsPlugin(),
-    mode === 'development' && primitivesManifestPlugin(),
   ].filter(Boolean),
   resolve: {
     alias: {

@@ -272,7 +272,7 @@
 
   /* v2 — Charts */
   --chart-pipeline: #c9a84c;                          /* gold — primary series */
-  --chart-accepted: #4ade80;                          /* green-400 */
+  --chart-accepted: #d6ccb4;                          /* dim cream — 1a monochrome cream→gold viz */
   --chart-grid-dasharray: 2 4;
   --chart-anim-duration: 800ms;
   --chart-anim-stagger: 200ms;
@@ -285,6 +285,7 @@
      Supersedes slate-800 CTA / red-700 accent — user reversal 2026-07-14. */
   --cta-primary-bg: #c9a84c;                          /* gold */
   --cta-primary-bg-hover: #d9bc6a;                    /* lighter gold — hover step */
+  --cta-primary-bg-active: #b8973b;                   /* darker gold — active step (1a) */
   --cta-primary-fg: #1a1200;                          /* near-black brown */
   --cta-destructive-bg: #c0392b;                      /* DISC-D red — only solid red allowed */
   --brand-red: #c9a84c;                               /* legacy NAME — now the gold brand accent (links, badges, focus) */

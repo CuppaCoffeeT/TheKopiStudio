@@ -42,10 +42,10 @@ export function ErrorState({
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
     >
-      {/* brand accent dot top-right */}
+      {/* error accent dot top-right — 1a gold discipline: never gold on error surfaces */}
       <span
         aria-hidden
-        className="absolute top-4 right-4 w-2 h-2 rounded-full bg-primary"
+        className="absolute top-4 right-4 w-2 h-2 rounded-full bg-[#E8836F]"
       />
 
       <h1
@@ -61,7 +61,7 @@ export function ErrorState({
       </h1>
 
       <div
-        className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2"
+        className="text-xs uppercase tracking-[0.2em] text-[#E8836F] mb-2"
         style={{ fontFamily: 'var(--font-mono)' }}
       >
         {subhead}
@@ -73,10 +73,10 @@ export function ErrorState({
 
       {(path || requestId) && (
         <div
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border max-w-full mb-7 bg-secondary border-border text-muted-foreground"
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border max-w-full mb-7 bg-[rgba(192,57,43,.15)] border-[rgba(192,57,43,.35)] text-[color:var(--fg-dim)]"
           style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}
         >
-          <span className="text-primary font-medium">×</span>
+          <span className="text-[#E8836F] font-medium">×</span>
           {path && (
             <span
               className="truncate max-w-[280px]"

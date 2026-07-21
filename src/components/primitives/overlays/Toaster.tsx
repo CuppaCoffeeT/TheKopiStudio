@@ -54,7 +54,7 @@ export function AppBaseToast({ variant, title, description, action, cancel, onDi
         'w-[360px] rounded-[10px] p-[12px_14px]',
         'flex gap-3 items-start',
         'backdrop-blur-[16px] backdrop-saturate-[160%]',
-        'bg-card/95',
+        'bg-popover/95',
         'border border-border',
         'shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_rgba(24,24,27,0.08)]',
         'dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_12px_32px_rgba(0,0,0,0.35)]'

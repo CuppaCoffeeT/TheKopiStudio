@@ -72,7 +72,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
             : 'border-border',
           !disabled && !error && 'hover:border-border',
           !error &&
-            'focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/15',
+            'focus-within:border-ring focus-within:outline-2 focus-within:outline-[color:var(--cta-primary-bg)] focus-within:outline-offset-1',
           error &&
             'focus-within:ring-[3px] focus-within:ring-red-700/15 dark:focus-within:ring-red-400/25',
           disabled ? 'bg-secondary opacity-80' : 'bg-card'
@@ -88,7 +88,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
           }}
           className={cn(
             'w-full px-3 py-2.5 bg-transparent outline-none resize-none',
-            'text-[14px] pointer-coarse:text-[16px] leading-[1.5]',
+            'text-[13px] pointer-coarse:text-[16px] leading-[1.5]',
             'text-foreground',
             'placeholder:text-muted-foreground',
             disabled && 'cursor-not-allowed',

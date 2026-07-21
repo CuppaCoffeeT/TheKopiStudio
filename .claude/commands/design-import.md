@@ -189,13 +189,13 @@ Read the `MANIFEST.json` in the snapshot folder containing the staged file. Reso
 | `project/reference/source-index.css` + `colors_and_type.css` | `src/index.css` | Edit (patch `@theme` block) |
 | `project/reference/LOCKED_PICKS.md` | `docs/99-refactor/_system/LOCKED_PICKS.md` | Edit (keep repo-only sections) |
 | `project/reference/W##_*.md` | matching `docs/99-refactor/_system/workflows/W##_*.md` | Edit (keep repo-only sections) |
-| `project/preview/component-<name>.html` | `src/components/primitives/**/<Name>.tsx` | Translate HTML→React via the EDIT protocol in [.claude/rules/universal-components-protocols.md](../rules/universal-components-protocols.md) (not copy) |
+| `project/preview/component-<name>.html` | `src/components/primitives/**/<Name>.tsx` (or wherever the target component lives) | Translate HTML→React as a targeted patch (not copy): re-read the spec, keep the prop API backward-compatible, implement all interaction states |
 | `project/uploads/*.woff2` | `public/fonts/` | Copy |
 
 ### 3. Apply the Edit
 
 - Show diff first. Stop if ambiguous.
-- Follow the EDIT protocol in [.claude/rules/universal-components-protocols.md](../rules/universal-components-protocols.md) for primitives — patch, don't rewrite.
+- Patch shared components, don't rewrite — keep existing prop APIs backward-compatible (grep consumers before any breaking change).
 - Never delete `Errors Encountered` / `What NOT To Try Again` sections from docs.
 - After Edit: update `MANIFEST.json` `status: "promoted"` + `promoted_at: <iso>`.
 
@@ -214,10 +214,9 @@ Read the `MANIFEST.json` in the snapshot folder containing the staged file. Reso
 
 ## Scope
 
-**Belongs**: ingesting a Claude Design handoff (stage) or promoting one staged primitive to `src/` (promote).
+**Belongs**: ingesting a Claude Design handoff (stage) or promoting one staged file to `src/` (promote).
 **Doesn't**: designing in-repo · outbound prompt (→ `/design-prompt`) · direct-to-src imports.
 
 ## Related
 
-- [.claude/rules/universal-components-protocols.md](../rules/universal-components-protocols.md) — EDIT/CREATE protocol for primitive files
 - [/design-prompt](design-prompt.md) — the outbound counterpart

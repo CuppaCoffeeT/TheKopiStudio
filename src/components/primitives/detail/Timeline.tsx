@@ -75,7 +75,7 @@ export function Timeline({ events, variant = 'full', scrollProgress = 0, classNa
                   'rounded-full border-2',
                   compact ? 'w-2.5 h-2.5' : 'w-3.5 h-3.5',
                   passed
-                    ? 'bg-primary border-primary shadow-[0_0_0_3px_rgba(185,28,28,0.10)] dark:shadow-[0_0_0_3px_rgba(248,113,113,0.14)]'
+                    ? 'bg-primary border-primary shadow-[0_0_0_3px_rgba(201,168,76,0.14)]'
                     : 'bg-card border-border'
                 )}
               />
@@ -104,7 +104,7 @@ export function Timeline({ events, variant = 'full', scrollProgress = 0, classNa
                   style={{ fontFamily: 'var(--font-mono)' }}
                 >
                   <span
-                    className="w-3.5 h-3.5 rounded-full inline-flex items-center justify-center text-[8px] font-semibold bg-primary text-primary-foreground"
+                    className="w-3.5 h-3.5 rounded-full inline-flex items-center justify-center text-[8px] font-semibold bg-secondary text-[color:var(--fg-dim)]"
                     style={{ fontFamily: 'var(--font-sans)' }}
                   >
                     {ev.actor.charAt(0)}

@@ -118,7 +118,7 @@ export function RelatedRecordsCard({
                 )}
               >
                 <span
-                  className="w-7 h-7 rounded-full inline-flex items-center justify-center flex-shrink-0 text-[10.5px] font-semibold bg-primary text-primary-foreground"
+                  className="w-7 h-7 rounded-full inline-flex items-center justify-center flex-shrink-0 text-[10.5px] font-semibold bg-secondary text-[color:var(--fg-dim)]"
                   style={{ fontFamily: 'var(--font-sans)' }}
                 >
                   {item.initials ?? '•'}

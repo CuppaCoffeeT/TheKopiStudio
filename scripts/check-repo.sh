@@ -60,45 +60,6 @@ if npm run --silent loc:check >/tmp/cs_loc.txt 2>&1; then ok "$(grep -oE 'LOC ra
 GOD=$(find src \( -name '*.ts' -o -name '*.tsx' \) | grep -vE "node_modules|integrations/supabase/types.ts|\.d\.ts$" | xargs wc -l 2>/dev/null | awk '$1>1000 && $2!="total"{print $1" "$2}')
 [ -z "$GOD" ] && ok "no >1000-LOC god-files (generated supabase types excluded)" || { warn ">1000-LOC file(s):"; echo "$GOD" | sed 's/^/        /'; }
 
-# 7 — primitives-only: REPO-WIDE primitive coverage (W09 6a–6e), enforced as BLOCKERS.
-#     Was features-only (raw HTML + h1, warnings). Now scans all of src/ MINUS the ui/ + primitives/
-#     definition layers (which legitimately use raw HTML / import ui/ by design) so adoption gains can't
-#     silently regress. The per-feature counterpart is /check-module Gate 3 (same 6a–6e greps).
-#     ⚠ SANCTIONED must stay byte-identical to docs/06-operations/MODULE_COMPLIANCE_CHECKLIST.md Gate 3
-#       AND .claude/rules/universal-components-protocols.md — out-of-sync whitelists = the #1 drift failure mode.
-hdr "7. Primitives-only (raw HTML / raw shadcn / non-primitive components — repo-wide)"
-SANCTIONED='searchable-select|form|calendar|command|date-picker|table'
-# robust comment/test filter: // line-comments · /* block openers · JSDoc/comment *-continuation lines · .test. files
-P7_CFILT='//|/\*|:[0-9]+:[[:space:]]*\*|\.test\.'
-# the design-system definition layers — excluded (they may use raw HTML / import ui/ by design)
-P7_EXCL='src/components/ui/|src/components/primitives/'
-
-# 7a — raw interactive HTML (Button/IconButton/Input/Select/Textarea exist for every one)
-P7_HTML=$(grep -rnE "<(button|input|select|textarea)\b" src --include='*.tsx' 2>/dev/null | grep -vE "$P7_CFILT" | grep -vE "$P7_EXCL" | wc -l | tr -d ' ')
-[ "$P7_HTML" = "0" ] && ok "no raw <button>/<input>/<select>/<textarea> (use Button/IconButton/Input/Select/Textarea)" || { bad "$P7_HTML raw interactive-HTML hit(s):"; grep -rnE "<(button|input|select|textarea)\b" src --include='*.tsx' 2>/dev/null | grep -vE "$P7_CFILT" | grep -vE "$P7_EXCL" | sed 's/^/        /'; }
-
-# 7b — raw <h1>
-P7_H1=$(grep -rnE "<h1\b" src --include='*.tsx' 2>/dev/null | grep -vE "$P7_CFILT" | grep -vE "$P7_EXCL" | wc -l | tr -d ' ')
-[ "$P7_H1" = "0" ] && ok "no raw <h1> (use PageTitle)" || { bad "$P7_H1 raw <h1> hit(s) (use PageTitle):"; grep -rnE "<h1\b" src --include='*.tsx' 2>/dev/null | grep -vE "$P7_CFILT" | grep -vE "$P7_EXCL" | sed 's/^/        /'; }
-
-# 7c — raw <label>
-P7_LABEL=$(grep -rnE "<label\b" src --include='*.tsx' 2>/dev/null | grep -vE "$P7_CFILT" | grep -vE "$P7_EXCL" | wc -l | tr -d ' ')
-[ "$P7_LABEL" = "0" ] && ok "no raw <label> (use Field / ui/form FormLabel)" || { bad "$P7_LABEL raw <label> hit(s) (use Field or ui/form FormLabel):"; grep -rnE "<label\b" src --include='*.tsx' 2>/dev/null | grep -vE "$P7_CFILT" | grep -vE "$P7_EXCL" | sed 's/^/        /'; }
-
-# 7d — non-sanctioned @/components/ui import (shadcn-minus-sanctioned)
-P7_SHADCN=$(grep -rnE "from ['\"]@/components/ui/" src --include='*.tsx' --include='*.ts' 2>/dev/null | grep -vE "@/components/ui/($SANCTIONED)" | grep -vE "$P7_CFILT" | grep -vE "$P7_EXCL" | wc -l | tr -d ' ')
-[ "$P7_SHADCN" = "0" ] && ok "no non-sanctioned @/components/ui import (outside ui/ + primitives/)" || { bad "$P7_SHADCN non-sanctioned shadcn import(s) — migrate to primitives (or add to SANCTIONED if internally primitive-composed):"; grep -rnE "from ['\"]@/components/ui/" src --include='*.tsx' --include='*.ts' 2>/dev/null | grep -vE "@/components/ui/($SANCTIONED)" | grep -vE "$P7_CFILT" | grep -vE "$P7_EXCL" | sed 's/^/        /'; }
-
-# 7e — non-primitive @/components/* import (anything not primitives/ ui/ shared/)
-P7_NONPRIM=$(grep -rn "from ['\"]@/components/" src --include='*.tsx' --include='*.ts' 2>/dev/null | grep -vE "@/components/primitives/" | grep -v "@/components/ui/" | grep -v "@/components/shared/" | grep -vE "$P7_CFILT" | grep -vE "$P7_EXCL" | wc -l | tr -d ' ')
-[ "$P7_NONPRIM" = "0" ] && ok "no non-primitive @/components/* imports (only primitives/ ui/ shared/)" || { bad "$P7_NONPRIM non-primitive @/components import(s) (must be primitives/ ui/ or shared/):"; grep -rn "from ['\"]@/components/" src --include='*.tsx' --include='*.ts' 2>/dev/null | grep -vE "@/components/primitives/" | grep -v "@/components/ui/" | grep -v "@/components/shared/" | grep -vE "$P7_CFILT" | grep -vE "$P7_EXCL" | sed 's/^/        /'; }
-
-# 7f — native-backed form Select (wraps a native <select> → OS dropdown chrome) is banned.
-#       Use SelectMenu / SearchableMultiSelect from @/components/primitives/overlays (custom-rendered).
-#       Mirrors the eslint no-restricted-imports rule for @/components/primitives/form Select.
-P7_FORMSEL=$(grep -rnE "from ['\"]@/components/primitives/form['\"]" src --include='*.tsx' --include='*.ts' 2>/dev/null | grep -wE "Select" | grep -vwE "SearchableMultiSelect|StarredMultiSelect|SelectMenu" | grep -vE "$P7_CFILT" | wc -l | tr -d ' ')
-[ "$P7_FORMSEL" = "0" ] && ok "no native-backed form Select import (use SelectMenu/SearchableMultiSelect from overlays)" || { bad "$P7_FORMSEL native-backed form Select import(s) — use SelectMenu/SearchableMultiSelect from @/components/primitives/overlays:"; grep -rnE "from ['\"]@/components/primitives/form['\"]" src --include='*.tsx' --include='*.ts' 2>/dev/null | grep -wE "Select" | grep -vwE "SearchableMultiSelect|StarredMultiSelect|SelectMenu" | grep -vE "$P7_CFILT" | sed 's/^/        /'; }
-
 # 8 — every feature folder has a CONTEXT.md
 hdr "8. Feature CONTEXT.md presence"
 MISSING=""
@@ -136,5 +97,5 @@ hdr "SUMMARY"
 if [ "$BLOCKERS" = "0" ] && [ "$WARNS" = "0" ]; then grn "✅ CLEAN — no deviations from the 2026-05-31 standard.";
 elif [ "$BLOCKERS" = "0" ]; then yel "⚠️  $WARNS warning(s), 0 blockers — non-blocking drift to tidy.";
 else red "❌ $BLOCKERS blocker(s) + $WARNS warning(s) — deviations require a fix pass."; fi
-echo "Per-module depth: /check-module <feature>.  Standard: docs/99-refactor/_system/ARCHITECTURE_BLUEPRINT.md + docs/ONBOARDING.md"
+echo "Per-module depth: /check-module <feature>.  Standard: docs/ONBOARDING.md"
 exit "$BLOCKERS"

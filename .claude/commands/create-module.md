@@ -29,7 +29,7 @@ mkdir -p src/features/$M/{api,components,hooks,pages,lib}
 #   src/features/$M/types.ts     — flat file, placeholder export (re-export generated DB types where possible)
 #   src/features/$M/CONTEXT.md   — feature memory + nav (house CONTEXT.md template, ≤1,600c)
 ```
-`pages/` gets one stub page that renders a `ListPageFrame`/`DetailPageFrame`/`DashboardHeader` per the intended archetype (primitives only — no raw HTML). `api/` is present only where the feature owns data; the others appear as needed but never under different names.
+`pages/` gets one stub page that renders a `ListPageFrame`/`DetailPageFrame`/`DashboardHeader` per the intended archetype (reuse existing shared components — `primitives/`, `ui/`, `shared/`; a new design system from Claude Design will replace the old primitive mandates). `api/` is present only where the feature owns data; the others appear as needed but never under different names.
 
 **Structure rules (hard — `no-stray-domain-components` fails CI otherwise):**
 - `types.ts` is a **flat file**, never a `types/` directory.
@@ -62,7 +62,7 @@ cross join public.modules m where m.path = '<path>';
 Add a lazy route to `src/App.tsx`: `const <Module>Page = lazy(() => import('@/features/<module>/pages/<Module>Page'))` + a `<Route path="<path>" .../>` inside the auth-guarded Suspense tree. Path must match the DB module row.
 
 ### 5. CONTEXT.md
-Populate `src/features/<module>/CONTEXT.md`: purpose, the api/hooks/pages map, which primitives the pages use, the RLS capabilities, and links to the PRD + canonical archetype doc.
+Populate `src/features/<module>/CONTEXT.md`: purpose, the api/hooks/pages map, which shared components the pages use, the RLS capabilities, and links to the PRD + canonical archetype doc.
 
 ## Verify (must pass before declaring scaffold done)
 

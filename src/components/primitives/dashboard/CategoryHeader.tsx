@@ -61,7 +61,7 @@ export function CategoryHeader({
       )}
       <span
         className={cn(
-          'text-[10.5px] font-medium uppercase tracking-[0.12em] transition-colors',
+          'text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors',
           clickable
             ? 'text-muted-foreground group-hover:text-foreground'
             : 'text-muted-foreground'
@@ -88,7 +88,7 @@ export function CategoryHeader({
           className={cn(
             'w-3 h-3 transition-all duration-150',
             clickable
-              ? 'text-muted-foreground group-hover:text-primary'
+              ? 'text-muted-foreground group-hover:text-foreground'
               : 'text-muted-foreground',
             collapsed && '-rotate-90'
           )}

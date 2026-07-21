@@ -51,7 +51,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
           : 'border-border',
         !disabled && !error && 'hover:border-border',
         !error &&
-          'focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/15',
+          'focus-within:border-ring focus-within:outline-2 focus-within:outline-[color:var(--cta-primary-bg)] focus-within:outline-offset-1',
         error &&
           'focus-within:ring-[3px] focus-within:ring-red-700/15 dark:focus-within:ring-red-400/25',
         disabled ? 'bg-secondary opacity-80 cursor-not-allowed' : 'bg-card',

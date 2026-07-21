@@ -114,7 +114,7 @@ export default tseslint.config(
               name: "@/components/primitives/form",
               importNames: ["Select"],
               message:
-                "Native-backed `Select` (OS dropdown chrome) is banned. Use `SelectMenu` or `SearchableMultiSelect` from @/components/primitives/overlays. See .claude/rules/universal-components.md.",
+                "Native-backed `Select` (OS dropdown chrome) is banned. Use `SelectMenu` or `SearchableMultiSelect` from @/components/primitives/overlays.",
             },
           ],
         },

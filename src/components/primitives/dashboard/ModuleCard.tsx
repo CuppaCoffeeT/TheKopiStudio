@@ -87,7 +87,7 @@ export const ModuleCard = forwardRef<HTMLButtonElement, ModuleCardProps>(functio
             <span className="flex-1 min-w-0 truncate text-[13px] font-medium text-foreground">
               {name}
             </span>
-            {starFav && <Star className="w-[13px] h-[13px] text-yellow-500 fill-yellow-500 flex-shrink-0" strokeWidth={1} />}
+            {starFav && <Star className="w-[13px] h-[13px] text-[color:var(--fg-dim)] fill-[color:var(--fg-dim)] flex-shrink-0" strokeWidth={1} />}
             {count != null && <CountBadge count={count} urgent={urgent} compact />}
             <ChevronRight className="w-2.5 h-2.5 text-muted-foreground flex-shrink-0" strokeWidth={1.3} />
           </>
@@ -96,7 +96,7 @@ export const ModuleCard = forwardRef<HTMLButtonElement, ModuleCardProps>(functio
             <div className="flex items-start w-full gap-2.5">
               <Icon className="w-[18px] h-[18px] text-muted-foreground" strokeWidth={1.6} />
               <div className="flex-1" />
-              {starFav && <Star className="w-[13px] h-[13px] text-yellow-500 fill-yellow-500" strokeWidth={1} />}
+              {starFav && <Star className="w-[13px] h-[13px] text-[color:var(--fg-dim)] fill-[color:var(--fg-dim)]" strokeWidth={1} />}
               {/* Reserve space when a pin button will be rendered as a sibling */}
               {pinButtonVisible && <span className="w-3 h-3 flex-shrink-0" aria-hidden />}
               {count != null && <CountBadge count={count} urgent={urgent} />}

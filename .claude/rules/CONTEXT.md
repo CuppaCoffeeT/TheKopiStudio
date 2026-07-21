@@ -1,6 +1,6 @@
 # Rules — Auto-Loaded Pattern Enforcement
 
-14 rule files. Auto-loaded reference patterns (Layer 3) — scoped via `paths:` frontmatter so rules load only when editing matching files.
+15 rule files. Auto-loaded reference patterns (Layer 3) — scoped via `paths:` frontmatter so rules load only when editing matching files.
 
 ## Scope
 

@@ -92,7 +92,7 @@ Stop. User approves plan explicitly before 3.
 
 ### Stage 3 — IMPLEMENT
 
-Per-commit: baseline (tsc + build + browser spot-check) → edit (one logical change) → verify (tsc + build + browser + manifest) → commit → repeat. Follow the primitives-only compliance discipline (`MODULE_COMPLIANCE_CHECKLIST.md`) for UI work. Maintain a test ledger with per-WF before/after checkmarks.
+Per-commit: baseline (tsc + build + browser spot-check) → edit (one logical change) → verify (tsc + build + browser + manifest) → commit → repeat. For UI work, reuse existing shared components (`primitives/`, `ui/`, `shared/`) per `MODULE_COMPLIANCE_CHECKLIST.md` import hygiene — a new design system from Claude Design will replace the old primitive mandates. Maintain a test ledger with per-WF before/after checkmarks.
 
 ### Stage 4 — TEST
 
@@ -100,7 +100,7 @@ Runs inside 3 (one ledger row per commit), not after. Workflow-level tests via `
 
 ### Stage 5 — DEPLOY
 
-Push to main. Capture: DB migrations via Supabase MCP · Python-side deltas flagged for JLCode repo · related docs synced (`DESIGN_CATALOG.md` · `MODULES_MANIFEST.json` · `CONTEXT.md` files) · rollback SHA.
+Push to main. Capture: DB migrations via Supabase MCP · Python-side deltas flagged for JLCode repo · related docs synced (`CONTEXT.md` files) · rollback SHA.
 
 ## Hard rules
 
@@ -115,7 +115,7 @@ Push to main. Capture: DB migrations via Supabase MCP · Python-side deltas flag
 
 **Belongs**: cross-system rethinks · pre-refactor scoping · incident-driven redesigns · first-principles state-model work.
 
-**Doesn't**: routine bug fixes → just fix · approved plans → just execute · single-page primitive migrations → `MODULE_CREATION_SOP` · one-off components → just build.
+**Doesn't**: routine bug fixes → just fix · approved plans → just execute · single-page migrations → `MODULE_CREATION_SOP` · one-off components → just build.
 
 ## Related
 

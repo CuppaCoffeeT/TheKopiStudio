@@ -103,7 +103,7 @@ export function ActivityLogTimeline({
                     'text-[9.5px] font-semibold tracking-wide',
                     e.system
                       ? 'bg-secondary text-muted-foreground'
-                      : 'bg-primary text-primary-foreground'
+                      : 'bg-secondary text-[color:var(--fg-dim)]'
                   )}
                   style={{ fontFamily: 'var(--font-sans)' }}
                   aria-hidden

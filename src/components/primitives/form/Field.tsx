@@ -31,17 +31,17 @@ export function Field({ label, required, hint, error, className, children }: Fie
         <span
           className="inline-flex items-center gap-1 text-muted-foreground uppercase"
           style={{
-            fontFamily: 'var(--font-pixel)',
-            fontSize: 10.5,
+            fontFamily: 'var(--font-sans)',
+            fontSize: 11,
             fontWeight: 600,
-            letterSpacing: '0.08em',
+            letterSpacing: '0.12em',
           }}
         >
           <span>{label}</span>
           {required && (
             <>
               {' '}
-              <span className="text-primary font-semibold">*</span>
+              <span className="text-[#E8836F] font-semibold">*</span>
             </>
           )}
         </span>

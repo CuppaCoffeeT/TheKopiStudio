@@ -39,7 +39,7 @@ export function Progress({
   const pct = Math.min(100, (value / max) * 100);
 
   const fillClass = {
-    neutral: 'bg-slate-800 dark:bg-slate-100',
+    neutral: 'bg-[color:var(--fg-dim)]',
     active: 'bg-primary',
     success: 'bg-green-700 dark:bg-green-400',
     error: 'bg-red-700 dark:bg-red-400',
@@ -49,9 +49,10 @@ export function Progress({
     <div className={cn('flex flex-col gap-1.5 w-full', className)}>
       {label && (
         <div className="flex items-center gap-2">
+          {/* 1a: loading verb label = Georgia italic dim-cream */}
           <span
-            className="uppercase text-muted-foreground"
-            style={{ fontFamily: 'var(--font-pixel)', fontSize: 11, letterSpacing: '0.08em' }}
+            className="italic text-[color:var(--fg-dim)]"
+            style={{ fontFamily: 'Georgia, serif', fontSize: 13 }}
           >
             {label}
           </span>

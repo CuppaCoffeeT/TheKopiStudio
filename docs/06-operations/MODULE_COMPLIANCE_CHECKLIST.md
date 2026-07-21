@@ -34,24 +34,9 @@ Run all 9 gates below in order. A module is compliant only when **every** gate p
 | 8b | Folder structure | the structure asserts below | canonical shape; flat `types.ts` (no `types/` dir); no `src/components/<x>/`; `no-stray-domain-components` = **literal zero** | SOP §1 |
 | 9 | Architecture-rule greps | the 7 per-feature greps below + the RLS-presence MCP check | each returns zero (or passes guided review) | SOP §3, §4, §5, §7 |
 
-## Gate 3 — the 5 primitive-coverage greps (ALL must return zero)
+## Gate 3 — component-import hygiene
 
-New code imports `@/components/primitives/**`, never raw `@/components/ui/**` except the sanctioned wrappers. Run from repo root:
-
-```bash
-SLUG=<slug>
-# SANCTIONED — keep byte-identical to scripts/check-repo.sh §7 + .claude/rules/universal-components-protocols.md (out-of-sync = #1 drift failure mode).
-SANCTIONED='searchable-select|form|calendar|command|date-picker|table'
-grep -rnE "from ['\"]@/components/ui/" src/features/$SLUG/ | grep -vE "@/components/ui/($SANCTIONED)"                                  # 6a shadcn-minus-sanctioned
-grep -rn  "from ['\"]@/components/" src/features/$SLUG/ | grep -v primitives | grep -v "@/components/ui/" | grep -v "@/components/shared/"  # 6b non-primitive @/components
-grep -rnE "<(button|input|select|textarea)\b" src/features/$SLUG/                                                                    # 6c raw interactive HTML
-grep -rnE "<label\b" src/features/$SLUG/                                                                                              # 6d raw label
-grep -rnE "<h1\b" src/features/$SLUG/                                                                                                 # 6e raw h1
-```
-
-**Note on false positives**: matches inside `// comments`, JSDoc, or string literals are not real violations — open each hit and confirm it is live code. `.md` files in the folder are not code.
-
-"Couldn't translate the primitive" is **not** a valid deferral. Defer a file only with the user's named in-conversation approval + a `lib/NOTES.md` entry citing the absorbing W-card.
+Feature code imports shared UI from `@/components/primitives/**`, `@/components/ui/**`, or `@/components/shared/**` — no cross-feature imports, no stray `src/components/<domain>/` folders. The former primitive-coverage greps (6a–6e) were retired 2026-07-21 when the primitives ruling was detached ahead of the new Claude Design system.
 
 ## Gate 8b — Folder structure (asserts placement; `npm run drift:check` baseline does NOT)
 

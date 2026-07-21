@@ -124,7 +124,7 @@ export const EmailSidebar = forwardRef<HTMLElement, EmailSidebarProps>(
                   {isActive && (
                     <span
                       aria-hidden
-                      className="absolute -left-2 top-2 bottom-2 w-[3px] rounded-sm bg-primary"
+                      className="absolute -left-2 top-2 bottom-2 w-[2px] rounded-sm bg-primary"
                     />
                   )}
                   <span className="w-4 h-4">{label.icon}</span>
@@ -269,10 +269,10 @@ export const EmailSidebar = forwardRef<HTMLElement, EmailSidebarProps>(
         <div
           className={cn(
             'flex items-center justify-between px-4 pt-2 pb-1.5',
-            'text-[9.5px] uppercase tracking-[0.08em]',
+            'text-[11px] font-semibold uppercase tracking-[0.14em]',
             'text-muted-foreground',
           )}
-          style={{ fontFamily: 'var(--font-mono)' }}
+          style={{ fontFamily: mono ? 'var(--font-mono)' : 'var(--font-sans)' }}
         >
           <span>{heading}</span>
           {onAction && (
@@ -309,9 +309,9 @@ export const EmailSidebar = forwardRef<HTMLElement, EmailSidebarProps>(
           data-testid={labelDef.testId}
           className={cn(
             'relative flex items-center gap-2.5 h-[30px] px-2 rounded-md',
-            'text-[12.5px]',
+            'text-[13px]',
             'text-muted-foreground',
-            'hover:bg-secondary',
+            'hover:bg-secondary hover:text-[color:var(--fg-dim)]',
             isActive &&
               'bg-secondary text-foreground font-medium',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
@@ -320,7 +320,7 @@ export const EmailSidebar = forwardRef<HTMLElement, EmailSidebarProps>(
           {isActive && (
             <span
               aria-hidden
-              className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-sm bg-primary"
+              className="absolute left-0 top-0 bottom-0 w-[2px] rounded-sm bg-primary"
             />
           )}
           <span

@@ -4,6 +4,7 @@
  * Extracted from AppHeader.tsx (W09 decomposition · ≤200 LOC primitive rule).
  * 2026-07-07 de-AppBase: serif wordmark (cream text on navy), replacing the
  * Geist-Mono lockup + flame. 2026-07-14: text rebranded to "Insurance CRM".
+ * 2026-07-21 (1a Masthead): Georgia 17px cream wordmark, second word gold italic.
  */
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -13,8 +14,8 @@ export function AppHeaderLogo({ mobile = false }: { mobile?: boolean }) {
     <Link
       to="/dashboard"
       className={cn(
-        'inline-flex items-center flex-shrink-0 text-foreground',
-        mobile ? 'text-[17px]' : 'text-[19px]',
+        'inline-flex items-center flex-shrink-0 text-foreground text-[17px]',
+        mobile && 'text-[17px]', // API kept — 1a locks the wordmark at 17px on all viewports
       )}
       aria-label="Insurance CRM — Home"
       style={{
@@ -24,7 +25,8 @@ export function AppHeaderLogo({ mobile = false }: { mobile?: boolean }) {
         letterSpacing: '0.01em',
       }}
     >
-      Insurance CRM
+      Insurance&nbsp;
+      <i style={{ color: 'var(--brand-red)' }}>CRM</i>
     </Link>
   );
 }

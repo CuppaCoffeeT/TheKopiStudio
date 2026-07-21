@@ -49,9 +49,9 @@ export function TableHeader({
     <div
       className={cn(
         'flex items-stretch h-10 px-[14px]',
-        'bg-secondary',
+        'bg-transparent',
         'border-b border-border',
-        'text-[10.5px] font-semibold uppercase tracking-[0.08em]',
+        'text-[10.5px] font-semibold uppercase tracking-[0.1em]',
         'text-muted-foreground',
         className
       )}

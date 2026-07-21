@@ -79,7 +79,7 @@ export function PageShell({
             'sticky bottom-0 left-0 right-0 z-20',
             'px-4 py-2.5 flex items-center gap-2.5',
             'border-t border-border',
-            'bg-white/70 dark:bg-zinc-950/70',
+            'bg-popover/80',
             'backdrop-blur-md backdrop-saturate-150'
           )}
         >

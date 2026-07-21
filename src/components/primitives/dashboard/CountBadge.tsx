@@ -19,12 +19,17 @@ export function CountBadge({ count, urgent = false, compact = false, className }
         'inline-flex items-center justify-center rounded-full font-semibold tabular-nums',
         compact ? 'min-w-[22px] h-[18px] px-1.5' : 'min-w-[24px] h-5 px-1.5',
         'text-[10.5px]',
-        critical
-          ? 'bg-primary text-primary-foreground'
-          : 'bg-secondary text-muted-foreground',
+        !critical && 'bg-secondary text-muted-foreground',
         className
       )}
-      style={{ fontFamily: 'var(--font-mono)' }}
+      style={{
+        fontFamily: 'var(--font-mono)',
+        // Critical = error tone, not gold — 1a gold discipline
+        ...(critical && {
+          color: 'var(--status-rejected-fg, #e8836f)',
+          background: 'var(--status-rejected-bg, rgb(192 57 43 / 0.15))',
+        }),
+      }}
     >
       {count}
     </span>

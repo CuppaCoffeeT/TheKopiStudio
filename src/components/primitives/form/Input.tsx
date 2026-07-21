@@ -46,7 +46,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 ) {
   const heightCls = size === 'lg'
     ? 'h-12 text-[15px] pointer-coarse:text-[16px]'
-    : 'h-10 text-[14px] pointer-coarse:text-[16px]';
+    : 'h-10 text-[13px] pointer-coarse:text-[16px]';
   const hasSlots = !!prefix || !!suffix || !!leadingIcon || !!readOnly;
 
   // Bare mode — no slots. One <input> is the root; Slot/FormControl forwarding works.
@@ -63,7 +63,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             ? 'border-red-700 dark:border-red-400'
             : 'border-border',
           !disabled && !error && 'hover:border-border',
-          !error && 'focus:border-ring focus:ring-[3px] focus:ring-ring/15',
+          !error && 'focus:border-ring focus:outline-2 focus:outline-[color:var(--cta-primary-bg)] focus:outline-offset-1',
           error && 'focus:ring-[3px] focus:ring-red-700/15 dark:focus:ring-red-400/25',
           disabled ? 'bg-secondary opacity-80 cursor-not-allowed' : 'bg-card',
           'text-foreground',
@@ -89,7 +89,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           : 'border-border',
         !disabled && !readOnly && !error && 'hover:border-border',
         !error &&
-          'focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/15',
+          'focus-within:border-ring focus-within:outline-2 focus-within:outline-[color:var(--cta-primary-bg)] focus-within:outline-offset-1',
         error &&
           'focus-within:ring-[3px] focus-within:ring-red-700/15 dark:focus-within:ring-red-400/25',
         disabled || readOnly

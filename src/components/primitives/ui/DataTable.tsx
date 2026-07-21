@@ -107,8 +107,8 @@ function EmptyState({
         )}
       </span>
       <div
-        className="text-[14px] font-medium text-foreground"
-        style={{ fontFamily: 'var(--font-sans)' }}
+        className="text-[15px] italic text-[color:var(--fg-dim)]"
+        style={{ fontFamily: 'Georgia, serif' }}
       >
         {message}
       </div>
@@ -236,10 +236,10 @@ export function DataTable({
       // scan, so the loading skeleton is never scanned (crm load-a11y.spec).
       data-variant={variant}
       className={cn(
-        'rounded-[10px] overflow-hidden',
+        'rounded-xl overflow-hidden',
         'border border-border',
         'bg-card',
-        'shadow-[0_1px_2px_rgba(0,0,0,0.04)]',
+        'shadow-[0_1px_2px_rgba(0,0,0,0.25)]',
         className
       )}
     >

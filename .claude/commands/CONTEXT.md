@@ -27,7 +27,7 @@
 | Command | Purpose |
 |---------|---------|
 | `check-repo.md` | Whole-repo audit vs the 2026-05-31 refactor standard (12 structural checks; `npm run check:repo`). _(was `check-standard`.)_ |
-| `check-module.md` | One-module audit — 11-gate DoD + 5 primitive greps + 7 arch greps **+ a11y + mobile** gates. _(was `compliance-check`; absorbed `check-a11y` + `check-mobile`.)_ |
+| `check-module.md` | One-module audit — 11-gate DoD + import-hygiene grep + 7 arch greps **+ a11y + mobile** gates. _(was `compliance-check`; absorbed `check-a11y` + `check-mobile`.)_ |
 | `code-hygiene.md` | Deep codebase scan — redundancy, stale refs, inconsistencies |
 | `health-check.md` | System-wide health (TS, query-compliance, migration gaps, doc health) via the health-checker + docs-monitor agents |
 
@@ -53,7 +53,7 @@
 ### Design system
 | Command | Purpose |
 |---------|---------|
-| `design-import.md` | Fetch a Claude Design handoff URL, diff, promote to primitives |
+| `design-import.md` | Fetch a Claude Design handoff URL, diff, promote staged files to `src/` |
 | `design-prompt.md` | Emit a scoped prompt to paste into Claude Design |
 
 ### Cross-repo

@@ -45,7 +45,7 @@ Only genuinely user-owned, irreversible calls defer — batched up front (Stage 
    - **Prod DB** (`your-project-ref`): one DB for all runs. Migrations additive + non-overlapping (new tables/columns, namespaced); serialize the schema phase if two runs touch schema. **Top residual risk.**
    - **node_modules** (symlinked in): never `npm install`/`ci` mid-run — read-only scripts only (tsc/build/lint/test). A new dependency is a coordination point — flag it, don't silently install.
    - **Port 8080** (dev/Playwright): distinct `--port`/`PORT` per run, or serialize the build + e2e gate.
-4. **Every phase ends green** on the 8-gate DoD (`docs/06-operations/MODULE_COMPLIANCE_CHECKLIST.md`): tsc 0 · lint ≤ cap · query-compliance · RLS · primitives-only · drift 0 net-new · LOC ratchet · `npm run build` passes.
+4. **Every phase ends green** on the 8-gate DoD (`docs/06-operations/MODULE_COMPLIANCE_CHECKLIST.md`): tsc 0 · lint ≤ cap · query-compliance · RLS · import hygiene · drift 0 net-new · LOC ratchet · `npm run build` passes.
 5. **No hardcoded values, no test/placeholder/mock data, no TODO-left-behind, no commented-out dead code** in delivered work. Every agent prompt states this; the Stage-5 critic hunts violations.
 6. **Update the PRD line-by-line, not just the header.** Per phase: flip `Status:` (⬜→🟡→✅), tick `- [ ]`→`- [x]`, append a dated Execution-Log entry, bump `Last Updated`. Sub-guides + sibling PRDs too — remove deprecated instructions, add newly-required ones.
 7. **DB via Supabase MCP only** (`apply_migration`, project `your-project-ref`) + a matching committed `supabase/migrations/YYYYMMDD_HHMMSS_*.sql`. FKs → `public.users(id)`. RLS on every table (minimal authenticated + capability-gated writes via `has_capability()`). Pin `search_path` on SECURITY DEFINER fns. (Concurrency: see #3.)
@@ -83,7 +83,7 @@ Derive an explicit **sub-phased** plan from the PRD phases (hold it in head / a 
 |---|---|
 | DB + RLS | migration (tables/enums/FKs) · RLS policies (per-role) · types regen |
 | api/ + hooks | one service/concern (paginated `.range()`) · one hook/query+mutation (queryKeys + invalidation) |
-| UI | each page (archetype + primitives) · each component · mobile · dark-mode · a11y |
+| UI | each page (archetype + shared components) · each component · mobile · dark-mode · a11y |
 | Route + registration | App.tsx lazy route · `modules`+`role_modules` rows · module-access wiring |
 | E2E | one spec/story · re-run per role · load+a11y per page (Stage 4) |
 
@@ -92,13 +92,13 @@ Derive an explicit **sub-phased** plan from the PRD phases (hold it in head / a 
 Per PRD phase, **delegate — don't execute.** Pick the shape (§ Two-level model): a workflow when slices fan out (`pipeline` default; a `parallel` barrier only where a stage needs all prior; an adversarial-verify stage on anything subtly-wrong), a single agent when it's one thing. You author the script; agents are leaves. Runtime auto-throttles — pass all the work, it queues. Then:
 
 1. **Collect** each report (what built, files touched, assumptions).
-2. **Verify the gates yourself**: `npx tsc --noEmit` (0) · `npm run lint` · `npm run drift:check` · `npm run build` · `npm run loc:check` · the 5 primitive greps in the feature folder. Fail → spawn a fix agent (hand-patch only one-line obvious).
+2. **Verify the gates yourself**: `npx tsc --noEmit` (0) · `npm run lint` · `npm run drift:check` · `npm run build` · `npm run loc:check` · the import-hygiene grep in the feature folder. Fail → spawn a fix agent (hand-patch only one-line obvious).
 3. **Update the PRD**: phase `Status:` ✅, tick tasks, append an Execution-Log row (date · phase · what landed · agents), bump `Last Updated`.
 4. **Commit** (you, once): `feat(<module>): <phase> — <summary>`.
 5. **Re-read the PRD for what's next.** A new question → stuck protocol, keep going.
 
 **Agent prompt template (every execution agent you spawn includes):**
-> Working dir + branch. 🚫 NO git commit/push/checkout/reset/stash/branch — edit + `git mv` only; orchestrator commits. 🚫 You are a leaf — do NOT spawn or coordinate other agents; do only your slice. Import ONLY from `@/components/primitives/**` (+ sanctioned `ui/**`); no raw shadcn, no raw `<button>/<input>/<select>/<textarea>/<label>/<h1>`. Every `.select()` needs `.range()`/`.limit()`/`.single()`. Dates via `timezoneUtils`. Toasts via `showSuccess`/`showError`. queryKeys factory + invalidate `.all`+`.detail(id)`. RLS/FK rules. **No hardcoded values, no test/placeholder/mock data, no TODOs, no dead code.** Run `npx tsc --noEmit`, report the count. Return a concise plain-text report.
+> Working dir + branch. 🚫 NO git commit/push/checkout/reset/stash/branch — edit + `git mv` only; orchestrator commits. 🚫 You are a leaf — do NOT spawn or coordinate other agents; do only your slice. Reuse existing shared components (`@/components/primitives/**`, `ui/**`, `shared/**`) — a new design system from Claude Design will replace the old primitive mandates. Every `.select()` needs `.range()`/`.limit()`/`.single()`. Dates via `timezoneUtils`. Toasts via `showSuccess`/`showError`. queryKeys factory + invalidate `.all`+`.detail(id)`. RLS/FK rules. **No hardcoded values, no test/placeholder/mock data, no TODOs, no dead code.** Run `npx tsc --noEmit`, report the count. Return a concise plain-text report.
 
 ## Stage 4 — Comprehensive E2E (every button, every role)
 

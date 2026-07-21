@@ -28,7 +28,10 @@ function resolveSize(s: ButtonSize): 'xs' | 'sm' | 'md' | 'lg' {
 
 /**
  * S-shell Button — formal variant + size spec from W08 Session 3.
- * CTA primary = slate-800 (locked 2026-04-19). Destructive = red-700.
+ * CTA primary = gold (--cta-primary-bg, 1a Masthead 2026-07-21): hover
+ * --cta-primary-bg-hover, active --cta-primary-bg-active, text --cta-primary-fg.
+ * Secondary/ghost = cream text, hairline border or none, hover card bg.
+ * Destructive = red-700.
  * Icon variant renders a square button; children are the icon node.
  * All 5 states wired (2026-04-26): cursor-pointer when enabled, hover
  * bg shift, :active darker bg + scale-[0.97] press feedback, disabled
@@ -63,8 +66,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
           iconSize,
           'rounded-md inline-flex items-center justify-center cursor-pointer transition-transform',
           'bg-transparent text-muted-foreground',
-          'hover:bg-secondary',
-          'active:scale-[0.94] active:bg-zinc-300 dark:active:bg-zinc-700',
+          'hover:bg-card hover:text-[color:var(--fg-dim)]',
+          'active:scale-[0.94] active:bg-secondary',
           'disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
           className
@@ -79,15 +82,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   const sizeMap = {
     xs: 'h-8 px-2.5 text-[13px]',
     sm: 'h-7 px-3 text-[12.5px]',
-    md: 'h-9 px-4 text-[13px]',
+    md: 'h-9 px-4 text-[12.5px]',
     lg: 'h-11 px-5 text-sm',
   }[size];
 
   const variantClass = {
-    primary: 'bg-primary hover:bg-slate-900 active:bg-black text-primary-foreground dark:hover:bg-white',
+    primary:
+      'bg-[var(--cta-primary-bg)] hover:bg-[var(--cta-primary-bg-hover)] active:bg-[var(--cta-primary-bg-active)] text-[color:var(--cta-primary-fg)] font-semibold',
     destructive: 'bg-red-700 hover:bg-red-800 active:bg-red-900 text-white',
-    ghost: 'bg-transparent hover:bg-secondary active:bg-zinc-300 dark:active:bg-zinc-700 text-muted-foreground',
-    outline: 'bg-transparent hover:bg-secondary active:bg-zinc-100 dark:active:bg-zinc-800 text-muted-foreground border border-border',
+    ghost: 'bg-transparent hover:bg-card active:bg-secondary text-[color:var(--fg-dim)]',
+    outline: 'bg-transparent hover:bg-card active:bg-secondary text-[color:var(--fg-dim)] border border-border',
   }[variant];
 
   return (
@@ -99,7 +103,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       className={cn(
         sizeMap,
         variantClass,
-        'rounded-md inline-flex items-center gap-2 font-medium whitespace-nowrap cursor-pointer transition-transform',
+        'rounded-lg inline-flex items-center gap-2 font-medium whitespace-nowrap cursor-pointer transition-transform',
         'active:scale-[0.97]',
         'disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',

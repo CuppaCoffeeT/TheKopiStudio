@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
+import { chartSeriesColor } from './ChartShell';
 
 /**
  * ChartTooltip — glass popover (zinc-10/80% + backdrop-blur). Title + key-value rows in Geist Mono.
@@ -14,7 +15,8 @@ import { cn } from '@/lib/utils';
 export interface ChartTooltipRow {
   label: React.ReactNode;
   value: React.ReactNode;
-  color: string;
+  /** Optional — defaults to the monochrome cream→gold palette by row index. */
+  color?: string;
 }
 
 interface ChartTooltipProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -30,18 +32,24 @@ export const ChartTooltip = forwardRef<HTMLDivElement, ChartTooltipProps>(functi
     <div
       ref={ref}
       className={cn(
-        'rounded-lg border shadow-2xl',
-        'border-white/10 bg-zinc-900/90 text-zinc-50 backdrop-blur-md backdrop-saturate-150',
-        'dark:bg-zinc-950/85',
+        'rounded-lg border shadow-2xl backdrop-blur-md backdrop-saturate-150',
         className
       )}
-      style={{ minWidth: 180, padding: '10px 12px', fontFamily: 'var(--font-sans)', ...style }}
+      style={{
+        minWidth: 180,
+        padding: '10px 12px',
+        fontFamily: 'var(--font-sans)',
+        borderColor: 'var(--border-soft)',
+        background: 'rgba(24, 38, 56, 0.92)', // --surface-subtle @ 92%
+        color: 'var(--fg)',
+        ...style,
+      }}
       {...props}
     >
       {title && (
         <div
-          className="mb-1.5 text-[10.5px] uppercase tracking-wider text-zinc-400"
-          style={{ fontFamily: 'var(--font-mono)' }}
+          className="mb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.1em]"
+          style={{ fontFamily: 'var(--font-sans)', color: 'var(--fg-muted)' }}
         >
           {title}
         </div>
@@ -51,14 +59,14 @@ export const ChartTooltip = forwardRef<HTMLDivElement, ChartTooltipProps>(functi
           <div key={i} className="flex items-center gap-2">
             <span
               className="flex-shrink-0 rounded-sm"
-              style={{ width: 8, height: 8, background: r.color }}
+              style={{ width: 8, height: 8, background: r.color ?? chartSeriesColor(i) }}
             />
-            <span className="flex-1 whitespace-nowrap text-[12px] text-zinc-200">
+            <span className="flex-1 whitespace-nowrap text-[12px]" style={{ color: 'var(--fg-dim)' }}>
               {r.label}
             </span>
             <span
-              className="text-[12px] font-medium tabular-nums text-zinc-50"
-              style={{ fontFamily: 'var(--font-mono)' }}
+              className="text-[12px] font-medium tabular-nums"
+              style={{ fontFamily: 'var(--font-mono)', color: 'var(--fg)' }}
             >
               {r.value}
             </span>

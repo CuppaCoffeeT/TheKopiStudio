@@ -11,6 +11,24 @@ import { cn } from '@/lib/utils';
  * Locked: canvas height defaults to 280 · header divider + footer divider use zinc-200/800.
  */
 
+/**
+ * 1a Masthead monochrome cream→gold series palette (2026-07-21).
+ * Primary gold · secondary dim cream · further series step down cream opacity.
+ * No green/blue/purple categoricals inside charts.
+ */
+export const CHART_SERIES_PALETTE = [
+  'var(--chart-pipeline, #C9A84C)', // gold — primary series
+  'var(--chart-accepted, #D6CCB4)', // dim cream — second series
+  'rgba(240, 234, 214, 0.55)',      // cream @ 55%
+  'rgba(240, 234, 214, 0.35)',      // cream @ 35%
+  'rgba(240, 234, 214, 0.2)',       // cream @ 20%
+] as const;
+
+/** Series color by index — clamps to the last (faintest) cream step. */
+export function chartSeriesColor(index: number): string {
+  return CHART_SERIES_PALETTE[Math.min(Math.max(index, 0), CHART_SERIES_PALETTE.length - 1)];
+}
+
 interface ChartShellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   title: React.ReactNode;
   subtitle?: React.ReactNode;
@@ -46,7 +64,8 @@ export const ChartShell = forwardRef<HTMLDivElement, ChartShellProps>(function C
       >
         <div className="min-w-0 flex-1">
           <div
-            className="text-[15px] font-semibold tracking-tight text-foreground"
+            className="text-[18px] text-foreground"
+            style={{ fontFamily: 'Georgia, serif' }}
           >
             {title}
           </div>
@@ -163,8 +182,12 @@ export function GridLines({ count = 4, height }: GridLinesProps) {
         return (
           <span
             key={i}
-            className="absolute left-0 right-0 bg-border"
-            style={{ top: y, height: 1 }}
+            className="absolute left-0 right-0"
+            style={{
+              top: y,
+              height: 0,
+              borderTop: '1px dashed var(--border-soft)',
+            }}
           />
         );
       })}

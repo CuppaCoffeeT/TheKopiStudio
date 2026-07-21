@@ -46,6 +46,8 @@ interface KpiTileProps {
   animate?: boolean;
   /** Optional sparkline slot — usually <AreaChart> from charts primitives. */
   sparkline?: ReactNode;
+  /** Optional corner index numeral (e.g. "01") — Georgia 15px gold, per 1a Masthead spec. */
+  index?: string;
   className?: string;
   onClick?: () => void;
   /** Forwarded as `data-testid` on the KpiTile root element. */
@@ -73,6 +75,7 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
     compact = false,
     animate = true,
     sparkline,
+    index,
     className,
     onClick,
     testId,
@@ -117,8 +120,8 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
       {alert && (
         <span
           aria-hidden
-          className="absolute top-3 left-3 h-1.5 w-1.5 rounded-full bg-primary"
-          style={{ boxShadow: '0 0 0 3px #fef2f2' }}
+          className="absolute top-3 left-3 h-1.5 w-1.5 rounded-full"
+          style={{ background: 'var(--delta-negative-fg, #e8836f)' }}
         />
       )}
 
@@ -131,21 +134,31 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
         )}
       >
         {Icon && <Icon className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />}
-        <span className="flex-1 min-w-0 truncate text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+        <span className="flex-1 min-w-0 truncate text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
           {label}
         </span>
         {delta && <DeltaBadge {...delta} />}
+        {index && (
+          <span
+            aria-hidden
+            className="flex-shrink-0 text-[15px] leading-none"
+            style={{ fontFamily: 'Georgia, serif', color: 'var(--brand-red)' }}
+          >
+            {index}
+          </span>
+        )}
       </div>
 
       {/* Row 2: value */}
       <div
         className={cn(
-          'font-mono font-bold tracking-tight tabular-nums text-foreground leading-[1.05]',
-          compact ? 'text-[22px]' : 'text-[32px] mb-1.5',
+          'tabular-nums leading-[1.05]',
+          compact ? 'text-[22px]' : 'text-[30px] mb-1.5',
         )}
+        style={{ fontFamily: 'Georgia, serif', color: 'var(--fg)' }}
       >
         {prefix && (
-          <span className="mr-1 font-medium text-muted-foreground">{prefix}</span>
+          <span className="mr-1 text-[14px]" style={{ color: 'var(--fg-dim)' }}>{prefix}</span>
         )}
         {animate ? (
           <NumberTicker value={value} decimalPlaces={decimals} format={formatValue} />
@@ -153,7 +166,7 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
           formatValue(value)
         )}
         {suffix && (
-          <span className="ml-0.5 font-medium text-muted-foreground">{suffix}</span>
+          <span className="ml-1 text-[14px]" style={{ color: 'var(--fg-dim)' }}>{suffix}</span>
         )}
       </div>
 

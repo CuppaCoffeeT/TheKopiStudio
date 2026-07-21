@@ -39,7 +39,7 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
           'bg-[var(--surface)] border-[color:var(--border-soft)] text-[color:var(--fg-muted)]',
           'hover:bg-[color:var(--row-hover)] hover:text-[color:var(--fg)]',
           'disabled:opacity-50 disabled:cursor-default',
-          'focus-visible:outline-2 focus-visible:outline-[color:var(--brand-red)] focus-visible:outline-offset-2',
+          'focus-visible:outline-2 focus-visible:outline-[color:var(--cta-primary-bg)] focus-visible:outline-offset-2',
           SIZE_CLASSES[size],
           className,
         )}

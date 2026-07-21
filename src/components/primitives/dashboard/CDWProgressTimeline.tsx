@@ -86,17 +86,18 @@ function deriveState(step: CDWProgressStep): StepState {
 
 /* ─── Locked status tokens — Tailwind palette, no raw hex ─────────────── */
 
+/* 1a Masthead status tones: complete = green tint · in-progress = gold tint
+ * (gold sanctioned for in-progress badges) · pending = quiet secondary. */
 const CELL_BG: Record<StepState, string> = {
-  completed: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300',
-  ongoing:   'bg-amber-100   text-amber-800   dark:bg-amber-900/30   dark:text-amber-300',
+  completed: 'bg-[color:var(--status-accepted-bg)] text-[color:var(--status-accepted-fg)]',
+  ongoing:   'bg-[rgb(201_168_76_/_0.14)] text-[color:var(--brand-red)]',
   pending:   'bg-secondary text-muted-foreground',
 };
 
-/** Date-line colour — one step softer than the label but still WCAG AA on
- *  the cell bg (label = 800, date = 700; both verified via axe-playwright). */
+/** Date-line colour — one step softer than the label but still legible on the tint. */
 const DATE_FG: Record<StepState, string> = {
-  completed: 'text-emerald-700 dark:text-emerald-400',
-  ongoing:   'text-amber-700   dark:text-amber-400',
+  completed: 'text-[color:var(--status-accepted-fg)]',
+  ongoing:   'text-[color:var(--brand-red)]',
   pending:   'text-muted-foreground',
 };
 

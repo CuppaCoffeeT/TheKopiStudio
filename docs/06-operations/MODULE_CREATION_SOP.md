@@ -8,11 +8,11 @@
 
 ## Overview
 
-Authoritative router for building a NEW module end-to-end (archetype → scaffold → DB → RBAC → queries → primitives → cross-cutting → docs). To migrate an existing page to primitive shape, follow this SOP + the [MODULE_COMPLIANCE_CHECKLIST.md](./MODULE_COMPLIANCE_CHECKLIST.md) audit; to **audit/verify** any module (new or existing) run the same checklist; this SOP is the build guide for net-new domains. Comprehensive reference — read top-to-bottom once, then use the checklist per build.
+Authoritative router for building a NEW module end-to-end (archetype → scaffold → DB → RBAC → queries → components → cross-cutting → docs). To rework an existing page, follow this SOP + the [MODULE_COMPLIANCE_CHECKLIST.md](./MODULE_COMPLIANCE_CHECKLIST.md) audit; to **audit/verify** any module (new or existing) run the same checklist; this SOP is the build guide for net-new domains. Comprehensive reference — read top-to-bottom once, then use the checklist per build.
 
 ## Pre-flight (read before writing code)
 
-[src/CONTEXT.md](../../src/CONTEXT.md) · [ARCHETYPES.md](../01-system-architecture/design-system/ARCHETYPES.md) · [universal-components.md](../../.claude/rules/universal-components.md) · [CANONICAL_LIST_TABLE_PATTERN.md](../01-system-architecture/canonical-page-patterns/CANONICAL_LIST_TABLE_PATTERN.md) · [TOKEN_BUDGET.md](../99-meta/TOKEN_BUDGET.md).
+[src/CONTEXT.md](../../src/CONTEXT.md) · [ARCHETYPES.md](../01-system-architecture/design-system/ARCHETYPES.md) · [CANONICAL_LIST_TABLE_PATTERN.md](../01-system-architecture/canonical-page-patterns/CANONICAL_LIST_TABLE_PATTERN.md) · [TOKEN_BUDGET.md](../99-meta/TOKEN_BUDGET.md).
 
 ## Step 1: Pick your archetype
 
@@ -95,11 +95,11 @@ Build order keys → service → hooks → page. [react-query.md](../../.claude/
 
 ## Step 6: Components — 4-tier system
 
-**Decision (top-down, stop at first match)**: 1) primitive covers it → `@/components/primitives/<group>`; 2) new reusable + design-spec → build a primitive (`/design-prompt` first); 3) 2+ features → `src/components/shared/<domain>/`; 4) one feature → `features/<x>/components/`; 5) shadcn base / sanctioned wrapper → `@/components/ui/`. **Cardinal rule: new code imports `primitives/**`, never `ui/**`** except the sanctioned list. Full Need→Import matrix: [universal-components.md](../../.claude/rules/universal-components.md) · inventory [primitives/CONTEXT.md](../../src/components/primitives/CONTEXT.md).
+**Decision (top-down, stop at first match)**: 1) primitive covers it → `@/components/primitives/<group>`; 2) new reusable + design-spec → build a primitive (`/design-prompt` first); 3) 2+ features → `src/components/shared/<domain>/`; 4) one feature → `features/<x>/components/`; 5) shadcn base / sanctioned wrapper → `@/components/ui/`. **Reuse existing shared components (`primitives/`, `ui/`, `shared/`)** — a new design system from Claude Design will replace the old primitive mandates. Inventory: [primitives/CONTEXT.md](../../src/components/primitives/CONTEXT.md).
 
 Key imports: `Button`/`Badge`/`Card`/`PageTitle`/`PageDescription` (shell) · `Input`/`Select`/`Textarea`/`Field`/`DatePicker`/`FileUpload` (form) · `Modal`/`DestructiveConfirmDialog`/`DrawerRoot`/`Alert`/`SearchableMultiSelect`/`Tabs` (overlays) · `DataTable` (ui) · `KpiTile` (dashboard) · `showSuccess`/`showError`. **Page frames**: LIST→`ListPageFrame` (ui); DETAIL→`DetailPageFrame` (detail); TOOL/SETTINGS/custom→`AppHeaderShell` (shell). Never `DashboardHeader` in new code; all frames internalize chrome via `useViewAs()`/`useNotificationsBell()`.
 
-**The 5 forbidden greps must ALL return zero before close** — the canonical grep block + false-positive notes live in [MODULE_COMPLIANCE_CHECKLIST.md](./MODULE_COMPLIANCE_CHECKLIST.md) gate 3. "Couldn't translate the primitive" is NOT a valid deferral; defer a file ONLY with the user's named in-conversation approval + `lib/NOTES.md` entry. Sanctioned exceptions + 5-step edit protocol: [universal-components-protocols.md](../../.claude/rules/universal-components-protocols.md).
+**Import hygiene must be clean before close** — shared UI imported only from `primitives/`, `ui/`, or `shared/`; no cross-feature or stray-domain imports. See [MODULE_COMPLIANCE_CHECKLIST.md](./MODULE_COMPLIANCE_CHECKLIST.md) gate 3.
 
 ## Step 7: Cross-cutting rules
 
@@ -122,7 +122,7 @@ Ceilings (`wc -c`): Feature CONTEXT 1,600 · Category CONTEXT 2,400 · Guide/SOP
 
 ## Step 9: Verify (Definition of Done)
 
-Run the **9-gate audit** in [MODULE_COMPLIANCE_CHECKLIST.md](./MODULE_COMPLIANCE_CHECKLIST.md): tsc · lint · the 5 primitive greps · build · @p0 · docs · decisions · drift · **Gate 9 architecture-rule greps** (toast · roles · date-fns · query-bounds · URL-state · dark-mode · mobile-vh + the RLS-presence Supabase-MCP check — these enforce Steps 3/4/5/7). **ALL must pass.** Any fail → write `## Unfinished` (gate · why · tried · unblock) in `lib/NOTES.md` and STOP. See [MODULE_COMPLIANCE_CHECKLIST.md](./MODULE_COMPLIANCE_CHECKLIST.md) — the audit tool for any existing module, not just new ones.
+Run the **9-gate audit** in [MODULE_COMPLIANCE_CHECKLIST.md](./MODULE_COMPLIANCE_CHECKLIST.md): tsc · lint · import hygiene · build · @p0 · docs · decisions · drift · **Gate 9 architecture-rule greps** (toast · roles · date-fns · query-bounds · URL-state · dark-mode · mobile-vh + the RLS-presence Supabase-MCP check — these enforce Steps 3/4/5/7). **ALL must pass.** Any fail → write `## Unfinished` (gate · why · tried · unblock) in `lib/NOTES.md` and STOP. See [MODULE_COMPLIANCE_CHECKLIST.md](./MODULE_COMPLIANCE_CHECKLIST.md) — the audit tool for any existing module, not just new ones.
 
 ## Step 10: Deleting a module
 

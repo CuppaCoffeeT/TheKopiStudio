@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
+import { chartSeriesColor } from './ChartShell';
 
 /**
  * HBarChart — horizontal bar chart. Avatar prefix per row · ranked lists / engineer workload.
@@ -10,9 +11,6 @@ import { cn } from '@/lib/utils';
  *
  * Locked: 22px avatar · 140px label · 56px trailing value cell · Geist Mono tabular values.
  */
-
-const FALLBACK_LIGHT = '#1e293b';
-const FALLBACK_DARK = '#e2e8f0';
 
 export interface HBarRow {
   label: React.ReactNode;
@@ -62,17 +60,10 @@ export const HBarChart = forwardRef<HTMLDivElement, HBarChartProps>(function HBa
             </span>
             <div className="relative h-4 flex-1 overflow-hidden rounded bg-secondary">
               <div
-                className="absolute inset-y-0 left-0 rounded dark:hidden"
+                className="absolute inset-y-0 left-0 rounded"
                 style={{
                   width: `${pct}%`,
-                  background: r.color || FALLBACK_LIGHT,
-                }}
-              />
-              <div
-                className="absolute inset-y-0 left-0 hidden rounded dark:block"
-                style={{
-                  width: `${pct}%`,
-                  background: r.color || FALLBACK_DARK,
+                  background: r.color || chartSeriesColor(0),
                 }}
               />
             </div>

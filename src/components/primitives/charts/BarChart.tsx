@@ -1,6 +1,6 @@
 import { forwardRef, useId } from 'react';
 import { cn } from '@/lib/utils';
-import { AxisY, AxisX, GridLines } from './ChartShell';
+import { AxisY, AxisX, GridLines, chartSeriesColor } from './ChartShell';
 
 /**
  * BarChart — grouped + stacked modes. Vertical bars with 200ms stagger-in motion.
@@ -14,7 +14,8 @@ import { AxisY, AxisX, GridLines } from './ChartShell';
 
 export interface BarSeries {
   name: string;
-  color: string;
+  /** Optional — defaults to the monochrome cream→gold palette by series index. */
+  color?: string;
   points: number[];
 }
 
@@ -105,7 +106,7 @@ export const BarChart = forwardRef<HTMLDivElement, BarChartProps>(function BarCh
                         style={{
                           bottom,
                           height: Math.max(0, h - 1),
-                          background: s.color,
+                          background: s.color ?? chartSeriesColor(i),
                           borderTopLeftRadius: i === series.length - 1 ? 3 : 0,
                           borderTopRightRadius: i === series.length - 1 ? 3 : 0,
                           animationDelay: `${j * 40}ms`,

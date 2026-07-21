@@ -1,6 +1,6 @@
 import { forwardRef, useId } from 'react';
 import { cn } from '@/lib/utils';
-import { AxisY, AxisX, GridLines } from './ChartShell';
+import { AxisY, AxisX, GridLines, chartSeriesColor } from './ChartShell';
 
 /**
  * AreaChart — stacked + single-series modes. SVG area + line path.
@@ -15,7 +15,8 @@ import { AxisY, AxisX, GridLines } from './ChartShell';
 
 export interface AreaSeries {
   name: string;
-  color: string;
+  /** Optional — defaults to the monochrome cream→gold palette by series index. */
+  color?: string;
   points: number[];
 }
 
@@ -120,7 +121,7 @@ export const AreaChart = forwardRef<HTMLDivElement, AreaChartProps>(function Are
                 <path
                   key={`f-${idx}`}
                   d={`M ${top} L ${bot} Z`}
-                  fill={s.color}
+                  fill={s.color ?? chartSeriesColor(idx)}
                   className={`area-fill-${uid}`}
                   style={{ ['--to' as string]: toOp } as React.CSSProperties}
                 />
@@ -135,7 +136,7 @@ export const AreaChart = forwardRef<HTMLDivElement, AreaChartProps>(function Are
                   key={`l-${idx}`}
                   d={d}
                   fill="none"
-                  stroke={s.color}
+                  stroke={s.color ?? chartSeriesColor(idx)}
                   strokeWidth={1.8}
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -153,7 +154,7 @@ export const AreaChart = forwardRef<HTMLDivElement, AreaChartProps>(function Are
                   cx={px(n - 1)}
                   cy={py(v)}
                   r={3}
-                  fill={s.color}
+                  fill={s.color ?? chartSeriesColor(idx)}
                   className={`area-fill-${uid}`}
                   style={{ ['--to' as string]: 1 } as React.CSSProperties}
                 />

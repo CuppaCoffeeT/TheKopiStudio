@@ -17,7 +17,7 @@ Decides PRD shape, gates, reference template:
 | **bugfix** | one defect, full root-cause + regression | reproduce → root-cause → fix → regression-test → doc. Failing-test-first |
 | **idea** | vague; scope unknown | run [/scope-first](./scope-first.md) inline (brain-dump → research → 2-3 options), settle on a type above, write that PRD |
 
-Single existing-page primitive migration → follow `MODULE_CREATION_SOP`, not a PRD. Pure per-module audit → `/check-module`.
+Single existing-page rework → follow `MODULE_CREATION_SOP`, not a PRD. Pure per-module audit → `/check-module`.
 
 ## The /prd-execute contract (every PRD keeps these — load-bearing)
 

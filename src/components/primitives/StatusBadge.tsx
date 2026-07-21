@@ -45,7 +45,7 @@ export function StatusBadge({ variant, children, className }: StatusBadgeProps) 
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border whitespace-nowrap capitalize',
+        'inline-flex items-center gap-1.5 px-2.5 py-[3px] rounded-full text-[11.5px] font-medium border whitespace-nowrap capitalize',
         STYLE_BY_VARIANT[variant],
         className,
       )}

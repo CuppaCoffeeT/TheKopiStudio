@@ -32,7 +32,7 @@ export const DrawerContent = ({
       className={cn(
         'fixed left-0 right-0 bottom-0 z-50',
         'rounded-t-2xl overflow-hidden',
-        'bg-card',
+        'bg-popover',
         'border-t border-x border-border',
         'shadow-[0_-12px_40px_rgba(24,24,27,0.12)]',
         'dark:shadow-[0_-12px_40px_rgba(0,0,0,0.45)]',
@@ -92,7 +92,7 @@ export const DrawerHeader = ({
 );
 
 export const DrawerFooter = ({ children }: { children: React.ReactNode }) => (
-  <div className="px-4.5 py-3.5 border-t border-border flex gap-2.5 items-center bg-card">
+  <div className="px-4.5 py-3.5 border-t border-border flex gap-2.5 items-center bg-popover">
     {children}
   </div>
 );

@@ -70,7 +70,7 @@ export function AppHeaderUserMenu({
           style={{ fontFamily: 'var(--font-sans)' }}
         >
           <span
-            className="w-6 h-6 rounded-full inline-flex items-center justify-center font-semibold text-[11px] bg-primary text-primary-foreground"
+            className="w-6 h-6 rounded-full inline-flex items-center justify-center font-semibold text-[11px] bg-secondary text-foreground border border-[color:var(--border-soft)]"
             style={{ letterSpacing: '0.02em' }}
           >
             {initial}

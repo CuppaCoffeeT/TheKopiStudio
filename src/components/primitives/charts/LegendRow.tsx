@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import { chartSeriesColor } from './ChartShell';
 
 /**
  * LegendRow — color dot + label + optional value, horizontal wrap.
@@ -12,7 +13,8 @@ import { cn } from '@/lib/utils';
 
 export interface LegendItem {
   label: React.ReactNode;
-  color: string;
+  /** Optional — defaults to the monochrome cream→gold palette by item index. */
+  color?: string;
   value?: React.ReactNode;
 }
 
@@ -34,7 +36,7 @@ export function LegendRow({ items, className, ...props }: LegendRowProps) {
         >
           <span
             className="inline-block flex-shrink-0 rounded-sm"
-            style={{ width: 8, height: 8, background: it.color }}
+            style={{ width: 8, height: 8, background: it.color ?? chartSeriesColor(i) }}
           />
           <span className="text-muted-foreground">{it.label}</span>
           {it.value != null && (

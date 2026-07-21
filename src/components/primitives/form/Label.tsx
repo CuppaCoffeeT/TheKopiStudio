@@ -31,10 +31,10 @@ export const Label = forwardRef<HTMLLabelElement, LabelProps>(function Label(
           className,
         )}
         style={{
-          fontFamily: 'var(--font-pixel)',
-          fontSize: 10.5,
+          fontFamily: 'var(--font-sans)',
+          fontSize: 11,
           fontWeight: 600,
-          letterSpacing: '0.08em',
+          letterSpacing: '0.12em',
         }}
         {...props}
       >

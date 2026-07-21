@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><meta name="design_doc_mode" content="canvas"><style>body{margin:0;background:#080f18;font-family:system-ui,sans-serif}a{color:#C9A84C;text-decoration:none}a:hover{color:#D9BC6A}.dv-turn{padding:40px 44px 32px;scroll-margin-top:16px;background:#080f18}.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 8px}.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#C9A84C;color:#1A1200;border-radius:4px;text-decoration:none}.dv-tname{font:600 13px/1.2 system-ui;color:#F0EAD6}.dv-intro{max-width:820px;font:12.5px/1.6 system-ui;color:#8A8070;margin:0 0 26px}.dv-opts{display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start}.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(201,168,76,.15);color:#C9A84C;border-radius:5px;text-decoration:none}.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11.5px/1.4 system-ui;color:#8A8070;max-width:1180px}.dv-olabel b{color:#F0EAD6;font-weight:600}.dv-card{width:1180px;background:#0D1B2A;border:1px solid #2E3D4D;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,.5);overflow:hidden}.dv-pg{font:600 10px ui-monospace,Menlo,monospace;color:#8A8070;letter-spacing:.08em;text-transform:uppercase;margin:14px 0 6px}.dv-opt:target .dv-oid{background:#C9A84C;color:#1A1200}.dv-next{margin:26px 0 0;font:12px/1.6 system-ui;color:#8A8070}</style></helmet>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Three directions on the Editorial navy/gold system</span></div>
+<p class="dv-intro"><b style="color:#D6CCB4">Assumptions:</b> tokens frozen from LOCKED_PICKS (page #0D1B2A → card #12202F → modal #182638, gold #C9A84C only accent, Georgia display). Each direction answers the open gaps differently — type scale, gold discipline, viz palette, empty/error states, and one signature moment. Detail pages alternate: <a class="dv-oid" href="#1a">1a</a> shows a CRM client dossier, <a class="dv-oid" href="#1b">1b</a> a prospect-profiler result, <a class="dv-oid" href="#1c">1c</a> a CRM client with report generation.</p>
+<div class="dv-opts">
+
+<!-- ============ 1a MASTHEAD ============ -->
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a><span><b>Masthead</b> — broadsheet editorial. Gold at its most disciplined: CTA + focus + index numerals only. Hairline rules do the layout work; viz is monochrome cream→gold. Signature: dateline greeting masthead.</span></div>
+
+<div class="dv-pg">Dashboard</div>
+<div class="dv-card" style="display:flex;min-height:640px">
+  <div style="width:200px;background:#0D1B2A;border-right:1px solid #2E3D4D;padding:22px 0;display:flex;flex-direction:column;gap:2px;flex:none">
+    <div style="font-family:Georgia,serif;font-size:17px;color:#F0EAD6;padding:0 22px 18px;letter-spacing:.01em">Advisor <i style="color:#C9A84C">Suite</i></div>
+    <div style="padding:9px 22px;font-size:13px;color:#F0EAD6;border-left:2px solid #C9A84C;background:#12202F">Overview</div>
+    <div style="padding:9px 22px;font-size:13px;color:#8A8070;border-left:2px solid transparent" style-hover="color:#D6CCB4;background:#12202F">Prospect Profiler</div>
+    <div style="padding:9px 22px;font-size:13px;color:#8A8070;border-left:2px solid transparent" style-hover="color:#D6CCB4;background:#12202F">Clients (CRM)</div>
+    <div style="padding:9px 22px;font-size:13px;color:#4A4536;border-left:2px solid transparent">+ 3 modules soon</div>
+  </div>
+  <div style="flex:1;padding:34px 40px">
+    <div style="border-bottom:1px solid #2E3D4D;padding-bottom:22px;margin-bottom:26px">
+      <div style="font:600 11px system-ui;letter-spacing:.14em;text-transform:uppercase;color:#8A8070">Tuesday · 21 July 2026 · 4 reviews due this week</div>
+      <div style="font-family:Georgia,serif;font-size:34px;color:#F0EAD6;margin-top:8px">Good morning, Rachel.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:26px">
+      <div style="background:#12202F;border:1px solid #2E3D4D;border-radius:12px;padding:20px 22px;box-shadow:0 1px 2px rgba(0,0,0,.25)" style-hover="box-shadow:0 4px 16px rgba(0,0,0,.35)">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:600 11px system-ui;letter-spacing:.12em;text-transform:uppercase;color:#8A8070">Prospect Profiler</span><span style="font-family:Georgia,serif;font-size:15px;color:#C9A84C">01</span></div>
+        <div style="font-family:Georgia,serif;font-size:30px;color:#F0EAD6;margin:10px 0 2px">12 <span style="font-size:14px;color:#D6CCB4">profiles this month</span></div>
+        <div style="font-size:12.5px;color:#8A8070">3 in progress · last: Wei Ling T., step 4 of 7</div>
+      </div>
+      <div style="background:#12202F;border:1px solid #2E3D4D;border-radius:12px;padding:20px 22px;box-shadow:0 1px 2px rgba(0,0,0,.25)" style-hover="box-shadow:0 4px 16px rgba(0,0,0,.35)">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:600 11px system-ui;letter-spacing:.12em;text-transform:uppercase;color:#8A8070">Clients · CRM</span><span style="font-family:Georgia,serif;font-size:15px;color:#C9A84C">02</span></div>
+        <div style="font-family:Georgia,serif;font-size:30px;color:#F0EAD6;margin:10px 0 2px">86 <span style="font-size:14px;color:#D6CCB4">clients</span></div>
+        <div style="font-size:12.5px;color:#8A8070">4 reviews due · 2 reports pending generation</div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #2E3D4D;padding-bottom:10px">
+      <span style="font-family:Georgia,serif;font-size:18px;color:#F0EAD6">Latest additions</span>
+      <button style="background:#C9A84C;color:#1A1200;border:none;border-radius:8px;padding:8px 16px;font:600 12.5px system-ui;cursor:pointer" style-hover="background:#D9BC6A" style-active="background:#B8973B" style-focus="outline:2px solid #C9A84C;outline-offset:2px">+ New client</button>
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead><tr style="color:#8A8070;text-align:left"><th style="font:600 10.5px system-ui;letter-spacing:.1em;text-transform:uppercase;padding:12px 8px 8px 0">Name</th><th style="font:600 10.5px system-ui;letter-spacing:.1em;text-transform:uppercase;padding:12px 8px 8px 0">Module</th><th style="font:600 10.5px system-ui;letter-spacing:.1em;text-transform:uppercase;padding:12px 8px 8px 0">Risk</th><th style="font:600 10.5px system-ui;letter-spacing:.1em;text-transform:uppercase;padding:12px 8px 8px 0">Added</th><th style="font:600 10.5px system-ui;letter-spacing:.1em;text-transform:uppercase;padding:12px 0 8px 0;text-align:right">Status</th></tr></thead>
+      <tbody>
+        <tr style="border-top:1px solid #22303F;color:#D6CCB4" style-hover="background:#12202F"><td style="padding:11px 8px 11px 0;color:#F0EAD6">Marcus Tan</td><td style="padding:11px 8px 11px 0">CRM</td><td style="padding:11px 8px 11px 0">Moderate</td><td style="padding:11px 8px 11px 0;color:#8A8070">Today</td><td style="padding:11px 0;text-align:right"><span style="color:#4ADE80;background:rgba(22,163,74,.15);border-radius:99px;padding:3px 10px;font-size:11.5px">Complete</span></td></tr>
+        <tr style="border-top:1px solid #22303F;color:#D6CCB4" style-hover="background:#12202F"><td style="padding:11px 8px 11px 0;color:#F0EAD6">Wei Ling Teo</td><td style="padding:11px 8px 11px 0">Profiler</td><td style="padding:11px 8px 11px 0">—</td><td style="padding:11px 8px 11px 0;color:#8A8070">Today</td><td style="padding:11px 0;text-align:right"><span style="color:#C9A84C;background:rgba(201,168,76,.14);border-radius:99px;padding:3px 10px;font-size:11.5px">Step 4 / 7</span></td></tr>
+        <tr style="border-top:1px solid #22303F;color:#D6CCB4" style-hover="background:#12202F"><td style="padding:11px 8px 11px 0;color:#F0EAD6">Priya Nair</td><td style="padding:11px 8px 11px 0">CRM</td><td style="padding:11px 8px 11px 0">Aggressive</td><td style="padding:11px 8px 11px 0;color:#8A8070">Yesterday</td><td style="padding:11px 0;text-align:right"><span style="color:#4ADE80;background:rgba(22,163,74,.15);border-radius:99px;padding:3px 10px;font-size:11.5px">Complete</span></td></tr>
+        <tr style="border-top:1px solid #22303F;color:#D6CCB4" style-hover="background:#12202F"><td style="padding:11px 8px 11px 0;color:#F0EAD6">Daniel Koh</td><td style="padding:11px 8px 11px 0">CRM</td><td style="padding:11px 8px 11px 0">Conservative</td><td style="padding:11px 8px 11px 0;color:#8A8070">18 Jul</td><td style="padding:11px 0;text-align:right"><span style="color:#E8836F;background:rgba(192,57,43,.15);border-radius:99px;padding:3px 10px;font-size:11.5px">Missing email</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="dv-pg">List — CRM clients</div>
+<div class="dv-card" style="padding:34px 40px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #2E3D4D;padding-bottom:16px;margin-bottom:2px">
+    <div><div style="font:600 11px system-ui;letter-spacing:.14em;text-transform:uppercase;color:#8A8070">Clients · CRM</div><div style="font-family:Georgia,serif;font-size:28px;color:#F0EAD6;margin-top:6px">All clients <span style="font-size:15px;color:#8A8070">86</span></div></div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <input placeholder="Search name, email…" style="background:#12202F;border:1px solid #2E3D4D;border-radius:8px;padding:9px 14px;font-size:13px;color:#F0EAD6;width:220px" style-focus="outline:2px solid #C9A84C;outline-offset:1px;border-color:#C9A84C"></input>
+      <button style="background:#C9A84C;color:#1A1200;border:none;border-radius:8px;padding:9px 16px;font:600 12.5px system-ui;cursor:pointer" style-hover="background:#D9BC6A" style-active="background:#B8973B" style-focus="outline:2px solid #C9A84C;outline-offset:2px">+ New client</button>
+    </div>
+  </div>
+  <table style="width:100%;border-collapse:collapse;font-size:13px">
+    <thead><tr style="color:#8A8070;text-align:left"><th style="font:600 10.5px system-ui;letter-spacing:.1em;text-transform:uppercase;padding:14px 8px 10px 0">Client</th><th style="font:600 10.5px system-ui;letter-spacing:.1em;text-transform:uppercase;padding:14px 8px 10px 0">Risk profile</th><th style="font:600 10.5px system-ui;letter-spacing:.1em;text-transform:uppercase;padding:14px 8px 10px 0;text-align:right">Annual income</th><th style="font:600 10.5px system-ui;letter-spacing:.1em;text-transform:uppercase;padding:14px 8px 10px 0">Next review</th><th style="font:600 10.5px system-ui;letter-spacing:.1em;text-transform:uppercase;padding:14px 0 10px 0;text-align:right">Report</th></tr></thead>
+    <tbody>
+      <tr style="border-top:1px solid #22303F;color:#D6CCB4" style-hover="background:#12202F"><td style="padding:12px 8px 12px 0"><span style="color:#F0EAD6">Marcus Tan</span><span style="color:#8A8070;font-size:12px"> · marcus.t@gmail.com</span></td><td style="padding:12px 8px 12px 0">Moderate</td><td style="padding:12px 8px 12px 0;text-align:right;font-family:Georgia,serif;font-size:14px;color:#F0EAD6">$96,000</td><td style="padding:12px 8px 12px 0">Mar 2027</td><td style="padding:12px 0;text-align:right"><span style="color:#4ADE80;font-size:12px">Generated</span></td></tr>
+      <tr style="border-top:1px solid #22303F;color:#D6CCB4" style-hover="background:#12202F"><td style="padding:12px 8px 12px 0"><span style="color:#F0EAD6">Priya Nair</span><span style="color:#8A8070;font-size:12px"> · priya.n@outlook.com</span></td><td style="padding:12px 8px 12px 0">Aggressive</td><td style="padding:12px 8px 12px 0;text-align:right;font-family:Georgia,serif;font-size:14px;color:#F0EAD6">$142,500</td><td style="padding:12px 8px 12px 0">Nov 2026</td><td style="padding:12px 0;text-align:right"><span style="color:#4ADE80;font-size:12px">Generated</span></td></tr>
+      <tr style="border-top:1px solid #22303F;color:#D6CCB4" style-hover="background:#12202F"><td style="padding:12px 8px 12px 0"><span style="color:#F0EAD6">Daniel Koh</span><span style="color:#8A8070;font-size:12px"> · —</span></td><td style="padding:12px 8px 12px 0">Conservative</td><td style="padding:12px 8px 12px 0;text-align:right;font-family:Georgia,serif;font-size:14px;color:#F0EAD6">$61,200</td><td style="padding:12px 8px 12px 0;color:#E8836F">Overdue · 12 Jul</td><td style="padding:12px 0;text-align:right"><span style="color:#8A8070;font-size:12px">Pending</span></td></tr>
+      <tr style="border-top:1px solid #22303F;color:#D6CCB4" style-hover="background:#12202F"><td style="padding:12px 8px 12px 0"><span style="color:#F0EAD6">Sarah Lim</span><span style="color:#8A8070;font-size:12px"> · sarah.lim@yahoo.com</span></td><td style="padding:12px 8px 12px 0">Moderate</td><td style="padding:12px 8px 12px 0;text-align:right;font-family:Georgia,serif;font-size:14px;color:#F0EAD6">$88,000</td><td style="padding:12px 8px 12px 0">Jan 2027</td><td style="padding:12px 0;text-align:right"><span style="color:#4ADE80;font-size:12px">Generated</span></td></tr>
+    </tbody>
+  </table>
+  <div style="border-top:1px solid #2E3D4D;margin-top:2px;padding:36px 0 8px;text-align:center">
+    <div style="font-family:Georgia,serif;font-size:17px;color:#D6CCB4;font-style:italic">No clients match “kelvin”.</div>
+    <div style="font-size:12.5px;color:#8A8070;margin-top:6px">Empty state: serif italic line + one quiet action — no illustration.</div>
+    <button style="background:none;border:1px solid #2E3D4D;color:#D6CCB4;border-radius:8px;padding:8px 16px;font:600 12.5px system-ui;margin-top:14px;cursor:pointer" style-hover="border-color:#C9A84C;color:#C9A84C" style-focus="outline:2px solid #C9A84C;outline-offset:2px">Clear search</button>
+  </div>
+</div>
+
+<div class="dv-pg">Detail — CRM client dossier</div>
+<div class="dv-card" style="padding:34px 40px">
+  <div style="font-size:12px;color:#8A8070;margin-bottom:16px">Clients / <span style="color:#D6CCB4">Marcus Tan</span></div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid #2E3D4D;padding-bottom:20px">
+    <div>
+      <div style="font-family:Georgia,serif;font-size:36px;color:#F0EAD6">Marcus Tan</div>
+      <div style="font-size:13px;color:#8A8070;margin-top:6px">Software engineer · Client since Feb 2024 · Moderate risk</div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button style="background:none;border:1px solid #2E3D4D;color:#D6CCB4;border-radius:8px;padding:9px 16px;font:600 12.5px system-ui;cursor:pointer" style-hover="border-color:#C9A84C;color:#C9A84C" style-focus="outline:2px solid #C9A84C;outline-offset:2px">Edit</button>
+      <button style="background:#C9A84C;color:#1A1200;border:none;border-radius:8px;padding:9px 16px;font:600 12.5px system-ui;cursor:pointer" style-hover="background:#D9BC6A" style-active="background:#B8973B" style-focus="outline:2px solid #C9A84C;outline-offset:2px">Generate report</button>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:22px;margin-top:22px">
+    <div style="display:flex;flex-direction:column;gap:22px">
+      <div style="background:#12202F;border:1px solid #2E3D4D;border-radius:12px;padding:22px">
+        <div style="font:600 11px system-ui;letter-spacing:.12em;text-transform:uppercase;color:#8A8070;margin-bottom:16px">Financial position</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+          <div><div style="font-size:11px;color:#8A8070">Bank balance</div><div style="font-family:Georgia,serif;font-size:20px;color:#F0EAD6;margin-top:4px">$48,300</div></div>
+          <div><div style="font-size:11px;color:#8A8070">CPF OA</div><div style="font-family:Georgia,serif;font-size:20px;color:#F0EAD6;margin-top:4px">$62,150</div></div>
+          <div><div style="font-size:11px;color:#8A8070">CPF SA</div><div style="font-family:Georgia,serif;font-size:20px;color:#F0EAD6;margin-top:4px">$41,900</div></div>
+          <div><div style="font-size:11px;color:#8A8070">Medisave</div><div style="font-family:Georgia,serif;font-size:20px;color:#F0EAD6;margin-top:4px">$38,400</div></div>
+        </div>
+        <div style="margin-top:20px;display:flex;height:10px;border-radius:5px;overflow:hidden">
+          <div style="width:25%;background:#C9A84C"></div><div style="width:33%;background:#A98D45"></div><div style="width:22%;background:#7D6B3E"></div><div style="width:20%;background:#4E4632"></div>
+        </div>
+        <div style="display:flex;gap:16px;margin-top:10px;font-size:11.5px;color:#8A8070"><span><span style="color:#C9A84C">■</span> Bank</span><span><span style="color:#A98D45">■</span> CPF OA</span><span><span style="color:#7D6B3E">■</span> CPF SA</span><span><span style="color:#4E4632">■</span> Medisave</span><span style="margin-left:auto;color:#D6CCB4">Monochrome gold ramp — viz stays quiet</span></div>
+      </div>
+      <div style="background:#12202F;border:1px solid #2E3D4D;border-radius:12px;padding:22px">
+        <div style="font:600 11px system-ui;letter-spacing:.12em;text-transform:uppercase;color:#8A8070;margin-bottom:12px">Notes</div>
+        <div style="font-size:13.5px;line-height:1.65;color:#D6CCB4">Prefers annual lump-sum top-ups. Wife handles household budget; loop her into the next review. Interested in education planning for two kids (ages 4, 7).</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:22px">
+      <div style="background:#12202F;border:1px solid #2E3D4D;border-radius:12px;padding:22px">
+        <div style="font:600 11px system-ui;letter-spacing:.12em;text-transform:uppercase;color:#8A8070;margin-bottom:14px">Relationship</div>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:13px">
+          <div style="display:flex;justify-content:space-between"><span style="color:#8A8070">Client since</span><span style="color:#F0EAD6">12 Feb 2024</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:#8A8070">Next review</span><span style="color:#F0EAD6">Mar 2027</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:#8A8070">Frequency</span><span style="color:#F0EAD6">Annual</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:#8A8070">Email</span><span style="color:#F0EAD6">marcus.t@gmail.com</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:#8A8070">Phone</span><span style="color:#F0EAD6">+65 9123 4567</span></div>
+        </div>
+      </div>
+      <div style="background:#12202F;border:1px dashed #2E3D4D;border-radius:12px;padding:22px;text-align:center">
+        <div style="font-family:Georgia,serif;font-size:15px;font-style:italic;color:#D6CCB4">Generating report…</div>
+        <div style="margin:12px auto 0;width:70%;height:3px;background:#22303F;border-radius:2px;overflow:hidden"><div style="width:55%;height:100%;background:#C9A84C"></div></div>
+        <div style="font-size:11.5px;color:#8A8070;margin-top:10px">Loading state: thin gold progress bar, serif italic verb</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 1b LEDGER ============ -->
+<div class="dv-opt" id="1b">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a><span><b>Ledger</b> — elevation drama. Surfaces step visibly (page → card → inset), gold hairline crowns cards, gold serif numerals. Viz adds green + slate-blue categoricals. Signature: gold-spine activity timeline.</span></div>
+
+<div class="dv-pg">Dashboard</div>
+<div class="dv-card" style="display:flex;min-height:640px">
+  <div style="width:210px;background:#0A1622;border-right:1px solid #2E3D4D;padding:22px 0;flex:none;display:flex;flex-direction:column;gap:2px">
+    <div style="font-family:Georgia,serif;font-size:17px;color:#F0EAD6;padding:0 22px 18px">Advisor <i style="color:#C9A84C">Suite</i></div>
+    <div style="margin:0 12px;padding:9px 12px;font-size:13px;color:#1A1200;background:#C9A84C;border-radius:8px;font-weight:600">Overview</div>
+    <div style="margin:0 12px;padding:9px 12px;font-size:13px;color:#8A8070;border-radius:8px" style-hover="background:#12202F;color:#D6CCB4">Prospect Profiler</div>
+    <div style="margin:0 12px;padding:9px 12px;font-size:13px;color:#8A8070;border-radius:8px" style-hover="background:#12202F;color:#D6CCB4">Clients (CRM)</div>
+  </div>
+  <div style="flex:1;padding:30px 36px;display:grid;grid-template-columns:1fr 300px;gap:24px">
+    <div>
+      <div style="font-family:Georgia,serif;font-size:28px;color:#F0EAD6">Overview</div>
+      <div style="font-size:12.5px;color:#8A8070;margin:4px 0 20px">Week of 20 July · 2 profiles in flight, 4 reviews due</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px">
+        <div style="background:#12202F;border:1px solid #2E3D4D;border-top:2px solid #C9A84C;border-radius:12px;padding:18px 20px;box-shadow:0 4px 16px rgba(0,0,0,.35)">
+          <div style="font:600 11px system-ui;letter-spacing:.12em;text-transform:uppercase;color:#8A8070">Prospect Profiler</div>
+          <div style="font-family:Georgia,serif;font-size:34px;color:#C9A84C;margin:8px 0 2px">12</div>
+          <div style="font-size:12.5px;color:#D6CCB4">profiles this month · 3 in progress</div>
+        </div>
+        <div style="background:#12202F;border:1px solid #2E3D4D;border-top:2px solid #C9A84C;border-radius:12px;padding:18px 20px;box-shadow:0 4px 16px rgba(0,0,0,.35)">
+          <div style="font:600 11px system-ui;letter-spacing:.12em;text-transform:uppercase;color:#8A8070">Clients · CRM</div>
+          <div style="font-family:Georgia,serif;font-size:34px;color:#C9A84C;margin:8px 0 2px">86</div>
+          <div style="font-size:12.5px;color:#D6CCB4">clients · 4 reviews due</div>
+        </div>
+      </div>
+      <div style="background:#12202F;border:1px solid #2E3D4D;border-radius:12px;padding:20px 22px;box-shadow:0 4px 16px rgba(0,0,0,.35)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-family:Georgia,serif;font-size:17px;color:#F0EAD6">Latest additions</span>
+          <button style="background:#C9A84C;color:#1A1200;border:none;border-radius:8px;padding:7px 14px;font:600 12px system-ui;cursor:pointer" style-hover="background:#D9BC6A" style-active="background:#B8973B" style-focus="outline:2px solid #C9A84C;outline-offset:2px">+ Add</button>
+        </div>
+        <div style="display:flex;flex-direction:column">
+          <div style="display:grid;grid-template-columns:1.3fr .7fr .8fr .7fr;padding:10px 12px;background:#0D1B2A;border-radius:8px;margin:6px 0;align-items:center" style-hover="background:#1F2B3B"><span style="color:#F0EAD6;font-size:13px">Marcus Tan</span><span style="color:#8A8070;font-size:12px">CRM</span><span style="color:#4ADE80;font-size:12px">Complete</span><span style="color:#8A8070;font-size:12px;text-align:right">Today</span></div>
+          <div style="display:grid;grid-template-columns:1.3fr .7fr .8fr .7fr;padding:10px 12px;background:#0D1B2A;border-radius:8px;margin:6px 0;align-items:center" style-hover="background:#1F2B3B"><span style="color:#F0EAD6;font-size:13px">Wei Ling Teo</span><span style="color:#8A8070;font-size:12px">Profiler</span><span style="color:#C9A84C;font-size:12px">Step 4 / 7</span><span style="color:#8A8070;font-size:12px;text-align:right">Today</span></div>
+          <div style="display:grid;grid-template-columns:1.3fr .7fr .8fr .7fr;padding:10px 12px;background:#0D1B2A;border-radius:8px;margin:6px 0;align-items:center" style-hover="background:#1F2B3B"><span style="color:#F0EAD6;font-size:13px">Priya Nair</span><span style="color:#8A8070;font-size:12px">CRM</span><span style="color:#4ADE80;font-size:12px">Complete</span><span style="color:#8A8070;font-size:12px;text-align:right">Yesterday</span></div>
+          <div style="display:grid;grid-template-columns:1.3fr .7fr .8fr .7fr;padding:10px 12px;background:#0D1B2A;border-radius:8px;margin:6px 0;align-items:center" style-hover="background:#1F2B3B"><span style="color:#F0EAD6;font-size:13px">Daniel Koh</span><span style="color:#8A8070;font-size:12px">CRM</span><span style="color:#E8836F;font-size:12px">Missing email</span><span style="color:#8A8070;font-size:12px;text-align:right">18 Jul</span></div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-end;height:90px;margin-top:18px;padding:0 8px">
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:40%;background:#C9A84C;border-radius:3px 3px 0 0"></div></div>
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:65%;background:#C9A84C;border-radius:3px 3px 0 0"></div></div>
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:50%;background:#4ADE80;border-radius:3px 3px 0 0;opacity:.85"></div></div>
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:80%;background:#C9A84C;border-radius:3px 3px 0 0"></div></div>
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:34%;background:#7FA3C7;border-radius:3px 3px 0 0"></div></div>
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:58%;background:#C9A84C;border-radius:3px 3px 0 0"></div></div>
+        </div>
+        <div style="display:flex;gap:16px;margin-top:10px;font-size:11.5px;color:#8A8070"><span><span style="color:#C9A84C">■</span> Profiles</span><span><span style="color:#4ADE80">■</span> Conversions</span><span><span style="color:#7FA3C7">■</span> Referrals</span><span style="margin-left:auto;color:#D6CCB4">Categorical: gold / green-400 / slate-blue</span></div>
+      </div>
+    </div>
+    <div style="background:#12202F;border:1px solid #2E3D4D;border-radius:12px;padding:20px;box-shadow:0 4px 16px rgba(0,0,0,.35);align-self:start">
+      <div style="font-family:Georgia,serif;font-size:17px;color:#F0EAD6;margin-bottom:16px">Activity <span style="font-size:11px;color:#C9A84C;font-family:system-ui;letter-spacing:.1em;text-transform:uppercase;vertical-align:middle">· signature</span></div>
+      <div style="position:relative;padding-left:18px;display:flex;flex-direction:column;gap:18px">
+        <div style="position:absolute;left:4px;top:4px;bottom:4px;width:1px;background:linear-gradient(#C9A84C,rgba(201,168,76,.15))"></div>
+        <div style="position:relative"><div style="position:absolute;left:-18px;top:3px;width:9px;height:9px;border-radius:50%;background:#C9A84C"></div><div style="font-size:12.5px;color:#F0EAD6">Report generated — Marcus Tan</div><div style="font-size:11px;color:#8A8070;margin-top:2px">10:42 · CRM</div></div>
+        <div style="position:relative"><div style="position:absolute;left:-18px;top:3px;width:9px;height:9px;border-radius:50%;background:#12202F;border:1.5px solid #C9A84C"></div><div style="font-size:12.5px;color:#D6CCB4">Profile resumed — Wei Ling Teo</div><div style="font-size:11px;color:#8A8070;margin-top:2px">09:15 · Profiler</div></div>
+        <div style="position:relative"><div style="position:absolute;left:-18px;top:3px;width:9px;height:9px;border-radius:50%;background:#12202F;border:1.5px solid #2E3D4D"></div><div style="font-size:12.5px;color:#D6CCB4">Review scheduled — Priya Nair</div><div style="font-size:11px;color:#8A8070;margin-top:2px">Yesterday</div></div>
+        <div style="position:relative"><div style="position:absolute;left:-18px;top:3px;width:9px;height:9px;border-radius:50%;background:#12202F;border:1.5px solid #2E3D4D"></div><div style="font-size:12.5px;color:#D6CCB4">Client added — Daniel Koh</div><div style="font-size:11px;color:#8A8070;margin-top:2px">18 Jul</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="dv-pg">List — Prospect profiles</div>
+<div class="dv-card" style="padding:30px 36px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+    <div style="font-family:Georgia,serif;font-size:26px;color:#F0EAD6">Prospect profiles</div>
+    <button style="background:#C9A84C;color:#1A1200;border:none;border-radius:8px;padding:9px 16px;font:600 12.5px system-ui;cursor:pointer" style-hover="background:#D9BC6A" style-active="background:#B8973B" style-focus="outline:2px solid #C9A84C;outline-offset:2px">Start new profile</button>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:16px">
+    <span style="background:#C9A84C;color:#1A1200;border-radius:99px;padding:6px 14px;font:600 12px system-ui">All · 12</span>
+    <span style="background:#12202F;border:1px solid #2E3D4D;color:#D6CCB4;border-radius:99px;padding:6px 14px;font-size:12px" style-hover="background:#1F2B3B">In progress · 3</span>
+    <span style="background:#12202F;border:1px solid #2E3D4D;color:#D6CCB4;border-radius:99px;padding:6px 14px;font-size:12px" style-hover="background:#1F2B3B">Complete · 9</span>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="background:#12202F;border:1px solid #2E3D4D;border-radius:12px;padding:16px 20px;display:grid;grid-template-columns:1.2fr 1fr 1fr .8fr;align-items:center;box-shadow:0 1px 2px rgba(0,0,0,.25)" style-hover="box-shadow:0 4px 16px rgba(0,0,0,.35);border-color:#3A4B5E">
+      <div><div style="color:#F0EAD6;font-size:14px">Wei Ling Teo</div><div style="color:#8A8070;font-size:11.5px;margin-top:2px">Started today</div></div>
+      <div style="display:flex;gap:4px;align-items:center">
+        <div style="width:26px;height:4px;background:#C9A84C;border-radius:2px"></div><div style="width:26px;height:4px;background:#C9A84C;border-radius:2px"></div><div style="width:26px;height:4px;background:#C9A84C;border-radius:2px"></div><div style="width:26px;height:4px;background:#C9A84C;border-radius:2px"></div><div style="width:26px;height:4px;background:#22303F;border-radius:2px"></div><div style="width:26px;height:4px;background:#22303F;border-radius:2px"></div><div style="width:26px;height:4px;background:#22303F;border-radius:2px"></div>
+      </div>
+      <div style="color:#C9A84C;font-size:12.5px">Step 4 of 7 · Values</div>
+      <button style="justify-self:end;background:none;border:1px solid #C9A84C;color:#C9A84C;border-radius:8px;padding:7px 14px;font:600 12px system-ui;cursor:pointer" style-hover="background:rgba(201,168,76,.12)" style-focus="outline:2px solid #C9A84C;outline-offset:2px">Resume</button>
+    </div>
+    <div style="background:#12202F;border:1px solid #2E3D4D;border-radius:12px;padding:16px 20px;display:grid;grid-template-columns:1.2fr 1fr 1fr .8fr;align-items:center;box-shadow:0 1px 2px rgba(0,0,0,.25)" style-hover="box-shadow:0 4px 16px rgba(0,0,0,.35);border-color:#3A4B5E">
+      <div><div style="color:#F0EAD6;font-size:14px">Marcus Tan</div><div style="color:#8A8070;font-size:11.5px;margin-top:2px">Completed 19 Jul</div></div>
+      <div style="display:flex;gap:4px"><div style="width:26px;height:4px;background:#4ADE80;border-radius:2px;opacity:.8"></div><div style="width:26px;height:4px;background:#4ADE80;border-radius:2px;opacity:.8"></div><div style="width:26px;height:4px;background:#4ADE80;border-radius:2px;opacity:.8"></div><div style="width:26px;height:4px;background:#4ADE80;border-radius:2px;opacity:.8"></div><div style="width:26px;height:4px;background:#4ADE80;border-radius:2px;opacity:.8"></div><div style="width:26px;height:4px;background:#4ADE80;border-radius:2px;opacity:.8"></div><div style="width:26px;height:4px;background:#4ADE80;border-radius:2px;opacity:.8"></div></div>
+      <div style="color:#4ADE80;font-size:12.5px">Complete · Type: Steward</div>
+      <button style="justify-self:end;background:none;border:1px solid #2E3D4D;color:#D6CCB4;border-radius:8px;padding:7px 14px;font:600 12px system-ui;cursor:pointer" style-hover="border-color:#C9A84C;color:#C9A84C" style-focus="outline:2px solid #C9A84C;outline-offset:2px">View</button>
+    </div>
+    <div style="background:#12202F;border:1px solid rgba(192,57,43,.4);border-radius:12px;padding:16px 20px;display:grid;grid-template-columns:1.2fr 2fr .8fr;align-items:center">
+      <div><div style="color:#F0EAD6;font-size:14px">Ahmad Rizal</div><div style="color:#8A8070;font-size:11.5px;margin-top:2px">Started 15 Jul</div></div>
+      <div style="color:#E8836F;font-size:12.5px">Couldn’t save step 5 — connection lost. Answers up to step 4 are safe.</div>
+      <button style="justify-self:end;background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.4);color:#E8836F;border-radius:8px;padding:7px 14px;font:600 12px system-ui;cursor:pointer" style-hover="background:rgba(192,57,43,.25)" style-focus="outline:2px solid #C9A84C;outline-offset:2px">Retry save</button>
+    </div>
+    <div style="border:1px dashed #2E3D4D;border-radius:12px;padding:16px 20px;display:grid;grid-template-columns:1.2fr 1fr 1fr .8fr;align-items:center;opacity:.7">
+      <div style="height:14px;width:110px;background:linear-gradient(90deg,#1F2B3B,#22303F,#1F2B3B);border-radius:4px"></div>
+      <div style="height:4px;width:150px;background:#1F2B3B;border-radius:2px"></div>
+      <div style="height:12px;width:90px;background:#1F2B3B;border-radius:4px"></div>
+      <div style="justify-self:end;font-size:11px;color:#8A8070;font-family:ui-monospace,monospace">skeleton row</div>
+    </div>
+  </div>
+</div>
+
+<div class="dv-pg">Detail — Prospect profile result</div>
+<div class="dv-card" style="padding:30px 36px">
+  <div style="font-size:12px;color:#8A8070;margin-bottom:14px">Prospect Profiler / <span style="color:#D6CCB4">Marcus Tan</span></div>
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:22px">
+    <div>
+      <div style="background:#12202F;border:1px solid #2E3D4D;border-top:2px solid #C9A84C;border-radius:12px;padding:26px;box-shadow:0 4px 16px rgba(0,0,0,.35)">
+        <div style="font:600 11px system-ui;letter-spacing:.14em;text-transform:uppercase;color:#8A8070">Profile type</div>
+        <div style="font-family:Georgia,serif;font-size:40px;color:#C9A84C;margin:10px 0 4px">The Steward</div>
+        <div style="font-size:13.5px;line-height:1.6;color:#D6CCB4;max-width:520px">Security-first, family-oriented, plans in decades not quarters. Responds to concrete milestones and dislikes being sold to. Lead with protection, then growth.</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px">
+          <div><div style="display:flex;justify-content:space-between;font-size:11.5px;color:#8A8070;margin-bottom:5px"><span>Security</span><span style="color:#C9A84C;font-family:Georgia,serif">82</span></div><div style="height:5px;background:#22303F;border-radius:3px"><div style="width:82%;height:100%;background:#C9A84C;border-radius:3px"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:11.5px;color:#8A8070;margin-bottom:5px"><span>Growth</span><span style="color:#C9A84C;font-family:Georgia,serif">54</span></div><div style="height:5px;background:#22303F;border-radius:3px"><div style="width:54%;height:100%;background:#C9A84C;border-radius:3px"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:11.5px;color:#8A8070;margin-bottom:5px"><span>Legacy</span><span style="color:#C9A84C;font-family:Georgia,serif">71</span></div><div style="height:5px;background:#22303F;border-radius:3px"><div style="width:71%;height:100%;background:#C9A84C;border-radius:3px"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:11.5px;color:#8A8070;margin-bottom:5px"><span>Liquidity</span><span style="color:#C9A84C;font-family:Georgia,serif">38</span></div><div style="height:5px;background:#22303F;border-radius:3px"><div style="width:38%;height:100%;background:#C9A84C;border-radius:3px"></div></div></div>
+        </div>
+      </div>
+      <div style="background:#12202F;border:1px solid #2E3D4D;border-radius:12px;padding:22px;margin-top:20px;box-shadow:0 4px 16px rgba(0,0,0,.35)">
+        <div style="font:600 11px system-ui;letter-spacing:.12em;text-transform:uppercase;color:#8A8070;margin-bottom:14px">Answers by step</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
+          <div style="display:flex;justify-content:space-between;background:#0D1B2A;border-radius:8px;padding:11px 14px" style-hover="background:#1F2B3B"><span style="color:#D6CCB4">1 · Life stage</span><span style="color:#F0EAD6">Young family</span></div>
+          <div style="display:flex;justify-content:space-between;background:#0D1B2A;border-radius:8px;padding:11px 14px" style-hover="background:#1F2B3B"><span style="color:#D6CCB4">2 · Money mindset</span><span style="color:#F0EAD6">Saver, risk-aware</span></div>
+          <div style="display:flex;justify-content:space-between;background:#0D1B2A;border-radius:8px;padding:11px 14px" style-hover="background:#1F2B3B"><span style="color:#D6CCB4">3 · Priorities</span><span style="color:#F0EAD6">Education, home upgrade</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div style="background:#182638;border:1px solid #3A4B5E;border-radius:12px;padding:20px;box-shadow:0 8px 28px rgba(0,0,0,.5)">
+        <div style="font:600 11px system-ui;letter-spacing:.12em;text-transform:uppercase;color:#8A8070;margin-bottom:12px">Next actions <span style="color:#C9A84C;font-family:ui-monospace,monospace;text-transform:none;letter-spacing:0">(modal-level surface)</span></div>
+        <button style="width:100%;background:#C9A84C;color:#1A1200;border:none;border-radius:8px;padding:11px;font:600 13px system-ui;cursor:pointer;margin-bottom:8px" style-hover="background:#D9BC6A" style-active="background:#B8973B" style-focus="outline:2px solid #C9A84C;outline-offset:2px">Convert to CRM client</button>
+        <button style="width:100%;background:none;border:1px solid #3A4B5E;color:#D6CCB4;border-radius:8px;padding:11px;font:600 13px system-ui;cursor:pointer" style-hover="border-color:#C9A84C;color:#C9A84C" style-focus="outline:2px solid #C9A84C;outline-offset:2px">Share summary</button>
+        <button disabled="{{ true }}" style="width:100%;background:#1F2B3B;border:none;color:#8A8070;border-radius:8px;padding:11px;font:600 13px system-ui;margin-top:8px;opacity:.55;cursor:not-allowed">Generate report — complete profile first</button>
+      </div>
+      <div style="border:1px dashed #2E3D4D;border-radius:12px;padding:22px;text-align:center">
+        <div style="width:36px;height:36px;border-radius:50%;border:1.5px solid #C9A84C;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;color:#C9A84C;font-family:Georgia,serif;font-size:18px">?</div>
+        <div style="font-size:12.5px;color:#D6CCB4">No meetings logged yet</div>
+        <div style="font-size:11.5px;color:#8A8070;margin-top:4px">Empty state: outlined gold glyph, never filled</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 1c VAULT ============ -->
+<div class="dv-opt" id="1c">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a><span><b>Vault</b> — private-bank luxe. Generous gold: small-caps gold section labels, gradient hairlines, big serif numerals. Viz is a sequential gold ramp. Signature: hero KPI band with portrait rule.</span></div>
+
+<div class="dv-pg">Dashboard</div>
+<div class="dv-card">
+  <div style="background:linear-gradient(180deg,#0A1622,#0D1B2A);border-bottom:1px solid #2E3D4D;padding:36px 44px 30px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <div style="font:600 10.5px system-ui;letter-spacing:.22em;text-transform:uppercase;color:#C9A84C">Advisor Suite · Overview</div>
+        <div style="font-family:Georgia,serif;font-size:38px;color:#F0EAD6;margin-top:10px">Your book, at a glance</div>
+      </div>
+      <button style="background:#C9A84C;color:#1A1200;border:none;border-radius:8px;padding:10px 18px;font:600 13px system-ui;cursor:pointer" style-hover="background:#D9BC6A" style-active="background:#B8973B" style-focus="outline:2px solid #C9A84C;outline-offset:2px">+ New record</button>
+    </div>
+    <div style="height:1px;background:linear-gradient(90deg,#C9A84C,rgba(201,168,76,0));margin:24px 0"></div>
+    <div style="display:flex;gap:56px">
+      <div><div style="font-family:Georgia,serif;font-size:44px;color:#F0EAD6">86</div><div style="font:600 10.5px system-ui;letter-spacing:.18em;text-transform:uppercase;color:#8A8070;margin-top:4px">Clients</div></div>
+      <div><div style="font-family:Georgia,serif;font-size:44px;color:#F0EAD6">12</div><div style="font:600 10.5px system-ui;letter-spacing:.18em;text-transform:uppercase;color:#8A8070;margin-top:4px">Profiles · July</div></div>
+      <div><div style="font-family:Georgia,serif;font-size:44px;color:#C9A84C">4</div><div style="font:600 10.5px system-ui;letter-spacing:.18em;text-transform:uppercase;color:#8A8070;margin-top:4px">Reviews due</div></div>
+      <div><div style="font-family:Georgia,serif;font-size:44px;color:#F0EAD6">2</div><div style="font:600 10.5px system-ui;letter-spacing:.18em;text-transform:uppercase;color:#8A8070;margin-top:4px">Reports pending</div></div>
+    </div>
+  </div>
+  <div style="padding:28px 44px 36px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:26px">
+      <div style="background:#12202F;border:1px solid #2E3D4D;border-radius:14px;padding:22px 24px" style-hover="box-shadow:0 4px 16px rgba(0,0,0,.35)">
+        <div style="font:600 10.5px system-ui;letter-spacing:.2em;text-transform:uppercase;color:#C9A84C;margin-bottom:14px">Prospect Profiler</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end">
+          <div style="font-size:13px;color:#D6CCB4;line-height:1.6">3 in progress<br>Latest: Wei Ling Teo, step 4</div>
+          <div style="display:flex;gap:5px;align-items:flex-end;height:52px"><div style="width:14px;height:35%;background:#5A4A22;border-radius:2px"></div><div style="width:14px;height:55%;background:#8A6F2E;border-radius:2px"></div><div style="width:14px;height:45%;background:#8A6F2E;border-radius:2px"></div><div style="width:14px;height:75%;background:#C9A84C;border-radius:2px"></div><div style="width:14px;height:100%;background:#D9BC6A;border-radius:2px"></div></div>
+        </div>
+      </div>
+      <div style="background:#12202F;border:1px solid #2E3D4D;border-radius:14px;padding:22px 24px" style-hover="box-shadow:0 4px 16px rgba(0,0,0,.35)">
+        <div style="font:600 10.5px system-ui;letter-spacing:.2em;text-transform:uppercase;color:#C9A84C;margin-bottom:14px">Clients · CRM</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end">
+          <div style="font-size:13px;color:#D6CCB4;line-height:1.6">4 reviews due this month<br>Next: Daniel Koh — overdue</div>
+          <div style="display:flex;gap:5px;align-items:flex-end;height:52px"><div style="width:14px;height:60%;background:#8A6F2E;border-radius:2px"></div><div style="width:14px;height:40%;background:#5A4A22;border-radius:2px"></div><div style="width:14px;height:70%;background:#C9A84C;border-radius:2px"></div><div style="width:14px;height:85%;background:#C9A84C;border-radius:2px"></div><div style="width:14px;height:65%;background:#8A6F2E;border-radius:2px"></div></div>
+        </div>
+      </div>
+    </div>
+    <div style="font:600 10.5px system-ui;letter-spacing:.2em;text-transform:uppercase;color:#C9A84C;margin-bottom:6px">Latest additions</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <tbody>
+        <tr style="border-bottom:1px solid #22303F;color:#D6CCB4" style-hover="background:#12202F"><td style="padding:13px 8px 13px 0;color:#F0EAD6;font-family:Georgia,serif;font-size:15px">Marcus Tan</td><td style="padding:13px 8px">CRM · Moderate</td><td style="padding:13px 8px;color:#8A8070">Today</td><td style="padding:13px 0;text-align:right;color:#4ADE80;font-size:12px">Report generated</td></tr>
+        <tr style="border-bottom:1px solid #22303F;color:#D6CCB4" style-hover="background:#12202F"><td style="padding:13px 8px 13px 0;color:#F0EAD6;font-family:Georgia,serif;font-size:15px">Wei Ling Teo</td><td style="padding:13px 8px">Profiler · Step 4/7</td><td style="padding:13px 8px;color:#8A8070">Today</td><td style="padding:13px 0;text-align:right;color:#C9A84C;font-size:12px">In progress</td></tr>
+        <tr style="color:#D6CCB4" style-hover="background:#12202F"><td style="padding:13px 8px 13px 0;color:#F0EAD6;font-family:Georgia,serif;font-size:15px">Priya Nair</td><td style="padding:13px 8px">CRM · Aggressive</td><td style="padding:13px 8px;color:#8A8070">Yesterday</td><td style="padding:13px 0;text-align:right;color:#4ADE80;font-size:12px">Report generated</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="dv-pg">List — CRM clients</div>
+<div class="dv-card" style="padding:36px 44px">
+  <div style="font:600 10.5px system-ui;letter-spacing:.22em;text-transform:uppercase;color:#C9A84C">Clients · CRM</div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin:10px 0 0">
+    <div style="font-family:Georgia,serif;font-size:32px;color:#F0EAD6">Eighty-six relationships</div>
+    <div style="display:flex;gap:10px">
+      <input placeholder="Search…" style="background:#12202F;border:1px solid #2E3D4D;border-radius:8px;padding:9px 14px;font-size:13px;color:#F0EAD6;width:200px" style-focus="outline:2px solid #C9A84C;outline-offset:1px;border-color:#C9A84C"></input>
+      <button style="background:#C9A84C;color:#1A1200;border:none;border-radius:8px;padding:9px 16px;font:600 12.5px system-ui;cursor:pointer" style-hover="background:#D9BC6A" style-active="background:#B8973B" style-focus="outline:2px solid #C9A84C;outline-offset:2px">+ New client</button>
+    </div>
+  </div>
+  <div style="height:1px;background:linear-gradient(90deg,#C9A84C,rgba(201,168,76,0));margin:20px 0 6px"></div>
+  <table style="width:100%;border-collapse:collapse;font-size:13px">
+    <thead><tr style="color:#8A8070;text-align:left"><th style="font:600 10px system-ui;letter-spacing:.16em;text-transform:uppercase;padding:12px 8px 10px 0">Client</th><th style="font:600 10px system-ui;letter-spacing:.16em;text-transform:uppercase;padding:12px 8px 10px 0">Risk</th><th style="font:600 10px system-ui;letter-spacing:.16em;text-transform:uppercase;padding:12px 8px 10px 0;text-align:right">Portfolio signal</th><th style="font:600 10px system-ui;letter-spacing:.16em;text-transform:uppercase;padding:12px 0 10px 0;text-align:right">Next review</th></tr></thead>
+    <tbody>
+      <tr style="border-top:1px solid #22303F;color:#D6CCB4" style-hover="background:#12202F"><td style="padding:14px 8px 14px 0;color:#F0EAD6;font-family:Georgia,serif;font-size:15px">Marcus Tan</td><td style="padding:14px 8px">Moderate</td><td style="padding:14px 8px;text-align:right"><span style="display:inline-flex;gap:3px;align-items:flex-end;height:16px"><span style="width:5px;height:40%;background:#5A4A22;border-radius:1px;display:inline-block"></span><span style="width:5px;height:70%;background:#8A6F2E;border-radius:1px;display:inline-block"></span><span style="width:5px;height:100%;background:#C9A84C;border-radius:1px;display:inline-block"></span></span></td><td style="padding:14px 0;text-align:right;color:#8A8070">Mar 2027</td></tr>
+      <tr style="border-top:1px solid #22303F;color:#D6CCB4" style-hover="background:#12202F"><td style="padding:14px 8px 14px 0;color:#F0EAD6;font-family:Georgia,serif;font-size:15px">Priya Nair</td><td style="padding:14px 8px">Aggressive</td><td style="padding:14px 8px;text-align:right"><span style="display:inline-flex;gap:3px;align-items:flex-end;height:16px"><span style="width:5px;height:60%;background:#8A6F2E;border-radius:1px;display:inline-block"></span><span style="width:5px;height:100%;background:#D9BC6A;border-radius:1px;display:inline-block"></span><span style="width:5px;height:80%;background:#C9A84C;border-radius:1px;display:inline-block"></span></span></td><td style="padding:14px 0;text-align:right;color:#8A8070">Nov 2026</td></tr>
+      <tr style="border-top:1px solid #22303F;color:#D6CCB4" style-hover="background:#12202F"><td style="padding:14px 8px 14px 0;color:#F0EAD6;font-family:Georgia,serif;font-size:15px">Daniel Koh</td><td style="padding:14px 8px">Conservative</td><td style="padding:14px 8px;text-align:right"><span style="display:inline-flex;gap:3px;align-items:flex-end;height:16px"><span style="width:5px;height:100%;background:#C9A84C;border-radius:1px;display:inline-block"></span><span style="width:5px;height:35%;background:#5A4A22;border-radius:1px;display:inline-block"></span><span style="width:5px;height:50%;background:#8A6F2E;border-radius:1px;display:inline-block"></span></span></td><td style="padding:14px 0;text-align:right;color:#E8836F">Overdue</td></tr>
+    </tbody>
+  </table>
+  <div style="margin-top:28px;background:#12202F;border:1px solid #2E3D4D;border-radius:14px;padding:34px;text-align:center">
+    <div style="height:1px;width:64px;background:linear-gradient(90deg,rgba(201,168,76,0),#C9A84C,rgba(201,168,76,0));margin:0 auto 16px"></div>
+    <div style="font-family:Georgia,serif;font-size:19px;color:#F0EAD6">Your first client awaits</div>
+    <div style="font-size:12.5px;color:#8A8070;margin:8px auto 0;max-width:340px">Empty state: centered gold rule + serif headline. Add a client to begin building your book.</div>
+    <button style="background:#C9A84C;color:#1A1200;border:none;border-radius:8px;padding:10px 20px;font:600 13px system-ui;margin-top:18px;cursor:pointer" style-hover="background:#D9BC6A" style-active="background:#B8973B" style-focus="outline:2px solid #C9A84C;outline-offset:2px">Add first client</button>
+  </div>
+</div>
+
+<div class="dv-pg">Detail — CRM client + report</div>
+<div class="dv-card">
+  <div style="background:linear-gradient(180deg,#0A1622,#0D1B2A);border-bottom:1px solid #2E3D4D;padding:32px 44px 26px">
+    <div style="font-size:12px;color:#8A8070">Clients / Marcus Tan</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:12px">
+      <div style="display:flex;gap:18px;align-items:center">
+        <div style="width:56px;height:56px;border-radius:50%;background:#12202F;border:1.5px solid #C9A84C;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:20px;color:#C9A84C">MT</div>
+        <div>
+          <div style="font-family:Georgia,serif;font-size:32px;color:#F0EAD6">Marcus Tan</div>
+          <div style="font:600 10.5px system-ui;letter-spacing:.18em;text-transform:uppercase;color:#C9A84C;margin-top:4px">Moderate · Client since 2024 · Annual review</div>
+        </div>
+      </div>
+      <button style="background:#C9A84C;color:#1A1200;border:none;border-radius:8px;padding:10px 18px;font:600 13px system-ui;cursor:pointer" style-hover="background:#D9BC6A" style-active="background:#B8973B" style-focus="outline:2px solid #C9A84C;outline-offset:2px">Generate report</button>
+    </div>
+  </div>
+  <div style="padding:26px 44px 36px;display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <div style="background:#12202F;border:1px solid #2E3D4D;border-radius:14px;padding:22px 24px">
+      <div style="font:600 10.5px system-ui;letter-spacing:.2em;text-transform:uppercase;color:#C9A84C;margin-bottom:16px">Financial position</div>
+      <div style="display:flex;flex-direction:column;gap:12px;font-size:13px">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:#8A8070">Bank balance</span><span style="font-family:Georgia,serif;font-size:17px;color:#F0EAD6">$48,300</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:#8A8070">CPF Ordinary</span><span style="font-family:Georgia,serif;font-size:17px;color:#F0EAD6">$62,150</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:#8A8070">CPF Special</span><span style="font-family:Georgia,serif;font-size:17px;color:#F0EAD6">$41,900</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:#8A8070">Medisave</span><span style="font-family:Georgia,serif;font-size:17px;color:#F0EAD6">$38,400</span></div>
+        <div style="height:1px;background:linear-gradient(90deg,#C9A84C,rgba(201,168,76,0))"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:#D6CCB4">Total</span><span style="font-family:Georgia,serif;font-size:22px;color:#C9A84C">$190,750</span></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="background:#182638;border:1px solid #3A4B5E;border-radius:14px;padding:22px 24px;box-shadow:0 8px 28px rgba(0,0,0,.5)">
+        <div style="font:600 10.5px system-ui;letter-spacing:.2em;text-transform:uppercase;color:#C9A84C;margin-bottom:12px">Client report</div>
+        <div style="font-size:13px;color:#D6CCB4;line-height:1.6">Last generated 19 Jul 2026 · includes profile summary, financial snapshot, review recommendation.</div>
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button style="background:none;border:1px solid #C9A84C;color:#C9A84C;border-radius:8px;padding:9px 16px;font:600 12.5px system-ui;cursor:pointer" style-hover="background:rgba(201,168,76,.12)" style-focus="outline:2px solid #C9A84C;outline-offset:2px">View PDF</button>
+          <button style="background:none;border:1px solid #3A4B5E;color:#D6CCB4;border-radius:8px;padding:9px 16px;font:600 12.5px system-ui;cursor:pointer" style-hover="border-color:#C9A84C;color:#C9A84C" style-focus="outline:2px solid #C9A84C;outline-offset:2px">Regenerate</button>
+        </div>
+      </div>
+      <div style="background:#12202F;border:1px solid rgba(192,57,43,.4);border-radius:14px;padding:18px 22px;display:flex;gap:14px;align-items:flex-start">
+        <div style="width:8px;height:8px;border-radius:50%;background:#C0392B;margin-top:5px;flex:none"></div>
+        <div>
+          <div style="font-size:13px;color:#E8836F;font-weight:600">Report generation failed</div>
+          <div style="font-size:12.5px;color:#D6CCB4;margin-top:3px;line-height:1.5">CPF figures incomplete. Error state: red dot + tinted border, body stays cream — red never floods the card.</div>
+          <button style="background:none;border:none;color:#C9A84C;font:600 12.5px system-ui;padding:0;margin-top:8px;cursor:pointer" style-hover="color:#D9BC6A" style-focus="outline:2px solid #C9A84C;outline-offset:2px">Fill missing fields →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "combine <a class="dv-oid" href="#1a">1a</a>'s masthead with <a class="dv-oid" href="#1b">1b</a>'s timeline" · "show <a class="dv-oid" href="#1c">1c</a>'s hero on the profiler step form" · "new directions for the step-by-step profiler flow"</p>
+</section>
+</x-dc>
+</body>
+</html>

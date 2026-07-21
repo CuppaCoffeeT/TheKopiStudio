@@ -7,7 +7,7 @@ paths:
 
 ## Summary
 
-New code must import the primitive `DatePicker` and the primitive `SearchableMultiSelect` (combobox/picker). The legacy shadcn-style equivalents at `@/components/ui/date-picker` and `@/components/ui/searchable-select` are deprecated. Portal rendering inside Dialogs is component-specific: Radix `Select` / `DropdownMenu` Portal-render correctly, but `SearchableMultiSelect` MUST NOT use Portal (iOS Safari touch event blocking).
+Prefer the existing `DatePicker` and `SearchableMultiSelect` components (currently in `@/components/primitives/`) over hand-rolled equivalents. The legacy shadcn-style equivalents at `@/components/ui/date-picker` and `@/components/ui/searchable-select` are deprecated. Portal rendering inside Dialogs is component-specific: Radix `Select` / `DropdownMenu` Portal-render correctly, but `SearchableMultiSelect` MUST NOT use Portal (iOS Safari touch event blocking).
 
 ## Detailed Patterns
 

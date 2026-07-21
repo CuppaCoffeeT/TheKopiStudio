@@ -94,20 +94,20 @@ export const DataRow = forwardRef<HTMLDivElement, DataRowProps>(function DataRow
         'group relative flex items-center px-[14px]',
         DENSITY_MIN_H[density],
         DENSITY_PY[density],
-        'border-b border-border',
+        'border-b border-[color:var(--border-faint)]',
         // Surface default
         'bg-card',
-        // Hover (must contrast w/ page-bg zinc-100 — surface is white so zinc-100 hover is visible)
+        // Hover — cream wash token, visible on the raised card navy (1a)
         !disabled &&
           effectiveState !== 'selected' &&
-          'hover:bg-secondary',
-        effectiveState === 'hover' && 'bg-secondary',
+          'hover:bg-[color:var(--row-hover)]',
+        effectiveState === 'hover' && 'bg-[color:var(--row-hover)]',
         effectiveState === 'selected' &&
           'bg-primary/[0.06] hover:bg-primary/[0.08] dark:bg-primary/[0.08] dark:hover:bg-primary/[0.10]',
         effectiveState === 'focused' &&
-          'shadow-[inset_0_0_0_2px] shadow-red-700 dark:shadow-red-400',
+          'shadow-[inset_0_0_0_2px_var(--cta-primary-bg)]',
         disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
-        'text-[13px] text-foreground',
+        'text-[13px] text-[color:var(--fg-dim)]',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         className
       )}
@@ -154,9 +154,12 @@ export const DataRow = forwardRef<HTMLDivElement, DataRowProps>(function DataRow
               cell.wrap
                 ? 'whitespace-normal break-words min-w-0'
                 : 'whitespace-nowrap overflow-hidden text-ellipsis',
+              // 1a: primary (first) cell cream, remaining cells dim cream, meta muted
               cell.muted
                 ? 'text-muted-foreground'
-                : 'text-foreground'
+                : i === 0
+                  ? 'text-foreground'
+                  : 'text-[color:var(--fg-dim)]'
             )}
             style={{
               flex: `${grow} ${shrink} ${basis}px`,

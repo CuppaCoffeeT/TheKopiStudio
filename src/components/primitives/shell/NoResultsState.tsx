@@ -27,31 +27,25 @@ export function NoResultsState({
       className={cn('max-w-[460px] mx-auto py-10 px-7 text-center', className)}
       style={{ fontFamily: 'var(--font-sans)' }}
     >
-      <div className="w-11 h-11 mx-auto mb-5 rounded-full bg-secondary inline-flex items-center justify-center text-muted-foreground">
+      {/* 1a Masthead: glyph is outlined gold, never filled. */}
+      <div className="w-11 h-11 mx-auto mb-5 rounded-full border border-[color:var(--brand-red)] inline-flex items-center justify-center text-[color:var(--brand-red)]">
         <Search className="w-5 h-5" strokeWidth={1.5} />
       </div>
-      <div className="text-base font-semibold text-foreground mb-2">
-        {query ? (
-          <>
-            No matches for{' '}
-            <span
-              className="font-medium"
-              style={{ fontFamily: 'var(--font-sans)' }}
-            >
-              "{query}"
-            </span>
-          </>
-        ) : (
-          'No results'
-        )}
+      {/* 1a Masthead: serif italic empty-state line. */}
+      <div
+        className="text-[17px] italic text-[color:var(--fg-dim)] mb-2"
+        style={{ fontFamily: 'var(--font-prose, Georgia, serif)' }}
+      >
+        {query ? <>No matches for "{query}".</> : 'No results.'}
       </div>
       <div className="text-[13px] text-muted-foreground leading-relaxed mb-5">
         Try a broader search or clear active filters
       </div>
 
       <div className="inline-flex gap-2 justify-center mb-5">
+        {/* 1a Masthead: ONE quiet (outline) action — no filled CTA in empty states. */}
         {onClearSearch && (
-          <Button size="sm" variant="primary" onClick={onClearSearch}>
+          <Button size="sm" variant="outline" onClick={onClearSearch}>
             Clear search
           </Button>
         )}

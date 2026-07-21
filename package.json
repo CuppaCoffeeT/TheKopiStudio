@@ -33,8 +33,6 @@
     "drift:baseline": "depcruise --config .dependency-cruiser.cjs --output-type baseline src > .dependency-cruiser-known-violations.json",
     "loc:check": "node scripts/loc-ratchet.mjs",
     "loc:baseline": "node scripts/loc-ratchet.mjs --update",
-    "primitives:manifest": "node scripts/build-primitives-manifest.mjs",
-    "primitives:manifest:check": "node scripts/build-primitives-manifest.mjs --check",
     "prepare": "husky",
     "knip": "knip",
     "knip:production": "knip --production",

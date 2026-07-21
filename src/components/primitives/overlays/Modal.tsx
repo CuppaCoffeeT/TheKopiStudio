@@ -93,7 +93,8 @@ export function Modal({
         <div
           className={cn(
             'pointer-events-auto rounded-xl',
-            'bg-card',
+            // 1a: modal surface is one step lighter than card — #182638 (--popover)
+            'bg-popover',
             'border border-border',
             'shadow-[0_1px_2px_rgba(0,0,0,0.04),0_24px_64px_rgba(24,24,27,0.14)]',
             'dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_24px_64px_rgba(0,0,0,0.5)]',
@@ -178,11 +179,12 @@ export function ModalPrimaryAction({
       disabled={disabled}
       data-testid={dataTestId}
       className={cn(
-        'h-8 px-3.5 rounded-md text-[13px] font-medium',
+        'h-8 px-3.5 rounded-lg text-[12.5px] font-semibold',
         'disabled:opacity-40 disabled:cursor-not-allowed',
+        'focus-visible:outline-2 focus-visible:outline-[color:var(--cta-primary-bg)] focus-visible:outline-offset-2',
         destructive
-          ? 'bg-red-700 hover:bg-red-800 text-white'
-          : 'bg-primary hover:bg-primary/90 text-primary-foreground'
+          ? 'bg-red-700 hover:bg-red-800 active:bg-red-900 text-white'
+          : 'bg-[var(--cta-primary-bg)] hover:bg-[var(--cta-primary-bg-hover)] active:bg-[var(--cta-primary-bg-active)] text-[color:var(--cta-primary-fg)]'
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
     >
@@ -207,7 +209,7 @@ export function ModalGhostAction({
       onClick={onClick}
       disabled={disabled}
       data-testid={dataTestId}
-      className="h-8 px-3 rounded-md text-xs font-medium border border-border text-muted-foreground hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed"
+      className="h-8 px-3 rounded-lg text-xs font-medium border border-border text-[color:var(--fg-dim)] hover:bg-card disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-[color:var(--cta-primary-bg)] focus-visible:outline-offset-2"
       style={{ fontFamily: 'var(--font-sans)' }}
     >
       {children}
