@@ -2,7 +2,7 @@
 
 Append-only. Newest at the bottom. Format authority: [DECISIONS_LESSONS_PATTERN.md](/Volumes/YourVolume/META_FOLDER_STRUCTURE/DECISIONS_LESSONS_PATTERN.md).
 
-Last Updated: 2026-07-14 (E2E_PORT foreign-dev-server lesson)
+Last Updated: 2026-07-24 (@pushgate gate removed from pre-push)
 
 ---
 
@@ -149,3 +149,10 @@ Last Updated: 2026-07-14 (E2E_PORT foreign-dev-server lesson)
 **Root cause**: `reuseExistingServer` only checks that the port answers — it cannot tell whose app is listening; both ports were already taken by another repo's servers.
 **Fix**: `E2E_PORT` env override added to `playwright.config.ts` (drives `baseURL` + webServer command `--port <n> --strictPort`); run suites with `E2E_PORT=<free port>` whenever 8080 is taken. `--strictPort` makes Vite fail loudly instead of drifting to the occupied port.
 **How to apply**: before a run, check who owns 8080/8081 (`lsof -i :8080`); if foreign, export `E2E_PORT`. Also: fresh worktrees need BOTH gitignored env files copied in — `.env` AND `.env.secrets` — or global-setup fails.
+
+## 2026-07-24 — @pushgate removed from pre-push: a gate that verifies nothing is worse than no gate
+**What happened**: The 2026-07-14 entry above was still live 10 days later — every push still needed `SKIP_E2E=1`. Confirmed unchanged: `npx playwright test --grep @pushgate --list` → "Total: 0 tests in 0 files", so the hook rejected 100% of pushes on a check that exercised zero code.
+**Root cause**: the tag was never applied to any spec. The documented `SKIP_E2E=1` workaround made the breakage survivable, so nobody fixed it — and it normalised bypassing the whole E2E step on every single push.
+**Fix**: deleted the @pushgate block (and the now-pointless `SKIP_E2E` branch) from `.husky/pre-push`; left an in-file comment stating the restore precondition. The five real gates (tsc · ESLint · dependency-cruiser · vite build · LOC ratchet) are untouched and still block pushes. `test:e2e:pushgate` stays in package.json as the restore mechanism. E2E coverage meanwhile = Mac Mini nightly comprehensive run.
+**How to apply**: before re-adding ANY `--grep`-based gate, prove it selects >0 tests with `--list`. A gate whose selector matches nothing fails closed and teaches the team to reach for the bypass — which then hides the gates that DO work. Don't paper over a broken gate with a documented workaround; either fix the selector or remove the gate.
+**Supersedes**: 2026-07-14 — pre-push @pushgate gate fails: no spec carries the tag
