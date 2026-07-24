@@ -1,7 +1,8 @@
 import { forwardRef, type ReactNode } from 'react';
-import { ArrowDownRight, ArrowUpRight, type LucideIcon } from 'lucide-react';
+import { type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NumberTicker } from './NumberTicker';
+import { KpiDeltaBadge, type KpiDelta } from './KpiDeltaBadge';
 
 /**
  * KpiTile — dashboard metric tile with value, delta, optional icon / subtitle / sparkline.
@@ -18,14 +19,7 @@ import { NumberTicker } from './NumberTicker';
  *   <KpiTile compact label="Hours" value={42.5} decimals={1} suffix="h" />
  */
 
-export type KpiDeltaTone = 'positive' | 'negative' | 'neutral' | 'auto';
-
-export interface KpiDelta {
-  value: number;
-  tone?: KpiDeltaTone;
-  /** Suffix after the number (default '%'). Pass '' to omit. */
-  suffix?: string;
-}
+export type { KpiDelta, KpiDeltaTone } from './KpiDeltaBadge';
 
 interface KpiTileProps {
   label: string;
@@ -52,13 +46,6 @@ interface KpiTileProps {
   onClick?: () => void;
   /** Forwarded as `data-testid` on the KpiTile root element. */
   testId?: string;
-}
-
-function resolveTone(value: number, tone?: KpiDeltaTone): 'positive' | 'negative' | 'neutral' {
-  if (tone && tone !== 'auto') return tone;
-  if (value > 0) return 'positive';
-  if (value < 0) return 'negative';
-  return 'neutral';
 }
 
 export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile(
@@ -137,7 +124,7 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
         <span className="flex-1 min-w-0 truncate text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
           {label}
         </span>
-        {delta && <DeltaBadge {...delta} />}
+        {delta && <KpiDeltaBadge {...delta} />}
         {index && (
           <span
             aria-hidden
@@ -182,25 +169,3 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
     </div>
   );
 });
-
-function DeltaBadge({ value, tone = 'auto', suffix = '%' }: KpiDelta) {
-  const resolved = resolveTone(value, tone);
-  const isPositive = resolved === 'positive';
-  const isNegative = resolved === 'negative';
-  return (
-    <span
-      className={cn(
-        'inline-flex flex-shrink-0 items-center gap-0.5 rounded px-1.5 py-0.5 text-xs font-medium',
-        isPositive && 'text-[color:var(--delta-positive-fg)] bg-[color:var(--delta-positive-bg)]',
-        isNegative && 'text-[color:var(--delta-negative-fg)] bg-[color:var(--delta-negative-bg)]',
-        !isPositive && !isNegative && 'text-muted-foreground bg-secondary',
-      )}
-    >
-      {isPositive && <ArrowUpRight className="h-3 w-3" />}
-      {isNegative && <ArrowDownRight className="h-3 w-3" />}
-      {value > 0 ? '+' : ''}
-      {value}
-      {suffix}
-    </span>
-  );
-}
