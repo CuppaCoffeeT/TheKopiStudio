@@ -11,7 +11,7 @@
 | Phase | Status | Notes |
 |---|---|---|
 | P1 — Brand token layer: navy/gold dark → Kopi cream/brown light | ✅ | 103 files repainted over 4 adversarial rounds (158→76→23→1). All 5 gates green |
-| P2 — AppSidebar + DashboardLayout mount | ⬜ | Depends on P1 |
+| P2 — AppSidebar + DashboardLayout mount | ✅ | 200px rail, nav from `useAuth().modules` (shared with ⌘K), data-driven "modules soon", card-cream ground for AA |
 | P3 — Frames drop the top masthead | ⬜ | Depends on P2 |
 | P4 — Dashboard home → 2a Overview (launcher removed) | ⬜ | Parallel-safe after P3 |
 | P5 — List archetype → 2a | ⬜ | Parallel-safe after P3 |
@@ -20,7 +20,7 @@
 | P8 — Rebrand user-facing → "The Kopi Studio" | ⬜ | Parallel-safe after P1 (disjoint: 4 files) |
 | P9 — E2E repair, docs refresh, full gates | ⬜ | Last; depends on all |
 
-Current phase: P2 · Blockers: none
+Current phase: P3 · Blockers: none
 
 ## 📋 Definition
 
@@ -257,6 +257,7 @@ For any file the rebuild touches, in order:
 |---|---|---|
 | 2026-07-25 | — | PRD authored. Direction 2a picked from the Claude Design turn-2 exploration; brand card adopted as token authority; launcher-removal and rebrand confirmed by user. |
 | 2026-07-25 | P1 | ✅ Token layer inverted to Kopi cream/brown light. Handoff + `KOPI_2A_SPEC.md` staged; `:root` rewritten; Instrument Serif + IBM Plex Sans loaded; `ThemeProvider` pinned `'light'`. **103 files** repainted across 4 adversarial rounds (158→76→23→1 findings), 33 agents. Notable catches: a `paths:`-scoped `.claude/rules/dark-mode.md` that auto-loaded into every agent and declared the app permanently navy/gold (replaced by `light-theme.md`, history preserved); a surviving navy panel in `ChartTooltip` painting dark ink on dark; gold hidden as `bg-[rgb(201_168_76_/_0.14)]`; the ⌘K palette left with no visible keyboard-selection indicator (1.045:1); the impersonation banner's account email at 3.24:1; and a cream wash on the report hero that *lightened* the ground on the client-facing PDF (3.42:1). Four files trimmed to clear the LOC ratchet (comment inflation only). Gates: tsc 0 · lint 0 err · drift 0 · build ✓ · LOC 37≤38. Visual smoke: 9/9 routes render on cream, 0 console errors. |
+| 2026-07-25 | P2 | ✅ `AppSidebar` built + mounted in `DashboardLayout`. Nav derives from `useAuth().modules` via the same `groupModulesByCategory` pair `GlobalCommandPalette` uses, so the rail and ⌘K cannot drift; zero role strings. "+ N modules soon" is data-driven (active modules minus granted; renders nothing at zero) — verified advisor→1, manager/super_admin→hidden. Deviation accepted: rail ships **card** cream not page cream — the comp's own sidebar div is `#faf6ee`, and idle `--fg-muted` labels measure 4.12:1 on page cream (fails AA) vs 4.72:1 on card cream. Responsive `hidden lg:flex` with the existing mobile bar below 1024px; `print:hidden` + `.no-print` preserve the report contract. Gates: tsc 0 · lint 0 err · drift 0 · build ✓ · LOC 37≤38. |
 
 ## 📚 Related Documentation
 
