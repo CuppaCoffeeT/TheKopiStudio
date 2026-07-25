@@ -3,9 +3,9 @@
  *
  * Pure presentation primitive. Caller wires data via `useNotificationsBell()` (or any
  * equivalent hook) and passes `items` + `onPick`. Owns only its own popover open state.
- * Slotted into `AppHeader` via `notificationsSlot`.
+ * Homed in `AppSidebarFooter` (>= lg) and in `AppHeaderMobileBar` (< lg).
  */
-import { useState } from 'react';
+import { useState, type ComponentPropsWithoutRef } from 'react';
 import { AlertCircle, Bell, Check, ChevronRight } from 'lucide-react';
 import { getModuleIcon } from '@/lib/iconLookup';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/primitives/overlays/Popover';
@@ -23,9 +23,19 @@ export interface NotificationsBellProps {
   /** Sum of `items[].count`. Passed in (not derived) so the bell-dot rule and the header badge stay consistent with the caller's truth. */
   total: number;
   onPick: (path: string) => void;
+  /** Popover placement. The sidebar footer passes `right` so the 320px panel
+   *  clears the 200px rail instead of being collision-shoved across it. */
+  side?: ComponentPropsWithoutRef<typeof PopoverContent>['side'];
+  align?: ComponentPropsWithoutRef<typeof PopoverContent>['align'];
 }
 
-export function NotificationsBell({ items, total, onPick }: NotificationsBellProps) {
+export function NotificationsBell({
+  items,
+  total,
+  onPick,
+  side,
+  align = 'end',
+}: NotificationsBellProps) {
   const [open, setOpen] = useState(false);
 
   const handlePick = (path: string) => {
@@ -51,7 +61,7 @@ export function NotificationsBell({ items, total, onPick }: NotificationsBellPro
         </button>
       </PopoverTrigger>
 
-      <PopoverContent align="end" sideOffset={8} className="w-[320px] p-0">
+      <PopoverContent side={side} align={align} sideOffset={8} className="w-[320px] p-0">
         <div className="px-3 pt-3 pb-2 flex items-center gap-2 border-b border-border">
           <AlertCircle className="h-3.5 w-3.5 text-[color:var(--negative-text)]" />
           <span className="text-[11px] font-medium uppercase tracking-widest text-[color:var(--negative-text)]">

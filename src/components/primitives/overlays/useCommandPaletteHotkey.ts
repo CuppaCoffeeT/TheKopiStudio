@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 
 /**
  * Registers global ⌘K / Ctrl+K to toggle the palette. Caller owns the `open`
- * state so the palette can also open programmatically (e.g. from an AppHeader
- * pill or a custom `open-command-palette` event).
+ * state so the palette can also open programmatically — e.g. via the
+ * `open-command-palette` event `AppHeaderMobileBar`'s search button dispatches,
+ * which is the only touch route to the palette.
  */
 export function useCommandPaletteHotkey(toggle: () => void) {
   useEffect(() => {

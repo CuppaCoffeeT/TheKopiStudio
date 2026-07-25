@@ -1,18 +1,28 @@
 /**
- * AppHeaderMobileBar — < md layout for AppHeader (52px row).
+ * AppHeaderMobileBar — the only horizontal app bar left in the product.
  *
- * Extracted from AppHeader.tsx (W09 decomposition · ≤200 LOC primitive rule).
- * Visible last breadcrumb segment + universal-search trigger + UserMenu
- * (which folds notifications / theme / view-as on mobile).
+ * The 2a "Kopi House" comps show no top bar at all: the rail is the whole
+ * chrome. `AppSidebar` only exists at >= lg, so below that this 52px bar keeps
+ * identity, page context, module navigation (through the ⌘K palette, which has
+ * no touch equivalent otherwise) and the account menu reachable. It absorbed
+ * the sticky glass `<header>` from the retired `AppHeader` wrapper — there is
+ * no desktop counterpart any more.
+ *
+ * Breakpoint: `lg:hidden`, matched to the rail. It used to be `md:hidden`,
+ * which left 768–1023px with neither rail nor bar.
+ *
+ * Locked: 52px row · sticky top-0 z-30 · glass card cream @ 72%
+ * (`bg-card/[0.72]`) + backdrop-blur-xl saturate-140 · bottom hairline
+ * `--border`. Excluded from print twice over (Tailwind `print:` + the
+ * `.no-print` class `features/crm/lib/report-print.css` owns), like the rail.
  */
 import { cn } from '@/lib/utils';
 import type { BreadcrumbSegment } from './Breadcrumb';
 import { AppHeaderLogo } from './AppHeaderLogo';
 import { AppHeaderUserMenu } from './AppHeaderUserMenu';
 
-type ThemeMode = 'light' | 'dark' | 'system';
-
 interface AppHeaderMobileBarProps {
+  /** Page trail. Only the last segment is shown — it is the page label here. */
   breadcrumb: BreadcrumbSegment[];
   initial: string;
   userName: string;
@@ -21,16 +31,27 @@ interface AppHeaderMobileBarProps {
   onSignOut?: () => void;
   onAccountSettings?: () => void;
   onKeyboardShortcuts?: () => void;
-  themeMode?: ThemeMode;
-  onThemeChange?: (mode: ThemeMode) => void;
   unreadCount?: number;
   onNotificationsClick?: () => void;
+  /** Impersonation control — folded into the account dropdown at this width. */
   viewAsSlot?: React.ReactNode;
-  /** Already resolved by the parent (default-wired). `undefined` hides. */
-  onGlobalSearchClick?: () => void;
-  /** When true, this layout is forced regardless of viewport. */
-  forceMobile?: boolean;
+  /**
+   * Search trigger. Default-wires to the ⌘K module palette
+   * (`open-command-palette`, listened for by `GlobalCommandPalette`), which is
+   * the touch equivalent of the rail: below lg there is no other way to reach
+   * another module. It used to dispatch `open-global-search`, an event nothing
+   * has ever listened for. Pass `null` to hide the button.
+   */
+  onGlobalSearchClick?: (() => void) | null;
+  className?: string;
 }
+
+const ICON_BUTTON_CLASS = cn(
+  'w-9 h-9 rounded-md inline-flex items-center justify-center text-muted-foreground',
+  'hover:bg-secondary hover:text-[color:var(--brown-text)]',
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+  'focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+);
 
 export function AppHeaderMobileBar({
   breadcrumb,
@@ -41,61 +62,68 @@ export function AppHeaderMobileBar({
   onSignOut,
   onAccountSettings,
   onKeyboardShortcuts,
-  themeMode,
-  onThemeChange,
   unreadCount,
   onNotificationsClick,
   viewAsSlot,
   onGlobalSearchClick,
-  forceMobile = false,
+  className,
 }: AppHeaderMobileBarProps) {
   const last = breadcrumb[breadcrumb.length - 1];
 
+  const resolvedGlobalSearchClick =
+    onGlobalSearchClick === null
+      ? undefined
+      : (onGlobalSearchClick ??
+        (() => window.dispatchEvent(new Event('open-command-palette'))));
+
   return (
-    <div
+    <header
       className={cn(
-        'h-[52px] flex items-center px-2.5 gap-1.5',
-        forceMobile ? 'flex' : 'flex md:hidden',
+        'no-print print:hidden lg:hidden',
+        'sticky top-0 z-30 backdrop-blur-xl backdrop-saturate-[1.4]',
+        'bg-card/[0.72] border-b border-border',
+        className,
       )}
+      style={{ fontFamily: 'var(--font-sans)' }}
     >
-      <AppHeaderLogo mobile />
-      <div className="h-3.5 w-px bg-[color:var(--border-soft)] flex-shrink-0" />
-      <div className="flex-1 min-w-0 text-[13px] font-medium text-muted-foreground truncate">
-        {last?.label}
+      <div className="flex h-[52px] items-center gap-1.5 px-2.5">
+        <AppHeaderLogo />
+        <div className="h-3.5 w-px flex-shrink-0 bg-[color:var(--border-soft)]" />
+        <div className="min-w-0 flex-1 truncate text-[13px] font-medium text-muted-foreground">
+          {last?.label}
+        </div>
+
+        {resolvedGlobalSearchClick && (
+          <button
+            type="button"
+            onClick={resolvedGlobalSearchClick}
+            aria-label="Search modules"
+            data-testid="app-header-mobile-search"
+            className={ICON_BUTTON_CLASS}
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+              <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.5" fill="none" />
+              <path d="M10.5 10.5 L14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </button>
+        )}
+
+        <AppHeaderUserMenu
+          initial={initial}
+          showName={false}
+          userName={userName}
+          userEmail={userEmail}
+          userRole={userRole}
+          onSignOut={onSignOut}
+          onAccountSettings={onAccountSettings}
+          onKeyboardShortcuts={onKeyboardShortcuts}
+          mobile
+          unreadCount={unreadCount}
+          onNotificationsClick={onNotificationsClick}
+          viewAsSlot={viewAsSlot}
+          className="pointer-coarse:min-h-11"
+        />
       </div>
-
-      {/* Universal-search trigger — touch-discoverable entry on phones/tablets,
-          since ⌘/ has no touch equivalent. */}
-      {onGlobalSearchClick && (
-        <button
-          type="button"
-          onClick={onGlobalSearchClick}
-          aria-label="Search records"
-          className="w-9 h-9 rounded-md inline-flex items-center justify-center text-muted-foreground hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" className="text-muted-foreground">
-            <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.5" fill="none" />
-            <path d="M10.5 10.5 L14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-        </button>
-      )}
-
-      <AppHeaderUserMenu
-        initial={initial}
-        showName={false}
-        userName={userName}
-        userEmail={userEmail}
-        userRole={userRole}
-        onSignOut={onSignOut}
-        onAccountSettings={onAccountSettings}
-        onKeyboardShortcuts={onKeyboardShortcuts}
-        mobile
-        themeMode={themeMode}
-        onThemeChange={onThemeChange}
-        unreadCount={unreadCount}
-        onNotificationsClick={onNotificationsClick}
-        viewAsSlot={viewAsSlot}
-      />
-    </div>
+    </header>
   );
 }

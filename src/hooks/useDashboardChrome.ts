@@ -1,27 +1,25 @@
 /**
- * useDashboardChrome — shared chrome state for every page that composes
- * `<AppHeader>` directly (replacing the legacy `<DashboardHeader>` shim).
+ * useDashboardChrome — the one place account / impersonation chrome is wired,
+ * wherever that chrome is homed.
  *
- * Returns the props AppHeader needs, derived from AuthContext, plus an
- * impersonation sub-object for rendering `<ImpersonationBanner>`.
- * Theme is pinned light (The Kopi Studio cream/brown) by ThemeProvider, so no
- * theme-toggle props are passed — AppHeader hides the toggle when
- * `onThemeChange` is absent.
+ * Since the 2a masthead retirement (2026-07-25) there are three consumers:
+ *   - `AppSidebarFooter` — the >= lg account home, pinned to the bottom of the
+ *     200px rail.
+ *   - `AppHeaderMobileBar` — the < lg fallback, rendered by ListPageFrame /
+ *     DetailPageFrame / AppHeaderShell.
+ *   - `ImpersonationBanner` — rendered by those same frames.
  *
- * Usage:
- *   const chrome = useDashboardChrome();
- *   return (
- *     <div className="min-h-screen" style={{ background: 'var(--page-bg, #f0e6d6)' }}>
- *       <AppHeader breadcrumb={[{ label: 'Workspace', href: '/dashboard' }, { label: 'My Page' }]} {...chrome.appHeaderProps} />
- *       {chrome.impersonation.active && <ImpersonationBanner {...chrome.impersonation.props} />}
- *       …page content…
- *     </div>
- *   );
+ * It returns connector PROP BAGS rather than pre-rendered slots, so each home
+ * places its own overlays: the rail opens them to its right, the mobile bar
+ * folds view-as into the account dropdown.
+ *
+ * Theme is pinned light by ThemeProvider (.claude/rules/light-theme.md), so no
+ * theme props exist here.
  *
  * Related:
- *  - src/components/primitives/shell/AppHeader.tsx
+ *  - src/components/primitives/shell/AppSidebarFooter.tsx
+ *  - src/components/primitives/shell/AppHeaderMobileBar.tsx
  *  - src/components/primitives/shell/ImpersonationBanner.tsx
- *  - src/components/DashboardHeader.tsx (legacy shim — this hook extracts its chrome logic)
  */
 
 import { useNavigate } from 'react-router-dom';
@@ -29,26 +27,30 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { clearAuthStorage } from '@/utils/authStorage';
 import { showError, showSuccess } from '@/utils/toastHelper';
-import { NotificationsBell } from '@/components/primitives/shell/NotificationsBell';
-import { ViewAsSelector } from '@/components/primitives/shell/ViewAsSelector';
+import type { NotificationsBellProps } from '@/components/primitives/shell/NotificationsBell';
+import type { ViewAsSelectorProps } from '@/components/primitives/shell/ViewAsSelector';
 import { useViewAs } from '@/hooks/useViewAs';
 import { useNotificationsBell } from '@/hooks/useNotificationsBell';
 
 const formatRole = (role: string) =>
   role
     .split('_')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .map((w) => (w ? w.charAt(0).toUpperCase() + w.slice(1) : ''))
     .join(' ');
 
 export interface DashboardChrome {
-  appHeaderProps: {
+  /** Identity for the account menu — spread straight into `<AppHeaderUserMenu>`. */
+  user: {
+    initial: string;
     userName: string;
     userEmail: string;
     userRole: string;
-    viewAsSlot: React.ReactNode;
-    notificationsSlot: React.ReactNode;
-    onSignOut: () => Promise<void>;
   };
+  /** Prop bag for `<ViewAsSelector>` (self-guards for non-super_admin). */
+  viewAs: ViewAsSelectorProps;
+  /** Prop bag for `<NotificationsBell>`. */
+  notifications: NotificationsBellProps;
+  onSignOut: () => Promise<void>;
   impersonation: {
     active: boolean;
     props: {
@@ -62,7 +64,7 @@ export interface DashboardChrome {
 export function useDashboardChrome(): DashboardChrome {
   const navigate = useNavigate();
   const { user, profile, isImpersonating, realUser, stopImpersonation } = useAuth();
-  const impersonation = useViewAs();
+  const viewAs = useViewAs();
   const notifications = useNotificationsBell();
 
   const userName = profile?.name || user?.email?.split('@')[0] || 'User';
@@ -84,14 +86,15 @@ export function useDashboardChrome(): DashboardChrome {
   };
 
   return {
-    appHeaderProps: {
+    user: {
+      initial: userName.charAt(0).toUpperCase(),
       userName,
       userEmail,
       userRole,
-      viewAsSlot: <ViewAsSelector {...impersonation} />,
-      notificationsSlot: <NotificationsBell {...notifications} />,
-      onSignOut: handleSignOut,
     },
+    viewAs,
+    notifications,
+    onSignOut: handleSignOut,
     impersonation: {
       active: !!(isImpersonating && realUser),
       props: {

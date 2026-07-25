@@ -1,8 +1,11 @@
 /**
  * AppSidebar — the 2a "Kopi House" primary navigation rail.
  *
- * 200px fixed rail carrying the wordmark + one nav item per granted module,
- * mounted once by `shared/app-shell/DashboardLayout`.
+ * 200px fixed rail carrying the wordmark, one nav item per granted module, and
+ * — since the top masthead was retired (2026-07-25) — the account footer.
+ * Mounted once by `shared/app-shell/DashboardLayout`. It is the ONLY chrome on
+ * desktop: identity, navigation and account all live here, which is what leaves
+ * the content column as clean as the 2a comps draw it.
  *
  * Nav source of truth: `useAuth().modules` run through `groupModulesByCategory`
  * — the same pair `GlobalCommandPalette` uses — so the rail and ⌘K can never
@@ -18,7 +21,7 @@
  * page cream (4.12) — see the spec's "Open item — muted on page".
  *
  * Responsive: >= lg (1024px) only. Below that the rail is hidden and
- * `AppHeaderMobileBar` keeps serving navigation — no second drawer is built.
+ * `AppHeaderMobileBar` serves navigation + account — no second drawer is built.
  *
  * Print: excluded twice over — Tailwind's `print:` variant plus the `.no-print`
  * class that `features/crm/lib/report-print.css` owns — so `/clients/:id/report`
@@ -33,12 +36,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { queryKeys } from '@/utils/queryKeys';
 import { groupModulesByCategory, type DashboardModule } from '@/utils/dashboardHelpers';
 import { cn } from '@/lib/utils';
+import { AppSidebarFooter } from './AppSidebarFooter';
 
 /**
- * Rail width, as the two literal Tailwind classes it produces. Tailwind scans
- * source text, so the width can never be a computed string — these two must be
- * changed together. `SIDEBAR_OFFSET_CLASS` is what DashboardLayout pads the
- * routed content pane by.
+ * Rail width, as the two literal Tailwind classes it produces — Tailwind scans
+ * source text, so it can never be computed. Change both together.
+ * `SIDEBAR_OFFSET_CLASS` is DashboardLayout's padding on the content pane.
  */
 const SIDEBAR_WIDTH_CLASS = 'w-[200px]';
 export const SIDEBAR_OFFSET_CLASS = 'lg:pl-[200px]';
@@ -47,11 +50,8 @@ export const SIDEBAR_OFFSET_CLASS = 'lg:pl-[200px]';
 const HOME_PATH = '/dashboard';
 const HOME_LABEL = 'Overview';
 
-/**
- * Focus is a VISIBLE brown ring on every interactive element. Inset by design —
- * an outer ring collides with the rail's right hairline (KOPI_2A_SPEC →
- * "Sidebar items").
- */
+/** Visible brown focus ring, inset by design — an outer ring collides with the
+ *  rail's right hairline (KOPI_2A_SPEC → "Sidebar items"). */
 const FOCUS_RING = cn(
   'focus-visible:outline-2 focus-visible:outline-[color:hsl(var(--sidebar-ring))]',
   'focus-visible:outline-offset-[-2px]',
@@ -75,11 +75,8 @@ interface SidebarItemProps {
   end?: boolean;
 }
 
-/**
- * All five interactive states, per the comp: idle · hover · pressed · focus ·
- * current. Hover text takes `--brown-text` rather than the raw brand brown
- * because 13px is under the 18px AA threshold.
- */
+/** All five comp states: idle · hover · pressed · focus · current. Hover text
+ *  takes `--brown-text`, not raw brand brown — 13px is under the AA threshold. */
 function SidebarItem({ to, label, end }: SidebarItemProps) {
   return (
     <NavLink
@@ -160,7 +157,7 @@ export function AppSidebar() {
         'no-print print:hidden',
         'fixed inset-y-0 left-0 z-40 hidden lg:flex lg:flex-col',
         SIDEBAR_WIDTH_CLASS,
-        'overflow-y-auto overscroll-contain border-r border-sidebar-border bg-sidebar py-[22px]',
+        'overflow-hidden border-r border-sidebar-border bg-sidebar py-[22px]',
       )}
     >
       <Link
@@ -175,7 +172,12 @@ export function AppSidebar() {
         The Kopi <i className="text-sidebar-primary">Studio</i>
       </Link>
 
-      <nav aria-label="Primary" className="flex flex-col gap-0.5">
+      {/* The nav is the only scroller — the footer stays pinned to the rail's
+          bottom edge however long the module list gets. */}
+      <nav
+        aria-label="Primary"
+        className="flex min-h-0 flex-col gap-0.5 overflow-y-auto overscroll-contain"
+      >
         <SidebarItem to={HOME_PATH} label={HOME_LABEL} end />
         {navModules.map((mod) => (
           <SidebarItem key={mod.path} to={mod.path} label={mod.name} />
@@ -187,6 +189,8 @@ export function AppSidebar() {
           </p>
         )}
       </nav>
+
+      <AppSidebarFooter />
     </aside>
   );
 }

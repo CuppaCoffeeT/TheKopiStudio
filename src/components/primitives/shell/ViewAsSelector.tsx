@@ -8,7 +8,7 @@
  * Self-guards: renders nothing when `realUser` is null or not super_admin —
  * the slot collapses on its own so callers don't need a role check.
  */
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ComponentPropsWithoutRef } from 'react';
 import { Eye, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/primitives/overlays/Popover';
@@ -30,6 +30,10 @@ export interface ViewAsSelectorProps {
   impersonationLoading: boolean;
   onSelect: (userId: string) => void;
   onExit: () => void;
+  /** Popover placement. The sidebar footer passes `right` so the 300px panel
+   *  clears the 200px rail instead of being collision-shoved across it. */
+  side?: ComponentPropsWithoutRef<typeof PopoverContent>['side'];
+  align?: ComponentPropsWithoutRef<typeof PopoverContent>['align'];
 }
 
 const formatRole = (r: string) => r.replace(/_/g, ' ');
@@ -42,6 +46,8 @@ export function ViewAsSelector({
   impersonationLoading,
   onSelect,
   onExit,
+  side,
+  align = 'end',
 }: ViewAsSelectorProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -103,7 +109,12 @@ export function ViewAsSelector({
         </button>
       </PopoverTrigger>
 
-      <PopoverContent align="end" sideOffset={8} className="w-[300px] p-0 overflow-hidden">
+      <PopoverContent
+        side={side}
+        align={align}
+        sideOffset={8}
+        className="w-[300px] p-0 overflow-hidden"
+      >
         <div className="px-3 pt-2 pb-2" style={{ fontFamily: 'var(--font-sans)' }}>
           <div
             className="text-[9.5px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-1"

@@ -1,9 +1,15 @@
 /**
  * DetailPageFrame — the one-stop wrapper for heavyweight detail pages.
  *
- * Composes: AppHeader (breadcrumb + user menu + theme + impersonation slot)
+ * Composes: AppHeaderMobileBar (< lg chrome; >= lg the AppSidebar rail is all
+ *           the chrome there is)
  *         + ImpersonationBanner (when impersonating)
- *         + PageShell (hero + tabs + 2/3 main + 1/3 side-rail).
+ *         + PageShell (breadcrumb + hero + tabs + 2/3 main + 1/3 side-rail).
+ *
+ * 2026-07-25 (2a "Kopi House"): the top bar is retired, so the breadcrumb moved
+ * from chrome into the content column — quiet inline text above the H1, exactly
+ * as the 2a Detail comp draws it ("Clients / Marcus Tan"). The `breadcrumb`
+ * prop API is unchanged; no page needed editing.
  *
  * Pages pass FLAT props — no nested slot-rendering required. Same auth/theme
  * plumbing as the legacy `DashboardHeader` shim, so all 71+ pages inherit
@@ -26,28 +32,23 @@
  *     {mainContent}
  *   </DetailPageFrame>
  *
- * If anything inside (AppHeader, PageShell, TabNav) changes its prop API,
- * ONLY this file updates. Zero page edits. That's the point.
+ * If anything inside (AppHeaderMobileBar, PageShell, TabNav) changes its prop
+ * API, ONLY this file updates. Zero page edits. That's the point — the masthead
+ * retirement itself cost no page a single line.
  *
  * Spec: docs/99-refactor/_system/design/handoffs/2026-04-20-MUmgnpT1/project/preview/component-pageshell.html
  * Related: src/components/DashboardHeader.tsx (the list-page counterpart shim).
  */
 
 import type { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
-import { clearAuthStorage } from '@/utils/authStorage';
-import { showError, showSuccess } from '@/utils/toastHelper';
 import {
-  AppHeader,
+  AppHeaderMobileBar,
+  Breadcrumb,
   ImpersonationBanner,
-  NotificationsBell,
   ViewAsSelector,
   type BreadcrumbSegment,
 } from '@/components/primitives/shell';
-import { useViewAs } from '@/hooks/useViewAs';
-import { useNotificationsBell } from '@/hooks/useNotificationsBell';
+import { useDashboardChrome } from '@/hooks/useDashboardChrome';
 import { cn } from '@/lib/utils';
 import { PageShell, PageShellHero, type PageShellStatusTone, type PageShellActionBarBreakpoint } from './PageShell';
 import { TabNav, type TabNavItem } from './TabNav';
@@ -55,7 +56,8 @@ import { TabNav, type TabNavItem } from './TabNav';
 type BreadcrumbInput = string | BreadcrumbSegment;
 
 interface DetailPageFrameProps {
-  /** Trail shown in AppHeader. Strings auto-convert to `BreadcrumbSegment`; last item gets no href. */
+  /** Trail rendered inline above the hero title (and used as the mobile bar's page label).
+   *  Strings auto-convert to `BreadcrumbSegment`; last item gets no href. */
   breadcrumb: BreadcrumbInput[];
   /** Hero title. Use the current record label — e.g. `"Project 7463B — Penta-Ocean ATCC"`. */
   title: ReactNode;
@@ -88,14 +90,8 @@ interface DetailPageFrameProps {
   testId?: string;
 }
 
-// Locked: NO back button. Back navigation goes through the breadcrumb in AppHeader.
+// Locked: NO back button. Back navigation goes through the inline breadcrumb.
 // Adding `backPath` / `backLabel` props here is forbidden per anti-patterns.md.
-
-const formatRole = (role: string) =>
-  role
-    .split('_')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
 
 function normalizeBreadcrumb(input: BreadcrumbInput[]): BreadcrumbSegment[] {
   return input.map((b, i) => {
@@ -126,32 +122,12 @@ export function DetailPageFrame({
   className,
   testId,
 }: DetailPageFrameProps) {
-  const navigate = useNavigate();
-  const { user, profile, isImpersonating, realUser, stopImpersonation } = useAuth();
-  const impersonation = useViewAs();
-  const notifications = useNotificationsBell();
-
-  const userName = profile?.name || user?.email?.split('@')[0] || 'User';
-  const userEmail = profile?.email || user?.email || '';
-  const userRoleRaw = profile?.role || user?.role || '';
-  const userRole = formatRole(userRoleRaw);
-
+  const chrome = useDashboardChrome();
   const segments = normalizeBreadcrumb(breadcrumb);
-
-  const handleSignOut = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) showError('There was an issue signing out. Clearing session anyway.');
-      clearAuthStorage();
-      showSuccess('Logged out successfully');
-      navigate('/login', { replace: true });
-    } catch {
-      showError('An unexpected error occurred during logout');
-    }
-  };
 
   const heroBlock = (
     <PageShellHero
+      breadcrumb={<Breadcrumb segments={segments} />}
       title={title}
       recordId={recordId}
       statusTone={status?.tone ?? 'neutral'}
@@ -172,23 +148,14 @@ export function DetailPageFrame({
       style={{ background: 'var(--page-bg, #f0e6d6)' }}
       data-testid={testId}
     >
-      <AppHeader
+      <AppHeaderMobileBar
         breadcrumb={segments}
-        userName={userName}
-        userEmail={userEmail}
-        userRole={userRole}
-        viewAsSlot={<ViewAsSelector {...impersonation} />}
-        notificationsSlot={<NotificationsBell {...notifications} />}
-        onSignOut={handleSignOut}
+        {...chrome.user}
+        viewAsSlot={<ViewAsSelector {...chrome.viewAs} />}
+        onSignOut={chrome.onSignOut}
       />
 
-      {isImpersonating && realUser && (
-        <ImpersonationBanner
-          role={userRole}
-          email={userEmail}
-          onExit={stopImpersonation}
-        />
-      )}
+      {chrome.impersonation.active && <ImpersonationBanner {...chrome.impersonation.props} />}
 
       <PageShell
         variant={variant}

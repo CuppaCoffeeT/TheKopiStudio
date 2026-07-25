@@ -11,8 +11,10 @@ interface ImpersonationBannerProps {
 }
 
 /**
- * Terracotta-tint strip (--red-soft) rendered directly under AppHeader when
- * super_admin is impersonating. Pulsing --brand-terracotta dot +
+ * Terracotta-tint strip (--red-soft) rendered at the top of the page frame when
+ * super_admin is impersonating. It stays in the CONTENT column, not in the
+ * sidebar rail, when the top masthead retires (2026-07-25): it is safety
+ * chrome and must keep full page width. Pulsing --brand-terracotta dot +
  * "Test mode · Engineer" + keyboard shortcut hint. Copy is 12px, so it takes
  * the AA-safe --negative-text step, not the raw terracotta fill.
  *

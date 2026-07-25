@@ -13,7 +13,7 @@ interface GreetingHeaderProps {
 }
 
 /**
- * Page hero for /dashboard — sits BELOW the AppHeader.
+ * Page hero for /dashboard — the first thing in the content column.
  *
  * Kopi Studio 2a dateline greeting (2026-07-25 visual direction):
  * uppercase 600 11px tracking-.14em dateline (weekday · date · one context
@@ -21,8 +21,9 @@ interface GreetingHeaderProps {
  * under the block. Spec: docs/05-implementation/design-handoffs/
  * 2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md
  *
- * Pure presentation: no view-as, no logout. Those controls live in AppHeader's
- * user menu so the chrome stays consistent across every page.
+ * Pure presentation: no view-as, no logout. Those controls live in the sidebar
+ * rail's account footer (and in AppHeaderMobileBar's account menu below lg), so
+ * the chrome stays consistent across every page.
  */
 export function GreetingHeader({
   name,

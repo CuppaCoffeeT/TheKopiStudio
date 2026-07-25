@@ -16,9 +16,15 @@ interface BreadcrumbProps {
 
 /**
  * Segmented breadcrumb nav — replaces back-button on every page.
- * Last segment bold ink; inactive segments + separators use `--fg-dim` so they
- * clear AA on the page cream. Hover underline is brown (`decoration-primary`).
- * Middle-ellipsis /…/ when deep.
+ *
+ * Since the 2a masthead retirement (2026-07-25) this is CONTENT, not chrome:
+ * it renders as quiet inline text at the top of the content column, exactly as
+ * the 2a Detail comp shows it ("Clients / Marcus Tan"). 12px per KOPI_2A_SPEC →
+ * Type scale; the current segment is plain ink, earlier segments + separators
+ * take `--fg-dim` (not `--fg-muted`, which measures 4.12:1 on the page cream and
+ * misses AA — same call as PageShellHero's meta line).
+ *
+ * Hover underline is brown (`decoration-primary`). Middle-ellipsis /…/ when deep.
  */
 export function Breadcrumb({ segments, truncate = true, className }: BreadcrumbProps) {
   const visible =
@@ -29,7 +35,7 @@ export function Breadcrumb({ segments, truncate = true, className }: BreadcrumbP
   return (
     <nav
       aria-label="Breadcrumb"
-      className={cn('inline-flex items-center gap-2 text-[13px] leading-none', className)}
+      className={cn('inline-flex flex-wrap items-center gap-2 text-[12px] leading-none', className)}
       style={{ fontFamily: 'var(--font-sans)' }}
     >
       {visible.map((s, i) => {
@@ -52,10 +58,8 @@ export function Breadcrumb({ segments, truncate = true, className }: BreadcrumbP
                     : undefined
                 }
                 className={cn(
-                  'hover:underline decoration-primary underline-offset-[3px]',
-                  isLast
-                    ? 'font-semibold text-foreground'
-                    : 'font-normal text-[color:var(--fg-dim)]'
+                  'font-normal hover:underline decoration-primary underline-offset-[3px]',
+                  isLast ? 'text-foreground' : 'text-[color:var(--fg-dim)]'
                 )}
               >
                 {s.label}
@@ -63,9 +67,8 @@ export function Breadcrumb({ segments, truncate = true, className }: BreadcrumbP
             ) : (
               <span
                 className={cn(
-                  isLast
-                    ? 'font-semibold text-foreground'
-                    : 'font-normal text-[color:var(--fg-dim)]'
+                  'font-normal',
+                  isLast ? 'text-foreground' : 'text-[color:var(--fg-dim)]'
                 )}
               >
                 {s.label}

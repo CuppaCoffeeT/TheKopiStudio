@@ -1,18 +1,19 @@
 /**
  * ListPageFrame — Lego-assembly frame for every list archetype page.
  *
- * Composes AppHeader + ImpersonationBanner + title-row (H1 · description · primary-action)
+ * Composes ImpersonationBanner + title-row (H1 · description · primary-action)
  *   + StatusTabs + FilterBar + DataTable + Pagination + FloatingCTA (mobile).
  *
  * Spec: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/DataTable.html
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/DataTable.jsx#L388 (PageChrome)
  * Adopters: tracked in DESIGN_CATALOG.md (primary target: CompanyList + 40+ list pages).
  *
- * Locked: renders AppHeader directly (not via DashboardHeader shim) — DashboardHeader's
- * pre-rendered title row lacks a primary-action slot. This is the direct-migration
- * landing surface referenced in DashboardHeader.tsx JSDoc.
+ * 2026-07-25 (2a "Kopi House"): no top bar. `AppSidebar` carries identity, nav
+ * and account at >= lg; `AppHeaderMobileBar` stands in below that. No inline
+ * breadcrumb either — the 2a List comp opens straight on kicker + title — so
+ * the trail is built here only to label the mobile bar.
  *
- * Chrome plumbing (user/theme/impersonation/sign-out) delegated to `useDashboardChrome`.
+ * Chrome plumbing (user/impersonation/sign-out) delegated to `useDashboardChrome`.
  *
  * `floatingCTAOnly=false` (default) renders BOTH an inline desktop primary button
  * next to the H1 AND a mobile FloatingCTA — per archetypes/list.md responsive split.
@@ -20,15 +21,15 @@
 
 import { type ReactNode } from 'react';
 import { Plus } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { useDashboardChrome } from '@/hooks/useDashboardChrome';
-import { AppHeader } from '@/components/primitives/shell/AppHeader';
+import { AppHeaderMobileBar } from '@/components/primitives/shell/AppHeaderMobileBar';
 import { Button } from '@/components/primitives/shell/Button';
 import { ImpersonationBanner } from '@/components/primitives/shell/ImpersonationBanner';
 import { FilterBar } from '@/components/primitives/shell/FilterBar';
 import { FloatingCTA } from '@/components/primitives/shell/FloatingCTA';
 import { PageTitle } from '@/components/primitives/shell/PageTitle';
 import { PageDescription } from '@/components/primitives/shell/PageDescription';
+import { ViewAsSelector } from '@/components/primitives/shell/ViewAsSelector';
 import { type BreadcrumbSegment } from '@/components/primitives/shell/Breadcrumb';
 import { DataTable, type DataTableRow, type DataTableVariant } from './DataTable';
 import { type DataRowDensity } from './DataRow';
@@ -132,7 +133,12 @@ export function ListPageFrame({
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader breadcrumb={breadcrumb} {...chrome.appHeaderProps} />
+      <AppHeaderMobileBar
+        breadcrumb={breadcrumb}
+        {...chrome.user}
+        viewAsSlot={<ViewAsSelector {...chrome.viewAs} />}
+        onSignOut={chrome.onSignOut}
+      />
       {chrome.impersonation.active && <ImpersonationBanner {...chrome.impersonation.props} />}
 
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">

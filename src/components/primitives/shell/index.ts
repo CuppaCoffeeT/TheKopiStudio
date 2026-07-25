@@ -1,5 +1,5 @@
-export { AppHeader, AppHeaderWrapper } from './AppHeader';
 export { AppHeaderLogo } from './AppHeaderLogo';
+export { AppHeaderMobileBar } from './AppHeaderMobileBar';
 export { AppHeaderUserMenu, type AppHeaderUserMenuProps } from './AppHeaderUserMenu';
 export { AppSidebar, SIDEBAR_OFFSET_CLASS } from './AppSidebar';
 export { Breadcrumb, type BreadcrumbSegment } from './Breadcrumb';
