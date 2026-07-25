@@ -1,6 +1,6 @@
 # The Kopi Studio Redesign — Direction 2a "Kopi House" — PRD
 
-**Created:** 2026-07-25 · **Last Updated:** 2026-07-25 · **Status:** 🔵 Planning · **Priority:** 🔴 Critical (whole-app visual + structural rebuild)
+**Created:** 2026-07-25 · **Last Updated:** 2026-07-25 · **Status:** 🟡 In Progress (P1) · **Priority:** 🔴 Critical (whole-app visual + structural rebuild)
 **Work type**: refactor (palette inversion + shell restructure across every route; new primitives, no new tables, no new routes)
 
 🤖 Build via: `/prd-execute docs/05-implementation/active/KOPI_STUDIO_REDESIGN_PRD.md`
@@ -226,17 +226,23 @@ For any file the rebuild touches, in order:
 | A11y | every body-text pairing ≥ 4.5:1; focus ring visible on every interactive element; 44px touch targets |
 | Print | `/clients/:id/report` prints with no sidebar and unchanged structure |
 
-## ❓ Open Questions / Risks
+## ✅ Resolved Decisions (2026-07-25, execution start — all reversible)
 
-| # | Item | Provisional default (reversible) |
-|---|---|---|
-| 1 | **Mobile is undefined.** Every 2a comp is 1180px desktop. | Sidebar collapses to the existing mobile bar below 1024px. Revisit if it feels wrong on a phone. |
-| 2 | **Brand palette fails AA in three places** (sage, terracotta, and everything on the page bg). | Ship the three darkened *text* variants; brand hexes keep fills/borders/large type. Flagged for brand sign-off — the alternative is amending the brand card. |
-| 3 | **Font delivery.** Brand card says "load from Google Fonts"; that is a third-party request on every page load. | Follow the brand card (CDN) in P1. Self-hosting via `@fontsource` is a drop-in swap later if you want it. |
-| 4 | **Instrument Serif ≥18px floor** vs. existing small serif usages. | Audit during P1; anything under 18px moves to IBM Plex Sans. |
-| 5 | **"+ 3 modules soon"** in the comp implies a roadmap the app does not have. | Render it as a static muted affordance; drop it if you would rather not promise. |
-| 6 | **Launcher removal is one-way** for users who navigate by the grid. | Decided 2026-07-25: remove. ⌘K + sidebar replace it. |
-| 7 | Dark mode is dropped entirely. | The brand is light-only. `ThemePreference` type/storage stay so a future toggle is cheap. |
+| # | Question | Decision | Rationale |
+|---|---|---|---|
+| 1 | Mobile is undefined (all 2a comps are 1180px desktop) | Sidebar collapses to the existing mobile bar below 1024px | Reuses shipped responsive chrome; no new mobile design invented where the comp is silent |
+| 2 | Brand palette fails WCAG AA in three places | Ship `--brown-text #806241` · `--sage-text #526f56` · `--negative-text #ab4925` for small text; brand hexes keep every fill, border, icon and ≥18px display type | Never ship illegible error text; never unilaterally repaint a brand. **Surfaced for brand sign-off in the final report** — amending the brand card instead is a one-line revert |
+| 3 | Font delivery: Google Fonts CDN vs self-host | CDN `<link>` per the brand card | `@fontsource` means an npm install, which is forbidden mid-run (shared `node_modules`). Self-hosting is a drop-in swap in a later pass |
+| 4 | Instrument Serif ≥18px floor vs existing small serif usages | P1 audits every serif usage; anything under 18px moves to IBM Plex Sans | The brand card states the floor as a rule, not a preference |
+| 5 | "+ 3 modules soon" implies a roadmap that does not exist | Render **data-driven**: count modules the signed-in user lacks; omit the line entirely when that count is zero | Honest in every state, and still matches the comp when it is true |
+| 6 | Launcher removal is one-way for grid navigators | Remove it; sidebar + ⌘K replace it | User decision, 2026-07-25 |
+| 7 | Dark mode dropped entirely | Light-pinned. `ThemePreference` type + localStorage key stay | Brand is light-only; keeping the type makes a future toggle cheap |
+
+## ❓ Residual risks
+
+- **Brand-card AA deviation (#2)** is the one place this build knowingly departs from the supplied brand spec. Needs your sign-off.
+- **Prod DB is shared** across worktrees. This PRD writes no schema, so the risk is nil for this run.
+- **Worktree hooks do not fire** (`.husky/_` untracked) — every gate must be run explicitly, never inferred from a green push.
 
 ## 🗒️ Execution Log
 
