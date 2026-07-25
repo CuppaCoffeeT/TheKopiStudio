@@ -10,12 +10,12 @@ import { AxisY, AxisX, GridLines, chartSeriesColor } from './ChartShell';
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
  * Locked: 600ms path-draw motion via CSS keyframes inside the SVG.
- *         Grid zinc-100/800; Geist Mono 11px axis labels.
+ *         Grid: dashed --border-soft hairlines; mono-stack (--font-mono) 11px axis labels.
  */
 
 export interface AreaSeries {
   name: string;
-  /** Optional — defaults to the monochrome cream→gold palette by series index. */
+  /** Optional — defaults to the monochrome brown ramp (CHART_SERIES_PALETTE in ChartShell) by series index. */
   color?: string;
   points: number[];
 }

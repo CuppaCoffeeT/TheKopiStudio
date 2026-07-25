@@ -21,9 +21,8 @@ import { cn } from '@/lib/utils';
  *
  * Locked:
  *   • Toolbar = bold · italic · bullet · ordered · 1px divider · link · NAS-link popover trigger
- *   • Outer focus ring = red-700 border + 3px red-7/14% halo when contentEditable has focus
- *   • Toolbar btn states: default · hover (zinc-100) · pressed/active (zinc-200) · focus-visible (red-700) · disabled
- *   • Dark mirror via class-based `.dark` variant on every surface
+ *   • Outer focus ring = --ring brown border + the --shadow-focus brown halo when contentEditable has focus
+ *   • Toolbar btn states: default · hover/pressed (--secondary tint) · focus-visible (--ring brown) · disabled
  */
 
 interface RichTextEditorProps {
@@ -300,7 +299,7 @@ export function RichTextEditor({
       className={cn(
         'w-full min-w-0 overflow-hidden rounded-lg border bg-card transition-[box-shadow,border-color] duration-150',
         'border-border',
-        hasFocus && !disabled && 'border-ring shadow-[0_0_0_3px_rgba(185,28,28,0.14)] dark:shadow-[0_0_0_3px_rgba(248,113,113,0.22)]',
+        hasFocus && !disabled && 'border-ring shadow-[var(--shadow-focus)]',
         disabled && 'pointer-events-none opacity-55',
         className,
       )}
@@ -310,12 +309,12 @@ export function RichTextEditor({
         editor={editor}
         style={{ minHeight: minHeightCss, maxHeight: maxHeightCss }}
         className={cn(
-          'prose prose-sm dark:prose-invert max-w-none w-full overflow-y-auto px-3.5 py-3 text-foreground',
+          'prose prose-sm max-w-none w-full overflow-y-auto px-3.5 py-3 text-foreground',
           '[&_.tiptap]:outline-none [&_.tiptap]:break-words [&_.tiptap]:min-h-[inherit]',
           '[&_.tiptap_p]:my-0 [&_.tiptap_p]:mb-2.5 [&_.tiptap_p:last-child]:mb-0',
           '[&_.tiptap_strong]:font-semibold',
           '[&_.tiptap_em]:italic [&_.tiptap_em]:text-muted-foreground',
-          '[&_.tiptap_a]:text-primary [&_.tiptap_a]:underline [&_.tiptap_a]:underline-offset-2 [&_.tiptap_a]:decoration-1 hover:[&_.tiptap_a]:decoration-2',
+          '[&_.tiptap_a]:text-[color:var(--brand-red)] [&_.tiptap_a]:underline [&_.tiptap_a]:underline-offset-2 [&_.tiptap_a]:decoration-1 hover:[&_.tiptap_a]:decoration-2',
           '[&_.tiptap_ul]:list-disc [&_.tiptap_ol]:list-decimal',
           '[&_.tiptap_ul]:pl-[22px] [&_.tiptap_ol]:pl-[22px] [&_.tiptap_ul]:mb-2.5 [&_.tiptap_ol]:mb-2.5',
           '[&_.tiptap_li]:my-0.5',

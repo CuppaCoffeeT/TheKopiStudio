@@ -1,11 +1,17 @@
 /**
- * TableHeader — sortable column header row with Geist Mono uppercase labels.
+ * TableHeader — sortable column header row with uppercase IBM Plex Sans labels.
  *
  * Spec: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/DataTablePrimitives.html
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/table/DataTablePrimitives.jsx
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked: 40h · zinc-100/zinc-900 bg · 10.5px Geist Mono uppercase · 28px checkbox slot.
+ * Locked: 40h · transparent (the header rule, not a fill, separates it from the
+ * rows) · 600 10.5px uppercase tracking-.1em in --fg-dim · 28px checkbox slot.
+ *
+ * The transparent ground means the label ratio is set by whatever surface the
+ * adopter mounts the table on, and DataTable is used on BOTH the page cream
+ * (dashboard) and the card cream (list pages). --fg-dim clears AA on either
+ * (6.40:1 / 7.34:1); --fg-muted fails on the page at 4.12:1.
  */
 
 import { cn } from '@/lib/utils';
@@ -52,7 +58,7 @@ export function TableHeader({
         'bg-transparent',
         'border-b border-border',
         'text-[10.5px] font-semibold uppercase tracking-[0.1em]',
-        'text-muted-foreground',
+        'text-[color:var(--fg-dim)]',
         className
       )}
       role="row"
@@ -84,7 +90,7 @@ export function TableHeader({
           col.align === 'right' ? 'justify-end' : 'justify-start',
           isSorted
             ? 'text-foreground'
-            : 'text-muted-foreground',
+            : 'text-[color:var(--fg-dim)]',
         );
         if (!col.sortable) {
           return (

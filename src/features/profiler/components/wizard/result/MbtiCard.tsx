@@ -33,20 +33,26 @@ export function MbtiCard({ signals }: { signals: MbtiSignals }) {
             >
               <div className="mb-2 flex items-center justify-between gap-2">
                 <span
-                  className="text-accent"
+                  className="text-[color:var(--brown-text)]"
                   style={{ fontFamily: 'var(--font-sans)', fontSize: 12, fontWeight: 700 }}
                 >
                   {total === 0
                     ? 'No signals yet'
                     : `${winLabel} → ${winScore} signal${winScore !== 1 ? 's' : ''}`}
                 </span>
-                <span className="text-muted-foreground" style={{ fontSize: 10 }}>
+                {/* 10px on the --secondary tile fill, where --fg-muted is
+                    4.37:1 — the smallest type in the report takes --fg-dim
+                    (6.79:1). Same for the strength line below. */}
+                <span className="text-[color:var(--fg-dim)]" style={{ fontSize: 10 }}>
                   vs {loseLabel}
                   {total === 0 ? '' : ` (${loseScore})`}
                 </span>
               </div>
+              {/* Same 2a bar track as ScoreCard. The page token used to recess
+                  this strip against a raised card; on the cream ground it is
+                  within a hair of the tile fill, so the hairline carries it. */}
               <div
-                className="h-2 overflow-hidden rounded-full bg-background/60"
+                className="h-2 overflow-hidden rounded-full bg-[color:var(--border-faint)]"
                 role="progressbar"
                 aria-label={`${dim.la} vs ${dim.lb} strength`}
                 aria-valuenow={barPc}
@@ -58,7 +64,7 @@ export function MbtiCard({ signals }: { signals: MbtiSignals }) {
                   style={{ width: `${barPc}%` }}
                 />
               </div>
-              <div className="mt-1.5 text-muted-foreground" style={{ fontSize: 10 }}>
+              <div className="mt-1.5 text-[color:var(--fg-dim)]" style={{ fontSize: 10 }}>
                 {total === 0 ? 'Answer questions to see this' : `Strength: ${barPc}%`}
               </div>
             </div>

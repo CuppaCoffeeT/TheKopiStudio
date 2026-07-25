@@ -5,11 +5,9 @@
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-MUmgnpT1/project/ui_kits/appbase/src/PageShell.jsx
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked:
- *  - Hero padding 28/40/20/40 desktop (T/R/B/L) · 18/20/14/20 mobile.
- *  - Two variants: `withSideRail` (flex row · 2/3 main + 1/3 aside) · `fullWidth`.
- *  - Mobile: side-rail stacks beneath main · sticky bottom action bar.
- *  - h1 = `<PageTitle>` (src/components/primitives/shell/PageTitle.tsx) — size/family locked there, not here.
+ * Locked: hero padding 28/40/20/40 desktop (T/R/B/L) · 18/20/14/20 mobile · variants `withSideRail`
+ *  (flex row · 2/3 main + 1/3 aside) + `fullWidth` · mobile stacks the side-rail beneath main with a
+ *  sticky bottom action bar · h1 = `<PageTitle>` (primitives/shell/PageTitle.tsx), sized/family-locked there.
  */
 
 import type { ReactNode } from 'react';
@@ -38,7 +36,6 @@ interface PageShellProps {
   className?: string;
 }
 
-/** PageShell wrapper — arranges hero / tabs / main / side-rail. */
 export function PageShell({
   hero,
   tabs,
@@ -56,9 +53,8 @@ export function PageShell({
     <div className={cn('min-h-full bg-background text-foreground', className)}>
       {hero}
       {tabs}
-      {/* Single render path — responsive via flex-col→md:flex-row. Prevents children
-          from mounting twice (which broke hook state + form ownership for detail
-          pages whose children hold form state). W09 P2 · fix 2026-04-21. */}
+      {/* Single render path — responsive via flex-col→md:flex-row. A second path mounts
+          children twice, breaking hook state + form ownership. W09 P2 · fix 2026-04-21. */}
       <div className="flex flex-col md:flex-row md:items-start md:gap-8 px-4 py-4 md:px-10 md:pt-6 md:pb-10">
         <main className="flex-1 min-w-0">{main}</main>
         {showSideRail && (
@@ -139,14 +135,16 @@ export function PageShellHero({
             {statusLabel && <PageShellStatusPill tone={statusTone}>{statusLabel}</PageShellStatusPill>}
           </div>
           {(recordId || (meta && meta.length > 0)) && (
+            /* --fg-dim, not --fg-muted: on the hero's page cream #7D6B5B is 4.12:1 and fails
+               AA at 11.5px; #5D4F3F clears 6.40:1 — same call as PageDescription/Breadcrumb. */
             <div
-              className="mt-2 flex flex-wrap items-center gap-2.5 text-[11.5px] text-muted-foreground tracking-wide"
+              className="mt-2 flex flex-wrap items-center gap-2.5 text-[11.5px] text-[color:var(--fg-dim)] tracking-wide"
               style={{ fontFamily: 'var(--font-mono)' }}
             >
-              {recordId && <span className="text-muted-foreground font-medium">{recordId}</span>}
+              {recordId && <span className="text-[color:var(--fg-dim)] font-medium">{recordId}</span>}
               {meta?.map((m, i) => (
                 <span key={i} className="inline-flex items-center gap-2.5">
-                  {(recordId || i > 0) && <span aria-hidden="true" className="text-muted-foreground">·</span>}
+                  {(recordId || i > 0) && <span aria-hidden="true" className="text-[color:var(--fg-dim)]">·</span>}
                   <span>{m}</span>
                 </span>
               ))}
@@ -161,12 +159,21 @@ export function PageShellHero({
 
 // ─── Status pill ──────────────────────────────────────────────
 
+/** 2a status = three meanings — sage positive · brown in-progress · terracotta error, with
+ *  muted neutrals for inert. Tone NAMES are the frozen prop API; each resolves to a
+ *  `--status-*` pair (tint fill + darkened same-hue text), never a saturated Tailwind swatch.
+ *
+ *  These pills sit on PageShellHero's `bg-background` (page cream) — one step DARKER than
+ *  the card cream the pairs were tuned on. Only `info` is affected: brown@14% tint composites
+ *  to ~#E2D5C2 there and drops --status-revised-fg to 4.05:1 at 10.5px, so it takes the
+ *  page-ground step (5.00:1); the other four clear unchanged. Deepen the TEXT, not the tint —
+ *  the pill sits on the lighter ground here, not the darker one. */
 const STATUS_PILL: Record<PageShellStatusTone, string> = {
-  neutral: 'bg-secondary text-muted-foreground',
-  success: 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400',
-  warning: 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400',
-  danger: 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400',
-  info: 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400',
+  neutral: 'bg-[color:var(--status-expired-bg)] text-[color:var(--status-expired-fg)]',
+  success: 'bg-[color:var(--status-accepted-bg)] text-[color:var(--status-accepted-fg)]',
+  warning: 'bg-[color:var(--status-sent-bg)] text-[color:var(--status-sent-fg)]',
+  danger: 'bg-[color:var(--status-rejected-bg)] text-[color:var(--status-rejected-fg)]',
+  info: 'bg-[color:var(--status-revised-bg)] text-[color:var(--status-revised-fg-on-page)]',
 };
 
 function PageShellStatusPill({ tone, children }: { tone: PageShellStatusTone; children: ReactNode }) {

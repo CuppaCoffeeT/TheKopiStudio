@@ -131,7 +131,7 @@ export function ListPageFrame({
   const to = Math.min(page * pageSize, totalItems);
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--page-bg, #f4f4f5)' }}>
+    <div className="min-h-screen bg-background">
       <AppHeader breadcrumb={breadcrumb} {...chrome.appHeaderProps} />
       {chrome.impersonation.active && <ImpersonationBanner {...chrome.impersonation.props} />}
 

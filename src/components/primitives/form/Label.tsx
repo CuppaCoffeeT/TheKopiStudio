@@ -9,11 +9,11 @@ import { cn } from '@/lib/utils';
  * when you only need the label text styled (e.g. inside a dialog row
  * with inline layout, or above a custom input composition).
  *
- * Locked: 13px sans · zinc-700 · disabled peer state grays out.
+ * Locked (2a): 13px IBM Plex Sans · --fg-muted · disabled peer state dims.
  */
 
 interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
-  /** When true, renders as an eyebrow (mono 10.5px uppercase), matching Field's label. */
+  /** When true, renders as an eyebrow (sans 11px uppercase, tracked), matching Field's label. */
   eyebrow?: boolean;
 }
 

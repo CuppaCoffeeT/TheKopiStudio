@@ -7,8 +7,9 @@
  * Mobile: pass `compact` prop to collapse chip+label to dots-only (chips render
  * as 8×8 dots, no labels). Used by `<WizardMobileDrawer>`.
  *
- * Tokens: red-700 active chip + red-200 halo (light) / red-900/40 (dark) ·
- * green-600 completed · zinc-300 border upcoming. All from primitive Stepper.
+ * Tokens: brown active chip (`bg-primary`) + brown halo · sage completed
+ * (`--brand-sage`) · `--border` upcoming. Light-pinned, no dark arm. Compact
+ * dots mirror the full primitive Stepper's colours exactly.
  */
 
 import { Stepper, type StepperStep } from '@/components/primitives/form/Stepper';
@@ -33,7 +34,7 @@ export function WizardStepperHeader({
     <div className={cn('flex flex-col gap-2', className)}>
       <p
         className="text-[10.5px] uppercase tracking-widest text-muted-foreground"
-        style={{ fontFamily: 'var(--font-pixel)' }}
+        style={{ fontFamily: 'var(--font-sans)' }}
       >
         Step {currentStep + 1} of {steps.length} · <span className="text-foreground font-medium normal-case tracking-normal">{labelForStep}</span>
       </p>
@@ -46,7 +47,7 @@ export function WizardStepperHeader({
               aria-current={idx === currentStep ? 'step' : undefined}
               className={cn(
                 'h-2 w-2 rounded-full transition-colors',
-                idx < currentStep && 'bg-green-600',
+                idx < currentStep && 'bg-[color:var(--brand-sage)]',
                 idx === currentStep && 'bg-primary ring-2 ring-primary/30',
                 idx > currentStep && 'bg-border',
               )}

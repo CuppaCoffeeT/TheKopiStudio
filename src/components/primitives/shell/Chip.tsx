@@ -14,7 +14,8 @@ interface ChipProps
 
 /**
  * Chip — filter toggle OR routed tab.
- * Active state inherits CTA slate-800. Optional count suffix in mono.
+ * Active state inherits the brown CTA (bg-primary / text-primary-foreground).
+ * Optional count suffix in mono.
  */
 export const Chip = forwardRef<HTMLButtonElement, ChipProps>(function Chip(
   { kind: _kind = 'filter', size = 'md', active = false, count, className, children, type = 'button', ...props },

@@ -55,8 +55,8 @@ export function Alert({
                 className={cn(
                   'h-7 px-2.5 rounded text-xs font-medium',
                   variant === 'error'
-                    ? 'bg-red-700 hover:bg-red-800 text-white'
-                    : 'bg-primary hover:bg-primary/90 text-primary-foreground'
+                    ? 'bg-[color:var(--cta-destructive-bg)] hover:bg-[color:var(--cta-destructive-bg-hover)] text-[color:var(--cta-primary-fg)]'
+                    : 'bg-primary hover:bg-[var(--cta-primary-bg-hover)] text-primary-foreground'
                 )}
                 style={{ fontFamily: 'var(--font-sans)' }}
               >
@@ -66,7 +66,7 @@ export function Alert({
             {dismissAction && (
               <button
                 onClick={dismissAction.onClick}
-                className="h-7 px-2.5 rounded text-xs border border-border text-muted-foreground hover:bg-secondary"
+                className="h-7 px-2.5 rounded text-xs border border-border text-[color:var(--fg-dim)] hover:bg-secondary"
                 style={{ fontFamily: 'var(--font-sans)' }}
               >
                 {dismissAction.label}
@@ -92,7 +92,7 @@ function VariantIcon({ variant }: { variant: OverlayVariant }) {
   const accent = VARIANT_ACCENT[variant];
   return (
     <span
-      className="inline-flex items-center justify-center rounded-full text-white text-[11px] font-semibold leading-none flex-shrink-0"
+      className="inline-flex items-center justify-center rounded-full text-[color:var(--cta-primary-fg)] text-[11px] font-semibold leading-none flex-shrink-0"
       style={{
         width: 18,
         height: 18,

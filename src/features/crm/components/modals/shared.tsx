@@ -141,13 +141,24 @@ export function DateField({ label, testId, required, error, hint, disabled, valu
 
 interface ModalSectionProps {
   title: string;
-  /** `amber` = the hospitalization fieldset tone (legacy parity). */
+  /**
+   * `amber` = the hospitalization fieldset tone. Legacy value name, kept so the
+   * caller API is unchanged; it now paints the Kopi brown attention tone
+   * (`--status-revised-*`), not amber.
+   */
   tone?: 'default' | 'amber';
   testId?: string;
   children: ReactNode;
 }
 
-/** Titled fieldset block inside a form modal. */
+/**
+ * Titled fieldset block inside a form modal.
+ *
+ * The default tone paints the --secondary tint #F3EDE3, on which --fg-muted is
+ * only 4.37:1. Anything sub-18px nested here must be --fg-dim or darker — the
+ * `Field` shell already is, so plain `TextField`/`DateField`/`SelectField`
+ * children are safe; hand-rolled spans are not.
+ */
 export function ModalSection({ title, tone = 'default', testId, children }: ModalSectionProps) {
   return (
     <section
@@ -155,16 +166,19 @@ export function ModalSection({ title, tone = 'default', testId, children }: Moda
       className={cn(
         'rounded-lg border p-3.5 grid gap-3',
         tone === 'amber'
-          ? 'border-amber-400/50 bg-amber-950/20'
+          ? 'border-[color:var(--status-revised-border)] bg-[color:var(--status-revised-bg)]'
           : 'border-border bg-secondary'
       )}
     >
+      {/* Both labels sit on a tint, so they take the AA-safe ink, not --fg-muted. */}
       <span
         className={cn(
           'uppercase',
-          tone === 'amber' ? 'text-amber-500' : 'text-muted-foreground'
+          tone === 'amber'
+            ? 'text-[color:var(--status-revised-fg)]'
+            : 'text-[color:var(--fg-dim)]'
         )}
-        style={{ fontFamily: 'var(--font-pixel)', fontSize: 10.5, fontWeight: 600, letterSpacing: '0.08em' }}
+        style={{ fontFamily: 'var(--font-sans)', fontSize: 10.5, fontWeight: 600, letterSpacing: '0.08em' }}
       >
         {title}
       </span>

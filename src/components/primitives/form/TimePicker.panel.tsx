@@ -51,7 +51,7 @@ function ColumnSection({ heading, focused, divider, children }: ColumnSectionPro
       )}
     >
       <div
-        style={{ fontFamily: 'var(--font-pixel)' }}
+        style={{ fontFamily: 'var(--font-sans)' }}
         className={cn(
           'w-full text-center uppercase tracking-[0.08em] text-[10px] py-1 mb-1.5 border-b transition-colors',
           'text-muted-foreground',
@@ -118,7 +118,7 @@ export function TimePickerPanel({
           className={cn(
             'h-[26px] px-2.5 rounded-md border text-[11px] font-semibold cursor-pointer',
             'border-border',
-            'text-primary',
+            'text-[color:var(--brown-text)]',
             'bg-transparent hover:bg-primary/10',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
           )}

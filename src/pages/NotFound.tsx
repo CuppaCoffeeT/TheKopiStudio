@@ -1,15 +1,12 @@
 /**
  * NotFound — 404 page.
  *
- * Signature-moment design: massive Geist Pixel Square "404" wordmark +
- * short explanation + the offending path in Geist Mono + 2 CTAs (primary
- * back-to-dashboard, ghost browser-back).
+ * Signature-moment design: massive Instrument Serif "404" + short explanation
+ * + the offending path in a mono chip + 2 CTAs (primary back-to-dashboard,
+ * ghost browser-back).
  *
- * Visual language: consistent with W08 tokens — page-bg flat zinc-100/
- * zinc-900, slate-800 primary CTA, red-700 brand accent dot, Roboto body,
- * Geist Pixel crisp for the 404 + Geist Mono for the failed-path chip.
- *
- * Respects the global ThemeProvider — adapts to light/dark automatically.
+ * Visual language: page-bg cream, brown primary CTA + accent dot, IBM Plex
+ * Sans body, mono for the failed-path chip. Light-pinned — no theme branching.
  */
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -29,7 +26,7 @@ const NotFound = () => {
       className="min-h-screen flex items-center justify-center px-6 py-16 relative overflow-hidden"
       style={{ background: 'var(--page-bg)', color: 'var(--fg)' }}
     >
-      {/* Subtle red accent dot — signature moment, barely visible */}
+      {/* Subtle brown accent dot — signature moment, barely visible */}
       <div
         aria-hidden
         className="absolute top-8 right-8 w-2 h-2 rounded-full"
@@ -37,9 +34,8 @@ const NotFound = () => {
       />
 
       <div className="max-w-2xl w-full flex flex-col items-center text-center">
-        {/* Massive 404 — the display moment. Uses --font-pixel-display (Grid
-            variant) for visible pixel grain at scale. Rule: h1 ≤ 48px → Square;
-            display ≥ 140px → Grid. */}
+        {/* Massive 404 — the display moment. Uses --font-pixel-display, the
+            Instrument Serif display alias. */}
         <PageTitle
           className="mb-4 select-none"
           style={{
@@ -53,18 +49,18 @@ const NotFound = () => {
           404
         </PageTitle>
 
-        {/* Sub-header in Geist Mono (subheader font) */}
+        {/* Sub-header in the subheader family (--font-subheader → IBM Plex Sans) */}
         <div
           className="text-sm uppercase tracking-[0.2em] mb-2"
           style={{
             fontFamily: 'var(--font-subheader)',
-            color: 'var(--fg-muted)',
+            color: 'var(--fg-dim)',
           }}
         >
           Page not found
         </div>
 
-        {/* Body in Roboto */}
+        {/* Body in IBM Plex Sans (--font-sans) */}
         <p
           className="text-base max-w-md mb-4 leading-relaxed"
           style={{ color: 'var(--fg-dim)', fontFamily: 'var(--font-sans)' }}
@@ -72,13 +68,13 @@ const NotFound = () => {
           We couldn't find anything at that address. It may have moved, been renamed, or never existed.
         </p>
 
-        {/* The failed path — Geist Mono chip */}
+        {/* The failed path — mono-stack (--font-mono) chip */}
         <div
           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border mb-8 max-w-full"
           style={{
             background: 'var(--surface-subtle)',
             borderColor: 'var(--border-soft)',
-            color: 'var(--fg-muted)',
+            color: 'var(--fg-dim)',
             fontFamily: 'var(--font-mono)',
             fontSize: 12,
           }}
@@ -117,9 +113,9 @@ const NotFound = () => {
       {/* Footer meta — tiny, tucked */}
       <div
         className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[11px]"
-        style={{ color: 'var(--fg-muted)', fontFamily: 'var(--font-mono)' }}
+        style={{ color: 'var(--fg-dim)', fontFamily: 'var(--font-mono)' }}
       >
-        AppBase · error 404
+        Insurance CRM · error 404
       </div>
     </div>
   );

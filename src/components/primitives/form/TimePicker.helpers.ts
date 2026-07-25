@@ -8,7 +8,8 @@ export const TIME_PICKER_PANEL_CLASS = cn(
   'overflow-hidden rounded-[10px]',
   'border border-border',
   'bg-card',
-  'shadow-[0_12px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.5)]',
+  // Warm-ink float — 2a tints its shadows with the ink (#3A2E24), never black.
+  'shadow-[0_12px_40px_rgb(58_46_36_/_0.12)]',
 );
 
 export type TimePickerSize = 'sm' | 'md' | 'lg';

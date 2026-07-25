@@ -49,18 +49,26 @@ export function ResultActions({ onPdf, onCsv, onOpenNotes, isAuthenticated, save
       </div>
 
       {isAuthenticated && saveState === 'saving' && (
-        <p className="m-0 text-center text-[12px] text-muted-foreground" data-testid="result-save-status">
+        // --fg-dim (6.40:1): ResultActions is not inside a Card, so this status
+        // line sits on the page cream where --fg-muted is only 4.12:1. The
+        // 'saved' arm below is already on the AA-safe --sage-text.
+        <p className="m-0 text-center text-[12px] text-[color:var(--fg-dim)]" data-testid="result-save-status">
           Saving to your results…
         </p>
       )}
       {isAuthenticated && (saveState === 'saved' || saveState === 'skipped') && (
-        <p className="m-0 text-center text-[12px] text-green-400" data-testid="result-save-status">
+        <p
+          className="m-0 text-center text-[12px] text-[color:var(--sage-text)]"
+          data-testid="result-save-status"
+        >
           ✓ Saved to your results
         </p>
       )}
 
       {showLoginCta && (
-        <Card className="border-accent/40 bg-accent/10" data-testid="result-login-cta">
+        // Border-only accent — `bg-accent/10` replaced Card's bg-card (twMerge)
+        // and composited over the page cream, taking the 13px body to 3.68:1.
+        <Card className="border-accent/40" data-testid="result-login-cta">
           <div className="flex flex-col items-start gap-2">
             <p className="m-0 text-[13px] leading-6 text-muted-foreground">
               This profile was saved anonymously. Log in to keep your results and view your history.

@@ -30,7 +30,7 @@ export function ReportPolicyPortfolio({ policies }: { policies: CrmPolicy[] }) {
     <section className="report-section" data-testid="report-policy-portfolio">
       <h2>Policy portfolio</h2>
       {groups.size === 0 ? (
-        <p className="text-[12px] text-gray-500">No policies on record.</p>
+        <p className="text-[12px] text-[color:var(--fg-dim)]">No policies on record.</p>
       ) : (
         [...groups.entries()].map(([type, group]) => (
           <div key={type} className="mb-4" data-testid={`report-portfolio-group-${type}`}>

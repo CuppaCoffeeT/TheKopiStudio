@@ -71,8 +71,14 @@ export function CommandPaletteItem({
       onSelect={onSelect}
       className={cn(
         'flex items-start gap-2.5 px-2 py-2 rounded cursor-pointer outline-none select-none',
-        'data-[selected=true]:bg-secondary',
-        destructive ? 'text-red-700 dark:text-red-400' : 'text-foreground'
+        // cmdk marks the arrow-key row with data-[selected], and the row sets
+        // outline-none, so the global :focus-visible brown ring never fires here.
+        // A flat tint on the cream glass surface is ~1.05:1 — no visible indicator
+        // at all. Same contract as DropdownMenuItem/SelectMenuItem: an inset brown
+        // ring carries the selection, --row-selected (12%) fills it.
+        'data-[selected=true]:bg-[color:var(--row-selected)]',
+        'data-[selected=true]:ring-2 data-[selected=true]:ring-inset data-[selected=true]:ring-ring',
+        destructive ? 'text-[color:var(--negative-text)]' : 'text-foreground'
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
     >
@@ -80,7 +86,7 @@ export function CommandPaletteItem({
         <span
           className={cn(
             'w-4 h-4 mt-[1px] flex-shrink-0 flex items-center justify-center',
-            destructive ? 'text-red-700 dark:text-red-400' : 'text-muted-foreground'
+            destructive ? 'text-[color:var(--negative-text)]' : 'text-muted-foreground'
           )}
           aria-hidden
         >

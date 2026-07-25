@@ -5,10 +5,11 @@
  * Adopters: AIClassificationPanel, AIOverrideClassificationPanel, AIDraftReplyPanel.
  * Reusable anywhere AI surfaces inline annotations on a detail record.
  *
- * Three accent variants:
- *   - `green` — confirmed / successful classification
- *   - `blue`  — informational / override / pending draft
- *   - `amber` — warning / requires attention
+ * Three accent variants. The names are the frozen prop API; 2a collapses status
+ * to three meanings, so each name now paints a Kopi hue:
+ *   - `green` — confirmed / successful classification  → sage
+ *   - `blue`  — informational / override / pending draft → brown (in progress)
+ *   - `amber` — warning / requires attention            → terracotta
  *
  * Slots: `icon` (header leading 14x14) · `title` · `statusPill?` · children
  * (body) · `actions` (footer row).
@@ -42,10 +43,12 @@ interface AIPanelProps {
   className?: string;
 }
 
+/** 3px edge strip — a decorative fill, so it takes the raw brand hexes rather
+ *  than the AA text variants (those are for type under 18px only). */
 const ACCENT_STRIP: Record<AIPanelAccent, string> = {
-  green: 'bg-emerald-600 dark:bg-emerald-500',
-  blue: 'bg-blue-700 dark:bg-blue-500',
-  amber: 'bg-amber-600 dark:bg-amber-500',
+  green: 'bg-[color:var(--brand-sage)]',
+  blue: 'bg-[color:var(--brand-brown)]',
+  amber: 'bg-[color:var(--brand-terracotta)]',
 };
 
 export const AIPanel = forwardRef<HTMLDivElement, AIPanelProps>(function AIPanel(
@@ -74,7 +77,9 @@ export const AIPanel = forwardRef<HTMLDivElement, AIPanelProps>(function AIPanel
         'relative overflow-hidden rounded-2xl border',
         'bg-card',
         'border-border',
-        'shadow-[0_1px_2px_rgb(0_0_0_/_0.04)]',
+        // 2a panels rest FLAT — the lift is the cream-on-page colour step, so
+        // this carries `--card-shadow` (`none`) rather than a black drop shadow.
+        'shadow-[var(--card-shadow)]',
         className,
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
@@ -157,10 +162,13 @@ interface AIPanelStatusPillProps {
   className?: string;
 }
 
+/** Tint fill + darkened same-hue text — the 2a status-pill recipe. The pill
+ *  foregrounds are the comp's own values (they beat the page-tuned variants on
+ *  these tints); only the terracotta pill takes `--negative-text`. */
 const STATUS_TONE: Record<AIPanelStatusTone, string> = {
-  green: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300',
-  blue: 'bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300',
-  amber: 'bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300',
+  green: 'bg-[color:var(--status-accepted-bg)] text-[color:var(--status-accepted-fg)]',
+  blue: 'bg-[color:var(--status-sent-bg)] text-[color:var(--status-sent-fg)]',
+  amber: 'bg-[color:var(--status-rejected-bg)] text-[color:var(--status-rejected-fg)]',
   neutral: 'bg-secondary text-muted-foreground',
 };
 
@@ -196,9 +204,9 @@ export const AIPanelActionButton = forwardRef<HTMLButtonElement, AIPanelActionBu
       outline:
         'bg-card border border-border text-muted-foreground hover:bg-secondary',
       primary:
-        'bg-primary text-primary-foreground hover:bg-primary/90 border border-transparent font-medium',
+        'bg-[var(--cta-primary-bg)] text-[color:var(--cta-primary-fg)] hover:bg-[var(--cta-primary-bg-hover)] active:bg-[var(--cta-primary-bg-active)] border border-transparent font-medium',
       danger:
-        'bg-red-700 hover:bg-red-800 text-white border border-transparent font-medium',
+        'bg-[var(--cta-destructive-bg)] hover:brightness-95 active:brightness-90 text-[color:var(--cta-primary-fg)] border border-transparent font-medium',
       ghost:
         'bg-transparent border border-transparent text-muted-foreground hover:bg-secondary',
     }[kind];

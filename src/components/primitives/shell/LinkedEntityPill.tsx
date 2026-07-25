@@ -12,7 +12,7 @@ import { forwardRef, createElement } from 'react';
 import { cn } from '@/lib/utils';
 
 interface LinkedEntityPillProps extends React.HTMLAttributes<HTMLElement> {
-  /** Hex color for the leading dot. Defaults to zinc-500 if omitted. */
+  /** CSS color for the leading dot. Defaults to `var(--fg-muted)` if omitted. */
   dotColor?: string;
   /** If provided, renders as `<a>` with this href. Otherwise renders `<span>`. */
   href?: string;
@@ -47,7 +47,7 @@ export const LinkedEntityPill = forwardRef<HTMLElement, LinkedEntityPillProps>(
         key="dot"
         aria-hidden
         className="w-[5px] h-[5px] rounded-full shrink-0"
-        style={{ background: dotColor ?? '#71717a' }}
+        style={{ background: dotColor ?? 'var(--fg-muted)' }}
       />,
       <span key="label" className="truncate">
         {children}

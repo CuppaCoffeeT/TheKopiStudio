@@ -4,7 +4,10 @@ import * as RechartsPrimitive from "recharts"
 import { cn } from "@/lib/utils"
 
 // Format: { THEME_NAME: CSS_SELECTOR }
-const THEMES = { light: "", dark: ".dark" } as const
+// The app is light-pinned (Kopi Studio 2a) — nothing ever puts a `dark` class on
+// the tree, so the upstream shadcn `dark: ".dark"` entry only emitted a CSS block
+// that could never match. Dropped 2026-07-25; a `theme` map is now light-only.
+const THEMES = { light: "" } as const
 
 export type ChartConfig = {
   [k in string]: {

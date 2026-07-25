@@ -22,13 +22,13 @@ export function ReportDisclaimer({ currentAge, yearsToRetirement }: ReportDiscla
 
   return (
     <section className="report-section" data-testid="report-disclaimer">
-      <p className="m-0 border-t border-gray-200 pt-3 text-[12px] text-gray-500">
+      <p className="m-0 border-t border-[color:var(--border-soft)] pt-3 text-[12px] text-[color:var(--fg-dim)]">
         <strong>Disclaimer:</strong> This report is for informational purposes only and does not
         constitute financial or medical advice. Medical cost projections assume{' '}
         {(MEDICAL_INFLATION_RATE * 100).toFixed(0)}% annual inflation. All recommendations should
         be reviewed with a licensed financial advisor.
       </p>
-      <p className="m-0 mt-2 text-[12px] text-gray-500">
+      <p className="m-0 mt-2 text-[12px] text-[color:var(--fg-dim)]">
         Report generated: {generatedAt} · Current age {currentAge}, {yearsToRetirement} years to
         retirement · BHS 2026: ${BHS_2026.toLocaleString()}
       </p>

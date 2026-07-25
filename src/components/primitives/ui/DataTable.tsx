@@ -6,7 +6,8 @@
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/table/DataTablePrimitives.jsx
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked: rounded-10 shell · subtle shadow · overflow hidden · density compact 44h / cozy 56h.
+ * Locked: rounded-10 shell · flat at rest (2a lifts by the cream-on-page colour
+ *   step, not a shadow) · overflow hidden · density compact 44h / cozy 56h.
  * Responsive: when `mobileBody` is provided, desktop rows render on ≥ md and mobile cards render on < md
  *   automatically — no viewport prop needed. Set `variant="mobile"` only for explicit mobile-first override.
  *
@@ -95,8 +96,10 @@ function EmptyState({
         className={cn(
           'inline-flex items-center justify-center w-9 h-9 rounded-full',
           'border border-dashed border-border',
+          // Raw terracotta is sanctioned for icons — the AA text variants are
+          // only mandatory below 18px of TYPE.
           isError
-            ? 'text-red-700 dark:text-red-400'
+            ? 'text-[color:var(--brand-terracotta)]'
             : 'text-muted-foreground'
         )}
       >
@@ -106,9 +109,11 @@ function EmptyState({
           <FileText className="w-[18px] h-[18px]" aria-hidden />
         )}
       </span>
+      {/* 2a empty-state line — Instrument Serif 20px italic. 20px clears the
+          18px serif floor, so the family is safe to set here. */}
       <div
-        className="text-[15px] italic text-[color:var(--fg-dim)]"
-        style={{ fontFamily: 'Georgia, serif' }}
+        className="text-[20px] italic text-[color:var(--fg-dim)]"
+        style={{ fontFamily: 'var(--font-pixel)' }}
       >
         {message}
       </div>
@@ -239,7 +244,7 @@ export function DataTable({
         'rounded-xl overflow-hidden',
         'border border-border',
         'bg-card',
-        'shadow-[0_1px_2px_rgba(0,0,0,0.25)]',
+        'shadow-[var(--card-shadow-rest)]',
         className
       )}
     >

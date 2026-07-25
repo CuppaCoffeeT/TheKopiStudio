@@ -117,7 +117,7 @@ export function CommandPalette({
                 '[&_[cmdk-group-heading]]:text-[10.5px] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.08em]',
                 '[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:font-medium'
               )}
-              style={{ fontFamily: 'var(--font-pixel)' }}
+              style={{ fontFamily: 'var(--font-sans)' }}
             >
               {children}
             </CommandPrimitive.List>
@@ -139,7 +139,7 @@ function SearchRow({
   onValueChange: (next: string) => void;
 }) {
   return (
-    <div className="px-3 py-2.5 flex items-center gap-2 border-b border-border">
+    <div className="px-3 py-2.5 flex items-center gap-2 border-b border-border focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/15">
       <Search className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" strokeWidth={1.4} />
       <CommandPrimitive.Input
         placeholder={placeholder}
@@ -170,9 +170,11 @@ function Footer() {
 }
 
 function Hint({ children }: { children: ReactNode }) {
+  // 10px on the tinted footer: --fg-muted only reaches 4.37:1 there, so the
+  // hints take --fg-dim (7.34 on card) to clear AA.
   return (
     <span
-      className="text-[10px] text-muted-foreground flex items-center gap-1"
+      className="text-[10px] text-[color:var(--fg-dim)] flex items-center gap-1"
       style={{ fontFamily: 'var(--font-mono)' }}
     >
       {children}

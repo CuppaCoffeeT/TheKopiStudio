@@ -8,7 +8,7 @@ interface KbdProps {
 }
 
 /**
- * Keyboard shortcut pill. Geist Mono, subtle border.
+ * Keyboard shortcut pill. Mono face (`--font-mono`), hairline border.
  * Used in tooltips, dropdown items, launcher hints.
  */
 export function Kbd({ children, className, invert = false }: KbdProps) {
@@ -19,9 +19,12 @@ export function Kbd({ children, className, invert = false }: KbdProps) {
         'px-1.5 py-[1px] rounded',
         'text-[10.5px] tracking-wider',
         'border',
+        // `invert` is worn on the tooltip panel, which is `bg-foreground` —
+        // warm ink #3A2E24. The chip is therefore a lighter warm ink with a
+        // cream glyph, never a cool zinc block.
         invert
-          ? 'bg-zinc-800 text-zinc-200 border-zinc-700'
-          : 'bg-secondary text-muted-foreground border-border',
+          ? 'bg-[color:var(--fg-dim)] text-[color:var(--surface)] border-[color:var(--fg-muted)]'
+          : 'bg-secondary text-[color:var(--fg-dim)] border-border',
         className
       )}
       style={{ fontFamily: 'var(--font-mono)' }}

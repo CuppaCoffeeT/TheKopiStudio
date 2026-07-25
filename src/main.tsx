@@ -4,16 +4,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Analytics } from '@vercel/analytics/react';
 import App from './App.tsx';
 
-// W08 Phase 2 — fonts loaded app-wide.
-// Roboto 400/500/700 = body + UI · Geist Mono 400/500/700 = tabular + code.
-// Geist Pixel Square is self-hosted via @font-face in index.css.
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
-import '@fontsource/geist-mono/400.css';
-import '@fontsource/geist-mono/500.css';
-import '@fontsource/geist-mono/700.css';
-
+// Fonts are not bundled. The Kopi Studio stack (Instrument Serif + IBM Plex
+// Sans) is served from Google Fonts via the <link> in index.html per the brand
+// card; --font-mono resolves to the platform mono stack. The former
+// @fontsource Roboto / Geist Mono imports were dropped 2026-07-25 — no token
+// referenced either family any more.
 import './index.css';
 import 'react-photo-view/dist/react-photo-view.css';
 import { suppressExtensionErrors } from './utils/suppressExtensionErrors';

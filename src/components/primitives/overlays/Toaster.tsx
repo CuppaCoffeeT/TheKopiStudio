@@ -12,10 +12,10 @@ type ToasterProps = React.ComponentProps<typeof Sonner>;
  * `@/utils/toastHelper` so we control the full layout per Claude Design spec.
  *
  * Spec: docs/99-refactor/_system/design/session-02-overlays/export/appbase/project/overlays/OverlayPrimitives.jsx
- *   - 360px wide · rounded-[10px] · bg-white/72 light · bg-zinc-950/70 dark
+ *   - 360px wide · rounded-[10px] · bg-popover/95 cream glass
  *   - backdrop-blur(12px) saturate(140%)
- *   - border-l-[3px] variant accent
- *   - 18px colored circle icon with glyph (✓/!/i/!)
+ *   - border-l-[3px] variant accent (2a semantic set — see VARIANT_ACCENT)
+ *   - 18px accent circle icon with a cream glyph (✓/!/i/!)
  *   - 13px title · 12px description · always-visible 24px XClose
  */
 export function Toaster(props: ToasterProps) {
@@ -56,21 +56,22 @@ export function AppBaseToast({ variant, title, description, action, cancel, onDi
         'backdrop-blur-[16px] backdrop-saturate-[160%]',
         'bg-popover/95',
         'border border-border',
-        'shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_rgba(24,24,27,0.08)]',
-        'dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_12px_32px_rgba(0,0,0,0.35)]'
+        // Warm-ink float shadow — the app is light-pinned, so there is no
+        // `dark:` counterpart to declare.
+        'shadow-[var(--floating-shadow)]'
       )}
       style={{
         fontFamily: 'var(--font-sans)',
         borderLeftWidth: 3,
-        borderLeftColor: `light-dark(${accent.light}, ${accent.dark})`,
+        borderLeftColor: accent.light,
       }}
     >
       <span
-        className="inline-flex items-center justify-center rounded-full text-white flex-shrink-0"
+        className="inline-flex items-center justify-center rounded-full text-[color:var(--cta-primary-fg)] flex-shrink-0"
         style={{
           width: 18,
           height: 18,
-          background: `light-dark(${accent.light}, ${accent.dark})`,
+          background: accent.light,
           fontFamily: 'var(--font-sans)',
           fontSize: 11,
           fontWeight: 600,
@@ -104,7 +105,7 @@ export function AppBaseToast({ variant, title, description, action, cancel, onDi
                   action.onClick();
                   onDismiss();
                 }}
-                className="h-6 px-2 rounded text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90"
+                className="h-6 px-2 rounded text-[11px] font-medium bg-primary text-primary-foreground hover:bg-[var(--cta-primary-bg-hover)]"
                 style={{ fontFamily: 'var(--font-sans)' }}
               >
                 {action.label}

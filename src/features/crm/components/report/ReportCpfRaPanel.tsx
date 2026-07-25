@@ -80,7 +80,10 @@ export function ReportCpfRaPanel({
 
   return (
     <div className="report-ra-panel" data-testid="report-cpf-ra-panel">
-      <h3 style={{ color: '#0369a1' }}>Retirement account assessment at age 55</h3>
+      {/* Brown #806241 — the AA-safe brown for type under 18px (5.21:1 on the
+          panel's card cream). Brown is the panel's accent, not a heading hue
+          elsewhere in the report. */}
+      <h3 style={{ color: '#806241' }}>Retirement account assessment at age 55</h3>
 
       <div className="report-ra-cohort">
         <div className="text-[12px]">
@@ -102,19 +105,19 @@ export function ReportCpfRaPanel({
       </div>
 
       <div className="report-ra-value">
-        <div className="text-[12px] text-gray-500">Projected Retirement Account (RA):</div>
+        <div className="text-[12px] text-[color:var(--fg-dim)]">Projected Retirement Account (RA):</div>
         <div
-          style={{ fontSize: 30, fontWeight: 700, color: ra.meetsFRS ? '#059669' : '#dc2626' }}
+          style={{ fontSize: 30, fontWeight: 700, color: ra.meetsFRS ? '#4a6a4e' : '#ab4925' }}
           data-testid="report-cpf-projected-ra"
         >
           {moneyExact(ra.projectedRA)}
         </div>
-        <div className="text-[12px] text-gray-500">
+        <div className="text-[12px] text-[color:var(--fg-dim)]">
           (<span data-testid="report-cpf-frs-pct">{ra.frsPercentage}</span>% of FRS) · Withdrawable
           OA: {moneyExact(ra.remainingOA)}
         </div>
 
-        <div className="mt-3 border-t border-gray-200 pt-3">
+        <div className="mt-3 border-t border-[color:var(--border-soft)] pt-3">
           <div
             className={`report-callout report-callout--${alert.tone} mb-0`}
             data-testid="report-cpf-ra-alert"
@@ -126,16 +129,18 @@ export function ReportCpfRaPanel({
 
         {ra.projectedRA > 0 && (
           <div className="report-cpf-life" data-testid="report-cpf-life">
-            <div className="text-[12px] font-semibold" style={{ color: '#713f12' }}>
+            {/* Brown #7D5F3D — 4.75:1 on the panel's page-cream fill, so the
+                11px and 12px lines clear AA. */}
+            <div className="text-[12px] font-semibold" style={{ color: '#7d5f3d' }}>
               Estimated CPF LIFE monthly payout (from age 65):
             </div>
             <div
-              style={{ fontSize: 22, fontWeight: 700, color: '#854d0e' }}
+              style={{ fontSize: 22, fontWeight: 700, color: '#7d5f3d' }}
               data-testid="report-cpf-life-payout"
             >
               ${Math.round(ra.cpfLifeMonthlyPayout).toLocaleString()}/month
             </div>
-            <div className="text-[11px] italic" style={{ color: '#713f12' }}>
+            <div className="text-[11px] italic" style={{ color: '#7d5f3d' }}>
               Based on Standard Plan · At FRS, payout ≈ $1,780/month
             </div>
           </div>

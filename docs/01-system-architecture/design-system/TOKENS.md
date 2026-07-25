@@ -1,14 +1,17 @@
 # Tokens — Full Reference
 
+> ⛔ **VALUES SUPERSEDED 2026-07-25** — token **names** below are still correct and still frozen, but every **value** was re-pointed from navy/gold to The Kopi Studio cream/brown palette. Read the values from [src/index.css](../../../src/index.css) `:root`; the spec is [KOPI_2A_SPEC.md](../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md).
+
 **Created**: 2026-04-19 SGT
-**Last Updated**: 2026-07-14 SGT
-**Status**: 🟢 Production
+**Last Updated**: 2026-07-25 SGT
+**Status**: 🟡 Transitional — names current, values historical
+**Priority**: 🟡 High
 
 👉 Parent: [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md)
 
-**Runtime source of truth**: [src/index.css](../../../src/index.css) `:root` block + [src/lib/design/tokens.ts](../../../src/lib/design/tokens.ts). Table mirrors for reference; always consume CSS vars in components.
+**Runtime source of truth**: [src/index.css](../../../src/index.css) `:root` block + [src/lib/design/tokens.ts](../../../src/lib/design/tokens.ts). Always consume CSS vars in components — never copy a hex out of a doc table.
 
-**2026-07-14**: LOCKED_PICKS v1–v4 var **names** are frozen (primitives consume them); **values** were retuned to the navy/gold system per the user-approved reversal ([LOCKED_PICKS.md](../../99-refactor/_system/LOCKED_PICKS.md)). `.dark` carries no overrides — `:root` already holds the dark-tuned values (the app is always dark).
+**2026-07-25**: LOCKED_PICKS v1–v4 var **names** stayed frozen through a second retune; **values** moved navy/gold → Kopi cream/brown. The app is light-pinned: `:root` is the only block, there is no `.dark` counterpart, and every `dark:` utility is inert.
 
 ## Token groups
 
@@ -26,7 +29,11 @@
 | Mobile | `mobileTokens` | `MobileListCard` · `FloatingCTA` |
 | Motion | `motionTokens` | all animated primitives |
 
-## v1 — Card
+## Historical value tables — navy/gold era (locked 2026-07-14, retired 2026-07-25)
+
+> The token names in every table below are current. The **values** are not — they record the navy/gold tuning. For live values read [src/index.css](../../../src/index.css). Kept so a future reader can tell which name held which value in which era.
+
+### v1 — Card
 
 | Token | Value |
 |---|---|
@@ -36,7 +43,7 @@
 | `--card-shadow-hover` | `0 4px 16px rgb(0 0 0 / 0.35)` |
 | `--card-padding` | 1.25rem |
 
-## v1 — DataTable
+### v1 — DataTable
 
 | Token | Value |
 |---|---|
@@ -44,7 +51,7 @@
 | `--row-enter-duration` | 180ms |
 | `--sort-icon-opacity-rest` | 0.4 |
 
-## v1 — KpiTile
+### v1 — KpiTile
 
 | Token | Value |
 |---|---|
@@ -53,7 +60,7 @@
 | `--delta-negative-bg` / `-fg` | DISC-D red @ 15% / `#E8836F` |
 | `--ticker-spring-stiffness` / `-damping` | 100 / 60 |
 
-## v2 — Drawer
+### v2 — Drawer
 
 | Token | Value |
 |---|---|
@@ -62,7 +69,7 @@
 | `--drawer-overlay` | `rgb(0 0 0 / 0.6)` — deeper scrim over navy |
 | `--handle-pulse-duration` | 1.6s |
 
-## v2 — Stepper
+### v2 — Stepper
 
 | Token | Value |
 |---|---|
@@ -71,7 +78,7 @@
 | `--chip-done` | `#4ADE80` green-400 |
 | `--chip-spring-stiffness` / `-damping` | 320 / 24 |
 
-## v2 — Timeline
+### v2 — Timeline
 
 | Token | Value |
 |---|---|
@@ -80,7 +87,7 @@
 | `--timeline-dot-size` | 28px |
 | `--timeline-step-gap` | 20px |
 
-## v2 — Chart
+### v2 — Chart
 
 | Token | Value |
 |---|---|
@@ -89,7 +96,7 @@
 | `--chart-grid-dasharray` | `2 4` |
 | `--chart-anim-duration` / `-stagger` | 800ms / 200ms |
 
-## v3.1 — CTA
+### v3.1 — CTA
 
 | Token | Value |
 |---|---|
@@ -100,7 +107,7 @@
 | `--accent-red-soft-bg` / `-fg` | gold @ 12% / gold — legacy names |
 | `--ring` (shadcn) | gold `43 55% 55%` |
 
-## v3.2 — Glass / page
+### v3.2 — Glass / page
 
 | Token | Value |
 |---|---|
@@ -110,7 +117,7 @@
 | `--page-bg` | `#0D1B2A` navy — flat, always dark |
 | `--page-gradient-light` / `-dark` | `#0D1B2A` — back-compat aliases, both navy |
 
-## v3.3 — Mobile
+### v3.3 — Mobile
 
 | Token | Value |
 |---|---|
@@ -118,7 +125,7 @@
 | `--row-card-gap` | 6px |
 | `--row-card-border` | navy hairline `hsl(210 25% 24%)` |
 
-## v4 — List/table archetype semantics
+### v4 — List/table archetype semantics
 
 | Token | Value | Role |
 |---|---|---|
@@ -132,11 +139,11 @@
 | `--skeleton` / `--skeleton-hi` | `#182638` / `#21324A` | Shimmer |
 | `--card-shadow` / `--floating-shadow` | deep black layered shadows | Card / floating elevation |
 
-## v4 — Status palette
+### v4 — Status palette
 
-`--status-<tone>-bg/-fg/-border/-dot` × 6 tones — see [COLORS.md](./COLORS.md#status-palette-v4--translucent-tints-on-navy).
+`--status-<tone>-bg/-fg/-border/-dot` × 6 tones. Live values in [src/index.css](../../../src/index.css); 2a collapses the six tones to three meanings — sage positive, brown in-progress, terracotta error, with muted neutrals for the inert states.
 
-## Motion
+### Motion
 
 | Token | Value |
 |---|---|
@@ -149,7 +156,9 @@
 
 ## 📚 Related
 
+- [KOPI_2A_SPEC.md](../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md) — **current** value authority
+- [.claude/rules/light-theme.md](../../../.claude/rules/light-theme.md) — enforcement + anti-patterns
 - [src/index.css](../../../src/index.css) — canonical runtime block
 - [src/lib/design/tokens.ts](../../../src/lib/design/tokens.ts) — TS mirror
-- [LOCKED_PICKS.md](../../99-refactor/_system/LOCKED_PICKS.md) — lock rationale + 2026-07-14 reversal entry
+- [LOCKED_PICKS.md](../../99-refactor/_system/LOCKED_PICKS.md) — lock rationale + reversal history (values superseded)
 - [COLORS.md](./COLORS.md) · [SPACING_MOTION.md](./SPACING_MOTION.md) · [TYPOGRAPHY.md](./TYPOGRAPHY.md)

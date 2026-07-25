@@ -6,7 +6,7 @@
  * + Clear button. Used by the 4 coordinator-review tabs (Trial Trenches ·
  * General Works · Worker OT · Clarifications) so all filter cards look identical.
  *
- * Dark-mode aware: bg-white / dark:bg-zinc-950, no shadow, primitive Input.
+ * Light-pinned: bg-card cream, no shadow, primitive Input.
  */
 
 import { Search, X } from 'lucide-react';

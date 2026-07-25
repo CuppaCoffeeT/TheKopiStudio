@@ -15,8 +15,11 @@ export function OpeningLineCard({ profile }: { profile: DiscProfile }) {
       style={{ borderColor: `${profile.col}44`, backgroundColor: `${profile.col}12` }}
       data-testid="result-opening-line"
     >
-      {/* Eyebrow keeps its muted token text — the brand hex fails WCAG AA 4.5:1
-          on the tinted card; the border/background tint carries the identity. */}
+      {/* The inline DISC tint is a `style` background, so it wins over Card's
+          bg-card and composites over the PAGE cream — a ground neither the brand
+          hex (fails as text) nor --fg-muted (3.73–3.83:1) survives. Identity
+          therefore stays in the border/background tint and the eyebrow rides
+          Eyebrow's --fg-dim default, which is 5.78–5.95:1 on all four tints. */}
       <Eyebrow className="mb-1.5">Try This Opening Line</Eyebrow>
       <p className="m-0 text-[14px] italic leading-7 text-foreground">{profile.op}</p>
     </Card>
@@ -55,22 +58,28 @@ export function StyleCard({ profile }: { profile: DiscProfile }) {
     <Card data-testid="result-style">
       <Eyebrow>How to Run This Conversation</Eyebrow>
       <p className="m-0 text-[13px] leading-6 text-muted-foreground">{profile.st}</p>
-      <div className="mt-3 rounded-xl border border-red-900/60 bg-red-950/30 p-3">
+      {/* Watch-For is the report's negative note, so it takes terracotta —
+          tint fill + hairline, with the label on the AA-safe --negative-text
+          (10px) and the body on the ink token. Terracotta never carries the
+          body copy: it fails 4.5:1 raw and would flood the card. */}
+      <div className="mt-3 rounded-xl border border-destructive/30 bg-destructive/10 p-3">
         <div
-          className="mb-1 uppercase text-red-400"
-          style={{ fontFamily: 'var(--font-pixel)', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em' }}
+          className="mb-1 uppercase text-[color:var(--negative-text)]"
+          style={{ fontFamily: 'var(--font-sans)', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em' }}
         >
           ⚠ Watch For — Act Immediately
         </div>
-        <p className="m-0 text-[12.5px] leading-6 text-red-200">{profile.wf}</p>
+        <p className="m-0 text-[12.5px] leading-6 text-foreground">{profile.wf}</p>
       </div>
     </Card>
   );
 }
 
 export function FollowUpCard({ profile }: { profile: DiscProfile }) {
+  // Border-only accent — `bg-accent/10` replaced Card's bg-card (twMerge) and
+  // composited over the page cream, taking eyebrow + body to 3.68:1.
   return (
-    <Card className="border-accent/30 bg-accent/10" data-testid="result-follow-up">
+    <Card className="border-accent/30" data-testid="result-follow-up">
       <Eyebrow>Follow-Up Style</Eyebrow>
       <p className="m-0 text-[13px] leading-6 text-muted-foreground">{profile.fu}</p>
     </Card>

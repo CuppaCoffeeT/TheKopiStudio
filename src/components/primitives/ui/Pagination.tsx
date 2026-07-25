@@ -1,5 +1,5 @@
 /**
- * Pagination — first · prev · page numbers · next · last. "1–100 of 487" in Geist Mono.
+ * Pagination — first · prev · page numbers · next · last. "1–100 of 487" in the mono stack (--font-mono).
  *
  * Spec: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/DataTablePrimitives.html
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/table/DataTablePrimitives.jsx
@@ -131,7 +131,7 @@ export function Pagination({
       aria-label="Pagination"
     >
       <span
-        className="text-[12px] text-muted-foreground"
+        className="text-[12px] text-[color:var(--fg-dim)]"
         style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}
       >
         {from}&ndash;{to} of {total.toLocaleString('en-SG')}
@@ -139,7 +139,7 @@ export function Pagination({
       <div className="flex-1" />
       {showRowsPerPage && (
         <label
-          className="inline-flex items-center gap-1.5 mr-2 text-[11.5px] text-muted-foreground"
+          className="inline-flex items-center gap-1.5 mr-2 text-[11.5px] text-[color:var(--fg-dim)]"
           style={{ fontFamily: 'var(--font-sans)' }}
         >
           <span>Rows per page</span>
@@ -160,7 +160,7 @@ export function Pagination({
       )}
       {loading && (
         <span
-          className="inline-flex items-center gap-[6px] mr-2 text-[11px] text-muted-foreground"
+          className="inline-flex items-center gap-[6px] mr-2 text-[11px] text-[color:var(--fg-dim)]"
         >
           <span
             aria-hidden
@@ -178,7 +178,7 @@ export function Pagination({
       ))}
       {showEllipsis && (
         <span
-          className="px-[2px] text-[12px] text-muted-foreground"
+          className="px-[2px] text-[12px] text-[color:var(--fg-dim)]"
           aria-hidden
         >
           &hellip;

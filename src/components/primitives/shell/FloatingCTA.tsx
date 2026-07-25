@@ -19,7 +19,8 @@ interface FloatingCTAProps {
 /**
  * Bottom-right pill — persistent primary action on **mobile** list pages.
  * Hidden on ≥ md by default. 48×48 circle on mobile, 48×auto pill with label.
- * Slate-800 bg, large shadow, sticky above pagination.
+ * Brown CTA bg (--primary) with the brand hover step, large warm shadow,
+ * sticky above pagination.
  *
  * Caller wraps in a positioned container or uses `fixed` class via `className`.
  * Desktop equivalent: render an inline `<Button variant="primary">` —
@@ -33,9 +34,9 @@ export function FloatingCTA({ label, circle = false, allViewports = false, icon,
       data-testid={rest['data-testid']}
       className={cn(
         'h-12 inline-flex items-center justify-center gap-2',
-        'bg-primary hover:bg-slate-900 dark:hover:bg-white',
+        'bg-primary hover:bg-[var(--cta-primary-bg-hover)] active:bg-[var(--cta-primary-bg-active)]',
         'text-primary-foreground',
-        'shadow-[0_10px_24px_rgba(0,0,0,0.18),0_2px_6px_rgba(0,0,0,0.08)]',
+        'shadow-[0_10px_24px_rgba(58,46,36,0.18),0_2px_6px_rgba(58,46,36,0.08)]',
         'font-semibold text-[13px] tracking-[0.01em]',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         'active:scale-95 transition-transform',

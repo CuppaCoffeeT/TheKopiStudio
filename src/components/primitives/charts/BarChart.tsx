@@ -14,7 +14,7 @@ import { AxisY, AxisX, GridLines, chartSeriesColor } from './ChartShell';
 
 export interface BarSeries {
   name: string;
-  /** Optional — defaults to the monochrome cream→gold palette by series index. */
+  /** Optional — defaults to the monochrome brown ramp (CHART_SERIES_PALETTE in ChartShell) by series index. */
   color?: string;
   points: number[];
 }

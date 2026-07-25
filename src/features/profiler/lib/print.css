@@ -1,7 +1,9 @@
 /**
  * Profiler print stylesheet — port of the legacy index.html print CSS.
  *
- * Legacy block (for reference):
+ * Legacy block (kept verbatim as the port's source of truth for STRUCTURE —
+ * selectors, @page, display rules. Its colours/fonts are historical and are
+ * superseded by the Kopi Studio contract at the bottom of this header):
  *   .rph{display:none;text-align:center;padding-bottom:14px;
  *        border-bottom:2px solid #C9A84C;margin-bottom:16px}
  *   @media print{
@@ -25,34 +27,61 @@
  *     pages whose chrome lives inside frame primitives (DetailPageFrame's
  *     AppHeader/hero) where `.print-hide` cannot be applied per element.
  *     Uses the visibility pattern so ancestors of the area never clip it.
+ *
+ * Kopi Studio palette + type contract (paper is NOT app chrome):
+ *   - Paper stays WHITE with dark ink. The cream page background (#F0E6D6) is
+ *     deliberately never carried into print — printed output is its own
+ *     contract, not a screenshot of the app surface.
+ *   - Values are literal hexes, not `var(--…)` tokens, so a future app
+ *     re-theme can never leak into the printed artifact. Same deliberate
+ *     decoupling as `features/crm/lib/report-print.css`.
+ *   - Ink: #3A2E24 body copy · #7D6B5B meta/secondary (5.2:1 on white).
+ *     Accent type under 18px uses the AA-safe brown #806241 (`--brown-text`);
+ *     the raw brand brown #8B6A47 measures 4.00:1 on cream and is reserved
+ *     for marks — rules, borders, fills — and display type >= 18px.
+ *   - Type: Instrument Serif for display >= 18px, IBM Plex Sans below it.
+ *     Instrument Serif ships weight 400 only (see index.html), so serif type
+ *     here never asks for bold — the browser would synthesise it. Both stacks
+ *     keep a generic serif/sans-serif fallback because a print job may render
+ *     before/without the Google Fonts link.
  */
 
-/* Print-only report header — hidden on screen (legacy .rph). */
+/* Print-only report header — hidden on screen (legacy .rph). The rule under
+   the header is a mark, so it takes the RAW brand brown (was legacy gold). */
 .rph {
   display: none;
   text-align: center;
   padding-bottom: 14px;
-  border-bottom: 2px solid #c9a84c;
+  border-bottom: 2px solid #8b6a47;
   margin-bottom: 16px;
 }
 
-/* Inner header lines, mirroring the legacy inline styles. */
+/* Inner header lines, mirroring the legacy inline styles. Each sets its own
+   colour and family: in print only `body` carries the !important overrides,
+   and app-chrome ancestors may otherwise cascade a screen colour in here. */
 .rph-kicker {
+  font-family: 'IBM Plex Sans', Helvetica, Arial, sans-serif;
   font-size: 10px;
+  font-weight: 600;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: #c9a84c;
+  color: #806241;
   margin-bottom: 4px;
 }
 
+/* 22px clears the 18px serif floor. Weight stays 400 — Instrument Serif has
+   no bold face, and faux-bold wrecks it (legacy `bold` was Arial). */
 .rph-name {
+  font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif;
   font-size: 22px;
-  font-weight: bold;
+  font-weight: 400;
+  color: #3a2e24;
 }
 
 .rph-meta {
+  font-family: 'IBM Plex Sans', Helvetica, Arial, sans-serif;
   font-size: 12px;
-  color: #666;
+  color: #7d6b5b;
   margin-top: 3px;
 }
 
@@ -62,10 +91,11 @@
     margin: 12mm;
   }
 
+  /* Paper is white with Kopi ink — the cream page background never prints. */
   body {
     background: #fff !important;
-    color: #111 !important;
-    font-family: Arial, sans-serif !important;
+    color: #3a2e24 !important;
+    font-family: 'IBM Plex Sans', Helvetica, Arial, sans-serif !important;
   }
 
   /* App chrome + action buttons (legacy #hdr,#prg,#bot,.mbg,.toast,.abg,.anotes,.arst). */

@@ -44,16 +44,24 @@ export function DatePickerTrigger({
     'w-full flex items-center gap-2 rounded-lg border tabular-nums',
     padCls,
     heightCls,
-    error ? 'border-red-700 dark:border-red-400' : 'border-border',
+    error ? 'border-destructive' : 'border-border',
     !disabled && !error && 'hover:border-border',
-    open && !error && 'border-ring ring-[3px] ring-ring/15',
+    // 2a: brown ring at 50% — the 15% alpha it replaced composited to 1.2:1 and read as no ring at all.
+    open && !error && 'border-ring ring-[3px] ring-ring/50',
     disabled ? 'bg-secondary opacity-80 cursor-not-allowed' : 'bg-card',
     'transition-[box-shadow,border-color] duration-150',
   );
 
   if (editable) {
     return (
-      <div className={cn(frameCls, !disabled && 'cursor-text')}>
+      <div
+        className={cn(
+          frameCls,
+          !disabled && 'cursor-text',
+          // The inner input paints no outline of its own, so the frame carries the focus cue.
+          !error && 'focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50',
+        )}
+      >
         <button
           type="button"
           tabIndex={-1}
@@ -80,7 +88,6 @@ export function DatePickerTrigger({
             touchTextCls,
             'text-foreground placeholder:text-muted-foreground',
             disabled && 'cursor-not-allowed',
-            'focus:outline-none focus-visible:outline-none',
           )}
           style={{ fontFamily: 'var(--font-mono)' }}
         />

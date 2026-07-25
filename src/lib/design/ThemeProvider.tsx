@@ -3,12 +3,19 @@
  * ThemeProvider — W08 Phase 2 (hoisted app-wide 2026-04-19).
  *
  * Phase 1 scoped the `dark` class to a preview wrapper; Phase 2 promotes
- * the toggle to `document.documentElement` so every page respects it.
+ * the class to `document.documentElement` so every page respects it.
  *
- * Persists the user's preference to localStorage `w08:theme:v1` (same key as
- * Phase 1 so earlier picks survive).
+ * 2026-07-25 (The Kopi Studio rebrand): `resolved` is pinned to 'light'.
+ * The brand is a light one — cream page, cream cards, brown punctuation — and
+ * `src/index.css` carries a single `:root` token block with no `.dark`
+ * counterpart, so there is nothing to flip to. This provider now guarantees
+ * the `dark` class stays OFF <html>.
  *
- * Initial pick is `system` (follows `prefers-color-scheme`).
+ * Everything else is deliberately left intact so a future toggle is cheap:
+ * the `ThemePreference` / `ResolvedTheme` types, the `prefers-color-scheme`
+ * listener, and the localStorage key `w08:theme:v1` (same key since Phase 1,
+ * so earlier picks survive). Stored preference still defaults to `system`;
+ * it just doesn't drive `resolved` today.
  */
 import {
   createContext,
@@ -69,15 +76,19 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // Prospect Profiler original aesthetic is always the warm navy/gold dark
-  // look (2026-07-07 de-AppBase). The preference API is kept for compatibility
-  // but `resolved` is pinned to 'dark' so every surface renders on navy.
+  // The Kopi Studio is a light brand — warm cream canvas, brown punctuation,
+  // sage/terracotta semantics (2026-07-25 rebrand). There is no dark
+  // counterpart: `src/index.css` ships a single `:root` token block and no
+  // `.dark` overrides. So `resolved` is pinned to 'light' and every surface
+  // renders on cream. The preference API (type, storage key, system listener)
+  // is kept intact so re-enabling a real toggle stays a one-line change.
   void systemTheme;
-  const resolved: ResolvedTheme = 'dark';
+  const resolved: ResolvedTheme = 'light';
 
-  // Keep the `dark` class on <html> permanently.
+  // Keep the `dark` class OFF <html> permanently — the legacy `dark:` variant
+  // is still declared in index.css, so a stray class would repaint the brand.
   useEffect(() => {
-    document.documentElement.classList.add('dark');
+    document.documentElement.classList.remove('dark');
   }, [resolved]);
 
   const value = useMemo(

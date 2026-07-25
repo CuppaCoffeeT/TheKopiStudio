@@ -13,7 +13,7 @@
  *   3. External image policy — default `prompt` blocks `http(s)` images and shows
  *      a "Show images" banner (Gmail-style — prevents read-receipt tracking).
  *   4. Prose tokens driven by the design system — never Tailwind Typography defaults.
- *   5. Full dark-mode support (prose, tables, blockquotes, images, links).
+ *   5. Light-pinned prose styling (prose, tables, blockquotes, images, links).
  *
  * Pure / side-effect free: no Supabase, no queries, no auth. Feature layer owns
  * `cidMap` resolution + per-sender trust policy.
@@ -145,8 +145,8 @@ export function SanitizedHtmlProse({
         <div
           className={cn(
             'flex items-center gap-2 mb-3 px-3 py-2 rounded-md border text-[11.5px]',
-            'bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900/40',
-            'text-amber-800 dark:text-amber-300',
+            'bg-[color:var(--status-sent-bg)] border-[color:var(--status-sent-border)]',
+            'text-[color:var(--status-sent-fg)]',
           )}
           role="status"
           style={{ fontFamily: 'var(--font-sans)' }}
@@ -160,9 +160,9 @@ export function SanitizedHtmlProse({
             onClick={handleShowImages}
             className={cn(
               'h-6 px-2 rounded border text-[11px] font-medium whitespace-nowrap',
-              'border-amber-300 dark:border-amber-800 bg-card',
-              'text-amber-800 dark:text-amber-200',
-              'hover:bg-amber-100 dark:hover:bg-amber-900/40',
+              'border-[color:var(--status-sent-border)] bg-card',
+              'text-[color:var(--status-sent-fg)]',
+              'hover:bg-[color:var(--status-sent-bg)]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
             )}
           >
@@ -175,7 +175,7 @@ export function SanitizedHtmlProse({
           'text-[13px] leading-[1.6] text-muted-foreground',
           '[&_p]:mb-2 [&_p]:mt-0',
           '[&_strong]:text-foreground',
-          '[&_a]:text-blue-700 [&_a]:dark:text-blue-400 [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:text-blue-800 hover:[&_a]:dark:text-blue-300',
+          '[&_a]:text-[color:var(--brown-text)] [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:text-[color:var(--cta-primary-bg-hover)]',
           '[&_img]:max-w-full [&_img]:h-auto [&_img]:rounded [&_img]:my-2',
           '[&_blockquote]:border-l-2 [&_blockquote]:border-border [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground',
           '[&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5',

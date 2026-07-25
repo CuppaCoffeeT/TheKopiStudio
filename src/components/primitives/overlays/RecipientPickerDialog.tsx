@@ -13,11 +13,15 @@ import { GLASS_BACKDROP } from './shared';
  * Preview: docs/99-refactor/_system/design/handoffs/2026-04-27-EWSiu3Vc/project/preview/component-recipient-picker-dialog.html
  *
  * Locked:
- *   • 560px width · max-h 80vh · glass scrim · slate-800 primary CTA
- *   • Header = Geist Pixel h2 lowercase + 12px description
+ *   • 560px width · max-h 80vh · glass scrim · brown primary CTA
+ *   • Header = Instrument Serif 22px lowercase + 12px description
  *   • Search + to/cc segmented row · scrollable list body · footer with selected-count + Add CTA
- *   • Row tones: blue (Client Contact) · green (Company Email) · orange (Other Company / Unlinked)
- *   • Cross-company rows tint orange-50 on hover; selected row gets red-700 inset rail + checkmark fill
+ *   • Row tones keep their legacy NAMES (they are a public prop union) but paint
+ *     the 2a status pills: `blue` (Client Contact) → the quiet neutral tint,
+ *     `green` (Company Email) → sage, `orange` (Other Company / Unlinked) →
+ *     the brown in-progress tint. 2a has no blue and no orange.
+ *   • Cross-company rows tint brown on hover; selected row gets a brown inset
+ *     rail + checkmark fill
  */
 
 interface RecipientPickerDialogProps {
@@ -87,7 +91,7 @@ export function RecipientPickerDialog({
             'fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2',
             'flex w-[560px] max-w-[calc(100vw-32px)] max-h-[80vh] flex-col overflow-hidden rounded-xl',
             'border border-border bg-card',
-            'shadow-[0_24px_64px_rgba(24,24,27,0.14)] dark:shadow-[0_24px_64px_rgba(0,0,0,0.5)]',
+            'shadow-[0_24px_64px_rgb(58_46_36_/_0.14)]',
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
             'data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95',
             'data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0',
@@ -101,7 +105,6 @@ export function RecipientPickerDialog({
                 style={{
                   fontFamily: 'var(--font-pixel)',
                   letterSpacing: '-0.01em',
-                  WebkitFontSmoothing: 'none',
                   textTransform: 'lowercase',
                 }}
               >
@@ -124,7 +127,7 @@ export function RecipientPickerDialog({
           {actions && <div className="flex flex-wrap gap-2 px-[22px] pt-3">{actions}</div>}
 
           <div className="flex items-center gap-2.5 px-[22px] py-3">
-            <div className="flex h-[34px] flex-1 items-center gap-2 rounded-md border border-border bg-card px-2.5">
+            <div className="flex h-[34px] flex-1 items-center gap-2 rounded-md border border-border bg-card px-2.5 focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/15">
               <Search className="h-3.5 w-3.5 text-muted-foreground" />
               <input
                 type="search"
@@ -161,7 +164,7 @@ export function RecipientPickerDialog({
                 'h-8 rounded-md border-none px-3.5 text-[12.5px] font-medium transition-colors',
                 submitBlocked
                   ? 'cursor-not-allowed bg-muted text-muted-foreground'
-                  : 'cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90',
+                  : 'cursor-pointer bg-primary text-primary-foreground hover:bg-[var(--cta-primary-bg-hover)]',
               )}
             >
               Add {selectedCount > 0 ? `(${selectedCount}) ` : ''}Recipient{selectedCount === 1 ? '' : 's'}
@@ -244,16 +247,19 @@ interface RecipientRowProps {
   email: ReactNode;
   subtitle?: ReactNode;
   badges?: { label: ReactNode; tone: RecipientRowTone }[];
-  /** Marks the row as cross-company (orange-50 hover, orange ring on hover). */
+  /** Marks the row as cross-company (brown tint fill + brown hairline on hover). */
   crossCompany?: boolean;
 }
 
+/* Tone KEYS are the public prop union and cannot move; the values are the 2a
+ * status-pill triples — tint fill plus the same-hue darkened text the spec pins
+ * to that tint, so the 11px badge label clears AA on every one of them. */
 const ROW_BADGE_TONE: Record<RecipientRowTone, string> = {
-  blue: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-900/40',
+  blue: 'bg-[color:var(--status-draft-bg)] text-[color:var(--status-draft-fg)] border-[color:var(--status-draft-border)]',
   green:
-    'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-900/40',
+    'bg-[color:var(--status-accepted-bg)] text-[color:var(--status-accepted-fg)] border-[color:var(--status-accepted-border)]',
   orange:
-    'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-amber-300 dark:border-amber-900/40',
+    'bg-[color:var(--status-sent-bg)] text-[color:var(--status-sent-fg)] border-[color:var(--status-sent-border)]',
 };
 
 export function RecipientRow({
@@ -282,7 +288,7 @@ export function RecipientRow({
         'group flex min-h-[52px] cursor-pointer items-center gap-2.5 border-b border-border px-3.5 py-2.5 transition-colors',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring',
         crossCompany
-          ? 'hover:bg-orange-50 hover:shadow-[inset_0_0_0_1px_rgb(254_215_170)] dark:hover:bg-orange-950/20 dark:hover:shadow-[inset_0_0_0_1px_rgba(217,119,6,0.30)]'
+          ? 'hover:bg-[color:var(--status-sent-bg)] hover:shadow-[inset_0_0_0_1px_var(--border-hover)]'
           : 'hover:bg-secondary',
         selected && 'bg-secondary shadow-[inset_2px_0_0_var(--tw-shadow-color)] shadow-primary',
       )}
@@ -296,7 +302,8 @@ export function RecipientRow({
             : 'border-border bg-transparent',
         )}
       >
-        {selected && <Check className="h-2.5 w-2.5 text-white" strokeWidth={2.5} />}
+        {/* Cream on brown — the CTA label pair, not pure white. */}
+        {selected && <Check className="h-2.5 w-2.5 text-primary-foreground" strokeWidth={2.5} />}
       </span>
 
       <span

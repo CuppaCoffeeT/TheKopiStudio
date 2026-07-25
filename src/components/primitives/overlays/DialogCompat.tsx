@@ -1,13 +1,13 @@
 /**
  * DialogCompat — compositional shadcn-compat Dialog + AlertDialog primitives.
  *
- * Uses the same visual shell as <Modal> (glass backdrop, pixel-display title,
- * slate-800 primary, red-700 destructive) but exposes the shadcn API
+ * Uses the same visual shell as <Modal> (glass backdrop, Instrument Serif title,
+ * brown primary, terracotta destructive) but exposes the shadcn API
  * (`Dialog`, `DialogContent`, `DialogHeader`, `DialogTitle`,
  * `DialogDescription`, `DialogFooter`, `DialogTrigger`, `DialogClose` +
  * `AlertDialog*` equivalents) so legacy adopters can migrate via import swap.
  *
- * Locked: glass backdrop · title in Geist Pixel Square · focus ring red-700.
+ * Locked: glass backdrop · title in Instrument Serif 22px · brown focus ring.
  */
 
 import * as DialogPrimitive from '@radix-ui/react-dialog';
@@ -67,8 +67,10 @@ export const DialogContent = forwardRef<
             'w-[min(560px,92vw)]',
             'rounded-xl bg-card',
             'border border-border',
-            'shadow-[0_1px_2px_rgba(0,0,0,0.04),0_24px_64px_rgba(24,24,27,0.14)]',
-            'dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_24px_64px_rgba(0,0,0,0.5)]',
+            // Warm-ink float. Modals throw further than the shared
+            // --floating-shadow, so the geometry is local; only the hue is
+            // shared. Light-pinned — no `dark:` counterpart.
+            'shadow-[0_1px_2px_rgb(58_46_36_/_0.06),0_24px_64px_rgb(58_46_36_/_0.14)]',
             'px-5 py-5',
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
             'data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95',
@@ -124,7 +126,6 @@ export const DialogTitle = forwardRef<
       style={{
         fontFamily: 'var(--font-pixel)',
         letterSpacing: '-0.01em',
-        WebkitFontSmoothing: 'none',
       }}
       {...props}
     />
@@ -184,8 +185,10 @@ export const AlertDialogContent = forwardRef<
             'w-[min(460px,92vw)]',
             'rounded-xl bg-card',
             'border border-border',
-            'shadow-[0_1px_2px_rgba(0,0,0,0.04),0_24px_64px_rgba(24,24,27,0.14)]',
-            'dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_24px_64px_rgba(0,0,0,0.5)]',
+            // Warm-ink float. Modals throw further than the shared
+            // --floating-shadow, so the geometry is local; only the hue is
+            // shared. Light-pinned — no `dark:` counterpart.
+            'shadow-[0_1px_2px_rgb(58_46_36_/_0.06),0_24px_64px_rgb(58_46_36_/_0.14)]',
             'px-5 py-5',
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
             'data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95',
@@ -231,7 +234,6 @@ export const AlertDialogTitle = forwardRef<
       style={{
         fontFamily: 'var(--font-pixel)',
         letterSpacing: '-0.01em',
-        WebkitFontSmoothing: 'none',
       }}
       {...props}
     />
@@ -260,7 +262,7 @@ export const AlertDialogAction = forwardRef<
       ref={ref}
       className={cn(
         'h-8 px-3.5 rounded-md text-[13px] font-medium inline-flex items-center justify-center gap-2',
-        'bg-primary hover:bg-primary/90 text-primary-foreground',
+        'bg-primary hover:bg-[var(--cta-primary-bg-hover)] text-primary-foreground',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
         'disabled:opacity-40 disabled:cursor-not-allowed',
         className,

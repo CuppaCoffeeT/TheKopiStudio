@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Kopi Studio — Brand Card</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'IBM Plex Sans', sans-serif; background:#f0e6d6; padding:40px 20px; color:#3a2e24; }
+  .wrap { max-width:900px; margin:0 auto; }
+  h1 { font-family:'Instrument Serif',serif; font-size:32px; font-weight:400; margin-bottom:6px; color:#3a2e24; }
+  .subtitle { font-size:13px; color:#7d6b5b; margin-bottom:32px; }
+
+  .section { background:#faf6ee; border-radius:12px; padding:24px; margin-bottom:24px; border:1px solid #d9ccc0; }
+  .section h2 { font-family:'Instrument Serif',serif; font-size:18px; font-weight:400; color:#8b6a47; margin-bottom:16px; padding-bottom:12px; border-bottom:2px solid #d9ccc0; }
+
+  .color-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:16px; margin-bottom:0; }
+  .color-swatch { border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.1); }
+  .color-box { height:80px; display:flex; align-items:center; justify-content:center; color:white; font-weight:600; font-size:11px; text-shadow:0 1px 2px rgba(0,0,0,.2); }
+  .color-label { background:#f3ede3; padding:10px; font-size:11px; text-align:center; }
+  .color-label .name { font-weight:600; color:#8b6a47; }
+  .color-label .code { font-family:'Courier New',monospace; color:#7d6b5b; font-size:10px; margin-top:4px; }
+
+  .font-sample { padding:16px; background:#fff; border-radius:8px; margin-bottom:12px; border:1px solid #e0d3c3; }
+  .font-sample-heading { font-family:'Instrument Serif',serif; font-size:24px; font-weight:400; color:#8b6a47; margin-bottom:8px; }
+  .font-sample-body { font-family:'IBM Plex Sans'; font-size:14px; color:#5d4f3f; line-height:1.6; }
+
+  table { width:100%; border-collapse:collapse; font-size:13px; margin-top:12px; }
+  th { background:linear-gradient(135deg, #8b6a47 0%, #7d5f3d 100%); color:#faf6ee; padding:12px; text-align:left; font-weight:600; }
+  td { padding:12px; border-bottom:1px solid #e0d3c3; }
+  tr:nth-child(even) td { background:#f3ede3; }
+
+  code { font-family:'Courier New',monospace; background:#f3ede3; padding:2px 6px; border-radius:4px; color:#7d4a3a; font-size:12px; }
+
+  .note { background:#d9e8e0; border-left:4px solid #5a7a5e; padding:16px; border-radius:6px; font-size:12px; line-height:1.6; color:#4a6a54; margin-top:16px; }
+
+  .usage-box { background:#fdf8f3; border:1px solid #d9ccc0; border-radius:8px; padding:14px; font-size:12px; margin-bottom:12px; }
+  .usage-box strong { color:#8b6a47; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>The Kopi Studio</h1>
+  <p class="subtitle">Brand Colour Card & Coding Reference | For Developer Use</p>
+
+  <!-- PRIMARY PALETTE -->
+  <div class="section">
+    <h2>Primary Palette</h2>
+    <p style="font-size:13px; color:#7d6b5b; margin-bottom:16px;">Core colours for the website. Use Kopi & Cream + Sage as the main family.</p>
+    <div class="color-grid">
+      <div class="color-swatch">
+        <div class="color-box" style="background:#8b6a47;">Brown</div>
+        <div class="color-label">
+          <div class="name">Primary (Brown)</div>
+          <div class="code">#8b6a47</div>
+        </div>
+      </div>
+      <div class="color-swatch">
+        <div class="color-box" style="background:#faf6ee; color:#3a2e24; border:1px solid #d9ccc0;">Cream</div>
+        <div class="color-label">
+          <div class="name">Background (Cream)</div>
+          <div class="code">#faf6ee</div>
+        </div>
+      </div>
+      <div class="color-swatch">
+        <div class="color-box" style="background:#f0e6d6;">Page</div>
+        <div class="color-label">
+          <div class="name">Page Background</div>
+          <div class="code">#f0e6d6</div>
+        </div>
+      </div>
+      <div class="color-swatch">
+        <div class="color-box" style="background:#5a7a5e;">Sage</div>
+        <div class="color-label">
+          <div class="name">Secondary (Sage)</div>
+          <div class="code">#5a7a5e</div>
+        </div>
+      </div>
+      <div class="color-swatch">
+        <div class="color-box" style="background:#3a2e24;">Text</div>
+        <div class="color-label">
+          <div class="name">Text (Dark)</div>
+          <div class="code">#3a2e24</div>
+        </div>
+      </div>
+      <div class="color-swatch">
+        <div class="color-box" style="background:#7d6b5b;">Muted</div>
+        <div class="color-label">
+          <div class="name">Muted Text</div>
+          <div class="code">#7d6b5b</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXTENDED PALETTE (Reports) -->
+  <div class="section">
+    <h2>Extended Palette (For Reports)</h2>
+    <p style="font-size:13px; color:#7d6b5b; margin-bottom:16px;">Add these colours to reports only. Website uses primary palette only.</p>
+    <div class="color-grid">
+      <div class="color-swatch">
+        <div class="color-box" style="background:#e8e6e0;">Grey</div>
+        <div class="color-label">
+          <div class="name">Neutral Box</div>
+          <div class="code">#e8e6e0</div>
+        </div>
+      </div>
+      <div class="color-swatch">
+        <div class="color-box" style="background:#d9e8e0; color:#4a6a54; border:1px solid #b8d8d0;">Green Box</div>
+        <div class="color-label">
+          <div class="name">Positive Alert</div>
+          <div class="code">#d9e8e0</div>
+        </div>
+      </div>
+      <div class="color-swatch">
+        <div class="color-box" style="background:#d97551;">Red</div>
+        <div class="color-label">
+          <div class="name">Negative Text</div>
+          <div class="code">#d97551</div>
+        </div>
+      </div>
+      <div class="color-swatch">
+        <div class="color-box" style="background:#5a7a5e;">Green</div>
+        <div class="color-label">
+          <div class="name">Positive Text</div>
+          <div class="code">#5a7a5e</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FONTS -->
+  <div class="section">
+    <h2>Typography</h2>
+    <p style="font-size:13px; color:#7d6b5b; margin-bottom:16px;">Two fonts only. Load from Google Fonts.</p>
+
+    <div class="font-sample">
+      <div class="font-sample-heading">Instrument Serif — Headings Only</div>
+      <div class="font-sample-body" style="font-family:'Instrument Serif',serif; font-size:16px;">Elegant, distinctive serif. Use for h1, h2, h3, page titles. Never smaller than 18px. Weights: 400 regular.</div>
+    </div>
+    <code>@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap');</code>
+
+    <div class="font-sample" style="margin-top:16px;">
+      <div class="font-sample-heading" style="font-family:'IBM Plex Sans'; font-size:14px; font-weight:600; color:#8b6a47; margin-bottom:8px;">IBM Plex Sans — Body & UI</div>
+      <div class="font-sample-body">Clean, readable sans. Use for all body text, buttons, labels. Weights: 400, 500, 600, 700.</div>
+    </div>
+    <code>@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');</code>
+  </div>
+
+  <!-- USAGE RULES -->
+  <div class="section">
+    <h2>Where Each Colour Goes</h2>
+
+    <div class="usage-box">
+      <strong style="color:#8b6a47;">Brown (#8b6a47)</strong><br>
+      Page headers, primary buttons, section titles (with Instrument Serif), active navigation, hover states. The "authority" colour.
+    </div>
+
+    <div class="usage-box">
+      <strong style="color:#3a2e24;">Text Dark (#3a2e24)</strong><br>
+      All body copy, form labels, important text. Default text colour throughout.
+    </div>
+
+    <div class="usage-box">
+      <strong style="color:#5a7a5e;">Sage (#5a7a5e)</strong><br>
+      Secondary buttons, accent lines, success states, links. Complements brown without competing.
+    </div>
+
+    <div class="usage-box">
+      <strong style="color:#7d6b5b;">Muted (#7d6b5b)</strong><br>
+      Subtitles, helper text, disabled states, secondary information. Lower visual weight.
+    </div>
+
+    <div class="usage-box">
+      <strong style="color:#f0e6d6;">Page Background (#f0e6d6)</strong><br>
+      Body/page background. Warm cream tone.
+    </div>
+
+    <div class="usage-box">
+      <strong style="color:#faf6ee;">Cards/Boxes (#faf6ee)</strong><br>
+      All content boxes, cards, sections. Lighter cream than page bg for subtle lift.
+    </div>
+  </div>
+
+  <!-- COMPONENT STYLES -->
+  <div class="section">
+    <h2>Component Styles</h2>
+
+    <h3 style="font-size:14px; color:#8b6a47; margin-top:16px; margin-bottom:12px; font-weight:600;">Buttons</h3>
+    <table>
+      <tr>
+        <th>Type</th>
+        <th>Background</th>
+        <th>Text</th>
+        <th>Border</th>
+        <th>Hover</th>
+      </tr>
+      <tr>
+        <td><strong>Primary</strong></td>
+        <td>#8b6a47</td>
+        <td>#faf6ee (white)</td>
+        <td>None</td>
+        <td>#7d5f3d (darker)</td>
+      </tr>
+      <tr>
+        <td><strong>Secondary</strong></td>
+        <td>#faf6ee</td>
+        <td>#8b6a47</td>
+        <td>1px #d9ccc0</td>
+        <td>#f3ede3 (slightly darker)</td>
+      </tr>
+      <tr>
+        <td><strong>Success</strong></td>
+        <td>#5a7a5e</td>
+        <td>#faf6ee (white)</td>
+        <td>None</td>
+        <td>#4a6a4e (darker)</td>
+      </tr>
+    </table>
+
+    <h3 style="font-size:14px; color:#8b6a47; margin-top:20px; margin-bottom:12px; font-weight:600;">Forms</h3>
+    <table>
+      <tr>
+        <th>Element</th>
+        <th>Background</th>
+        <th>Border</th>
+        <th>Focus</th>
+      </tr>
+      <tr>
+        <td><strong>Input / Select</strong></td>
+        <td>#fff (white)</td>
+        <td>1px #d9ccc0</td>
+        <td>Border #8b6a47 + 3px shadow rgba(139,106,71,0.1)</td>
+      </tr>
+      <tr>
+        <td><strong>Label</strong></td>
+        <td>N/A</td>
+        <td>N/A</td>
+        <td>Color: #8b6a47, font-weight: 600</td>
+      </tr>
+    </table>
+
+    <h3 style="font-size:14px; color:#8b6a47; margin-top:20px; margin-bottom:12px; font-weight:600;">Headers & Navigation</h3>
+    <table>
+      <tr>
+        <th>Element</th>
+        <th>Background</th>
+        <th>Text</th>
+        <th>Notes</th>
+      </tr>
+      <tr>
+        <td><strong>Page Header</strong></td>
+        <td>Linear gradient: #8b6a47 → #7d5f3d</td>
+        <td>#faf6ee</td>
+        <td>135deg, use Instrument Serif for titles</td>
+      </tr>
+      <tr>
+        <td><strong>Nav Link (inactive)</strong></td>
+        <td>Transparent</td>
+        <td>#7d6b5b</td>
+        <td>Hover: #8b6a47</td>
+      </tr>
+      <tr>
+        <td><strong>Nav Link (active)</strong></td>
+        <td>#8b6a47</td>
+        <td>#faf6ee</td>
+        <td>Slight rounded corners</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- SPACING & DETAILS -->
+  <div class="section">
+    <h2>Spacing & Details</h2>
+    <table>
+      <tr>
+        <th>Element</th>
+        <th>Value</th>
+        <th>Notes</th>
+      </tr>
+      <tr>
+        <td><strong>Border Radius (small)</strong></td>
+        <td>6px–8px</td>
+        <td>Buttons, inputs, small elements</td>
+      </tr>
+      <tr>
+        <td><strong>Border Radius (large)</strong></td>
+        <td>12px–14px</td>
+        <td>Cards, major sections</td>
+      </tr>
+      <tr>
+        <td><strong>Line Height (body)</strong></td>
+        <td>1.6</td>
+        <td>Default for readable paragraphs</td>
+      </tr>
+      <tr>
+        <td><strong>Button Padding</strong></td>
+        <td>10px 20px</td>
+        <td>Comfortable click target, not oversized</td>
+      </tr>
+      <tr>
+        <td><strong>Section Spacing</strong></td>
+        <td>24px–32px</td>
+        <td>Between major sections</td>
+      </tr>
+      <tr>
+        <td><strong>Box Shadow (subtle)</strong></td>
+        <td>0 2px 8px rgba(0,0,0,0.1)</td>
+        <td>Cards, lifted elements</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- QUICK CSS SNIPPET -->
+  <div class="section">
+    <h2>Quick CSS Variables</h2>
+    <p style="font-size:13px; color:#7d6b5b; margin-bottom:12px;">Paste this into your root CSS for consistency:</p>
+    <code style="display:block; background:#f3ede3; padding:12px; border-radius:6px; overflow-x:auto; font-size:11px; line-height:1.8;">
+      :root {<br>
+      &nbsp;&nbsp;--color-primary: #8b6a47;<br>
+      &nbsp;&nbsp;--color-secondary: #5a7a5e;<br>
+      &nbsp;&nbsp;--color-background: #f0e6d6;<br>
+      &nbsp;&nbsp;--color-card: #faf6ee;<br>
+      &nbsp;&nbsp;--color-text-dark: #3a2e24;<br>
+      &nbsp;&nbsp;--color-text-muted: #7d6b5b;<br>
+      &nbsp;&nbsp;--color-border: #d9ccc0;<br>
+      &nbsp;&nbsp;--color-positive: #5a7a5e;<br>
+      &nbsp;&nbsp;--color-negative: #d97551;<br>
+      &nbsp;&nbsp;--font-heading: 'Instrument Serif', serif;<br>
+      &nbsp;&nbsp;--font-body: 'IBM Plex Sans', sans-serif;<br>
+      }
+    </code>
+  </div>
+
+  <div class="note">
+    <strong>For your developer:</strong> Website uses Primary Palette only (Brown, Cream, Sage, Text). Reports layer in Extended Palette (Grey, Green, Red sentiment). Keep it consistent — same brown (#8b6a47) and cream (#faf6ee) across website and reports so clients recognize "this is The Kopi Studio."
+  </div>
+
+</div>
+</body>
+</html>

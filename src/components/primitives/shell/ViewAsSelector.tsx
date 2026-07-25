@@ -95,7 +95,7 @@ export function ViewAsSelector({
             'transition-colors',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
             isImpersonating
-              ? 'border border-primary bg-primary/10 dark:bg-primary/15 text-primary hover:bg-primary/15 dark:hover:bg-primary/20'
+              ? 'border border-primary bg-primary/10 text-[color:var(--brown-text)] hover:bg-primary/15'
               : 'text-muted-foreground hover:bg-secondary',
           )}
         >
@@ -192,7 +192,7 @@ export function ViewAsSelector({
                 <span
                   className={cn(
                     'inline-block w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0',
-                    isActive ? 'bg-primary' : 'bg-zinc-300 dark:bg-zinc-700',
+                    isActive ? 'bg-primary' : 'bg-[color:var(--border)]',
                   )}
                 />
                 <div className="flex-1 min-w-0">
@@ -227,7 +227,7 @@ export function ViewAsSelector({
                 className={cn(
                   'w-full flex items-center justify-center gap-2 h-8 rounded',
                   'text-[12.5px] font-medium',
-                  'text-primary',
+                  'text-[color:var(--brown-text)]',
                   'hover:bg-secondary',
                   'transition-colors',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',

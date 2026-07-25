@@ -1,27 +1,31 @@
-# Design Philosophy — Insurance CRM
+# Design Philosophy — The Kopi Studio
 
 **Created**: 2026-04-19 SGT
-**Last Updated**: 2026-07-14 SGT
+**Last Updated**: 2026-07-25 SGT
 **Status**: 🟢 Production
+**Priority**: 🟡 High
 
 👉 Parent: [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md)
 
 ## North star
 
-**Editorial navy/gold/serif — a permanently-dark, warm, magazine-like aesthetic.** Deep navy canvas, cream text, gold accents, Georgia serif display type. The app reads like a well-set financial publication: calm, authoritative, premium. Built for insurance advisors reviewing client profiles and portfolios — trust and legibility over dashboard flash.
+**Quiet broadsheet — a light, warm, printed-page aesthetic.** Warm cream canvas, ink-brown text, Instrument Serif headings over IBM Plex Sans body. Brown is *punctuation*, not authority-by-volume: it carries the CTA, the focus ring, the active-nav marker and index numerals, and nothing else. Hierarchy comes from serif/sans contrast, a three-step ink ladder and hairline rules — never from a coloured header band. The app reads like a well-set newspaper: calm, legible, unhurried.
 
-## The direction shift (2026-07-14)
+## The direction shift (2026-07-25)
 
-Supersedes the **AppBase slate/zinc/Geist** direction (locked 2026-04-19, itself superseding 2025-Q4 Tadao-Ando minimalism). The user's 2026-07-14 reversal (Insurance CRM redesign PRD) made the original Prospect Profiler navy/gold aesthetic the system of record — recorded in [LOCKED_PICKS.md](../../99-refactor/_system/LOCKED_PICKS.md) ("Editorial navy/gold/serif" entry).
+Supersedes the **Editorial navy/gold/serif** direction (locked 2026-07-14, itself superseding the AppBase slate/zinc/Geist lock of 2026-04-19 and 2025-Q4 Tadao-Ando minimalism). The Kopi Studio brand card, direction 2a "Kopi House", is now the system of record — spec: [KOPI_2A_SPEC.md](../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md), enforcement: [.claude/rules/light-theme.md](../../../.claude/rules/light-theme.md).
 
-| Was (AppBase, deprecated 2026-07-14) | Is (locked 2026-07-14) |
+| Was (navy/gold, retired 2026-07-25) | Is (locked 2026-07-25) |
 |---|---|
-| Light-first zinc surfaces + class-toggled dark mode | **Always dark** — navy `#0D1B2A` canvas; `:root` == `.dark`; theme toggle is a no-op |
-| Slate-800 primary CTA · red-700 accent/focus | **Gold `#C9A84C`** CTA + accent + focus ring · red only for destructive |
-| Geist Pixel headings · Geist Mono labels · Roboto body | **Georgia serif** display/prose · system-ui sans body/UI |
-| Page zinc-100, card white (cards recessed darker in dark mode) | Card `#12202F` **raised lighter** than the navy page |
+| **Always dark** — navy `#0D1B2A` canvas; `:root` == `.dark` | **Light-pinned** — cream `#F0E6D6` canvas; single `:root`, no `.dark` block, every `dark:` utility inert |
+| Gold `#C9A84C` CTA + accent + focus ring | **Brown `#8B6A47`** CTA + focus ring + active-nav marker · terracotta `#D97551` destructive only |
+| Georgia serif display · system-ui sans body | **Instrument Serif** headings (hard floor 18px) · **IBM Plex Sans** everything smaller |
+| Card `#12202F` raised lighter than the navy page | Card `#FAF6EE` **still raised lighter** than the cream page — the cardinal rule survives the inversion |
+| 6-tone status palette as translucent tints on navy | Status collapses to **three meanings** — sage positive, brown in-progress, terracotta error — plus muted neutrals for inert states |
 
-**What survives from AppBase**: the primitive library, the archetype system, the locked token NAMES (LOCKED_PICKS v1–v4 var names are frozen — only their values were retuned to navy/gold), the reuse principles below.
+**What survives every reversal**: the primitive library, the archetype system, the locked token NAMES (LOCKED_PICKS v1–v4 var names are frozen — only their values move), the reuse principles below, and the cardinal surface rule (page → card → raised, each step lighter).
+
+**AA is a hard gate.** The raw brand hexes are tuned as fills and miss 4.5:1 as small type, so any text under 18px in a brand hue takes its darkened sibling: `--brown-text` `#806241` · `--sage-text` `#526F56` · `--negative-text` `#AB4925`.
 
 ## 11 reuse principles (hard rules)
 
@@ -33,24 +37,27 @@ Canonical source: [DESIGN_REUSE_PRINCIPLES.md](../../99-refactor/_system/DESIGN_
 4. **Slot pattern for legacy** — pass as `<prop>Slot`, not callback
 5. **No forking** — copy = tech debt
 6. **Check `DESIGN_CATALOG.md` first** — design ≠ impl ≠ adopted
-7. **Font rule** — system sans for body/UI · Georgia serif for display headings + prose (see [TYPOGRAPHY.md](./TYPOGRAPHY.md))
+7. **Font rule** — IBM Plex Sans for body/UI/prose · Instrument Serif for display headings only, never under 18px (see [TYPOGRAPHY.md](./TYPOGRAPHY.md))
 8. **Page composition** — `AppHeader → PageShell/DetailPageFrame` (no one-off chrome)
 9. **Brand assets in `/public/images/`** — no inline SVG duplication
 10. **No speculative machinery** — only build what's in the current design spec
-11. **Feedback on every interactive** — 5 states (default · hover · active · focus-visible · disabled). Hover must visually differ from the navy page bg. Focus-visible = gold ring 3px offset. Disabled = 40% opacity. Loading states required.
+11. **Feedback on every interactive** — 5 states (default · hover · active · focus-visible · disabled). Hover must visually differ from the cream page bg (brown wash @ 6% or the `#F3EDE3` tint). Focus-visible = brown ring, 2px at 2px offset. Disabled = 40% opacity. Loading states required.
 
 ## Why this design exists
 
-Insurance CRM is an advisor-facing tool — client profiling, portfolio review, follow-ups. The design must:
+The Kopi Studio is an advisor-facing tool — client profiling, portfolio review, follow-ups. The design must:
 
-- **Feel trustworthy and editorial** — serif display type + warm navy/gold signals "financial publication", not "admin panel"
-- **Stay coherent at any hour** — one permanent dark theme; no light/dark drift, no toggle-state bugs
+- **Feel trustworthy and editorial** — serif display type on a warm cream ground signals "printed broadsheet", not "admin panel"
+- **Stay coherent everywhere** — one permanent light theme; no light/dark drift, no toggle-state bugs
 - **Scale without per-page debate** — locked tokens + locked primitives inherited from AppBase
-- **Signal status at a glance** — 6-tone status palette retuned as translucent tints on navy
+- **Signal status at a glance** — three status meanings (sage positive · brown in-progress · terracotta error) as tint fills with darkened same-hue text, never saturated fills
+- **Pass AA without a second pass** — small text in a brand hue uses the AA-safe variant by default
 
 ## 📚 Related
 
+- [KOPI_2A_SPEC.md](../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md) — palette, type scale, states, archetypes
+- [.claude/rules/light-theme.md](../../../.claude/rules/light-theme.md) — enforcement + anti-patterns
 - [TYPOGRAPHY.md](./TYPOGRAPHY.md) · [COLORS.md](./COLORS.md) · [TOKENS.md](./TOKENS.md) · [SPACING_MOTION.md](./SPACING_MOTION.md)
 - [DESIGN_REUSE_PRINCIPLES.md](../../99-refactor/_system/DESIGN_REUSE_PRINCIPLES.md) — principles source-of-truth
-- [LOCKED_PICKS.md](../../99-refactor/_system/LOCKED_PICKS.md) — component locks + the 2026-07-14 aesthetic-reversal entry
-- [DARK_MODE.md](./DARK_MODE.md) — always-dark contract
+- [LOCKED_PICKS.md](../../99-refactor/_system/LOCKED_PICKS.md) — component locks + aesthetic-reversal history
+- [DARK_MODE.md](./DARK_MODE.md) — superseded always-dark contract (historical)

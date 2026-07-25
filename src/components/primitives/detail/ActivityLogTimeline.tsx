@@ -7,7 +7,7 @@
  *
  * Different from <Timeline>: no scroll-beam, tight rows, dense audit surface for Company / Invoice.
  * Locked:
- *  - Day-header = mono uppercase, zinc-50 bg, sticky-style.
+ *  - Day-header = mono uppercase, `--secondary` tint fill, sticky-style.
  *  - Row min-height 44px (mobile tap-target). Mobile wraps timestamp below.
  *  - Verb chip = 3px radius mono uppercase, 10px size.
  */
@@ -93,8 +93,9 @@ export function ActivityLogTimeline({
                   'px-3 md:px-4 py-2.5',
                   'min-h-11 flex-wrap md:flex-nowrap',
                   !isLast && 'border-b border-border',
-                  'hover:bg-card hover:shadow-[inset_0_0_0_1px_#ececee,0_1px_2px_rgba(24,24,27,0.04)]',
-                  'dark:hover:bg-white/[0.04] dark:hover:shadow-none'
+                  // Translucent brown wash — a solid cream would vanish against
+                  // the cream card this list sits in.
+                  'hover:bg-[color:var(--row-hover)] hover:shadow-[inset_0_0_0_1px_var(--border-hover),var(--card-shadow-hover)]'
                 )}
               >
                 <span
@@ -142,7 +143,7 @@ export function ActivityLogTimeline({
       ))}
 
       {(onLoadMore || totalCount != null) && (
-        <div className="flex items-center gap-2 px-3 py-2 border-t border-border bg-zinc-50/40 dark:bg-white/[0.015]">
+        <div className="flex items-center gap-2 px-3 py-2 border-t border-border bg-secondary">
           {onLoadMore && (
             <button
               type="button"

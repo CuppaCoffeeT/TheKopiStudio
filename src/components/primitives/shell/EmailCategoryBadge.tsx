@@ -2,7 +2,7 @@
  * EmailCategoryBadge — AI-classification category pill with color-coded dot.
  *
  * Spec: docs/99-refactor/_system/design/handoffs/2026-04-23-rNq9eFQw/project/preview/component-email-inbox.html (`.ei-cbadge` · `.ei-cat`)
- * Palette: src/lib/design/emailCategoryTones.ts (12 tone pairs · light + dark)
+ * Palette: src/lib/design/emailCategoryTones.ts (12 tone sets; the app is light-pinned)
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
  * Two variants:
@@ -10,13 +10,12 @@
  *   - `filter` — toggle chip (sidebar AI-category section; on/off states)
  *
  * Replaces `src/components/email/EmailClassificationBadge.tsx` in Commit 2.
- * Locked formula: same-hue dot, 50-tint bg, 700-sat fg, 200-hue border.
+ * Locked formula: same-hue dot, tinted bg, darkened same-hue fg, hairline border.
  */
 
 import { forwardRef } from 'react';
 import { PenLine } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useTheme } from '@/lib/design/ThemeProvider';
 import { getEmailCategoryDef, type EmailCategoryToneSet } from '@/lib/design/emailCategoryTones';
 
 export type EmailCategoryBadgeVariant = 'badge' | 'filter';
@@ -52,17 +51,14 @@ export type EmailCategoryBadgeProps =
   | EmailCategoryBadgeDisplayProps
   | EmailCategoryBadgeFilterProps;
 
-function useResolvedTones(category: string): EmailCategoryToneSet | null {
-  const { resolved } = useTheme();
-  const def = getEmailCategoryDef(category);
-  if (!def) return null;
-  return resolved === 'dark' ? def.tones.dark : def.tones.light;
+function resolveTones(category: string): EmailCategoryToneSet | null {
+  return getEmailCategoryDef(category)?.tones ?? null;
 }
 
 export const EmailCategoryBadge = forwardRef<HTMLSpanElement, EmailCategoryBadgeProps>(
   function EmailCategoryBadge(props, ref) {
     const { category, label, className } = props;
-    const tones = useResolvedTones(category);
+    const tones = resolveTones(category);
     const def = getEmailCategoryDef(category);
     const displayLabel = label ?? def?.label ?? category;
 
@@ -81,9 +77,9 @@ export const EmailCategoryBadge = forwardRef<HTMLSpanElement, EmailCategoryBadge
             'text-[11px] font-medium whitespace-nowrap',
             'border transition-colors cursor-pointer',
             toggled
-              ? 'bg-card border-border text-foreground shadow-[inset_0_1px_1px_rgba(0,0,0,0.03)]'
-              : 'bg-secondary border-border text-muted-foreground',
-            'hover:border-zinc-400 dark:hover:border-zinc-600',
+              ? 'bg-card border-border text-foreground shadow-[inset_0_1px_1px_rgb(58_46_36_/_0.03)]'
+              : 'bg-secondary border-border text-[color:var(--fg-dim)]',
+            'hover:border-[color:var(--border-hover)]',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
             'disabled:opacity-40 disabled:cursor-not-allowed',
             className,
@@ -93,7 +89,7 @@ export const EmailCategoryBadge = forwardRef<HTMLSpanElement, EmailCategoryBadge
           <span
             aria-hidden
             className={cn('w-[6px] h-[6px] rounded-full shrink-0', !toggled && 'opacity-45')}
-            style={{ background: tones?.dot ?? '#71717a' }}
+            style={{ background: tones?.dot ?? 'var(--fg-muted)' }}
           />
           <span>{displayLabel}</span>
         </button>
@@ -128,7 +124,7 @@ export const EmailCategoryBadge = forwardRef<HTMLSpanElement, EmailCategoryBadge
         <span
           aria-hidden
           className="w-[5px] h-[5px] rounded-full shrink-0"
-          style={{ background: tones?.dot ?? '#71717a' }}
+          style={{ background: tones?.dot ?? 'var(--fg-muted)' }}
         />
         <span>{displayLabel}</span>
         {confidencePercent !== null && (

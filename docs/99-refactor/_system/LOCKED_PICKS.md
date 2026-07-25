@@ -1,13 +1,15 @@
 # AppBase_REFACTOR — Locked Component Picks (W17)
 
 **Created**: 2026-04-19 SGT
-**Last Updated**: 2026-07-14 SGT — **🔁 Aesthetic reversal recorded** (see "2026-07-14 — Editorial navy/gold/serif" entry at the end of this file): the navy/gold dark theme supersedes the slate-CTA/red-accent/zinc-page visual values. Token NAMES remain locked. Previous: 2026-04-19 — **🟢 W17 closed · X6 ✅ committed.** v1+v2+v3 all locked. Picks + new patterns (CTA = strong-grey near-black; brand red as accent only; glass header on every page; subtle gradient page backdrop; optional translucent card variant) handed off to W07 (primitives) + W08 (tokens). User said "looks good roughly there, let the rest of the design in W08" 2026-04-19.
-**Status**: 🟢 W17 closed · X6 ✅ · W07 + W08 unblocked
+**Last Updated**: 2026-07-25 SGT — **🔁 Second aesthetic reversal recorded** (see "2026-07-25 — The Kopi Studio cream/brown light theme" entry at the end of this file): the light cream/brown Kopi palette supersedes the navy/gold dark theme, which had itself superseded the slate-CTA/red-accent/zinc-page values on 2026-07-14. **Token NAMES remain locked through both reversals — only values moved.** Previous: 2026-04-19 — **🟢 W17 closed · X6 ✅ committed.** v1+v2+v3 all locked, handed off to W07 (primitives) + W08 (tokens).
+**Status**: 🟡 Structural picks current · **visual values superseded twice** (see the two reversal entries at the end)
 **Priority**: 🔴 Critical
 
 ## 📋 Overview
 
 Canonical record of every visual-language pick the user has accepted via `/design-lab`. This file is the **handoff artefact for W07 (primitives) and W08 (tokens)** — once a slot's pick is here, W07 wraps it and W08 styles it.
+
+> ⚠️ **Read the era markers before trusting a hex.** The tables in the 2026-04-19 body below record the *AppBase slate/zinc/red* era and are historical; the colour values were re-pointed to navy/gold on 2026-07-14 and again to Kopi cream/brown on 2026-07-25. **Component picks, token names, radii, motion and spring constants are still live; every colour in the original tables is not.** Current palette: [KOPI_2A_SPEC.md](../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md) · live values: [src/index.css](../../../src/index.css).
 
 **Pick is durable** — surviving even if `/design-lab` is later removed. Locked picks are not re-litigated except by explicit user reversal.
 
@@ -172,4 +174,28 @@ Cascade:
 
 **What remains locked**: every token NAME (`--cta-primary-bg`, `--brand-red`, `--page-bg`, `--status-*`, v1/v2 structural tokens, radii, motion durations, spring constants) — primitives consume names, not values. Structural picks (Card/DataTable/KpiTile/Drawer/Stepper/Timeline/Charts component choices) also stand.
 
-**Source of truth**: `src/index.css` `:root` (LOCKED_PICKS blocks retuned in place; `.dark` no longer overrides them — app is always dark) + `src/lib/design/tokens.ts`. Rule digest updated in `.claude/rules/design-system.md`.
+**Source of truth** *(as of 2026-07-14 — superseded, see the next entry)*: `src/index.css` `:root` (LOCKED_PICKS blocks retuned in place; `.dark` no longer overrides them — app is always dark) + `src/lib/design/tokens.ts`.
+
+---
+
+## 2026-07-25 — The Kopi Studio cream/brown light theme, direction 2a "Kopi House" (USER-APPROVED REVERSAL)
+
+**Supersedes**: 2026-07-14 — Editorial navy/gold/serif dark theme.
+
+**Decision**: the app is **light-pinned** on The Kopi Studio brand card, direction 2a — warm cream `#F0E6D6` canvas · card `#FAF6EE` · raised white `#FFFFFF` · warm ink `#3A2E24` · brown `#8B6A47` primary CTA + focus ring + active-nav marker · sage `#5A7A5E` positive · terracotta `#D97551` negative · hairline `#D9CCC0` · Instrument Serif headings over IBM Plex Sans body. **There is no navy and no gold in this brand.** Authoritative spec: [KOPI_2A_SPEC.md](../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md).
+
+**Superseded visual locks** (values only — names still frozen):
+- v3.1 CTA: gold `#C9A84C` → **brown `#8B6A47`** with card-cream `#FAF6EE` label (4.58:1); hover `#7D5F3D`, pressed `#6D5233`.
+- v3.1 brand accent + focus ring: gold → **brown**. `--brand-red` keeps its NAME but now holds the AA-safe brown `#806241`, because most consumers paint it as small text. Destructive is AA-safe terracotta `#AB4925` (raw `#D97551` fails at 2.95:1 under a cream label).
+- v3.2 page backdrop: flat navy → **flat cream `#F0E6D6`**; ThemeProvider pins `resolved='light'` and keeps the `dark` class off `<html>`.
+- v2 Charts: gold + green two-series → **one brown ramp, four steps** (`#8B6A47` → `#A58868` → `#C0A68C` → `#DCCBB6`), assigned by series order. No sage, no terracotta, no categorical hues in viz — those stay semantic.
+- v4.6 status palette: six saturated hue families → **three meanings** (sage positive · brown in-progress · terracotta error) plus muted neutrals for inert states, as tint fills with darkened same-hue text.
+- v4.5 shadows: deep blacks → **cards rest flat**; the lift is the cream-on-cream colour step. Only floating surfaces cast a warm-ink shadow.
+- Fonts: system-ui body + Georgia serif display → **IBM Plex Sans** body/UI + **Instrument Serif** headings. Georgia survives only as the serif's offline fallback inside the font stack. **Hard floor: Instrument Serif never renders below 18px.**
+- Radii: 1rem card → **0.75rem** (2a rhythm: 8px small, 12px large, 99px pills).
+
+**New in 2a — AA text variants** (mandatory for any text under 18px, because the raw brand hexes are tuned as fills): `--brown-text` `#806241` · `--sage-text` `#526F56` · `--negative-text` `#AB4925`.
+
+**What remains locked**: every token NAME, and every structural pick (Card / DataTable / KpiTile / Drawer / Stepper / Timeline / Charts component choices). Two reversals in eleven days have moved values only — that is the system working as designed.
+
+**Source of truth**: `src/index.css` single `:root` block (no `.dark` counterpart) + `src/lib/design/tokens.ts`. Enforcement digest: [.claude/rules/light-theme.md](../../../.claude/rules/light-theme.md).

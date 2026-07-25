@@ -67,8 +67,8 @@ grep -rnE "from ['\"]date-fns['\"]" src/features/$SLUG
 grep -rn "\.select(" src/features/$SLUG
 # 9.5 URL state (LIST archetype only) — want ≥1 useURLPagination, 0 raw useSearchParams boilerplate — url-standards.md
 grep -rn "useURLPagination" src/features/$SLUG ; grep -rn "useSearchParams" src/features/$SLUG
-# 9.6 Dark-mode card surfaces — GUIDED: every card-shaped bg-white needs a dark:bg-zinc-950 — dark-mode.md
-grep -rnE "bg-white" src/features/$SLUG | grep -v "dark:"
+# 9.6 Light-theme surfaces — must be 0: app is light-pinned so dark: is dead, and cool neutrals clash with cream — light-theme.md
+grep -rnE "dark:|(bg|text|border|ring|divide)-(zinc|slate|gray)-" src/features/$SLUG
 # 9.7 Mobile vh literals — must be 0 (use dvh not vh) — mobile-web.md
 grep -rnE "max-h-\[[0-9]+vh\]|h-\[[0-9]+vh\]|min-h-\[[0-9]+vh\]" src/features/$SLUG
 ```
@@ -77,7 +77,7 @@ grep -rnE "max-h-\[[0-9]+vh\]|h-\[[0-9]+vh\]|min-h-\[[0-9]+vh\]" src/features/$S
 
 **9.4 unbounded select** — grep can't span the builder chain, so this is a guided manual check, not a pure pass/fail grep. A `.select()` with none of `.range(`/`.limit(`/`.single(`/`.maybeSingle(`/`{ count:` nearby is unbounded → silent truncation at 1,000 rows → violation.
 
-**9.5 / 9.6 / 9.7** — 9.5 applies only to LIST-archetype features (detail/form/dashboard/tool with no URL state are exempt). 9.6 + 9.7 are primarily VISUAL — the greps catch the worst offenders only; finish with a DevTools dark-class toggle + real-iPhone-Safari pass.
+**9.5 / 9.6 / 9.7** — 9.5 applies only to LIST-archetype features (detail/form/dashboard/tool with no URL state are exempt). 9.6 + 9.7 are primarily VISUAL — the greps catch the worst offenders only; finish with an eyes-on pass (every card visibly lighter than the cream page, brown focus ring on Tab, no serif under 18px) + real-iPhone-Safari.
 
 **9.8 RLS presence (Supabase-MCP, required — not greppable)** — for each table the module owns: `get_advisors(security)` shows no `rls_disabled_in_public` / unsanctioned `rls_policy_always_true`; `pg_policies` has ≥1 policy; FKs → `public.users(id)` not `auth.users`; capability functions are `(SELECT …)`-wrapped. — rls-policy.md
 

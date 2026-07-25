@@ -6,7 +6,7 @@
  *     <RadioGroupItem value="to" id="x" />
  *   </RadioGroup>
  *
- * Locked: CTA slate-800 dot when checked; red-700 focus ring never silent.
+ * Locked (2a): --primary brown ring + dot when checked; --ring brown focus ring, never silent.
  */
 
 import { createContext, forwardRef, useContext } from 'react';
@@ -83,12 +83,12 @@ export const RadioGroupItem = forwardRef<HTMLInputElement, RadioGroupItemProps>(
           'w-5 h-5 rounded-full inline-flex items-center justify-center flex-shrink-0',
           'border-[1.5px] transition-colors duration-150',
           'bg-card',
-          checked ? 'border-slate-800 dark:border-slate-100' : 'border-border',
+          checked ? 'border-primary' : 'border-border',
           !checked && !disabled && 'peer-hover:border-border',
           'peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background',
         )}
       >
-        {checked && <span className="w-2.5 h-2.5 rounded-full bg-slate-800 dark:bg-slate-100" />}
+        {checked && <span className="w-2.5 h-2.5 rounded-full bg-primary" />}
       </span>
     </label>
   );

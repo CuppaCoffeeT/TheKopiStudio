@@ -98,7 +98,7 @@ export function PortfolioSummary({ totals, generatedAt }: PortfolioSummaryProps)
           </table>
         </div>
         <p
-          className="mt-2 text-[11px] text-gray-500"
+          className="mt-2 text-[11px] text-[color:var(--fg-dim)]"
           data-testid="report-portfolio-annualised-note"
         >
           (annualised) — premium figures are frequency-annualised with ILP premiums at their

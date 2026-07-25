@@ -34,7 +34,7 @@ export function ReportClientProfile({
   return (
     <section className="report-section" data-testid="report-client-profile">
       <h2>Client profile</h2>
-      <div className="rounded-lg bg-gray-50 p-4">
+      <div className="rounded-lg bg-card p-4">
         <h3>{client.name}</h3>
         <div className="grid grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
           <Fact label="Email" value={client.email} />
@@ -47,7 +47,7 @@ export function ReportClientProfile({
           <Fact label="Years to retirement" value={String(yearsToRetirement)} />
         </div>
         {client.notes && (
-          <div className="mt-3 border-t border-gray-200 pt-3 text-[13px]">
+          <div className="mt-3 border-t border-[color:var(--border-soft)] pt-3 text-[13px]">
             <strong>Notes:</strong> {client.notes}
           </div>
         )}

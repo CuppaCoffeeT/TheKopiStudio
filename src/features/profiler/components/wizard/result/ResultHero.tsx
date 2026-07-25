@@ -1,10 +1,15 @@
 /**
- * ResultHero — report hero band (legacy `resultHTML` hero block): gradient in
- * the primary profile's colour, identity line, DISC/MBTI badges and the
+ * ResultHero — report hero band (legacy `resultHTML` hero block): a flat tint
+ * in the primary profile's colour, identity line, DISC/MBTI badges and the
  * "Advisor Quick Read" strip.
+ *
+ * The DISC hue is a TINT over the card cream, never a saturated slab: type sits
+ * on the ink ladder (`--fg` / `--fg-dim`) exactly as it does in DiscChip and
+ * TraitsCard, so contrast is independent of which DISC colour won.
  */
 
 import type { ReactNode } from 'react';
+import { cn } from '@/lib/utils';
 import { PR } from '../../../lib/content';
 import type { ProfileResult } from '../../../lib/scoring';
 
@@ -20,16 +25,22 @@ interface ResultHeroProps {
   dateLabel: string;
 }
 
+/**
+ * Identity badge. The band behind it already carries the DISC hue, so the badge
+ * itself is token-only — primary is a filled cream chip with ink type,
+ * secondary an outlined chip a step down the ink ladder.
+ */
 function HeroBadge({ children, primary }: { children: ReactNode; primary?: boolean }) {
   return (
     <span
-      className="rounded-full px-3 py-1"
+      className={cn(
+        'rounded-full px-3 py-1',
+        primary ? 'bg-card text-foreground' : 'border border-border text-[color:var(--fg-dim)]',
+      )}
       style={{
         fontFamily: 'var(--font-sans)',
         fontSize: 11,
         fontWeight: 700,
-        background: primary ? 'rgba(255,255,255,.22)' : 'rgba(0,0,0,.22)',
-        color: primary ? '#fff' : 'rgba(255,255,255,.8)',
       }}
     >
       {children}
@@ -55,18 +66,18 @@ export function ResultHero({
       style={{ borderColor: `${p.col}55` }}
       data-testid="result-hero"
     >
-      <div className="px-4 pt-5 pb-3.5" style={{ background: `linear-gradient(135deg, ${p.col}EE, ${p.col}88)` }}>
+      <div className="px-4 pt-5 pb-3.5" style={{ backgroundColor: `${p.col}24` }}>
         <span className="float-right text-4xl" aria-hidden="true">
           {p.em}
         </span>
         <div
-          className="uppercase mb-1"
-          style={{ fontFamily: 'var(--font-pixel)', fontSize: 9, letterSpacing: '0.25em', color: 'rgba(255,255,255,.65)' }}
+          className="uppercase mb-1 text-[color:var(--fg-dim)]"
+          style={{ fontFamily: 'var(--font-sans)', fontSize: 9, letterSpacing: '0.25em' }}
         >
           {meetingLabel} · {advisorName} · {dateLabel}
         </div>
-        <div className="text-[22px] font-normal text-white">{prospectName}</div>
-        <div className="mb-2.5" style={{ fontSize: 12, color: 'rgba(255,255,255,.7)' }}>
+        <div className="text-[22px] font-normal text-foreground">{prospectName}</div>
+        <div className="mb-2.5 text-[color:var(--fg-dim)]" style={{ fontSize: 12 }}>
           {occupation}
           {ageRange ? `${occupation ? ' · ' : ''}Age ${ageRange}` : ''}
         </div>
@@ -82,11 +93,12 @@ export function ResultHero({
           </HeroBadge>
         </div>
       </div>
-      {/* Solid navy backing (page token) recesses the strip under the gradient band. */}
-      <div className="bg-background px-4 py-3">
+      {/* Card cream under the tinted band, closed by a hairline — the colour
+          step plus the rule separate the strip, no shadow and no dark backing. */}
+      <div className="border-t border-border bg-card px-4 py-3">
         <div
-          className="uppercase mb-1 text-accent"
-          style={{ fontFamily: 'var(--font-pixel)', fontSize: 9, letterSpacing: '0.25em' }}
+          className="uppercase mb-1 text-[color:var(--brown-text)]"
+          style={{ fontFamily: 'var(--font-sans)', fontSize: 9, letterSpacing: '0.25em' }}
         >
           Advisor Quick Read
         </div>

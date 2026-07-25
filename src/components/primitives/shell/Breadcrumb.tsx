@@ -16,7 +16,9 @@ interface BreadcrumbProps {
 
 /**
  * Segmented breadcrumb nav — replaces back-button on every page.
- * Last segment bold. Hover underline red-700. Middle-ellipsis /…/ when deep.
+ * Last segment bold ink; inactive segments + separators use `--fg-dim` so they
+ * clear AA on the page cream. Hover underline is brown (`decoration-primary`).
+ * Middle-ellipsis /…/ when deep.
  */
 export function Breadcrumb({ segments, truncate = true, className }: BreadcrumbProps) {
   const visible =
@@ -35,9 +37,9 @@ export function Breadcrumb({ segments, truncate = true, className }: BreadcrumbP
         const isEllipsis = 'ellipsis' in s && s.ellipsis;
         return (
           <span key={i} className="inline-flex items-center gap-2">
-            {i > 0 && <span className="text-muted-foreground text-xs" aria-hidden="true">/</span>}
+            {i > 0 && <span className="text-[color:var(--fg-dim)] text-xs" aria-hidden="true">/</span>}
             {isEllipsis ? (
-              <span className="text-muted-foreground">…</span>
+              <span className="text-[color:var(--fg-dim)]">…</span>
             ) : s.href || s.onClick ? (
               <Link
                 to={s.href ?? '#'}
@@ -53,7 +55,7 @@ export function Breadcrumb({ segments, truncate = true, className }: BreadcrumbP
                   'hover:underline decoration-primary underline-offset-[3px]',
                   isLast
                     ? 'font-semibold text-foreground'
-                    : 'font-normal text-muted-foreground'
+                    : 'font-normal text-[color:var(--fg-dim)]'
                 )}
               >
                 {s.label}
@@ -63,7 +65,7 @@ export function Breadcrumb({ segments, truncate = true, className }: BreadcrumbP
                 className={cn(
                   isLast
                     ? 'font-semibold text-foreground'
-                    : 'font-normal text-muted-foreground'
+                    : 'font-normal text-[color:var(--fg-dim)]'
                 )}
               >
                 {s.label}

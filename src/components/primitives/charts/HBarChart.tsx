@@ -9,7 +9,7 @@ import { chartSeriesColor } from './ChartShell';
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/charts/ChartPrimitives.jsx
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked: 22px avatar · 140px label · 56px trailing value cell · Geist Mono tabular values.
+ * Locked: 22px avatar · 140px label · 56px trailing value cell · mono-stack (--font-mono) tabular values.
  */
 
 export interface HBarRow {
@@ -45,7 +45,7 @@ export const HBarChart = forwardRef<HTMLDivElement, HBarChartProps>(function HBa
               <span
                 className={cn(
                   'inline-flex flex-shrink-0 items-center justify-center rounded-full text-[10px] font-semibold',
-                  'bg-secondary text-muted-foreground'
+                  'bg-secondary text-[color:var(--fg-dim)]'
                 )}
                 style={{ width: 22, height: 22, fontFamily: 'var(--font-mono)' }}
               >

@@ -34,7 +34,7 @@ function ReadOnlyHint({ mobile }: { mobile?: boolean }) {
           ? 'inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 text-muted-foreground'
           : 'inline-flex items-center gap-1.5 text-muted-foreground'
       }
-      style={{ fontFamily: 'var(--font-pixel)', fontSize: 10.5, letterSpacing: '0.04em' }}
+      style={{ fontFamily: 'var(--font-sans)', fontSize: 10.5, letterSpacing: '0.04em' }}
       title="Only the advisor who saved a result can edit its notes or delete it."
       data-testid="result-detail-readonly-hint"
     >
@@ -102,13 +102,14 @@ export function ResultDetailActions({
           >
             Edit notes
           </Button>
-          {/* red-300 (not the mid-tone destructive token) — the sticky mobile
-              bar's translucent backing blends with report blocks behind it,
-              and axe wcag2aa needs the red to hold 4.5:1 over that worst case. */}
+          {/* --negative-text, not the raw terracotta: the label is a 12.5px
+              button string, and the sticky mobile bar's translucent cream
+              backing blends with report blocks behind it. #AB4925 holds
+              4.5:1 over both cream surfaces, which covers that worst case. */}
           <Button
             variant="ghost"
             size={size}
-            className={`text-red-300 ${grow ?? ''}`}
+            className={`text-[color:var(--negative-text)] ${grow ?? ''}`}
             leadingIcon={<Trash2 className="h-3.5 w-3.5" aria-hidden="true" />}
             onClick={onDelete}
             loading={deleting}

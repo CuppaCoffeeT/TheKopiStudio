@@ -33,7 +33,12 @@ const DISC_COLORS: Record<string, string> = {
   S: '#1A7A40',
   C: '#1A5F8A',
 };
-const DISC_NEUTRAL = '#52525b'; // zinc-600 — unexpected letters render toneless
+/**
+ * Fallback tint for unexpected letters — the warm `--fg-muted` value. Written as
+ * a literal because the pill appends alpha to the hex (`${col}1A`), which a
+ * `var()` cannot do; the DISC hexes above are literals for the same reason.
+ */
+const DISC_NEUTRAL = '#7d6b5b';
 
 function DiscPill({ letter, emphasis }: { letter: string; emphasis: 'primary' | 'secondary' }) {
   const col = DISC_COLORS[letter] ?? DISC_NEUTRAL;
@@ -57,7 +62,7 @@ function Fact({ label, value }: { label: string; value: ReactNode }) {
     <div className="min-w-0">
       <dt
         className="text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground"
-        style={{ fontFamily: 'var(--font-pixel)' }}
+        style={{ fontFamily: 'var(--font-sans)' }}
       >
         {label}
       </dt>
@@ -178,7 +183,7 @@ export function OverviewTab({ client, linkedResults }: OverviewTabProps) {
                 </span>
                 <Link
                   to={`/profiler-results/${result.id}`}
-                  className="inline-flex min-h-11 items-center text-[12.5px] font-medium text-primary underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:ml-auto"
+                  className="inline-flex min-h-11 items-center text-[12.5px] font-medium text-[color:var(--brown-text)] underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:ml-auto"
                   data-testid={`clients-detail-view-playbook-${result.id}`}
                 >
                   View full playbook

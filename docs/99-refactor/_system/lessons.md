@@ -1,6 +1,6 @@
 # Refactor Program — Lessons
 
-_Last Updated: 2026-05-31 SGT_
+_Last Updated: 2026-07-25 SGT_
 
 Append-only. Newest at the bottom. Format: [DECISIONS_LESSONS_PATTERN.md](/Volumes/YourVolume/META_FOLDER_STRUCTURE/DECISIONS_LESSONS_PATTERN.md).
 
@@ -27,3 +27,28 @@ Append-only. Newest at the bottom. Format: [DECISIONS_LESSONS_PATTERN.md](/Volum
 **Root cause**: NOT the cleanup. Evidence: (1) none of the `/design-lab → TanstackTable` render-path files were touched by any cleanup commit (git log empty); (2) reverting the dep-removal phase did NOT fix it; (3) the **production `vite build` PASSED** — the throw was vite-DEV `optimizeDeps`-only. `npm ls react` showed a single deduped react, BUT node_modules had **extraneous** `@headlessui/react@2.2.0` + `@floating-ui/react@*` (present in node_modules, absent from the committed `package.json`/lockfile — `npm install`ed by concurrent materialrequests work, uncommitted). Extraneous packages with their own React peer handling are the prime suspect for vite-dev splitting React in the `@tanstack/react-table` pre-bundle (design-lab is the only direct `@tanstack/react-table` consumer; production uses the primitive DataTable, hence build is clean).
 **Fix**: Could NOT `npm install` to reconcile — it would PRUNE the concurrent agent's in-flight extraneous deps and break their uncommitted work. Pushed with `SKIP_E2E=1 git push` (pre-push still ran tsc + ESLint + drift + build + LOC — the gates that validate the actual code change; all green). The `@p0` design-lab break is environmental and clears once node_modules is reconciled (`npm install` after the concurrent work commits its deps).
 **Prevention**: A `@p0`/smoke failure that is (a) vite-DEV-only (prod `build` passes), (b) "duplicate React"/"invalid hook call", and (c) in code your diff never touched → suspect node_modules state (`npm ls <dep>`, look for "extraneous") before suspecting your change. On a shared checkout with concurrent agents, expect extraneous deps; don't `npm install` (prunes their in-flight work). SKIP_E2E is justified when the failure is provably environmental + the code-validating gates pass.
+
+## 2026-07-25 — `npx tsc --noEmit` at the repo root type-checks NOTHING
+
+**What happened**: A colour-only sweep introduced four JSX parse errors
+(`{/* … */}` written in expression position — inside `return (`, a `&&` arm and
+a ternary branch — where it parses as an object literal, not a JSX comment).
+`npx tsc --noEmit` reported **0 errors**. ESLint caught all four as
+`Parsing error: ')' expected`.
+
+**Root cause**: root `tsconfig.json` is a solution-style file — `"files": []`
+plus `references` to `tsconfig.app.json` / `tsconfig.node.json`. With no
+`include`/`files` of its own it has zero inputs, and plain `tsc` does not follow
+`references` (only `tsc -b` does). It exits 0 having compiled nothing.
+
+**Fix**: type-check with `npx tsc --noEmit -p tsconfig.app.json` (or `npx tsc -b`).
+On this repo that surfaces 12 long-standing errors in 7 files — `ChartTooltip`,
+`RichTextEditor`, `Breadcrumb`, `FilterPill`, `MobileListCard`,
+`DashboardHomePage`, `usePendingUserCount` — so "0 errors" is never the expected
+baseline and a 0 should itself be read as a red flag that nothing ran.
+
+**Prevention**: never accept a bare `tsc --noEmit` pass as a gate on this repo;
+always pass `-p tsconfig.app.json`. Lint the touched files too — ESLint parses
+JSX independently and caught what the no-op tsc could not. JSX comments are only
+valid in *children* position; anywhere else use a `//` comment above the
+element or inside its opening tag.

@@ -9,7 +9,7 @@
  * Locked:
  *  - Quotation variant only shows the "Update quotation date" toggle.
  *  - Template picker + recipients row + subject + body + attachments + optional date toggle.
- *  - Body textarea uses Roboto 14px (readable copy), NOT mono.
+ *  - Body textarea uses IBM Plex Sans (`--font-sans`) for readable copy, NOT mono.
  */
 
 import { useState, type ReactNode } from 'react';
@@ -155,7 +155,9 @@ export function SendEmailDialog(props: SendEmailDialogProps) {
             disabled={sending}
             className={cn(
               'h-8 px-3.5 rounded-md inline-flex items-center gap-1.5 text-[13px] font-medium',
-              'bg-primary text-primary-foreground hover:bg-primary/90',
+              // Brown CTA darkens on hover/active. `bg-primary/90` would LIGHTEN
+              // it against the cream ground — the ladder must step down.
+              'bg-[var(--cta-primary-bg)] text-[color:var(--cta-primary-fg)] hover:bg-[var(--cta-primary-bg-hover)] active:bg-[var(--cta-primary-bg-active)]',
               'disabled:opacity-40 disabled:cursor-not-allowed',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
             )}
@@ -181,8 +183,9 @@ export function SendEmailDialog(props: SendEmailDialogProps) {
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
             )}
           >
+            {/* --fg-dim: --fg-muted is 4.37:1 on the secondary tint, under AA at 10.5px. */}
             <span
-              className="text-[10.5px] px-1.5 py-0.5 rounded-[3px] bg-secondary text-muted-foreground tracking-wider"
+              className="text-[10.5px] px-1.5 py-0.5 rounded-[3px] bg-secondary text-[color:var(--fg-dim)] tracking-wider"
               style={{ fontFamily: 'var(--font-mono)' }}
             >
               {template.key}
@@ -256,7 +259,7 @@ export function SendEmailDialog(props: SendEmailDialogProps) {
                 className="flex items-center gap-2.5 px-2.5 py-2 rounded-md border border-border bg-secondary"
               >
                 <div
-                  className="w-6 h-6 rounded inline-flex items-center justify-center bg-card border border-border text-[8px] font-semibold tracking-wider text-red-700 dark:text-red-400"
+                  className="w-6 h-6 rounded inline-flex items-center justify-center bg-card border border-border text-[8px] font-semibold tracking-wider text-[color:var(--brown-text)]"
                   style={{ fontFamily: 'var(--font-mono)' }}
                 >
                   {(a.kind ?? 'pdf').toUpperCase()}
@@ -290,8 +293,10 @@ export function SendEmailDialog(props: SendEmailDialogProps) {
           className={cn(
             'flex items-center gap-2.5 px-3 py-2.5 rounded-md cursor-pointer',
             'border border-dashed',
+            // Benign opt-in, not a destructive action — the checked state reads
+            // brown (2a's selected/in-progress accent), never terracotta.
             updateDate
-              ? 'border-red-200 dark:border-red-900/40 bg-red-50/60 dark:bg-red-900/10'
+              ? 'border-[color:var(--border-hover)] bg-[color:var(--accent-red-soft-bg)]'
               : 'border-border'
           )}
         >
@@ -306,7 +311,7 @@ export function SendEmailDialog(props: SendEmailDialogProps) {
               'w-4 h-4 rounded-sm flex-shrink-0 inline-flex items-center justify-center',
               'border-[1.5px]',
               updateDate
-                ? 'border-red-700 bg-red-700 text-white'
+                ? 'border-[color:var(--cta-primary-bg)] bg-[color:var(--cta-primary-bg)] text-[color:var(--cta-primary-fg)]'
                 : 'border-border bg-transparent'
             )}
             aria-hidden
@@ -393,7 +398,7 @@ function RecipientRow({
       {list.map((r) => (
         <span
           key={r.value}
-          className="inline-flex items-center gap-1.5 pl-2 pr-1 py-0.5 rounded bg-secondary text-muted-foreground text-[11px]"
+          className="inline-flex items-center gap-1.5 pl-2 pr-1 py-0.5 rounded bg-secondary text-[color:var(--fg-dim)] text-[11px]"
           style={{ fontFamily: 'var(--font-mono)' }}
         >
           <span title={r.sub}>{r.label}</span>

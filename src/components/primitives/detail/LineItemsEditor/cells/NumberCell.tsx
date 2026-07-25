@@ -38,7 +38,7 @@ export function Cell({
  *    the click to the inner trigger (any `<button>` or input · whichever comes first), opening the
  *    dropdown. No "click the tiny chevron" UX.
  *
- * Visual: full row-height target, subtle `hover:bg-zinc-50/60` to telegraph clickability.
+ * Visual: full row-height target, subtle `hover:bg-secondary` tint to telegraph clickability.
  * Cursor: `text` for number cells, `pointer` for dropdown cells.
  */
 export function EditableCellWrap({ kind, children }: { kind: 'number' | 'dropdown'; children: React.ReactNode }) {
@@ -124,7 +124,9 @@ export function NumberCell({ value, onCommit, step = 1, min, align = 'right', pr
           align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left',
           prefix ? 'pl-5' : 'pl-2',
           suffix ? 'pr-5' : 'pr-2',
-          'focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:bg-card',
+          // Focus: full-opacity brown ring (4.58:1 on card — an alpha ring
+          // composites under SC 1.4.11's 3:1) + raised white input surface.
+          'focus-visible:ring-2 focus-visible:ring-ring focus-visible:bg-popover',
           '[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]',
         )}
         style={{ fontFamily: 'var(--font-mono)' }}

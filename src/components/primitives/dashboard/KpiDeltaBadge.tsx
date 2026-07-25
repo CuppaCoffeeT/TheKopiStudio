@@ -35,7 +35,9 @@ export function KpiDeltaBadge({ value, tone = 'auto', suffix = '%' }: KpiDelta) 
         'inline-flex flex-shrink-0 items-center gap-0.5 rounded px-1.5 py-0.5 text-xs font-medium',
         isPositive && 'text-[color:var(--delta-positive-fg)] bg-[color:var(--delta-positive-bg)]',
         isNegative && 'text-[color:var(--delta-negative-fg)] bg-[color:var(--delta-negative-bg)]',
-        !isPositive && !isNegative && 'text-muted-foreground bg-secondary',
+        // Neutral arm carries the same contrast budget as the tuned pairs above:
+        // --fg-muted is 4.37:1 on the secondary tint (fails at 12px), dim ink is 6.79:1.
+        !isPositive && !isNegative && 'text-[color:var(--fg-dim)] bg-secondary',
       )}
     >
       {isPositive && <ArrowUpRight className="h-3 w-3" />}

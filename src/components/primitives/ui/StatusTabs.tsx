@@ -7,17 +7,18 @@
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/DataTable.jsx#L450-L481 (PageChrome STATES.map)
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked: desktop underline tab (2px fg bar, marginBottom:-1 overlap) · count badge (red tone for alert).
+ * Locked: desktop underline tab (2px ink bar, marginBottom:-1 overlap) · count badge tones
+ * map to 2a status pills — alert = brown CTA fill, warn = in-progress brown tint, default = quiet tint.
  *
- * Responsive behaviour (added 2026-05-27):
- *  - Auto-detects when the tab strip overflows the container and swaps to a
- *    dropdown trigger that opens the full list. The strip stays mounted
- *    off-screen for continued measurement so the component flips back to
- *    tabs once the container widens enough.
- *  - See `src/hooks/useTabsOverflow.ts` + mobile-web rule.
+ * Responsive (2026-05-27): on strip overflow, swap to a dropdown trigger holding the full
+ * list; the strip stays mounted off-screen so measurement continues and it flips back to
+ * tabs once the container widens. See `src/hooks/useTabsOverflow.ts` + mobile-web rule.
  *
- * 2026-04-28 axe-playwright fixes:
- *  · contrast — inactive label `text-zinc-500` → `text-zinc-600` (light), `dark:text-zinc-400` → `dark:text-zinc-300`
+ * 2026-04-28 axe-playwright fixes (kept — the failures they prevent still bite):
+ *  · contrast — an inactive tab must never sit at the lightest ink step available, or axe
+ *    colour-contrast fails. ListPageFrame mounts StatusTabs straight onto the page cream,
+ *    where `--fg-muted` is 4.12:1 at 12.5px; `--fg-dim` is 6.40:1 there, 6.79:1 on the count
+ *    pill tint (it carried zinc classes pre-2026-07-25 Kopi migration; the rule is unchanged).
  *  · aria-valid-attr-value — `aria-controls` is now opt-in via the `panelIdPrefix` prop.
  */
 
@@ -62,10 +63,10 @@ function CountPill({ count, tone, active }: { count: number; tone?: StatusTabTon
         alert
           ? 'bg-primary text-primary-foreground border-primary'
           : warn
-            ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/30'
+            ? 'bg-[color:var(--status-sent-bg)] text-[color:var(--status-sent-fg)] border-[color:var(--status-sent-border)]'
             : active
               ? 'bg-secondary text-foreground border-border'
-              : 'bg-secondary text-muted-foreground border-border'
+              : 'bg-secondary text-[color:var(--fg-dim)] border-border'
       )}
       style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}
     >
@@ -92,11 +93,9 @@ export const StatusTabs = forwardRef<HTMLDivElement, StatusTabsProps>(function S
       style={{ fontFamily: 'var(--font-sans)' }}
     >
       {/* Tab strip — always mounted so the overflow hook can measure it.
-       * `role="tablist"` stays on this container in BOTH modes so the child
-       * `role="tab"` buttons always have a valid tablist parent (axe
-       * `aria-required-parent` rule). When overflow, the strip is positioned
-       * off-screen + opacity-0 + pointer-events-none and children carry
-       * tabIndex=-1 — it's measurable but not user-reachable. */}
+       * `role="tablist"` stays on this container in BOTH modes so the child `role="tab"` buttons
+       * always have a valid tablist parent (axe `aria-required-parent`). On overflow the strip goes
+       * off-screen + opacity-0 + pointer-events-none, children tabIndex=-1: measurable, unreachable. */}
       <div
         ref={stripRef}
         role="tablist"
@@ -125,7 +124,7 @@ export const StatusTabs = forwardRef<HTMLDivElement, StatusTabsProps>(function S
                 '-mb-px border-b-2 transition-colors',
                 isActive
                   ? 'border-foreground text-foreground font-semibold'
-                  : 'border-transparent text-muted-foreground font-medium hover:text-foreground',
+                  : 'border-transparent text-[color:var(--fg-dim)] font-medium hover:text-foreground',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
                 'disabled:opacity-40 disabled:cursor-not-allowed'
               )}
@@ -179,7 +178,7 @@ export const StatusTabs = forwardRef<HTMLDivElement, StatusTabsProps>(function S
                         'w-full px-3 py-2 inline-flex items-center justify-between gap-2 rounded text-[12.5px]',
                         isActive
                           ? 'bg-secondary text-foreground font-semibold'
-                          : 'text-muted-foreground hover:bg-secondary'
+                          : 'text-[color:var(--fg-dim)] hover:bg-secondary'
                       )}
                     >
                       <span className="inline-flex items-center gap-1.5 min-w-0">

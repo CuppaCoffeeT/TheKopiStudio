@@ -5,7 +5,11 @@
 @plugin "tailwindcss-animate";
 @plugin "@tailwindcss/typography";
 
-/* Class-based dark mode — user opts in via `dark` class on a wrapper. */
+/* The app is light-pinned (Kopi Studio brand, 2026-07-25) — no `.dark` token
+   block exists and nothing puts a `dark` class on the tree, so every legacy
+   `dark:` utility is inert. The variant stays *declared* on purpose: dropping
+   it would hand `dark:` back to Tailwind's default `prefers-color-scheme`
+   media query and let a viewer's OS repaint the brand. */
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ---------------------------------------------------------------------------
@@ -17,12 +21,19 @@
  *       keep working exactly as they did under v3.
  *   (2) layer the W17 LOCKED_PICKS tokens (v1 + v2 + v3) on top — these are the
  *       new primitives that W07 components will consume.
- *   (3) Radix zinc + red 1-12 scales exposed as tokens for future W07 primitives.
+ *   (3) fonts. Beyond those three groups @theme holds no colour — every hex
+ *       lives in `:root`. The AppBase-era Radix zinc + red 1–12 scales were deleted on
+ *       2026-07-25: cool grey and pure red both fight the warm cream ground,
+ *       and no component, test or doc consumed them. Tailwind's own
+ *       `zinc-*` / `red-*` defaults are untouched by that removal.
  *
- * LOCKED_PICKS source of truth: docs/99-refactor/_system/LOCKED_PICKS.md
+ * Colour authority — The Kopi Studio brand card, direction 2a "Kopi House":
+ *   docs/05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md
+ * Which primitive owns which token: docs/99-refactor/_system/LOCKED_PICKS.md
  * ------------------------------------------------------------------------- */
 @theme {
-  /* --- shadcn/ui compat (runtime HSL vars stay in :root / .dark below) --- */
+  /* --- shadcn/ui compat (the runtime HSL vars live in the single `:root`
+         block below — the app is light-pinned, there is no `.dark`) --- */
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
@@ -70,73 +81,37 @@
   --animate-fade-in-up: fade-in-up 0.3s ease-out backwards;
 
   /* ---------------------------------------------------------------------
-   * Font families — Q-W08-a locked 2026-04-19 (W08 Phase 2).
-   * Direction: Roboto for body + UI · Geist Mono for tabular numbers + code
-   * blocks · Geist Pixel reserved for signature moments only.
-   * Phase 2 ships them app-wide; user reviews on UI before declaring final.
+   * Font families — The Kopi Studio brand card, direction 2a "Kopi House"
+   * (locked 2026-07-25). Two families, both served from Google Fonts via the
+   * <link> in index.html — no @fontsource packages, nothing self-hosted.
+   *
+   *   · Instrument Serif  400 roman + italic — page/section titles, KPI and
+   *     table numerals, empty-state + loading lines, the wordmark.
+   *     HARD FLOOR: never renders below 18px. Anything smaller is IBM Plex
+   *     Sans, no exceptions (KOPI_2A_SPEC.md → "Type scale").
+   *   · IBM Plex Sans     400/500/600/700 — body, UI, forms, inputs, labels,
+   *     kickers, table body, buttons, nav, breadcrumbs.
+   *
+   * The variable NAMES are frozen — ~130 src files reference them — so the
+   * legacy "pixel" names now simply mean "the serif":
+   *     --font-pixel · --font-pixel-display · --font-prose  → Instrument Serif
+   *     --font-sans  · --font-subheader                     → IBM Plex Sans
+   *     --font-mono                                         → unchanged
+   * The retired Geist Pixel shape aliases (--font-pixel-{square,grid,circle,
+   * triangle,line}) were deleted on 2026-07-25 — nothing referenced them.
+   * Georgia is the offline fallback for the serif; system-ui for sans. Georgia
+   * appears ONLY inside these stacks; an inline `fontFamily: 'Georgia, serif'`
+   * anywhere in the app is a bug, not a fallback.
    * ------------------------------------------------------------------- */
-  /* 2026-04-19 (eod+14 v2) — font trio revised after typing-feel review:
-     · --font-pixel (h1 / page titles · display)   = Geist Pixel Square crisp
-     · --font-subheader (h2-h6 · section labels)   = Geist Mono (signals "section")
-     · --font-sans    (body · UI · forms · inputs) = Roboto (normal reading + typing)
-     · --font-prose   (long-form readable text)    = Roboto (same as sans — kept as alias)
-     · --font-mono    (tabular-nums · code · Kbd)  = Geist Mono (explicit opt-in)
-     Rationale: typing into Geist Mono fields feels typewriter-y. Sub-headers
-     keep the technical/Linear aesthetic; body + inputs stay normal. */
-  /* Prospect Profiler original aesthetic (2026-07-07 de-AppBase):
-     UI/forms/labels = clean sans-serif · headings/titles/prose = Georgia serif.
-     Mono kept only for tabular numbers / Kbd. */
-  --font-sans: system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-  --font-subheader: system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-subheader: 'IBM Plex Sans', system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-pixel: Georgia, "Times New Roman", serif;
-  /* Display = giant moments (140px+): hero wordmarks, 404, splash. Uses the
-     Grid variant because its pixel dots are visibly coarser — at display
-     scale Square reads too smooth, losing the pixel-font character. Rule:
-     h1 ≤ 48px → --font-pixel (Square). Display ≥ 140px → --font-pixel-display (Grid). */
-  --font-pixel-display: Georgia, "Times New Roman", serif;
-  --font-prose: Georgia, "Times New Roman", serif;
-  /* de-AppBase 2026-07-07: all pixel variants repointed to Georgia serif so
-     any lingering --font-pixel-* reference renders in the original serif. */
-  --font-pixel-square: Georgia, "Times New Roman", serif;
-  --font-pixel-grid: Georgia, "Times New Roman", serif;
-  --font-pixel-circle: Georgia, "Times New Roman", serif;
-  --font-pixel-triangle: Georgia, "Times New Roman", serif;
-  --font-pixel-line: Georgia, "Times New Roman", serif;
-
-  /* ---------------------------------------------------------------------
-   * Radix 1–12 scales (zinc + red) — exposed as tokens so W07 primitives
-   * can reference `--color-zinc-7` instead of hardcoding hex.
-   * Light-mode values. Dark variants live under `.dark { ... }` below.
-   * ------------------------------------------------------------------- */
-
-  /* zinc (neutral) — used for text, borders, CTA backgrounds */
-  --color-zinc-1: #fafafa;
-  --color-zinc-2: #f4f4f5;
-  --color-zinc-3: #e4e4e7;
-  --color-zinc-4: #d4d4d8;
-  --color-zinc-5: #a1a1aa;
-  --color-zinc-6: #71717a;
-  --color-zinc-7: #52525b;
-  --color-zinc-8: #3f3f46;
-  --color-zinc-9: #27272a;
-  --color-zinc-10: #18181b;
-  --color-zinc-11: #09090b;
-  --color-zinc-12: #050506;
-
-  /* red (brand accent — never solid CTA per v3.1) */
-  --color-red-1: #fef2f2;
-  --color-red-2: #fee2e2;
-  --color-red-3: #fecaca;
-  --color-red-4: #fca5a5;
-  --color-red-5: #f87171;
-  --color-red-6: #ef4444;
-  --color-red-7: #dc2626;
-  --color-red-8: #b91c1c;
-  --color-red-9: #991b1b;
-  --color-red-10: #7f1d1d;
-  --color-red-11: #450a0a;
-  --color-red-12: #2d0606;
+  --font-pixel: 'Instrument Serif', Georgia, "Times New Roman", serif;
+  /* Display = giant moments (110px+): 404 / route-error codes, splash. Same
+     family as --font-pixel; the separate name is kept because components key
+     off it and a future display cut can be swapped here alone. */
+  --font-pixel-display: 'Instrument Serif', Georgia, "Times New Roman", serif;
+  --font-prose: 'Instrument Serif', Georgia, "Times New Roman", serif;
 }
 
 /* ---------------------------------------------------------------------------
@@ -166,82 +141,135 @@
  * `bg-background`, `text-foreground`, `border-border`, etc.
  *
  * LOCKED_PICKS tokens (v1/v2/v3) layered on top of the shadcn base.
+ *
+ * `:root` is the ONLY block — the app is light-pinned to The Kopi Studio
+ * brand and has no dark counterpart. Do not add a `.dark` block or a
+ * `prefers-color-scheme` variant.
  * ------------------------------------------------------------------------- */
 
 :root {
-  /* --- Prospect Profiler original palette (2026-07-07 de-AppBase) ---
-     Navy canvas · cream text · gold accent · DISC-derived semantics.
-     The app is always this warm dark aesthetic; :root and .dark match so
-     the theme toggle never breaks the look.
-       navy   #0D1B2A  hsl(210 53% 11%)   cream  #F0EAD6  hsl(43 48% 89%)
-       card   #12202F  hsl(209 44% 13%)   modal  #182638  hsl(213 42% 16%)
-       gold   #C9A84C  hsl(43 55% 55%)    muted  #8A8070  hsl(38 12% 49%) */
-  --background: 210 53% 11%;          /* navy #0D1B2A */
-  --foreground: 43 48% 89%;           /* cream #F0EAD6 */
+  /* --- The Kopi Studio palette (2026-07-25 · direction 2a "Kopi House") ---
+     Warm cream canvas · brown as punctuation · sage positive · terracotta
+     negative. LIGHT-PINNED: the brand has no dark counterpart, so there is no
+     `.dark` block — :root is the single always-on source of truth.
+     Surface ladder is a *light* three-step lift: page → card → raised.
+       page   #F0E6D6  hsl(37 46% 89%)   card    #FAF6EE  hsl(40 55% 96%)
+       raised #FFFFFF  hsl(0 0% 100%)    border  #D9CCC0  hsl(29 25% 80%)
+       ink    #3A2E24  hsl(27 23% 18%)   muted   #7D6B5B  hsl(28 16% 42%)
+       brown  #8B6A47  hsl(31 32% 41%)   sage    #5A7A5E  hsl(128 15% 42%)
+       tint   #F3EDE3  hsl(38 40% 92%)   terracotta #D97551 hsl(16 64% 58%) */
+  --background: 37 46% 89%;           /* page cream #F0E6D6 */
+  --foreground: 27 23% 18%;           /* ink #3A2E24 */
 
-  --card: 209 44% 13%;                /* raised navy surface */
-  --card-foreground: 43 48% 89%;
+  --card: 40 55% 96%;                 /* card cream #FAF6EE — LIGHTER than page */
+  --card-foreground: 27 23% 18%;
 
-  --popover: 213 42% 16%;             /* bottom-sheet / modal navy #182638 */
-  --popover-foreground: 43 48% 89%;
+  --popover: 0 0% 100%;               /* raised white #FFFFFF — modals, menus, inputs */
+  --popover-foreground: 27 23% 18%;
 
-  /* Primary CTA = gold gradient base; dark brown text sits on gold. */
-  --primary: 43 55% 55%;              /* gold #C9A84C */
-  --primary-foreground: 40 100% 6%;  /* near-black brown #1A1200 */
+  /* Primary CTA = flat brown fill, card-cream label (4.58:1 at rest — the
+     tightest pass in the spec; hover/active only improve it). */
+  --primary: 31 32% 41%;              /* brown #8B6A47 */
+  --primary-foreground: 40 55% 96%;   /* cream #FAF6EE */
 
-  --secondary: 209 32% 18%;           /* translucent-white-on-navy → lighter navy */
-  --secondary-foreground: 43 48% 89%;
+  --secondary: 38 40% 92%;            /* tint #F3EDE3 — hover / secondary surface */
+  --secondary-foreground: 27 23% 18%;
 
-  --muted: 209 32% 18%;
-  --muted-foreground: 38 12% 49%;     /* #8A8070 */
+  --muted: 38 40% 92%;                /* tint #F3EDE3 */
+  --muted-foreground: 28 16% 42%;     /* #7D6B5B */
 
-  --accent: 43 55% 55%;               /* gold accent */
-  --accent-foreground: 40 100% 6%;
+  --accent: 31 32% 41%;               /* brown accent — mirrors --primary */
+  --accent-foreground: 40 55% 96%;
 
-  --destructive: 6 64% 47%;           /* DISC-D red #C0392B */
-  --destructive-foreground: 43 48% 89%;
+  --destructive: 16 64% 41%;          /* AA-safe terracotta #AB4925 — cream label 5.25:1.
+                                         Raw #D97551 only clears 2.95:1 under cream text. */
+  --destructive-foreground: 40 55% 96%;
 
-  --border: 210 25% 24%;              /* hairline navy-gold border */
-  --input: 210 25% 24%;
-  --ring: 43 55% 55%;                 /* gold focus ring */
+  --border: 29 25% 80%;               /* hairline #D9CCC0 */
+  --input: 29 25% 80%;
+  --ring: 31 32% 41%;                 /* brown focus ring #8B6A47 */
 
-  --radius: 0.75rem;
+  --radius: 0.75rem;                  /* 12px — the spec's large radius (cards, panels) */
 
-  /* Sidebar — navy surface, gold accent (aligned 2026-07-14 P1 token consolidation). */
-  --sidebar-background: 209 44% 13%;                  /* raised navy — matches --card */
-  --sidebar-foreground: 43 48% 89%;                   /* cream */
-  --sidebar-primary: 43 55% 55%;                      /* gold */
-  --sidebar-primary-foreground: 40 100% 6%;           /* near-black brown on gold */
-  --sidebar-accent: 209 32% 18%;                      /* lighter navy hover/active */
-  --sidebar-accent-foreground: 43 48% 89%;
-  --sidebar-border: 210 25% 24%;                      /* navy hairline border */
-  --sidebar-ring: 43 55% 55%;                         /* gold focus ring */
+  /* Sidebar — the 2a rail is the LIGHTER surface (card cream on page cream),
+     never a dark rail. Active item = 2px brown left border + tint fill. */
+  --sidebar-background: 40 55% 96%;                   /* card cream — matches --card */
+  --sidebar-foreground: 27 23% 18%;                   /* ink */
+  --sidebar-primary: 31 32% 41%;                      /* brown — active marker */
+  --sidebar-primary-foreground: 40 55% 96%;           /* cream on brown */
+  --sidebar-accent: 38 40% 92%;                       /* tint #F3EDE3 hover / current fill */
+  --sidebar-accent-foreground: 27 23% 18%;
+  --sidebar-border: 29 25% 80%;                       /* hairline #D9CCC0 */
+  --sidebar-ring: 31 32% 41%;                         /* brown focus ring */
+
+  /* =====================================================================
+   * WCAG AA text variants — MANDATORY for any text under 18px.
+   * The raw brand hexes are tuned as FILLS and miss 4.5:1 as small type, so
+   * each hue gets one darkened text-only sibling. Raw hexes stay correct for
+   * fills, borders, icons, chart marks and display type >= 18px.
+   * Ratios quoted as: on page #F0E6D6 / on card #FAF6EE.
+   * ================================================================== */
+  --brown-text: #806241;              /* 4.54 / 5.21   (raw #8B6A47 = 4.00 / 4.58) */
+  --sage-text: #526f56;               /* 4.51 / 5.17   (raw #5A7A5E = 3.88 / 4.45) */
+  --negative-text: #ab4925;           /* 4.58 / 5.25   (raw #D97551 = 2.57 / 2.95) */
+
+  /* One step darker again, for small brown type sitting on a BROWN WASH of its
+     own hue (`bg-accent/10`–`/15` chips + phase tags). --brown-text above is
+     calibrated for the two flat cream grounds only; on brown@15%-over-card
+     (#E9E1D5) it drops to 4.33 and fails. Same value as the CTA pressed step,
+     kept as its own name so retuning that button can't silently break text.
+     Ratios: 4.92 on brown@15%-over-page / 5.58 on brown@15%-over-card. */
+  --brown-text-on-wash: #6d5233;
+
+  /* =====================================================================
+   * Brand fills + 2a derived neutrals — hex aliases for the values that have
+   * no shadcn slot, so components never hardcode them. Names not already
+   * covered elsewhere in this file: --border-soft is #D9CCC0, --border-faint
+   * is #E0D3C3, --fg-dim is #5D4F3F (see v4 below) — not repeated here.
+   * ================================================================== */
+  --brand-brown: #8b6a47;             /* index numerals, viz anchor, non-CTA brown fills */
+  --brand-sage: #5a7a5e;              /* positive fills, dots, accent lines */
+  --brand-terracotta: #d97551;        /* negative fills + dots only — never small text */
+  --tint-hover: #f3ede3;              /* nav hover, secondary-button hover, row active */
+  --tint-pressed: #ebe2d4;            /* nav :active, secondary-button :active */
+  --border-hover: #c0a68c;            /* hover border on interactive cards + buttons */
+  --hairline-frame: #c9b9a5;          /* outer frame + dashed loading placeholder */
 
   /* =====================================================================
    * LOCKED_PICKS v1 — Card · DataTable · KpiTile
-   * Locked 2026-04-19. Values retuned 2026-07-14 to the navy/gold system
-   * (user-approved reversal — see docs/99-refactor/_system/LOCKED_PICKS.md).
-   * Var NAMES are frozen (primitives consume them); values are navy/gold.
+   * Locked 2026-04-19. Values re-pointed 2026-07-25 from navy/gold to the
+   * Kopi cream/brown system (see the 2a handoff decisions.md).
+   * Var NAMES are frozen (primitives consume them); only values move.
    * ================================================================== */
 
-  /* v1 — Card (raised navy surface) */
-  --card-radius: 1rem;
-  --card-border: hsl(210 25% 24% / 0.8);              /* navy hairline @ 80% */
-  --card-shadow-rest: 0 1px 2px rgb(0 0 0 / 0.25);
-  --card-shadow-hover: 0 4px 16px rgb(0 0 0 / 0.35);
+  /* v1 — Card (cream card on the cream page; the lift is the colour step,
+     NOT a shadow — 2a cards rest flat and only lift on hover) */
+  --card-radius: 0.75rem;                             /* 12px per the 2a rhythm */
+  --card-border: #d9ccc0;                             /* hairline */
+  --card-shadow-rest: none;
+  --card-shadow-hover: 0 2px 8px rgb(58 46 36 / 0.1); /* warmed — comp overrides the brand card's rgba(0,0,0,.1) */
   --card-padding: 1.25rem;
 
-  /* v1 — DataTable (TanStack + Motion row enter/exit) */
-  --row-hover-bg: hsl(209 32% 18% / 0.6);             /* lighter navy — visible on card navy */
+  /* v1 — DataTable (TanStack + Motion row enter/exit).
+     A translucent brown wash, not a solid, so the hover reads on BOTH the
+     page (dashboard table) and the card (list table) — a solid #FAF6EE would
+     be invisible on the card. */
+  --row-hover-bg: rgb(139 106 71 / 0.06);
   --row-enter-duration: 180ms;
   --sort-icon-opacity-rest: 0.4;
 
-  /* v1 — KpiTile (deltas keep green/red semantics, tuned for navy contrast) */
-  --kpi-radius: 1rem;
-  --delta-positive-bg: rgb(22 163 74 / 0.15);         /* green tint on navy */
-  --delta-positive-fg: #4ade80;                       /* green-400 — readable on navy */
-  --delta-negative-bg: rgb(192 57 43 / 0.15);         /* DISC-D red tint */
-  --delta-negative-fg: #e8836f;                       /* soft red — readable on navy */
+  /* v1 — KpiTile (deltas keep their semantics: sage positive, terracotta
+     negative; both foregrounds use the AA-safe text variants).
+     KpiDeltaBadge paints its label at 12px, so the pair must clear 4.5:1 —
+     and the badge always sits inside a KpiTile, i.e. on card cream #FAF6EE.
+     The tint alphas are set BY that budget: sage @ .14 measured 4.39 and
+     terracotta @ .16 measured 4.48, both failing, so each drops one step.
+     Do not deepen these without re-measuring the pair. */
+  --kpi-radius: 0.75rem;
+  --delta-positive-bg: rgb(90 122 94 / 0.10);         /* sage tint — 4.60 on card */
+  --delta-positive-fg: #526f56;                       /* --sage-text */
+  --delta-negative-bg: rgb(217 117 81 / 0.12);        /* terracotta tint — 4.68 on card */
+  --delta-negative-fg: #ab4925;                       /* --negative-text */
   --ticker-spring-stiffness: 100;
   --ticker-spring-damping: 60;
 
@@ -253,26 +281,35 @@
   --drawer-radius: 1rem;
   --drawer-handle-w: 40px;
   --drawer-handle-h: 6px;
-  --drawer-overlay: rgb(0 0 0 / 0.6);                 /* deeper scrim over navy */
+  --drawer-overlay: rgb(58 46 36 / 0.4);              /* warm ink scrim over cream */
   --handle-pulse-duration: 1.6s;
 
   /* v2 — Stepper (animated chip) */
   --chip-size: 28px;
   --chip-size-compact: 24px;
-  --chip-active: #c9a84c;                             /* gold */
-  --chip-done: #4ade80;                               /* green-400 — done state on navy */
+  --chip-active: #8b6a47;                             /* brown — in-progress */
+  --chip-done: #5a7a5e;                               /* sage — done */
   --chip-spring-stiffness: 320;
   --chip-spring-damping: 24;
 
   /* v2 — Timeline (scroll-beam) */
-  --timeline-rail-color: hsl(210 25% 24%);            /* navy border rail */
-  --timeline-beam: linear-gradient(to bottom, #c9a84c, transparent);
+  --timeline-rail-color: #d9ccc0;                     /* hairline rail */
+  --timeline-beam: linear-gradient(to bottom, #8b6a47, transparent);
   --timeline-dot-size: 28px;
   --timeline-step-gap: 20px;
 
-  /* v2 — Charts */
-  --chart-pipeline: #c9a84c;                          /* gold — primary series */
-  --chart-accepted: #d6ccb4;                          /* dim cream — 1a monochrome cream→gold viz */
+  /* v2 — Charts. 2a keeps the viz quiet: ONE brown ramp, four steps, assigned
+     by series order (not by value) so a series keeps its step across renders.
+     No sage, no terracotta, no categorical hues — those stay semantic.
+     Steps 2–4 measure 3.08 / 2.15 / 1.47 on card cream: decorative only,
+     every segment needs its legend label and any encoded figure must also
+     appear as text. Legend squares follow the series colour. */
+  --chart-ramp-1: #8b6a47;                            /* ramp anchor */
+  --chart-ramp-2: #a58868;
+  --chart-ramp-3: #c0a68c;
+  --chart-ramp-4: #dccbb6;
+  --chart-pipeline: #8b6a47;                          /* series 1 — ramp step 1 */
+  --chart-accepted: #a58868;                          /* series 2 — ramp step 2 */
   --chart-grid-dasharray: 2 4;
   --chart-anim-duration: 800ms;
   --chart-anim-stagger: 200ms;
@@ -281,72 +318,100 @@
    * LOCKED_PICKS v3 — cross-cutting patterns
    * ================================================================== */
 
-  /* v3.1 — CTA pattern (gold CTA, dark-brown text; red reserved for destructive).
-     Supersedes slate-800 CTA / red-700 accent — user reversal 2026-07-14. */
-  --cta-primary-bg: #c9a84c;                          /* gold */
-  --cta-primary-bg-hover: #d9bc6a;                    /* lighter gold — hover step */
-  --cta-primary-bg-active: #b8973b;                   /* darker gold — active step (1a) */
-  --cta-primary-fg: #1a1200;                          /* near-black brown */
-  --cta-destructive-bg: #c0392b;                      /* DISC-D red — only solid red allowed */
-  --brand-red: #c9a84c;                               /* legacy NAME — now the gold brand accent (links, badges, focus) */
-  --accent-red-soft-bg: rgb(201 168 76 / 0.12);       /* soft gold tint */
-  --accent-red-soft-fg: #c9a84c;                      /* gold */
+  /* v3.1 — CTA pattern (brown CTA, cream label; terracotta reserved for
+     destructive). Brown is punctuation: CTA fill, focus ring, active-nav
+     marker, index numerals — never a header gradient or a heading colour. */
+  --cta-primary-bg: #8b6a47;                          /* brown */
+  --cta-primary-bg-hover: #7d5f3d;                    /* brand-card hover step */
+  --cta-primary-bg-active: #6d5233;                   /* comp's pressed step */
+  --cta-primary-fg: #faf6ee;                          /* card cream on brown — 4.58:1 */
+  --cta-destructive-bg: #ab4925;                      /* AA-safe terracotta — cream label 5.25:1 */
+  --cta-destructive-bg-hover: #8f3d1f;                /* destructive hover step — cream label 6.82:1 */
+  --brand-red: #806241;                               /* legacy NAME — now the brand brown accent
+                                                         (links, badges, glyphs). Holds the AA-safe
+                                                         --brown-text value, not the raw #8B6A47,
+                                                         because most consumers paint it as small
+                                                         TEXT; the handful that use it as a marker
+                                                         fill (bell dot, row inset rule) read the
+                                                         same, only a shade deeper. */
+  --accent-red-soft-bg: rgb(139 106 71 / 0.1);        /* soft brown tint */
+  --accent-red-soft-fg: #806241;                      /* --brown-text */
+  --accent-red-soft-fg-strong: #6d5233;               /* same chip on a TRANSLUCENT panel. The 10%
+                                                         brown wash over GLASS_SURFACE (bg-card/75)
+                                                         lands near #EDE4D8, where --accent-red-soft-fg
+                                                         is only 4.47:1 — under AA. This step is 5.76:1
+                                                         there. Use on glass; keep -fg on opaque. */
 
-  /* v3.2 — Glass surface pattern (navy glass) */
-  --surface-translucent-bg: rgb(13 27 42 / 0.72);     /* navy @ 72% */
+  /* v3.2 — Glass surface pattern (cream glass) */
+  --surface-translucent-bg: rgb(250 246 238 / 0.85);  /* card cream @ 85% */
   --surface-translucent-blur: 8px;
-  --surface-translucent-border: hsl(210 25% 24% / 0.6);
-  --glass-bg: rgb(13 27 42 / 0.72);                   /* alias */
-  /* Page backdrop — flat navy canvas (always dark since 2026-07-07 de-AppBase). */
-  --page-bg: #0d1b2a;                                 /* navy */
-  --page-gradient-light: #0d1b2a;                     /* alias, kept for back-compat */
-  --page-gradient-dark: #0d1b2a;                      /* alias, kept for back-compat */
+  --surface-translucent-border: rgb(217 204 192 / 0.7);
+  --glass-bg: rgb(250 246 238 / 0.85);                /* alias */
+  /* Page backdrop — flat warm cream canvas (light-pinned since 2026-07-25). */
+  --page-bg: #f0e6d6;                                 /* page cream */
+  --page-gradient-light: #f0e6d6;                     /* alias, kept for back-compat */
+  --page-gradient-dark: #f0e6d6;                      /* alias, kept for back-compat */
 
   /* v3.3 — Mobile data-table pattern */
   --mobile-page-padding: 12px;
   --row-card-gap: 6px;
-  --row-card-border: hsl(210 25% 24%);                /* navy hairline */
+  --row-card-border: #d9ccc0;                         /* hairline */
 
   /* =====================================================================
    * v4 — List/Table archetype (Session 1 · 2026-04-19)
-   * Produced by Claude Design handoff. Feeds W07 <AppHeader> · <FilterBar> ·
-   * <DataTable> · <StatusBadge> primitives + W09 /quotations migration.
-   * Full handoff bundle: docs/99-refactor/_system/design/session-01-list-table/
+   * Produced by a Claude Design handoff (that session-01 bundle is no longer
+   * in the repo). Feeds W07 <AppHeader> · <FilterBar> · <DataTable> ·
+   * <StatusBadge> primitives + W09 /quotations migration. Values were
+   * re-pointed to Kopi 2a on 2026-07-25; the live authority for every hex
+   * below is KOPI_2A_SPEC.md (path in the @theme header).
    * ================================================================== */
 
-  /* v4.1 — Surface + border layering (raised navy over navy canvas) */
-  --surface: #12202f;                                 /* main card body — matches --card */
-  --surface-subtle: #182638;                          /* filter bar + pagination bg — modal navy */
-  --border-soft: hsl(210 25% 24%);                    /* filter bar + row hover separator */
-  --border-faint: hsl(210 25% 20%);                   /* per-row hairline divider */
+  /* v4.1 — Surface + border layering (cream ladder on the cream canvas) */
+  --surface: #faf6ee;                                 /* main card body — matches --card */
+  --surface-subtle: #f3ede3;                          /* filter bar + pagination + tooltip tint */
+  --border-soft: #d9ccc0;                             /* structure hairline — card edges, section rules */
+  --border-faint: #e0d3c3;                            /* repetition hairline — table row dividers */
 
-  /* v4.2 — Text hierarchy (cream scale) */
-  --fg: #f0ead6;                                      /* cream — body text */
-  --fg-dim: #d6ccb4;                                  /* dim cream — secondary content */
-  --fg-muted: #8a8070;                                /* warm muted — labels, meta */
+  /* v4.2 — Text hierarchy (three ink steps; hierarchy is carried by these
+     plus serif/sans contrast and hairlines, never by brown) */
+  --fg: #3a2e24;                                      /* ink — primary copy */
+  --fg-dim: #5d4f3f;                                  /* table body + long-form prose (7.34 on card) */
+  --fg-muted: #7d6b5b;                                /* labels, meta, kickers */
 
   /* v4.3 — Row states (list/table archetype) */
-  --row-hover: rgb(240 234 214 / 0.04);               /* cream wash — visible on navy */
-  --row-selected: rgb(201 168 76 / 0.10);             /* gold tint — selected row */
-  --red-soft: rgb(192 57 43 / 0.18);                  /* DISC-D red tint — error bg, badge bg */
+  --row-hover: rgb(139 106 71 / 0.06);                /* brown wash — reads on page AND card */
+  --row-selected: rgb(139 106 71 / 0.12);             /* deeper brown tint — selected row */
+  --red-soft: #fae0d6;                                /* terracotta tint — error pill / badge bg */
 
   /* v4.4 — Skeleton shimmer (loading state) */
-  --skeleton: #182638;
-  --skeleton-hi: #21324a;
+  --skeleton: #e0d3c3;
+  --skeleton-hi: #f3ede3;
 
-  /* v4.5 — Shadow layering (card + floating — deeper on dark navy) */
-  --card-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.25);
-  --floating-shadow: 0 8px 24px rgb(0 0 0 / 0.45), 0 1px 3px rgb(0 0 0 / 0.3);
+  /* v4.5 — Shadow layering. 2a cards rest FLAT — the lift is the cream-on-page
+     colour step — so the card shadow is none; only floating surfaces cast one. */
+  --card-shadow: none;
+  --floating-shadow: 0 2px 8px rgb(58 46 36 / 0.1), 0 8px 24px rgb(58 46 36 / 0.08);
 
   /* v4.6 — Status badge palette (draft · sent · accepted · rejected · expired · revised)
      Each: bg + fg + border + dot. Consumed by <StatusBadge>.
-     Hue semantics preserved; translucent tints + lifted fg for navy contrast. */
-  --status-draft-bg: rgb(240 234 214 / 0.08);     --status-draft-fg: #b8ae96;   --status-draft-border: hsl(210 25% 24%);     --status-draft-dot: #8a8070;
-  --status-sent-bg: rgb(59 130 246 / 0.15);       --status-sent-fg: #7eb3f5;    --status-sent-border: rgb(59 130 246 / 0.3); --status-sent-dot: #3b82f6;
-  --status-accepted-bg: rgb(22 163 74 / 0.15);    --status-accepted-fg: #4ade80; --status-accepted-border: rgb(22 163 74 / 0.3); --status-accepted-dot: #16a34a;
-  --status-rejected-bg: rgb(192 57 43 / 0.15);    --status-rejected-fg: #e8836f; --status-rejected-border: rgb(192 57 43 / 0.3); --status-rejected-dot: #c0392b;
-  --status-expired-bg: rgb(234 88 12 / 0.15);     --status-expired-fg: #fb923c;  --status-expired-border: rgb(234 88 12 / 0.3);  --status-expired-dot: #ea580c;
-  --status-revised-bg: rgb(147 51 234 / 0.15);    --status-revised-fg: #c084fc;  --status-revised-border: rgb(147 51 234 / 0.3); --status-revised-dot: #9333ea;
+     2a collapses status to three meanings — sage positive · brown in-progress ·
+     terracotta error — with muted neutrals for the inert states. Tint fill +
+     darkened same-hue text, never a saturated fill. The pill text colours are
+     the comp's own (they beat the page-tuned variants on these tints); only the
+     error pill takes --negative-text. */
+  --status-draft-bg: rgb(139 106 71 / 0.06);      --status-draft-fg: #5d4f3f;    --status-draft-border: #d9ccc0;              --status-draft-dot: #a58868;
+  --status-sent-bg: #f0e2cf;                      --status-sent-fg: #7d5f3d;     --status-sent-border: rgb(139 106 71 / 0.28); --status-sent-dot: #8b6a47;
+  --status-accepted-bg: #d9e8e0;                  --status-accepted-fg: #4a6a54; --status-accepted-border: rgb(90 122 94 / 0.28); --status-accepted-dot: #5a7a5e;
+  --status-rejected-bg: #fae0d6;                  --status-rejected-fg: #ab4925; --status-rejected-border: rgb(217 117 81 / 0.28); --status-rejected-dot: #d97551;
+  --status-expired-bg: rgb(125 107 91 / 0.14);    --status-expired-fg: #5d4f3f;  --status-expired-border: #d9ccc0;            --status-expired-dot: #7d6b5b;
+  --status-revised-bg: rgb(139 106 71 / 0.14);    --status-revised-fg: #7d5f3d;  --status-revised-border: rgb(139 106 71 / 0.28); --status-revised-dot: #a58868;
+
+  /* The pairs above are tuned on CARD cream. `--status-revised-bg` is the only
+     one that is a translucent tint AND dark enough to matter: over page cream
+     it composites to ~#E2D5C2, where --status-revised-fg drops to 4.05:1 (it is
+     4.59:1 on card). Surfaces that paint the page ground — PageShellHero — take
+     this deeper step instead: 5.00:1 on page, 5.63:1 on card. */
+  --status-revised-fg-on-page: #6d5233;
 
   /* =====================================================================
    * Motion tokens — Q-W08-b RESERVED philosophy
@@ -357,121 +422,35 @@
   --motion-duration-instant: 80ms;                    /* button feedback */
   --motion-duration-quick: 180ms;                     /* row enter/exit, hover */
   --motion-duration-smooth: 400ms;                    /* page transitions */
-  --motion-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);   /* aligned to tokens.css spec 2026-04-20 eod+3 */
+  --motion-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);   /* locked 2026-04-20 (LOCKED_PICKS motion) */
   --motion-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  /* --- Focus-ring shadow token (spec parity with tokens.css) ---
+  /* --- Focus-ring shadow token ---
    * Used by primitives that want a CSS-var-driven focus ring instead of a
-   * Tailwind ring utility. Focus accent = gold (matches --ring). */
-  --shadow-focus: 0 0 0 3px rgb(201 168 76 / 0.35);   /* gold @ 35% */
-}
-
-.dark {
-  /* --- Prospect Profiler navy palette (mirrors :root — app is always dark) --- */
-  --background: 210 53% 11%;          /* navy #0D1B2A */
-  --foreground: 43 48% 89%;           /* cream #F0EAD6 */
-
-  --card: 209 44% 13%;
-  --card-foreground: 43 48% 89%;
-
-  --popover: 213 42% 16%;             /* modal navy #182638 */
-  --popover-foreground: 43 48% 89%;
-
-  --primary: 43 55% 55%;              /* gold #C9A84C */
-  --primary-foreground: 40 100% 6%;   /* #1A1200 */
-
-  --secondary: 209 32% 18%;
-  --secondary-foreground: 43 48% 89%;
-
-  --muted: 209 32% 18%;
-  --muted-foreground: 38 12% 49%;     /* #8A8070 */
-
-  --accent: 43 55% 55%;
-  --accent-foreground: 40 100% 6%;
-
-  --destructive: 6 64% 47%;           /* DISC-D red #C0392B */
-  --destructive-foreground: 43 48% 89%;
-
-  --border: 210 25% 24%;
-  --input: 210 25% 24%;
-  --ring: 43 55% 55%;                 /* gold focus ring */
-
-  --sidebar-background: 209 44% 13%;
-  --sidebar-foreground: 43 48% 89%;
-  --sidebar-primary: 43 55% 55%;
-  --sidebar-primary-foreground: 40 100% 6%;
-  --sidebar-accent: 209 32% 18%;
-  --sidebar-accent-foreground: 43 48% 89%;
-  --sidebar-border: 210 25% 24%;
-  --sidebar-ring: 43 55% 55%;
-
-  /* LOCKED_PICKS + v4 tokens: no dark overrides needed — the app is always
-     the navy/gold dark aesthetic, so :root already holds the dark-tuned
-     values and .dark inherits them unchanged (2026-07-14 P1 consolidation). */
+   * Tailwind ring utility. Focus accent = brown (matches --ring). Alpha .12
+   * is the comp's value for the input ring (the brand card says .10). */
+  --shadow-focus: 0 0 0 3px rgb(139 106 71 / 0.12);
 }
 
 /* ---------------------------------------------------------------------------
- * Self-hosted fonts — Geist Pixel is not on npm (yet), fetched from the
- * vercel/geist-pixel-font GitHub repo and committed to public/fonts/.
- * Roboto + Geist Mono come via @fontsource packages (see FontTestPanel.tsx).
+ * Display-type utility. The 2a brand is light-pinned and serif-led, so the
+ * former pixel-font machinery (self-hosted Geist Pixel @font-face blocks plus
+ * the `.font-pixel-crisp` / `.font-pixel-bold` antialiasing hacks) is gone —
+ * disabling antialiasing wrecks Instrument Serif. This alias survives because
+ * components key off the class for the giant 404 / route-error moments.
  * ------------------------------------------------------------------------- */
-/* Geist Pixel — 5 variants from vercel/geist-pixel-font (self-hosted).
-   Default `Geist Pixel` = Square. Use `Geist Pixel Grid/Circle/Triangle/Line`
-   for the other variants. */
-@font-face {
-  font-family: 'Geist Pixel';
-  src: url('/fonts/geist-pixel/GeistPixel-Square.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face { font-family: 'Geist Pixel Square'; src: url('/fonts/geist-pixel/GeistPixel-Square.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Geist Pixel Grid'; src: url('/fonts/geist-pixel/GeistPixel-Grid.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Geist Pixel Circle'; src: url('/fonts/geist-pixel/GeistPixel-Circle.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Geist Pixel Triangle'; src: url('/fonts/geist-pixel/GeistPixel-Triangle.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Geist Pixel Line'; src: url('/fonts/geist-pixel/GeistPixel-Line.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
-/* Pixeled (OMEGA font by Skyhaven) — user-supplied comparison candidate. */
-@font-face { font-family: 'Pixeled'; src: url('/fonts/Pixeled.ttf') format('truetype'); font-weight: 400; font-style: normal; font-display: swap; }
-
-/* ---------------------------------------------------------------------------
- * Pixel-crisp rendering — disables font antialiasing so the pixel grain of
- * Geist Pixel stays sharp. Without this, browsers smooth the edges and the
- * font looks like regular mono at small sizes. Use the `.font-pixel-crisp`
- * utility on any element rendering Geist Pixel at < 60px. At > 60px the
- * grain is visible even with antialiasing, so the class is optional but
- * still recommended for consistency.
- *
- * Firefox has no 'none' value for font-smoothing — it falls back to the
- * platform default (usually grayscale). Chrome/Safari get the full effect.
- * ------------------------------------------------------------------------- */
-.font-pixel-crisp,
-.font-pixel-crisp * {
-  -webkit-font-smoothing: none !important;
-  -moz-osx-font-smoothing: grayscale;
-  font-smooth: never;
-  text-rendering: geometricPrecision;
-}
-
-/* Fake-bold for Geist Pixel (which only ships single-weight). text-shadow
-   duplicates each pixel 1px right → doubles stroke width without breaking
-   the grid. Apply by adding `.font-pixel-bold` alongside .font-pixel-crisp. */
-.font-pixel-bold {
-  text-shadow: 1px 0 currentColor;
-  letter-spacing: 0.02em; /* compensate for the added horizontal mass */
-}
-
-/* Display utility — apply to any giant-display pixel text (140px+). Uses
-   the Grid variant for visible pixel texture at scale, and inherits
-   .font-pixel-crisp's no-antialiasing. Always use together:
-   `<h1 class="font-pixel-crisp font-pixel-display">…</h1>`. */
 .font-pixel-display {
   font-family: var(--font-pixel-display);
 }
 
 /* ---------------------------------------------------------------------------
- * Base layer — preserved from v3.
+ * Base layer — global element defaults. Structure carried over from the v3
+ * migration; the families, heading scale and link colour were re-cut for
+ * Kopi 2a on 2026-07-25.
  * ------------------------------------------------------------------------- */
 @layer base {
+  /* Every un-styled border in the app defaults to the Kopi hairline #D9CCC0 —
+     this is why component code should reach for `border-border`, never a hex. */
   * {
     @apply border-border;
   }
@@ -479,42 +458,40 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
-    /* W08 Phase 2 — Q-W08-a locked: Roboto for body + UI. */
+    line-height: 1.6;                 /* brand-card body rhythm */
   }
 
-  /* Tabular numerals use Geist Mono. Components add `font-mono` utility OR
-     `class="tabular-nums"`; this rule covers any <code>/<pre>/<kbd>. */
+  /* Tabular numerals / code / Kbd keep the mono stack. Components add the
+     `font-mono` utility OR `class="tabular-nums"`; this rule covers any
+     <code>/<pre>/<kbd>. */
   code, kbd, pre, samp {
     font-family: var(--font-mono);
   }
 
-  /* W08 Phase 2 — heading scale (Linear/Vercel-inspired, tight leading).
-     Per Q-W08-b RESERVED motion: no transitions on headings.
-     2026-04-19 (eod+14): h1 globally uses Geist Pixel Square + crisp
-     rendering (no antialiasing) so pixel grain stays visible. Size bumped
-     from 2rem → 2.75rem (44px) so each pixel is readable. */
+  /* h1 is the only heading level the serif claims globally: 44px is far above
+     the 18px Instrument Serif floor, so the family is safe to set here. */
   h1 {
     font-size: 2.75rem;
-    line-height: 1;
+    line-height: 1.1;
     font-weight: 400;
     letter-spacing: -0.01em;
     font-family: var(--font-pixel);
-    -webkit-font-smoothing: none;
-    -moz-osx-font-smoothing: grayscale;
-    font-smooth: never;
-    text-rendering: geometricPrecision;
   }
   /* Prose containers — long-form readable text (MarkdownBlock, design doc
-     pages, CONTEXT.md renders). Geist Mono is too dense for 20+ line prose. */
+     pages, CONTEXT.md renders). Body prose is 13.5px/1.6 in 2a, which is
+     BELOW the Instrument Serif floor, so long-form copy is IBM Plex Sans —
+     the serif is reserved for the headings inside these containers. */
   .prose,
   .prose p,
   .prose li,
   .prose blockquote,
   [data-font="prose"] {
-    font-family: var(--font-prose);
+    font-family: var(--font-sans);
   }
 
-  /* Sub-headers use Geist Mono for the technical/Linear feel. Body stays Roboto. */
+  /* h2–h6 are IBM Plex Sans: h5/h6 land under 18px, so a blanket serif here
+     would break the floor. Serif section heads are opted into per component
+     at their spec'd 22px. */
   h2, h3, h4, h5, h6 { font-family: var(--font-subheader); }
   h2 { font-size: 1.5rem;   line-height: 1.2;  font-weight: 500; letter-spacing: -0.005em; }
   h3 { font-size: 1.25rem;  line-height: 1.25; font-weight: 500; }
@@ -522,10 +499,11 @@
   h5 { font-size: 1rem;     line-height: 1.4;  font-weight: 500; }
   h6 { font-size: 0.875rem; line-height: 1.5;  font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
 
-  /* W08 Phase 2 — link colour + focus ring per LOCKED_PICKS v3.1
-     (gold accent since the 2026-07-14 navy/gold reversal; --brand-red keeps
-     its legacy NAME but now holds gold). Only :focus-visible styled — mouse
-     users never see the ring. */
+  /* Links carry --brand-red (legacy NAME, now the AA-safe brand brown) because
+     link text is body-sized. The focus ring is the RAW brand brown at 2px /
+     2px offset per the 2a spec — it is a mark, not type, and it must stay
+     visible on every interactive element in all five states. Only
+     :focus-visible is styled, so mouse users never see it. */
   a {
     color: var(--brand-red);
     text-decoration: none;
@@ -534,7 +512,7 @@
     color: var(--cta-primary-bg-hover);
   }
   :focus-visible {
-    outline: 2px solid var(--brand-red);
+    outline: 2px solid hsl(var(--ring));
     outline-offset: 2px;
   }
 

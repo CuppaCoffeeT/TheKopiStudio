@@ -5,8 +5,11 @@
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
  * Locked:
- *   Radius 16px (2xl) · padding 20px · border zinc-200 at 80% alpha
- *   Shadow rest: 0 1px 2px /.04 · hover: 0 4px 16px /.06 + 1-px lift (interactive only)
+ *   Radius 16px (2xl) · padding 20px · --border hairline at 80% alpha
+ *   Shadow rest: NONE. 2a cards lift by the cream-on-cream colour step
+ *     (#FAF6EE card on the #F0E6D6 page), not by a shadow. Only interactive
+ *     cards cast one, and only on hover: --card-shadow-hover (warm ink) +
+ *     --border-hover + a 1-px lift.
  *   Translucent variant for marketing/hero surfaces ONLY — never on data surfaces.
  *
  * Replaces shadcn `@/components/ui/card` everywhere in new code.
@@ -40,9 +43,9 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
           : cn(
               'bg-card text-card-foreground',
               'border border-border/80',
-              'shadow-[0_1px_2px_rgba(0,0,0,0.25)]',
+              'shadow-[var(--card-shadow-rest)]',
               interactive &&
-                'transition-all duration-150 hover:-translate-y-px hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_4px_16px_rgba(0,0,0,0.4)] cursor-pointer',
+                'transition-all duration-150 hover:-translate-y-px hover:shadow-[var(--card-shadow-hover)] hover:border-[color:var(--border-hover)] cursor-pointer',
             ),
         className,
       )}

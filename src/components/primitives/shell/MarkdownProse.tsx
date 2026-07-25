@@ -3,6 +3,8 @@
  *
  * No design spec — markdown-native twin of SanitizedHtmlProse, reuses its prose tokens;
  * built for SOP bodies (GFM + alert callouts + resolvable image srcs).
+ * Long-form body copy is 13px, so it takes --fg-dim rather than the lighter
+ * --fg-muted the sibling still uses for its body.
  *
  * Adopters: tracked in DESIGN_CATALOG_PRIMITIVES.md `Adopted` column.
  *
@@ -35,53 +37,63 @@ const ALERT_RE = /^\[!(NOTE|TIP|WARNING|IMPORTANT|ERROR|CAUTION)\]\s*/i;
 
 interface AlertDef {
   icon: typeof Info;
+  /** Left rail — the family's `--status-*-dot`, the saturated mark of the pair. */
   accent: string;
   bg: string;
   text: string;
   label: string;
 }
 
+/**
+ * GitHub's six alert kinds mapped onto the `--status-*` families in
+ * `src/index.css`. Kopi 2a admits no categorical hues — status collapses to
+ * sage positive · brown in-progress · terracotta negative — so the six kinds
+ * share four families and lean on their icon + label for the finer distinction:
+ * NOTE → draft (faint brown), IMPORTANT → revised (deeper brown),
+ * TIP → accepted (sage), WARNING/CAUTION → sent (brown), ERROR → rejected
+ * (terracotta).
+ */
 const ALERT_MAP: Record<AlertType, AlertDef> = {
   NOTE: {
     icon: Info,
-    accent: 'border-blue-400 dark:border-blue-600',
-    bg: 'bg-blue-50 dark:bg-blue-950/30',
-    text: 'text-blue-800 dark:text-blue-300',
+    accent: 'border-[color:var(--status-draft-dot)]',
+    bg: 'bg-[color:var(--status-draft-bg)]',
+    text: 'text-[color:var(--status-draft-fg)]',
     label: 'Note',
   },
   TIP: {
     icon: Lightbulb,
-    accent: 'border-green-400 dark:border-green-600',
-    bg: 'bg-green-50 dark:bg-green-950/30',
-    text: 'text-green-800 dark:text-green-300',
+    accent: 'border-[color:var(--status-accepted-dot)]',
+    bg: 'bg-[color:var(--status-accepted-bg)]',
+    text: 'text-[color:var(--status-accepted-fg)]',
     label: 'Tip',
   },
   WARNING: {
     icon: AlertTriangle,
-    accent: 'border-amber-400 dark:border-amber-600',
-    bg: 'bg-amber-50 dark:bg-amber-950/30',
-    text: 'text-amber-800 dark:text-amber-300',
+    accent: 'border-[color:var(--status-sent-dot)]',
+    bg: 'bg-[color:var(--status-sent-bg)]',
+    text: 'text-[color:var(--status-sent-fg)]',
     label: 'Warning',
   },
   IMPORTANT: {
     icon: AlertCircle,
-    accent: 'border-purple-400 dark:border-purple-600',
-    bg: 'bg-purple-50 dark:bg-purple-950/30',
-    text: 'text-purple-800 dark:text-purple-300',
+    accent: 'border-[color:var(--status-revised-dot)]',
+    bg: 'bg-[color:var(--status-revised-bg)]',
+    text: 'text-[color:var(--status-revised-fg)]',
     label: 'Important',
   },
   ERROR: {
     icon: XCircle,
-    accent: 'border-red-400 dark:border-red-600',
-    bg: 'bg-red-50 dark:bg-red-950/30',
-    text: 'text-red-800 dark:text-red-300',
+    accent: 'border-[color:var(--status-rejected-dot)]',
+    bg: 'bg-[color:var(--status-rejected-bg)]',
+    text: 'text-[color:var(--status-rejected-fg)]',
     label: 'Error',
   },
   CAUTION: {
     icon: AlertTriangle,
-    accent: 'border-orange-400 dark:border-orange-600',
-    bg: 'bg-orange-50 dark:bg-orange-950/30',
-    text: 'text-orange-800 dark:text-orange-300',
+    accent: 'border-[color:var(--status-sent-dot)]',
+    bg: 'bg-[color:var(--status-sent-bg)]',
+    text: 'text-[color:var(--status-sent-fg)]',
     label: 'Caution',
   },
 };
@@ -131,14 +143,14 @@ export interface MarkdownProseProps {
 }
 
 // ---------------------------------------------------------------------------
-// Prose class string (mirrors SanitizedHtmlProse exactly)
+// Prose class string (tracks SanitizedHtmlProse; body copy takes --fg-dim)
 // ---------------------------------------------------------------------------
 
 const PROSE_CLASSES = cn(
-  'text-[13px] leading-[1.6] text-muted-foreground',
+  'text-[13px] leading-[1.6] text-[color:var(--fg-dim)]',
   '[&_p]:mb-2 [&_p]:mt-0',
   '[&_strong]:text-foreground',
-  '[&_a]:text-blue-700 [&_a]:dark:text-blue-400 [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:text-blue-800 hover:[&_a]:dark:text-blue-300',
+  '[&_a]:text-[color:var(--brown-text)] [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:text-[color:var(--cta-primary-bg-hover)]',
   '[&_img]:max-w-full [&_img]:h-auto [&_img]:rounded [&_img]:my-2',
   '[&_blockquote]:border-l-2 [&_blockquote]:border-border [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground',
   '[&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5',
@@ -211,7 +223,7 @@ export function MarkdownProse({ markdown, className, resolveImageSrc }: Markdown
         <a
           href={href}
           {...(isExternal ? { target: '_blank', rel: 'noreferrer' } : {})}
-          className="text-blue-700 dark:text-blue-400 underline underline-offset-2 hover:text-blue-800 dark:hover:text-blue-300"
+          className="text-[color:var(--brown-text)] underline underline-offset-2 hover:text-[color:var(--cta-primary-bg-hover)]"
         >
           {children}
         </a>

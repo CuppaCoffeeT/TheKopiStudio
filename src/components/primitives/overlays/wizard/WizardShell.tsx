@@ -12,7 +12,7 @@
  * desktop. Mobile uses `<WizardMobileDrawer>` (same prop API).
  * EditWorkerOTModal does NOT use this (single-form, no Stepper).
  *
- * Locked picks v3: Stepper = animated chip · Resubmit CTA = primary slate-800.
+ * Locked picks v3: Stepper = animated chip · Resubmit CTA = primary (brown).
  */
 
 import { type ReactNode } from 'react';

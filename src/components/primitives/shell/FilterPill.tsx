@@ -5,7 +5,8 @@
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/table/DataTablePrimitives.jsx
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked: 30h · 10px radius 6 · active bg red-50 + border red-700 · count badge 18×18 pill.
+ * Locked: 30h · 10px radius 6 · active = brown 10% wash + brown border +
+ *         --brown-text label · count badge 18×18 pill.
  */
 
 import { forwardRef } from 'react';
@@ -33,8 +34,8 @@ export const FilterPill = forwardRef<HTMLButtonElement, FilterPillProps>(functio
         'h-[30px] px-[10px] rounded-md border',
         'text-[12px]',
         active
-          ? 'bg-primary/10 border-primary text-primary dark:bg-primary/15 dark:border-primary'
-          : 'bg-card border-zinc-300 text-muted-foreground hover:bg-secondary dark:border-zinc-700',
+          ? 'bg-primary/10 border-primary text-[color:var(--brown-text)]'
+          : 'bg-card border-border text-[color:var(--fg-dim)] hover:bg-secondary',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         'disabled:opacity-40 disabled:cursor-not-allowed',
         className
@@ -46,8 +47,8 @@ export const FilterPill = forwardRef<HTMLButtonElement, FilterPillProps>(functio
         className={cn(
           'text-[10.5px] font-semibold uppercase tracking-[0.08em]',
           active
-            ? 'text-primary'
-            : 'text-muted-foreground'
+            ? 'text-[color:var(--brown-text)]'
+            : 'text-[color:var(--fg-dim)]'
         )}
       >
         {label}
@@ -56,7 +57,7 @@ export const FilterPill = forwardRef<HTMLButtonElement, FilterPillProps>(functio
         <span
           className={cn(
             'font-medium',
-            active ? 'text-primary' : 'text-foreground'
+            active ? 'text-[color:var(--brown-text)]' : 'text-foreground'
           )}
         >
           · {value}
@@ -70,7 +71,7 @@ export const FilterPill = forwardRef<HTMLButtonElement, FilterPillProps>(functio
             'text-[10px] font-semibold',
             active
               ? 'bg-primary text-primary-foreground'
-              : 'bg-zinc-200 text-muted-foreground dark:bg-zinc-800'
+              : 'bg-secondary text-[color:var(--fg-dim)]'
           )}
           style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}
         >

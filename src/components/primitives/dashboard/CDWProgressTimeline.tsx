@@ -2,7 +2,7 @@
  * CDWProgressTimeline — 12-step CDW (Cable Detection Works) project workflow visualization.
  *
  * Dashboard-group primitive. Replaces `src/components/meeting-projects/MeetingCDWProgressBar.tsx`
- * (151 LOC) — same render, but caller-driven steps + Tooltip primitive + dark mode + a11y.
+ * (151 LOC) — same render, but caller-driven steps + Tooltip primitive + tokens + a11y.
  *
  * Pure presentation. State derivation (which date goes where, drawings_done_override → step 9,
  * NCE override mapping, etc.) stays in `useCDWProgressSteps` + `utils/cdwProjectProgress`.
@@ -84,21 +84,25 @@ function deriveState(step: CDWProgressStep): StepState {
   return step.date ? 'completed' : 'pending';
 }
 
-/* ─── Locked status tokens — Tailwind palette, no raw hex ─────────────── */
+/* ─── Locked status tokens — status-badge vars only, no raw colour ────── */
 
-/* 1a Masthead status tones: complete = green tint · in-progress = gold tint
- * (gold sanctioned for in-progress badges) · pending = quiet secondary. */
+/* 2a status tones — the three meanings the pill palette collapses to:
+ * complete = sage tint · in-progress = brown tint · pending = quiet secondary.
+ * The two live states pair a tint fill with the same-hue darkened text the spec
+ * pins to that tint; pending pairs the neutral #F3EDE3 tint with dim ink
+ * (--fg-dim). All three clear AA at these sub-18px sizes — --fg-muted does not
+ * on the secondary tint (4.37:1), so it is deliberately not used here. */
 const CELL_BG: Record<StepState, string> = {
   completed: 'bg-[color:var(--status-accepted-bg)] text-[color:var(--status-accepted-fg)]',
-  ongoing:   'bg-[rgb(201_168_76_/_0.14)] text-[color:var(--brand-red)]',
-  pending:   'bg-secondary text-muted-foreground',
+  ongoing:   'bg-[color:var(--status-sent-bg)] text-[color:var(--status-sent-fg)]',
+  pending:   'bg-secondary text-[color:var(--fg-dim)]',
 };
 
-/** Date-line colour — one step softer than the label but still legible on the tint. */
+/** Date-line colour — tracks the label tone so the whole cell stays AA on its tint. */
 const DATE_FG: Record<StepState, string> = {
   completed: 'text-[color:var(--status-accepted-fg)]',
-  ongoing:   'text-[color:var(--brand-red)]',
-  pending:   'text-muted-foreground',
+  ongoing:   'text-[color:var(--status-sent-fg)]',
+  pending:   'text-[color:var(--fg-dim)]',
 };
 
 /* ─── Full mode (xl+) ─────────────────────────────────────────────────── */

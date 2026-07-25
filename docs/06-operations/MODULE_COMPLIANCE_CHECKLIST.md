@@ -71,7 +71,7 @@ SLUG=<slug>
 | 9.3 | Raw date-fns | `grep -rnE "from ['\"]date-fns['\"]" src/features/$SLUG` | **guided** — see allowlist below | `.claude/rules/timezone.md` |
 | 9.4 | Unbounded Supabase select | `grep -rn "\.select(" src/features/$SLUG` | **guided** — each must chain `.range(`/`.limit(`/`.single(`/`.maybeSingle(`/`{ count:` | `.claude/rules/query-compliance.md` |
 | 9.5 | URL state (LIST archetype only) | `grep -rn "useURLPagination" src/features/$SLUG` ; `grep -rn "useSearchParams" src/features/$SLUG` | **≥1** `useURLPagination` AND **0** raw `useSearchParams` boilerplate on list pages | `.claude/rules/url-standards.md` |
-| 9.6 | Dark-mode (card surfaces) | `grep -rnE "bg-white" src/features/$SLUG \| grep -v "dark:"` | **guided** — every card-shaped `bg-white` needs a `dark:bg-zinc-950` pairing; review hits | `.claude/rules/dark-mode.md` |
+| 9.6 | Light theme (surfaces) | `grep -rnE "dark:\|(bg\|text\|border\|ring\|divide)-(zinc\|slate\|gray)-" src/features/$SLUG` | **0** — the app is light-pinned, so `dark:` is dead code and cool neutrals clash with the cream ground; use `bg-card` / `text-foreground` / `border-border` | `.claude/rules/light-theme.md` |
 | 9.7 | Mobile (vh literals) | `grep -rnE "max-h-\[[0-9]+vh\]\|h-\[[0-9]+vh\]\|min-h-\[[0-9]+vh\]" src/features/$SLUG` | **0** — use `dvh`, never `vh`, on containers/sheets/modals | `.claude/rules/mobile-web.md` |
 
 ### 9.3 — Raw date-fns allowlist (timezone.md, W12.04)

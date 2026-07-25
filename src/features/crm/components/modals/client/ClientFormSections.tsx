@@ -52,7 +52,9 @@ export function ClientFinancialSection({ isEdit, value, set }: ClientSectionProp
   return (
     <ModalSection title="Financial information">
       {isEdit ? (
-        <span className="text-[12px] text-muted-foreground">
+        // --fg-dim, matching Field's hint: this sits on ModalSection's
+        // --secondary tint, where --fg-muted is only 4.37:1 at 12px.
+        <span className="text-[12px] text-[color:var(--fg-dim)]">
           Balance is managed in Bank history
         </span>
       ) : (

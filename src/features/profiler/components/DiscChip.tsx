@@ -3,8 +3,8 @@
  *
  * Colour identity comes from the legacy profile palette (`PR[letter].col`)
  * applied to the dot + tinted background/border only; the letter itself stays
- * on the cream foreground token so contrast passes AA on the navy canvas (the
- * mid-tone brand hexes fail 4.5:1 as text on dark surfaces).
+ * on the ink foreground token, because the mid-tone DISC hexes fail 4.5:1 as
+ * 10–11px text on the cream surfaces and one of them would fail on any tint.
  */
 
 import { cn } from '@/lib/utils';
@@ -29,7 +29,7 @@ function DiscLetterPill({ letter, emphasis }: DiscLetterPillProps) {
       style={{
         backgroundColor: `${col}1A`,
         borderColor: `${col}59`,
-        fontFamily: 'var(--font-pixel)',
+        fontFamily: 'var(--font-sans)',
       }}
     >
       {emphasis === 'primary' && (

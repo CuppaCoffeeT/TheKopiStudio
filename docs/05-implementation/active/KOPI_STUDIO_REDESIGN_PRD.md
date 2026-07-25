@@ -10,7 +10,7 @@
 
 | Phase | Status | Notes |
 |---|---|---|
-| P1 — Brand token layer: navy/gold dark → Kopi cream/brown light | ⬜ | Serialize first; everything depends on it |
+| P1 — Brand token layer: navy/gold dark → Kopi cream/brown light | ✅ | 103 files repainted over 4 adversarial rounds (158→76→23→1). All 5 gates green |
 | P2 — AppSidebar + DashboardLayout mount | ⬜ | Depends on P1 |
 | P3 — Frames drop the top masthead | ⬜ | Depends on P2 |
 | P4 — Dashboard home → 2a Overview (launcher removed) | ⬜ | Parallel-safe after P3 |
@@ -20,7 +20,7 @@
 | P8 — Rebrand user-facing → "The Kopi Studio" | ⬜ | Parallel-safe after P1 (disjoint: 4 files) |
 | P9 — E2E repair, docs refresh, full gates | ⬜ | Last; depends on all |
 
-Current phase: 0 · Blockers: none
+Current phase: P2 · Blockers: none
 
 ## 📋 Definition
 
@@ -45,9 +45,16 @@ Current phase: 0 · Blockers: none
 
 **The palette is an inversion, not a repaint.** Today: page `#0d1b2a` navy, card `#12202f`, cream text `#f0ead6`, gold `#c9a84c`. Target: page `#f0e6d6`, card `#faf6ee`, raised `#ffffff`, brown `#8b6a47` primary, sage `#5a7a5e` secondary/positive, terracotta `#d97551` negative, text `#3a2e24`, muted `#7d6b5b`, border `#d9ccc0`.
 
-**Token abstraction is good — this is why the inversion is tractable.** `src/index.css` holds 204 `--` vars under `:root`; 118 primitive components consume them via `var(--…)`. Only **5 files** hardcode palette hexes anywhere in `src/`:
-`src/index.css` · `src/lib/design/tokens.ts` · `src/features/profiler/lib/print.css` · `src/components/primitives/charts/ChartShell.tsx` · `src/components/primitives/overlays/Modal.tsx`.
-Everything else inherits the palette for free.
+**Token abstraction is good** — `src/index.css` holds 204 `--` vars under `:root` and 118 primitive components consume them via `var(--…)`, so most of the tree repaints for free.
+
+> ⚠️ **CORRECTED 2026-07-25 during P1.** The original claim here — "only 5 files hardcode palette hexes" — was **wrong**, and the error was one of grep scope, not of fact. Searching for the navy/gold *hex literals* found 5 files. The real migration surface was **103 files / 158 findings**, because dark-era colour also hides as:
+> - `rgb()` / `rgba()` triples of the same colours (`rgba(24,38,56,.92)` is `#182638`; `rgba(201,168,76,.14)` is the old gold)
+> - Tailwind **space-separated arbitrary syntax** — `bg-[rgb(201_168_76_/_0.14)]` — which no hex or `rgb(r,g,b)` grep will ever match
+> - dark-era Tailwind utilities: `bg-red-950/30`, `text-red-400`, `zinc-*`, `slate-*`, and cool-grey literals `#ececee` / `#e4e4e7` / `#18181b`
+> - inline `fontFamily: 'Georgia, serif'` in components rather than in the token layer
+> - `dark:` variants, now dead on a light-pinned app
+>
+> **Lesson for any future palette work: grep the rendered colour space, not the literal.** Four adversarial rounds were needed to reach dry (158 → 76 → 23 → 1).
 
 **Theme pinning**: `src/lib/design/ThemeProvider.tsx:76` hard-pins `const resolved: ResolvedTheme = 'dark'`. `:root` is the always-dark source of truth (the `.dark` override block was deleted during the 1a work). P1 flips this to `'light'` and rewrites `:root`. The `ThemePreference` type and localStorage key stay — no toggle is wired either way.
 
@@ -249,6 +256,7 @@ For any file the rebuild touches, in order:
 | Date | Phase | Notes |
 |---|---|---|
 | 2026-07-25 | — | PRD authored. Direction 2a picked from the Claude Design turn-2 exploration; brand card adopted as token authority; launcher-removal and rebrand confirmed by user. |
+| 2026-07-25 | P1 | ✅ Token layer inverted to Kopi cream/brown light. Handoff + `KOPI_2A_SPEC.md` staged; `:root` rewritten; Instrument Serif + IBM Plex Sans loaded; `ThemeProvider` pinned `'light'`. **103 files** repainted across 4 adversarial rounds (158→76→23→1 findings), 33 agents. Notable catches: a `paths:`-scoped `.claude/rules/dark-mode.md` that auto-loaded into every agent and declared the app permanently navy/gold (replaced by `light-theme.md`, history preserved); a surviving navy panel in `ChartTooltip` painting dark ink on dark; gold hidden as `bg-[rgb(201_168_76_/_0.14)]`; the ⌘K palette left with no visible keyboard-selection indicator (1.045:1); the impersonation banner's account email at 3.24:1; and a cream wash on the report hero that *lightened* the ground on the client-facing PDF (3.42:1). Four files trimmed to clear the LOC ratchet (comment inflation only). Gates: tsc 0 · lint 0 err · drift 0 · build ✓ · LOC 37≤38. Visual smoke: 9/9 routes render on cream, 0 console errors. |
 
 ## 📚 Related Documentation
 

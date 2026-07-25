@@ -8,7 +8,7 @@
  * Composes: <Modal destructive> + <ModalGhostAction> + <ModalPrimaryAction destructive>.
  * Tier 1 (low)  = plain AlertDialog (deactivate / unlink / remove).
  * Tier 2 (mid)  = typed confirm — user types resource name (archive · merge).
- * Tier 3 (high) = typed confirm + irreversibility checkbox + red strip (delete).
+ * Tier 3 (high) = typed confirm + irreversibility checkbox + terracotta strip (delete).
  */
 
 import { useState, useEffect } from 'react';
@@ -105,10 +105,10 @@ export function DestructiveConfirmDialog({
         <>
           {tier === 3 && (
             <div
-              className="-mx-5 -mt-4.5 mb-3 px-5 py-1.5 flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border-b border-red-200 dark:border-red-900/40 text-[10.5px] font-medium uppercase tracking-widest text-red-700 dark:text-red-400"
+              className="-mx-5 -mt-4.5 mb-3 px-5 py-1.5 flex items-center gap-2 bg-[color:var(--red-soft)] border-b border-[color:var(--status-rejected-border)] text-[10.5px] font-medium uppercase tracking-widest text-[color:var(--negative-text)]"
               style={{ fontFamily: 'var(--font-mono)' }}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-red-700 dark:bg-red-400" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[color:var(--brand-terracotta)]" />
               Tier 3 · irreversible · admin audit-logged
             </div>
           )}
@@ -135,7 +135,7 @@ export function DestructiveConfirmDialog({
             {loading && (
               <span
                 aria-hidden
-                className="inline-block w-3 h-3 mr-1 rounded-full border-[1.5px] border-white/30 border-t-white animate-spin"
+                className="inline-block w-3 h-3 mr-1 rounded-full border-[1.5px] border-current/30 border-t-current animate-spin"
               />
             )}
             {effectiveConfirm}
@@ -156,11 +156,11 @@ export function DestructiveConfirmDialog({
           >
             cascading effects · {consequences.length}
           </div>
-          <div className="rounded-md border border-red-200 dark:border-red-900/40 bg-red-50/60 dark:bg-red-900/10 px-3 py-2.5 grid gap-1.5">
+          <div className="rounded-md border border-[color:var(--status-rejected-border)] bg-[color:var(--red-soft)] px-3 py-2.5 grid gap-1.5">
             {consequences.map((c, i) => (
               <div
                 key={i}
-                className="flex items-start gap-2 text-[12.5px] text-red-800 dark:text-red-400 leading-relaxed"
+                className="flex items-start gap-2 text-[12.5px] text-[color:var(--negative-text)] leading-relaxed"
               >
                 <svg width="10" height="10" viewBox="0 0 10 10" className="mt-1 flex-shrink-0" aria-hidden>
                   <path
@@ -186,7 +186,7 @@ export function DestructiveConfirmDialog({
             className="text-[10.5px] font-medium uppercase tracking-widest text-muted-foreground mb-1.5"
             style={{ fontFamily: 'var(--font-mono)' }}
           >
-            type <span className="text-red-700 dark:text-red-400">{resource}</span> to confirm
+            type <span className="text-[color:var(--negative-text)]">{resource}</span> to confirm
           </div>
           <div className="relative">
             <input
@@ -196,8 +196,10 @@ export function DestructiveConfirmDialog({
                 'w-full h-9 px-3 rounded-md text-[13px] tracking-wide',
                 'bg-card text-foreground',
                 'border',
+                // A border is a fill, so it takes raw sage; the "matches" label
+                // below is 10.5px type and takes the AA-safe --sage-text.
                 matches
-                  ? 'border-emerald-500 dark:border-emerald-400'
+                  ? 'border-[color:var(--brand-sage)]'
                   : 'border-border',
                 'focus:outline-none focus:border-ring focus:ring-[3px] focus:ring-ring/15'
               )}
@@ -207,7 +209,7 @@ export function DestructiveConfirmDialog({
             />
             {matches && (
               <span
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[10.5px] tracking-wide text-emerald-600 dark:text-emerald-400 pointer-events-none"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[10.5px] tracking-wide text-[color:var(--sage-text)] pointer-events-none"
                 style={{ fontFamily: 'var(--font-mono)' }}
               >
                 ✓ matches
@@ -224,7 +226,7 @@ export function DestructiveConfirmDialog({
             'flex items-start gap-2.5 px-3 py-2.5 rounded-md cursor-pointer',
             'border',
             irreversibleChecked
-              ? 'border-red-200 dark:border-red-900/40 bg-red-50/60 dark:bg-red-900/10'
+              ? 'border-[color:var(--status-rejected-border)] bg-[color:var(--red-soft)]'
               : 'border-border bg-secondary'
           )}
         >
@@ -239,7 +241,7 @@ export function DestructiveConfirmDialog({
               'w-4 h-4 rounded-sm mt-px flex-shrink-0 inline-flex items-center justify-center',
               'border-[1.5px]',
               irreversibleChecked
-                ? 'border-red-700 bg-red-700 text-white'
+                ? 'border-[color:var(--cta-destructive-bg)] bg-[color:var(--cta-destructive-bg)] text-[color:var(--cta-primary-fg)]'
                 : 'border-border bg-transparent'
             )}
             aria-hidden

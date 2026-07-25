@@ -169,7 +169,7 @@ export function DetailPageFrame({
   return (
     <div
       className={cn('min-h-screen', className)}
-      style={{ background: 'var(--page-bg, #f4f4f5)' }}
+      style={{ background: 'var(--page-bg, #f0e6d6)' }}
       data-testid={testId}
     >
       <AppHeader

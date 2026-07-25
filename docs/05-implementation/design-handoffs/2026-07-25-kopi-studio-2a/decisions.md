@@ -1,0 +1,45 @@
+# Decisions — Kopi Studio direction handoff
+
+_Last Updated: 2026-07-25 SGT_
+
+## 2026-07-25 — Disabled controls keep `--fg-muted`; they are AA-exempt
+**Decision**: A `disabled` button/input may keep `bg-muted` + `text-muted-foreground` (4.37:1) — do not "fix" it to `--fg-dim`. Only *enabled* small text must clear 4.5:1.
+**Why**: WCAG 2.1 SC 1.4.3 explicitly exempts inactive user-interface components. Darkening a disabled label to `--fg-dim` (#5D4F3F, 7.34 on card) makes it read *more* prominent than the enabled labels around it and destroys the disabled affordance. Contrast audits keep re-flagging `RecipientPickerDialog.tsx` submit-blocked state on the raw ratio alone.
+**Impact**: `--fg-dim` remains the correction for *enabled* 10–12px text on tinted surfaces (`CommandPalette` footer hints, `SearchableMultiSelect` overflow chip, `Alert` dismiss label). Disabled states stay on `--fg-muted`.
+
+## 2026-07-25 — Borderless (`isBare`) triggers carry focus on a full-opacity ring
+**Decision**: `SearchableMultiSelect`'s bare trigger open-state uses `ring-2 ring-ring` (full opacity), not the `ring-ring/15` halo the bordered variant uses.
+**Why**: The bordered variant splits the job — `border-ring` carries the 3:1 SC 1.4.11 state change and the low-alpha ring is only a halo. A bare trigger has no border, so the ring is the *only* mark; brown at 30% over card composites to ~#DED3C4 (~1.4:1) and is effectively invisible.
+**Impact**: Any future borderless control must use a full-opacity brown ring. The `border-ring` + `ring-ring/15` pair is only valid where a border actually exists.
+
+## 2026-07-25 — Direction 2a "Kopi House" chosen
+**Decision**: Apply direction 2a (quiet broadsheet on The Kopi Studio brand palette) from the Claude Design "Kopi Studio Directions" canvas, turn 2; 2b Ledger and 2c rejected.
+**Why**: User pick (in-conversation, 2026-07-25). Keeps the broadsheet/hairline layout logic that was already approved on 2026-07-21 while moving it onto the actual client brand — brown stays punctuation (CTA, focus, index numerals) instead of flooding chrome; viz collapses to a single brown ramp.
+**Impact**: Whole palette repoints navy/gold → page `#f0e6d6` / card `#faf6ee` / raised `#ffffff` / brown `#8b6a47` / sage `#5a7a5e` / border `#d9ccc0`. Type swaps Georgia → Instrument Serif (headings, never under 18px) + system-ui → IBM Plex Sans (body/UI), both loaded from Google Fonts via `<link>` in `index.html`, not `@fontsource`. Sidebar becomes a *light* rail (206px, card cream) rather than a dark one. Charts use the four-step brown ramp `#8b6a47`/`#a58868`/`#c0a68c`/`#dccbb6`. Spec: [KOPI_2A_SPEC.md](./KOPI_2A_SPEC.md).
+**Supersedes**: 2026-07-21 — Direction 1a "Masthead" chosen ([../2026-07-21-visual-directions/decisions.md](../2026-07-21-visual-directions/decisions.md)). The 1a *structure* survives — dateline greeting masthead, hairline-carried layout, restricted accent, monochrome viz; only the palette and type stack are replaced.
+
+## 2026-07-25 — Three AA text variants added on top of the brand card
+**Decision**: Introduce `--brown-text` `#806241`, `--sage-text` `#526f56`, `--negative-text` `#ab4925`, used **only** for text under 18px. The raw brand hexes `#8b6a47` / `#5a7a5e` / `#d97551` remain authoritative for fills, borders, icons, chart marks, and display type ≥ 18px.
+**Why**: The brand card's hexes are tuned as fills and miss WCAG AA (4.5:1) as small type. Measured: raw sage 3.88 on page / 4.45 on card; raw terracotta 2.57 / 2.95 — and the comp uses terracotta for live 13px cell text ("Overdue · 12 Jul"). Raw brown is the subtler failure: it passes on card (4.58) and fails on page (4.00), which would make compliance depend on which surface a component lands on. One variant per hue removes that conditional entirely. Variants preserve hue and were chosen to clear 4.5:1 on both surfaces at the smallest step (4.54 / 4.51 / 4.58 on page).
+**Impact**: A documented, deliberate deviation from `kopi-studio-brand-card.html`, which does not carry these tokens. Applies to secondary button labels, form labels, links, sage/terracotta status text, and any small-text accent. Status **pills** are exempt — the comp's own pill text colours score better on their tints (`#4a6a54` on `#d9e8e0` = 4.76; `#7d5f3d` on `#f0e2cf` = 4.61) than the page-tuned variants would; only the error pill takes the correction (`#b04f2c` 4.17 → `#ab4925` 4.50).
+**Open**: muted `#7d6b5b` measures **4.12 on the page colour** and the comp places it there (dateline, KPI meta, table meta). Not covered by the three variants; no fourth hex invented because none exists in the comp or brand card. Also open: the brand card's success button (`#faf6ee` on `#5a7a5e` = 4.45) is marginally below AA at 12.5px.
+
+## 2026-07-25 — Light-pinned, no dark mode
+**Decision**: Ship light only. No `prefers-color-scheme` variants, no theme toggle, no dark token set.
+**Why**: The Kopi Studio brand is defined as a warm cream system — page → card → raised is a three-step *light* ladder, and the whole accent strategy (brown as punctuation on cream) inverts badly on dark. Neither the brand card nor any of the three explored directions defines a dark counterpart, so a dark theme would be invented rather than specified.
+**Impact**: Removes the dark-surface token layer inherited from the navy/gold direction. Contrast ratios in [KOPI_2A_SPEC.md](./KOPI_2A_SPEC.md) are stated against `#f0e6d6` and `#faf6ee` only and need no second audit.
+
+## 2026-07-25 — Comp wins layout, brand card wins palette
+**Decision**: Where the 2a comp and the brand card conflict, follow the comp for layout/structure and the brand card for colour values — with each conflict recorded in the spec rather than silently resolved.
+**Why**: The comp is the approved visual artefact and encodes decisions the brand card has no opinion on; the brand card is the client's own colour authority and outlives any single direction.
+**Impact**: Three brand-card behaviours are explicitly **not** used in 2a — the `135deg` brown page-header gradient, the brown-filled active nav item (2a uses a 2px brown left border + `#f3ede3` fill + dark text), and brown-coloured section titles (2a renders all section heads `#3a2e24`). Two comp values override the brand card: card hover shadow warms from `rgba(0,0,0,0.1)` to `rgba(58,46,36,.1)`, and the input focus ring alpha goes from `0.1` to `.12`.
+
+## 2026-07-25 — KPI delta tint alphas are set by the AA budget, not by taste
+**Decision**: `--delta-positive-bg` drops from `rgb(90 122 94 / 0.14)` to `/ 0.10` and `--delta-negative-bg` from `rgb(217 117 81 / 0.16)` to `/ 0.12`. The foregrounds stay on the AA text variants (`--sage-text`, `--negative-text`).
+**Why**: `KpiDeltaBadge` renders its label at 12px and always sits inside a `KpiTile`, which paints `bg-card` `#faf6ee`. At the original alphas the pairs measured **4.39** (sage) and **4.48** (terracotta) — both below 4.5:1, so the badge was the one place where the AA variants still failed. Deepening the text further would have broken hue parity with the three locked variants; thinning the tint one step fixes it from the other side: 4.60 and 4.68.
+**Impact**: The delta chips read slightly quieter. These alphas are now a contrast budget, not a style choice — anything that deepens them must re-measure the fg/bg pair on `#faf6ee`. Comment in `src/index.css` (LOCKED_PICKS v1 → KpiTile) records the measurements.
+
+## 2026-07-25 — AppBase Radix zinc + red 1–12 scales deleted from `@theme`
+**Decision**: Remove `--color-zinc-1..12` and `--color-red-1..12` from `src/index.css`. Also removed the five dead Geist Pixel shape aliases (`--font-pixel-{square,grid,circle,triangle,line}`).
+**Why**: Both scales are cool-grey / pure-red AppBase leftovers that fight the warm cream ground, their block still claimed "dark variants live under `.dark { … }` below" (there is no `.dark` block), and a repo-wide grep found **zero** consumers in `src`, `tests` or `docs`. Same for the font aliases. Keeping unreferenced retired-palette tokens invites a future component to reach for `bg-zinc-3`.
+**Impact**: Tailwind's own `zinc-*` / `red-*` default palette is untouched — `bg-zinc-950`, `text-red-700`, `bg-red-50` still compile (verified in the built CSS), so the ~66 remaining default-palette utility usages elsewhere in `src` are unaffected and remain a separate migration item. `docs/01-system-architecture/design-system/COLORS.md` (line ~100) and `TYPOGRAPHY.md` still describe these tokens as present and still describe the navy/gold vocabulary — stale, needs the docs pass.

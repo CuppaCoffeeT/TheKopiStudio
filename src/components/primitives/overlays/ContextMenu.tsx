@@ -51,7 +51,7 @@ export const ContextMenuItem = ({
       'flex items-center gap-2 px-2 py-1.5 rounded-[5px]',
       'text-xs cursor-pointer outline-none select-none',
       destructive
-        ? 'text-red-700 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-950/40 hover:bg-red-50 dark:hover:bg-red-950/40'
+        ? 'text-[color:var(--negative-text)] focus:bg-[color:var(--red-soft)] hover:bg-[color:var(--red-soft)]'
         : 'text-foreground focus:bg-secondary hover:bg-secondary',
       'data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed',
       className
@@ -63,7 +63,7 @@ export const ContextMenuItem = ({
       <span
         className={cn(
           'w-3.5 text-center text-xs',
-          destructive ? 'text-red-700 dark:text-red-400' : 'text-muted-foreground'
+          destructive ? 'text-[color:var(--negative-text)]' : 'text-muted-foreground'
         )}
       >
         {icon}

@@ -26,13 +26,13 @@ export function WizardTopBar({ subtitle, isAuthenticated }: WizardTopBarProps) {
         <div className="min-w-0">
           <div
             className="text-[15px] leading-tight text-foreground truncate"
-            style={{ fontFamily: 'var(--font-pixel, var(--font-sans))', fontWeight: 500 }}
+            style={{ fontFamily: 'var(--font-sans)', fontWeight: 500 }}
           >
             Prospect Profiler
           </div>
           <div
             className="text-muted-foreground truncate"
-            style={{ fontFamily: 'var(--font-pixel)', fontSize: 10.5, letterSpacing: '0.08em' }}
+            style={{ fontFamily: 'var(--font-sans)', fontSize: 10.5, letterSpacing: '0.08em' }}
           >
             {subtitle}
           </div>

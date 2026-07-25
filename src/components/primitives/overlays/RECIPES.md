@@ -14,7 +14,7 @@ import { Checkbox } from '@/components/primitives/form';
 <FilterDropdown label="Status" count={selected.length} value={`${selected.length} selected`}>
   <div className="flex flex-col gap-1 p-1 min-w-[14rem]">
     {options.map(o => (
-      <label key={o.key} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-zinc-100 dark:hover:bg-zinc-900 cursor-pointer">
+      <label key={o.key} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-[color:var(--row-hover)] cursor-pointer">
         <Checkbox checked={selected.includes(o.key)} onCheckedChange={(v) => toggle(o.key, v)} />
         <span className="text-[12.5px]">{o.label}</span>
       </label>
@@ -60,10 +60,10 @@ import { IconGlyph } from '@/components/primitives/IconGlyph';
 <DrawerRoot open={open} onOpenChange={setOpen}>
   <DrawerContent>
     <DrawerHeader title="Row actions" />
-    <button className="w-full flex items-center gap-3 px-4 py-3 text-[13px] hover:bg-zinc-100 dark:hover:bg-zinc-900" onClick={onEdit}>
+    <button className="w-full flex items-center gap-3 px-4 py-3 text-[13px] hover:bg-[color:var(--row-hover)]" onClick={onEdit}>
       <IconGlyph name="doc" size={16} /> Edit
     </button>
-    <button className="w-full flex items-center gap-3 px-4 py-3 text-[13px] text-red-700 hover:bg-red-50" onClick={onDelete}>
+    <button className="w-full flex items-center gap-3 px-4 py-3 text-[13px] text-[color:var(--negative-text)] hover:bg-[color:var(--red-soft)]" onClick={onDelete}>
       <IconGlyph name="warn" size={16} /> Delete
     </button>
     <DrawerFooter />

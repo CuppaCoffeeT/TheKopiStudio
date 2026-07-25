@@ -14,6 +14,7 @@
 | `code-hygiene.md` | 4-checks-when-touching-a-file (always-loaded, no paths) |
 | `lessons-logging.md` | Append lessons/decisions to per-workspace `lessons.md`/`decisions.md` (always-loaded, no paths) |
 | `documentation.md` | Doc placement, header format, naming, DOCUMENTATION_INDEX registration |
+| `light-theme.md` | Kopi Studio light contract — raised cards on cream, brown/sage/terracotta, AA text variants, no `dark:` |
 | `migrations.md` | Migration timestamp filenames, MIGRATION_TEMPLATE adherence |
 | `mobile-web.md` | Touch-first rules — `dvh` not `vh`, popover-in-drawer height cap, 16px input zoom, 44px touch targets |
 | `module-access.md` | `useAuth().modules` for RBAC — never role strings |
@@ -30,7 +31,7 @@
 
 - **Always-loaded**: `code-hygiene.md` + `lessons-logging.md` have no `paths:` — apply everywhere.
 - **Scoped**: every other rule has `paths:` frontmatter (e.g. `paths: ['src/**/*.ts*']`) so it auto-loads only on matching edits.
-- **Structure**: Summary → Detailed Patterns → Known Patterns (when applicable) → References. Known-pattern notes are manually curated when a recurring mistake is observed.
+- **Structure**: Summary → Detailed Patterns → Anti-patterns / Known Patterns (when applicable) → References. Known-pattern notes are manually curated when a recurring mistake is observed; when the era they describe is retired, retitle the block `## Historical (<era>, retired <date>)` and keep the text verbatim — never delete debugging history.
 - **Length**: target ≤80 lines (rule docs are guides, but stay tight). Split by sub-topic if longer.
 
 ## 📚 Related

@@ -32,7 +32,7 @@ interface KpiTileProps {
   delta?: KpiDelta;
   subtitle?: string;
   icon?: LucideIcon;
-  /** Shows red alert dot top-left. */
+  /** Shows terracotta alert dot top-left. */
   alert?: boolean;
   /** Mobile-friendly reduced height. */
   compact?: boolean;
@@ -40,7 +40,7 @@ interface KpiTileProps {
   animate?: boolean;
   /** Optional sparkline slot — usually <AreaChart> from charts primitives. */
   sparkline?: ReactNode;
-  /** Optional corner index numeral (e.g. "01") — Georgia 15px gold, per 1a Masthead spec. */
+  /** Optional corner index numeral (e.g. "01") — Instrument Serif 18px raw brown, per the 2a spec. */
   index?: string;
   className?: string;
   onClick?: () => void;
@@ -96,10 +96,12 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
           : undefined
       }
       className={cn(
-        'relative overflow-hidden border border-border bg-card shadow-[0_1px_2px_rgba(24,24,27,0.04),0_1px_0_rgba(24,24,27,0.02)]',
+        // 2a cards rest FLAT — the lift is the cream-card-on-cream-page colour
+        // step, not a shadow. Only interactive tiles cast one, and only on hover.
+        'relative overflow-hidden border border-border bg-card shadow-[var(--card-shadow-rest)]',
         compact ? 'px-4 py-[14px]' : 'p-5',
         interactive &&
-          'cursor-pointer transition-all hover:shadow-sm hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:scale-[0.99]',
+          'cursor-pointer transition-all hover:shadow-[var(--card-shadow-hover)] hover:border-[color:var(--border-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:scale-[0.99]',
         className,
       )}
       style={{ borderRadius: 'var(--kpi-radius)' }}
@@ -108,7 +110,7 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
         <span
           aria-hidden
           className="absolute top-3 left-3 h-1.5 w-1.5 rounded-full"
-          style={{ background: 'var(--delta-negative-fg, #e8836f)' }}
+          style={{ background: 'var(--delta-negative-fg)' }}
         />
       )}
 
@@ -121,15 +123,17 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
         )}
       >
         {Icon && <Icon className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />}
-        <span className="flex-1 min-w-0 truncate text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+        <span className="flex-1 min-w-0 truncate text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--fg-dim)]">
           {label}
         </span>
         {delta && <KpiDeltaBadge {...delta} />}
         {index && (
           <span
             aria-hidden
-            className="flex-shrink-0 text-[15px] leading-none"
-            style={{ fontFamily: 'Georgia, serif', color: 'var(--brand-red)' }}
+            // 18px is the Instrument Serif floor; the index numeral sits exactly
+            // on it, which is also where the spec sanctions the RAW brown.
+            className="flex-shrink-0 text-[18px] leading-none"
+            style={{ fontFamily: 'var(--font-pixel)', color: 'var(--brand-brown)' }}
           >
             {index}
           </span>
@@ -140,12 +144,20 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
       <div
         className={cn(
           'tabular-nums leading-[1.05]',
-          compact ? 'text-[22px]' : 'text-[30px] mb-1.5',
+          compact ? 'text-[22px]' : 'text-[32px] mb-1.5',
         )}
-        style={{ fontFamily: 'Georgia, serif', color: 'var(--fg)' }}
+        style={{ fontFamily: 'var(--font-pixel)', color: 'var(--fg)' }}
       >
+        {/* Prefix / suffix units pin themselves to the sans face: at 14px they sit
+            under the 18px Instrument Serif floor, so they must not inherit the
+            parent numeral's serif. */}
         {prefix && (
-          <span className="mr-1 text-[14px]" style={{ color: 'var(--fg-dim)' }}>{prefix}</span>
+          <span
+            className="mr-1 text-[14px]"
+            style={{ fontFamily: 'var(--font-sans)', color: 'var(--fg-dim)' }}
+          >
+            {prefix}
+          </span>
         )}
         {animate ? (
           <NumberTicker value={value} decimalPlaces={decimals} format={formatValue} />
@@ -153,7 +165,12 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
           formatValue(value)
         )}
         {suffix && (
-          <span className="ml-1 text-[14px]" style={{ color: 'var(--fg-dim)' }}>{suffix}</span>
+          <span
+            className="ml-1 text-[14px]"
+            style={{ fontFamily: 'var(--font-sans)', color: 'var(--fg-dim)' }}
+          >
+            {suffix}
+          </span>
         )}
       </div>
 

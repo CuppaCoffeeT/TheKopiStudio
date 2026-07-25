@@ -12,7 +12,8 @@
  * Also re-exported under the shadcn names (`Select`, `SelectTrigger`,
  * `SelectValue`, `SelectContent`, `SelectItem`, `SelectGroup`, `SelectLabel`,
  * `SelectSeparator`) so existing adopters can swap imports with zero prop
- * changes. Tokens: red-700 focus ring · slate-800 highlight · glass content.
+ * changes. Tokens: brown focus outline (`--cta-primary-bg`) · brown-tinted row
+ * highlight · cream glass content.
  */
 
 import * as SelectPrimitive from '@radix-ui/react-select';
@@ -51,8 +52,12 @@ export const SelectMenuTrigger = forwardRef<
         'border-border',
         'text-foreground',
         'placeholder:text-muted-foreground',
-        'hover:border-border',
-        'focus:outline-none focus:border-ring focus:ring-[3px] focus:ring-ring/15',
+        'hover:border-[color:var(--border-hover)]',
+        // The trigger renders a <button>, so it takes the 2a button focus rule —
+        // a 2px brown outline. A low-alpha halo alone measures ~1.2:1 and is
+        // effectively invisible on cream.
+        'focus:border-ring',
+        'focus-visible:outline-2 focus-visible:outline-[color:var(--cta-primary-bg)] focus-visible:outline-offset-2',
         'disabled:cursor-not-allowed disabled:opacity-60',
         'data-[placeholder]:text-muted-foreground',
         className,
@@ -147,7 +152,7 @@ export const SelectMenuLabel = forwardRef<
         'px-2 py-1.5 text-[10.5px] font-semibold uppercase tracking-widest text-muted-foreground',
         className,
       )}
-      style={{ fontFamily: 'var(--font-pixel)' }}
+      style={{ fontFamily: 'var(--font-sans)' }}
       {...props}
     />
   );
@@ -164,7 +169,11 @@ export const SelectMenuItem = forwardRef<
         'relative flex w-full cursor-pointer select-none items-center rounded py-1.5 pl-7 pr-2',
         'text-[13px] text-foreground',
         'outline-none',
-        'focus:bg-secondary hover:bg-secondary',
+        // Same contract as DropdownMenuItem: an inset brown ring carries
+        // keyboard focus, --row-selected (12%) marks it, --row-hover (6%) marks
+        // hover — a flat tint on cream is only ~1.1:1 and reads as nothing.
+        'focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring',
+        'focus:bg-[color:var(--row-selected)] hover:bg-[color:var(--row-hover)]',
         'data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed',
         'data-[state=checked]:font-medium',
         className,
@@ -173,7 +182,7 @@ export const SelectMenuItem = forwardRef<
     >
       <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
         <SelectPrimitive.ItemIndicator>
-          <Check className="h-3.5 w-3.5 text-slate-800 dark:text-slate-100" />
+          <Check className="h-3.5 w-3.5 text-[color:var(--brown-text)]" />
         </SelectPrimitive.ItemIndicator>
       </span>
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>

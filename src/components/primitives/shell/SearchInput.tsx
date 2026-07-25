@@ -7,7 +7,7 @@
  * narrow sub-page filter).
  *
  * Spec parity: matches the left half of `<FilterBar>` (S-shell ListAtoms) —
- * same Geist Mono text, same focus ring (red-700/15), same mag-glass icon.
+ * same type ramp, same brown focus ring (`--ring` at 50%), same mag-glass icon.
  * Difference: the ⌘K hint is hidden by default (most cell-level places
  * don't wire up a palette hotkey); set `showKbd` to re-enable it.
  *
@@ -96,7 +96,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(functi
         'bg-card',
         'border border-border',
         'focus-within:border-ring',
-        'focus-within:ring-[3px] focus-within:ring-ring/15',
+        'focus-within:ring-[3px] focus-within:ring-ring/50',
         'transition-colors',
         disabled && 'opacity-50 cursor-not-allowed',
         className,

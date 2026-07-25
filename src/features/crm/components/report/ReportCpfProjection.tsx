@@ -89,7 +89,7 @@ export function ReportCpfProjection({ client, currentAge, refYear }: ReportCpfPr
   return (
     <section className="report-section report-page-break" data-testid="report-cpf-projection">
       <h2>CPF projection to age 55</h2>
-      <p className="text-[12px] text-gray-500">
+      <p className="text-[12px] text-[color:var(--fg-dim)]">
         Projection based on current CPF interest rates (OA: 2.5%, SA: 4%, MA: 4%) with Medisave
         cap overflow to SA.
       </p>

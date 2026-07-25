@@ -34,8 +34,10 @@ export const DrawerContent = ({
         'rounded-t-2xl overflow-hidden',
         'bg-popover',
         'border-t border-x border-border',
-        'shadow-[0_-12px_40px_rgba(24,24,27,0.12)]',
-        'dark:shadow-[0_-12px_40px_rgba(0,0,0,0.45)]',
+        // Warm-ink float, thrown UPWARD (a bottom sheet lifts off the page, so
+        // --floating-shadow's downward geometry doesn't apply). Light-pinned —
+        // no `dark:` counterpart.
+        'shadow-[0_-12px_40px_rgb(58_46_36_/_0.12)]',
         'flex flex-col max-h-[90dvh]',
         className
       )}
@@ -64,7 +66,7 @@ export const DrawerContent = ({
 );
 DrawerContent.displayName = 'DrawerContent';
 
-/** Title row — renders in Geist Pixel Square crisp + optional counter. */
+/** Title row — renders in Instrument Serif at 20px + optional counter. */
 export const DrawerHeader = ({
   title,
   subtitle,
@@ -78,7 +80,6 @@ export const DrawerHeader = ({
       style={{
         fontFamily: 'var(--font-pixel)',
         letterSpacing: '-0.01em',
-        WebkitFontSmoothing: 'none',
       }}
     >
       {title}

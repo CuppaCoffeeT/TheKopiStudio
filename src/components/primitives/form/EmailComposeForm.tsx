@@ -85,7 +85,7 @@ export function EmailComposeForm({
       {modeLabel && (
         <div
           className="text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground"
-          style={{ fontFamily: 'var(--font-pixel)' }}
+          style={{ fontFamily: 'var(--font-sans)' }}
         >
           {modeLabel}
         </div>
@@ -116,7 +116,7 @@ export function EmailComposeForm({
             onClick={() => setCcBccOpen((o) => !o)}
             className={cn(
               'text-[10.5px] inline-flex items-center gap-0.5',
-              'text-blue-700 dark:text-blue-400 hover:underline',
+              'text-[color:var(--brand-red)] hover:underline',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm',
             )}
             aria-expanded={ccBccOpen}
@@ -210,7 +210,7 @@ export function EmailComposeForm({
           disabled={!canSend}
           className={cn(
             'h-8 px-3.5 rounded-md inline-flex items-center gap-1.5 text-[12.5px] font-medium',
-            'bg-primary hover:bg-primary/90 text-primary-foreground',
+            'bg-primary hover:bg-[var(--cta-primary-bg-hover)] text-primary-foreground',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
             'disabled:opacity-40 disabled:cursor-not-allowed',
           )}
@@ -247,7 +247,7 @@ function FieldWrap({
       <div className="flex items-center justify-between">
         <span
           className="text-[9.5px] uppercase tracking-[0.08em] text-muted-foreground"
-          style={{ fontFamily: 'var(--font-pixel)' }}
+          style={{ fontFamily: 'var(--font-sans)' }}
         >
           {label}
         </span>

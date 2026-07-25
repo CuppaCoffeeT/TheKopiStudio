@@ -24,7 +24,7 @@ export interface EmailSidebarLabel {
   label: string;
   icon: ReactNode;
   count?: number;
-  /** If true, the count badge renders with the critical red-8 fill. */
+  /** If true, the count badge renders with the brown `--primary` fill. */
   critical?: boolean;
   /** Optional `data-testid` for the row button. */
   testId?: string;
@@ -65,7 +65,7 @@ function CountPill({ count, critical }: { count: number; critical?: boolean }) {
         'ml-auto text-[10px] px-1.5 rounded-sm tabular-nums shrink-0',
         critical
           ? 'bg-primary text-primary-foreground'
-          : 'bg-secondary text-muted-foreground',
+          : 'bg-secondary text-[color:var(--fg-dim)]',
       )}
       style={{ fontFamily: 'var(--font-mono)' }}
     >
@@ -132,8 +132,10 @@ export const EmailSidebar = forwardRef<HTMLElement, EmailSidebarProps>(
                     <span
                       className={cn(
                         'absolute top-1 right-1 min-w-[14px] h-[14px] px-1 rounded-full',
-                        'inline-flex items-center justify-center text-[9px] text-white tabular-nums',
-                        label.critical || label.count >= 10 ? 'bg-primary' : 'bg-zinc-500 dark:bg-zinc-600',
+                        'inline-flex items-center justify-center text-[9px] text-[color:var(--cta-primary-fg)] tabular-nums',
+                        label.critical || label.count >= 10
+                          ? 'bg-primary'
+                          : 'bg-[color:var(--status-expired-dot)]',
                       )}
                       style={{ fontFamily: 'var(--font-mono)' }}
                     >
@@ -198,7 +200,7 @@ export const EmailSidebar = forwardRef<HTMLElement, EmailSidebarProps>(
                         <span
                           aria-hidden
                           className="inline-block w-2 h-2 rounded-sm shrink-0"
-                          style={{ background: ul.color ?? '#71717a' }}
+                          style={{ background: ul.color ?? 'var(--fg-muted)' }}
                         />
                       ),
                       count: ul.count,

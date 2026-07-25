@@ -4,7 +4,7 @@
  * policy isHospitalization (legacy condition). ALL sums (IS = CPF + cash,
  * Total = IS + rider) come from lib hospitalShieldPremiums — only
  * toLocaleString formatting happens here. The bold Total row keeps the legacy
- * #fef3c7 highlight via .report-row-total (print-color locked in CSS).
+ * in-progress-tint highlight via .report-row-total (print-color locked in CSS).
  */
 
 import { hospitalShieldPremiums } from '../../lib/financeReport';

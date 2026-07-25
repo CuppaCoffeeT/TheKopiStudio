@@ -5,8 +5,8 @@
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
  * States: default · hover · unread · selected · focus-visible · disabled.
- * Unread: subtle red-8 left strip (50% opacity) + bold subject + red-8 date.
- * Selected: full red-8 left strip (3px) + zinc-50 bg.
+ * Unread: subtle brown left strip (50% opacity) + bold subject + brown date.
+ * Selected: full brown left strip (3px) + tint (--secondary) bg.
  *
  * Composes star button, read-state icon, subject line, snippet, AI-category
  * badge slot, and date. Caller controls star toggle and click-through.
@@ -113,7 +113,10 @@ export const EmailThreadRow = forwardRef<HTMLAnchorElement, EmailThreadRowProps>
           <Star
             className={cn(
               'w-4 h-4',
-              isStarred && 'fill-amber-400 text-amber-400 dark:fill-amber-400 dark:text-amber-400',
+              // Starring is punctuation, so it takes the raw brand brown — the
+              // one accent 2a sanctions for marks. Raw is correct: this is a
+              // fill, not type.
+              isStarred && 'fill-[color:var(--brand-brown)] text-[color:var(--brand-brown)]',
             )}
           />
         </button>
@@ -123,7 +126,9 @@ export const EmailThreadRow = forwardRef<HTMLAnchorElement, EmailThreadRowProps>
           {isRead ? (
             <MailOpen className="w-4 h-4 text-muted-foreground" />
           ) : (
-            <Mail className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            /* Unread reads as full ink against the read row's muted glyph —
+               an ink step, not a categorical hue. */
+            <Mail className="w-4 h-4 text-foreground" />
           )}
         </div>
 
@@ -139,14 +144,16 @@ export const EmailThreadRow = forwardRef<HTMLAnchorElement, EmailThreadRowProps>
             <span
               className={cn(
                 'flex-1 truncate',
-                !isRead ? 'font-semibold text-foreground' : 'text-muted-foreground font-normal',
+                !isRead
+                  ? 'font-semibold text-foreground'
+                  : 'text-[color:var(--fg-dim)] font-normal',
               )}
             >
               {subject || '(no subject)'}
             </span>
             {messageCount && messageCount > 1 && (
               <span
-                className="text-[10px] text-muted-foreground bg-secondary px-1.5 rounded-sm tabular-nums shrink-0"
+                className="text-[10px] text-[color:var(--fg-dim)] bg-secondary px-1.5 rounded-sm tabular-nums shrink-0"
                 style={{ fontFamily: 'var(--font-mono)' }}
               >
                 {messageCount}
@@ -160,7 +167,7 @@ export const EmailThreadRow = forwardRef<HTMLAnchorElement, EmailThreadRowProps>
             )}
           </div>
           <p
-            className="text-[12px] text-muted-foreground leading-[1.4] overflow-hidden"
+            className="text-[12px] text-[color:var(--fg-dim)] leading-[1.4] overflow-hidden"
             style={{
               display: '-webkit-box',
               WebkitLineClamp: 2,
@@ -178,8 +185,8 @@ export const EmailThreadRow = forwardRef<HTMLAnchorElement, EmailThreadRowProps>
             className={cn(
               'text-[10.5px] tabular-nums whitespace-nowrap',
               !isRead
-                ? 'text-primary font-medium'
-                : 'text-muted-foreground',
+                ? 'text-[color:var(--brown-text)] font-medium'
+                : 'text-[color:var(--fg-dim)]',
             )}
             style={{ fontFamily: 'var(--font-mono)' }}
           >

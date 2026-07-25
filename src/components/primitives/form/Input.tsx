@@ -8,7 +8,9 @@ import { cn } from '@/lib/utils';
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/form/FormPrimitives.jsx
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked: focus ring red-700 never silent; border red-700 on error/focus; prefix/suffix mono-font.
+ * Locked (2a): focus outline is a solid 2px brown (--cta-primary-bg) and never silent; error
+ * borrows the terracotta --destructive border with a solid --negative-text focus outline;
+ * prefix/suffix mono-font.
  *
  * Compat: when no prefix/suffix/leadingIcon slots are used, renders a bare
  * styled `<input>` so it works inside shadcn `<FormControl>`/Radix Slot
@@ -59,12 +61,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           'w-full rounded-lg border transition-[box-shadow,border-color] duration-150',
           heightCls,
           'px-3',
-          error
-            ? 'border-red-700 dark:border-red-400'
-            : 'border-border',
+          error ? 'border-destructive' : 'border-border',
           !disabled && !error && 'hover:border-border',
           !error && 'focus:border-ring focus:outline-2 focus:outline-[color:var(--cta-primary-bg)] focus:outline-offset-1',
-          error && 'focus:ring-[3px] focus:ring-red-700/15 dark:focus:ring-red-400/25',
+          error && 'focus:outline-2 focus:outline-[color:var(--negative-text)] focus:outline-offset-1',
           disabled ? 'bg-secondary opacity-80 cursor-not-allowed' : 'bg-card',
           'text-foreground',
           'placeholder:text-muted-foreground',
@@ -84,14 +84,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       className={cn(
         'w-full flex items-center rounded-lg overflow-hidden border transition-[box-shadow,border-color] duration-150',
         heightCls,
-        error
-          ? 'border-red-700 dark:border-red-400'
-          : 'border-border',
+        error ? 'border-destructive' : 'border-border',
         !disabled && !readOnly && !error && 'hover:border-border',
         !error &&
           'focus-within:border-ring focus-within:outline-2 focus-within:outline-[color:var(--cta-primary-bg)] focus-within:outline-offset-1',
         error &&
-          'focus-within:ring-[3px] focus-within:ring-red-700/15 dark:focus-within:ring-red-400/25',
+          'focus-within:outline-2 focus-within:outline-[color:var(--negative-text)] focus-within:outline-offset-1',
         disabled || readOnly
           ? 'bg-secondary'
           : 'bg-card',
@@ -136,7 +134,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       {readOnly && (
         <span
           className="px-3 text-muted-foreground uppercase tracking-wider flex-shrink-0"
-          style={{ fontFamily: 'var(--font-pixel)', fontSize: 10.5, letterSpacing: '0.08em' }}
+          style={{ fontFamily: 'var(--font-sans)', fontSize: 10.5, letterSpacing: '0.08em' }}
         >
           readonly
         </span>

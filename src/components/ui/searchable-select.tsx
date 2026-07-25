@@ -147,7 +147,7 @@ const SearchableSelect = (props: SearchableSelectProps) => {
               <Badge key={val} variant="secondary" className="flex items-center gap-1">
                 {opt?.label || val}
                 <X
-                  className="h-3 w-3 cursor-pointer hover:text-red-500"
+                  className="h-3 w-3 cursor-pointer hover:text-destructive"
                   onClick={(e) => handleRemoveBadge(e, val)}
                 />
               </Badge>

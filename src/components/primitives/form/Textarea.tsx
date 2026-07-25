@@ -8,7 +8,9 @@ import { cn } from '@/lib/utils';
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/form/FormPrimitives.jsx
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked: focus ring red-700 never silent; counter turns red when used > max.
+ * Locked (2a): focus outline is a solid 2px brown (--cta-primary-bg) and never silent; error
+ * uses the terracotta --destructive border with a solid --negative-text focus outline; the
+ * counter turns --negative-text when used > max.
  */
 
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -67,14 +69,12 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
       <div
         className={cn(
           'rounded-lg border transition-[box-shadow,border-color] duration-150',
-          error
-            ? 'border-red-700 dark:border-red-400'
-            : 'border-border',
+          error ? 'border-destructive' : 'border-border',
           !disabled && !error && 'hover:border-border',
           !error &&
             'focus-within:border-ring focus-within:outline-2 focus-within:outline-[color:var(--cta-primary-bg)] focus-within:outline-offset-1',
           error &&
-            'focus-within:ring-[3px] focus-within:ring-red-700/15 dark:focus-within:ring-red-400/25',
+            'focus-within:outline-2 focus-within:outline-[color:var(--negative-text)] focus-within:outline-offset-1',
           disabled ? 'bg-secondary opacity-80' : 'bg-card'
         )}
       >
@@ -107,7 +107,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
           className={cn(
             'self-end tabular-nums',
             counter.used > counter.max
-              ? 'text-red-700 dark:text-red-400'
+              ? 'text-[color:var(--negative-text)]'
               : 'text-muted-foreground'
           )}
           style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}

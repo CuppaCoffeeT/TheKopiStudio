@@ -13,7 +13,8 @@ import { formatCurrency } from '@/utils/currencyHelper';
  * (caller-side data shape unchanged); grouping by `quotation_id` happens inside.
  *
  * Locked: read-only · grouped by quotation_number · subtotal row tinted · tabular-num font on numerics ·
- *         empty state with FileText glyph · dark-mode mirror on every surface.
+ *         empty state with FileText glyph. Light-pinned (Kopi Studio 2a) — every
+ *         surface paints a cream/brown token, and there is no dark counterpart.
  */
 
 export interface QuotationItemForInvoice {
@@ -84,7 +85,8 @@ export function QuotationReferencePanel({ items, className }: QuotationReference
             Linked quotations
           </span>
           {groups.length > 0 && (
-            <span className="rounded-full border border-border bg-secondary px-1.5 py-px font-mono text-[10.5px] text-muted-foreground">
+            /* --fg-dim on the secondary tint: --fg-muted is only 4.37:1 there, under AA for 10.5px. */
+            <span className="rounded-full border border-border bg-secondary px-1.5 py-px font-mono text-[10.5px] text-[color:var(--fg-dim)]">
               {groups.length}
             </span>
           )}
@@ -135,7 +137,8 @@ export function QuotationReferencePanel({ items, className }: QuotationReference
                 <col className="w-[18%]" />
               </colgroup>
               <thead>
-                <tr className="bg-secondary font-mono text-[10px] uppercase tracking-[0.06em] text-muted-foreground">
+                {/* --fg-dim: 10px uppercase needs 6.66:1, not --fg-muted's 4.37:1 on the tint. */}
+                <tr className="bg-secondary font-mono text-[10px] uppercase tracking-[0.06em] text-[color:var(--fg-dim)]">
                   <th className="border-b border-border px-4 py-2.5 text-left font-medium">
                     Item
                   </th>

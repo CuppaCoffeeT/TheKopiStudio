@@ -8,8 +8,8 @@
  * Composes: <Modal> + <ModalPrimaryAction> + <ModalGhostAction>.
  * Locked:
  *  - Primary action blocked until reason ≥ `minReasonLength` chars.
- *  - `destructive` turns primary CTA + title red-700 (archive · delete flows).
- *  - Status transition row: FROM pill → arrow → TO pill, both in Geist Mono uppercase.
+ *  - `destructive` turns primary CTA + title terracotta (archive · delete flows).
+ *  - Status transition row: FROM pill → arrow → TO pill, both in the mono stack (--font-mono) uppercase.
  */
 
 import { useState } from 'react';
@@ -74,7 +74,7 @@ export function StatusTransitionModal({
             {loading && (
               <span
                 aria-hidden
-                className="inline-block w-3 h-3 mr-1 rounded-full border-[1.5px] border-white/30 border-t-white animate-spin"
+                className="inline-block w-3 h-3 mr-1 rounded-full border-[1.5px] border-current/30 border-t-current animate-spin"
               />
             )}
             {confirmLabel}
@@ -100,8 +100,8 @@ export function StatusTransitionModal({
           className={cn(
             'px-2 py-[3px] rounded-full text-[10.5px] uppercase tracking-wider',
             destructive
-              ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
-              : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400'
+              ? 'bg-[color:var(--status-rejected-bg)] text-[color:var(--status-rejected-fg)]'
+              : 'bg-[color:var(--status-accepted-bg)] text-[color:var(--status-accepted-fg)]'
           )}
         >
           {to}
@@ -142,7 +142,7 @@ export function StatusTransitionModal({
           <span>
             {reason.length} / {minReasonLength} min
           </span>
-          <span className={ok ? 'text-emerald-700 dark:text-emerald-400' : undefined}>
+          <span className={ok ? 'text-[color:var(--sage-text)]' : undefined}>
             {ok ? '✓ ready' : 'awaiting reason'}
           </span>
         </div>

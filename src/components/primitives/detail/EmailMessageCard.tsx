@@ -5,8 +5,8 @@
  * Adopters: email-inbox detail pane.
  *
  * States: collapsed (shows sender, time, snippet) · expanded (full body +
- * recipients + attachments + reply actions). Shadcnblocks-clean card shape
- * (16px radius · zinc-200/80 border · rest-shadow).
+ * recipients + attachments + reply actions). Card shape follows 2a: 16px radius,
+ * `--border` hairline, and NO rest shadow — the lift is the cream-on-page step.
  *
  * Body rendering delegated to `SanitizedHtmlProse` primitive — supports inline
  * images via `cidMap`, external image policy, and sanitization.
@@ -35,7 +35,7 @@ interface EmailMessageCardProps {
   fromName: string;
   /** Sender email address (monospace, shown next to name). */
   fromEmail: string;
-  /** Avatar bg color (slate-700 by default). Accepts any CSS color. */
+  /** Avatar bg color (brand brown by default). Accepts any CSS color. */
   avatarColor?: string;
   /** Initials shown inside avatar circle. 1–2 chars. */
   avatarInitials: string;
@@ -128,7 +128,9 @@ export const EmailMessageCard = forwardRef<HTMLDivElement, EmailMessageCardProps
           'relative overflow-hidden rounded-2xl border',
           'bg-card',
           'border-border',
-          'shadow-[0_1px_2px_rgb(0_0_0_/_0.04)]',
+          // 2a cards rest FLAT — `--card-shadow` is `none`; only floating
+          // surfaces cast a shadow.
+          'shadow-[var(--card-shadow)]',
           className,
         )}
         style={{ fontFamily: 'var(--font-sans)' }}
@@ -148,8 +150,8 @@ export const EmailMessageCard = forwardRef<HTMLDivElement, EmailMessageCardProps
         >
           <span
             aria-hidden
-            className="inline-flex items-center justify-center w-7 h-7 rounded-full text-white text-[11px] font-semibold shrink-0"
-            style={{ background: avatarColor ?? 'var(--slate-700, #334155)' }}
+            className="inline-flex items-center justify-center w-7 h-7 rounded-full text-[color:var(--cta-primary-fg)] text-[11px] font-semibold shrink-0"
+            style={{ background: avatarColor ?? 'var(--brand-brown)' }}
           >
             {avatarInitials}
           </span>

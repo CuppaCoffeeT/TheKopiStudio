@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/form/FormPrimitives.jsx
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked: drag-over border + tint uses red-700; success uses green-700; error uses red-700.
+ * Locked (2a): drag-over border + tint use the brand brown; success uses sage; error uses terracotta.
  */
 
 export type FileItemState = 'uploading' | 'success' | 'error';
@@ -99,11 +99,7 @@ export function FileUpload({
         className={cn(
           'rounded-[10px] px-5 py-[22px] w-full flex flex-col items-center gap-2 text-center',
           'border-[1.5px] border-dashed transition-[border-color,background-color] duration-150',
-          drag
-            ? 'border-primary bg-primary/5'
-            : error
-              ? 'border-red-700 dark:border-red-400'
-              : 'border-border',
+          drag ? 'border-primary bg-primary/5' : error ? 'border-destructive' : 'border-border',
           !drag && !error && !disabled && 'hover:border-border',
           disabled ? 'bg-secondary opacity-70 cursor-not-allowed' : 'bg-secondary cursor-pointer',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background'
@@ -113,7 +109,8 @@ export function FileUpload({
           className={cn(
             'w-9 h-9 rounded-lg inline-flex items-center justify-center border',
             'bg-card border-border',
-            drag ? 'text-primary' : 'text-muted-foreground'
+            // Drop zone sits on the tint surface, where raw brown / --fg-muted both fall under AA.
+            drag ? 'text-[color:var(--brown-text)]' : 'text-[color:var(--fg-dim)]'
           )}
         >
           <Upload size={18} />
@@ -125,7 +122,7 @@ export function FileUpload({
           {drag ? 'Drop files to upload' : 'Drop files here, or click to browse'}
         </div>
         <div
-          className="text-muted-foreground"
+          className="text-[color:var(--fg-dim)]"
           style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}
         >
           {hint}
@@ -185,7 +182,7 @@ function FileRow({ item, onRemove }: { item: FileUploadItem; onRemove?: (id: str
                 />
               </span>
               <span
-                className="tabular-nums text-primary"
+                className="tabular-nums text-[color:var(--brown-text)]"
                 style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}
               >
                 {item.progress ?? 0}%
@@ -194,7 +191,7 @@ function FileRow({ item, onRemove }: { item: FileUploadItem; onRemove?: (id: str
           )}
           {item.state === 'error' && (
             <span
-              className="text-red-700 dark:text-red-400"
+              className="text-[color:var(--negative-text)]"
               style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}
             >
               Upload failed · retry
@@ -206,7 +203,7 @@ function FileRow({ item, onRemove }: { item: FileUploadItem; onRemove?: (id: str
         <span
           className={cn(
             'w-5 h-5 rounded-full inline-flex items-center justify-center flex-shrink-0',
-            'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+            'bg-[color:var(--delta-positive-bg)] text-[color:var(--sage-text)]'
           )}
         >
           <Check size={12} strokeWidth={2.5} />
@@ -216,7 +213,7 @@ function FileRow({ item, onRemove }: { item: FileUploadItem; onRemove?: (id: str
         <span
           className={cn(
             'w-5 h-5 rounded-full inline-flex items-center justify-center flex-shrink-0',
-            'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+            'bg-[color:var(--red-soft)] text-[color:var(--negative-text)]'
           )}
         >
           <AlertCircle size={12} strokeWidth={2.5} />

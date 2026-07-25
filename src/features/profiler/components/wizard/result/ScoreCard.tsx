@@ -20,7 +20,11 @@ export function ScoreCard({ profile }: { profile: ProfileResult }) {
     <Card data-testid="result-score-card">
       {profile.occUsed && (
         <span
-          className="mb-2.5 inline-flex items-center rounded-full border border-accent/40 bg-accent/15 px-2.5 py-0.5 text-accent"
+          // --brown-text is calibrated for the flat cream grounds (4.54 / 5.21),
+          // not for a brown wash of its own hue: on bg-accent/15 over card it
+          // falls to 4.33:1. --brown-text-on-wash is the darker step for exactly
+          // this case and reads 5.58:1, so the 15% fill can stay as designed.
+          className="mb-2.5 inline-flex items-center rounded-full border border-accent/40 bg-accent/15 px-2.5 py-0.5 text-[color:var(--brown-text-on-wash)]"
           style={{ fontFamily: 'var(--font-sans)', fontSize: 10.5, fontWeight: 600 }}
           data-testid="result-occupation-chip"
         >
@@ -52,8 +56,11 @@ export function ScoreCard({ profile }: { profile: ProfileResult }) {
                   {pts} pts
                 </span>
               </div>
+              {/* Track is the repetition hairline (--border-faint), the 2a bar
+                  track — the secondary tint is too close to the card cream to
+                  read as an unfilled remainder. */}
               <div
-                className="h-2 overflow-hidden rounded-full bg-secondary"
+                className="h-2 overflow-hidden rounded-full bg-[color:var(--border-faint)]"
                 role="progressbar"
                 aria-label={`DISC-${d} score`}
                 aria-valuenow={widthPc}

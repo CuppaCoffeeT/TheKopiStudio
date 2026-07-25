@@ -27,23 +27,23 @@ export function NoResultsState({
       className={cn('max-w-[460px] mx-auto py-10 px-7 text-center', className)}
       style={{ fontFamily: 'var(--font-sans)' }}
     >
-      {/* 1a Masthead: glyph is outlined gold, never filled. */}
+      {/* Glyph is an outlined brand mark, never filled. */}
       <div className="w-11 h-11 mx-auto mb-5 rounded-full border border-[color:var(--brand-red)] inline-flex items-center justify-center text-[color:var(--brand-red)]">
         <Search className="w-5 h-5" strokeWidth={1.5} />
       </div>
-      {/* 1a Masthead: serif italic empty-state line. */}
+      {/* 2a empty state: Instrument Serif italic line at the spec'd 20px. */}
       <div
-        className="text-[17px] italic text-[color:var(--fg-dim)] mb-2"
-        style={{ fontFamily: 'var(--font-prose, Georgia, serif)' }}
+        className="text-[20px] italic text-[color:var(--fg-dim)] mb-2"
+        style={{ fontFamily: 'var(--font-prose)' }}
       >
         {query ? <>No matches for "{query}".</> : 'No results.'}
       </div>
-      <div className="text-[13px] text-muted-foreground leading-relaxed mb-5">
+      <div className="text-[13px] text-[color:var(--fg-dim)] leading-relaxed mb-5">
         Try a broader search or clear active filters
       </div>
 
       <div className="inline-flex gap-2 justify-center mb-5">
-        {/* 1a Masthead: ONE quiet (outline) action — no filled CTA in empty states. */}
+        {/* Kopi 2a: ONE quiet (outline) action — no filled CTA in empty states. */}
         {onClearSearch && (
           <Button size="sm" variant="outline" onClick={onClearSearch}>
             Clear search
@@ -59,7 +59,7 @@ export function NoResultsState({
       {activeFilters.length > 0 && (
         <div>
           <div
-            className="text-[10px] text-muted-foreground tracking-[0.1em] uppercase mb-2"
+            className="text-[10px] text-[color:var(--fg-dim)] tracking-[0.1em] uppercase mb-2"
             style={{ fontFamily: 'var(--font-sans)' }}
           >
             ACTIVE FILTERS
@@ -68,7 +68,7 @@ export function NoResultsState({
             {activeFilters.map((f, i) => (
               <span
                 key={i}
-                className="inline-flex items-center gap-1.5 h-6 pl-2.5 pr-2 rounded-full bg-secondary border border-border text-muted-foreground"
+                className="inline-flex items-center gap-1.5 h-6 pl-2.5 pr-2 rounded-full bg-secondary border border-border text-[color:var(--fg-dim)]"
                 style={{ fontFamily: 'var(--font-sans)', fontSize: 10.5 }}
               >
                 {f.label}
@@ -76,7 +76,7 @@ export function NoResultsState({
                   <button
                     onClick={f.onRemove}
                     aria-label={`Remove ${f.label}`}
-                    className="w-3 h-3 inline-flex items-center justify-center text-muted-foreground hover:text-foreground"
+                    className="w-3 h-3 inline-flex items-center justify-center text-[color:var(--fg-dim)] hover:text-foreground"
                   >
                     <X className="w-2 h-2" strokeWidth={1.5} />
                   </button>

@@ -3,19 +3,20 @@ import { cn } from '@/lib/utils';
 import { chartSeriesColor } from './ChartShell';
 
 /**
- * ChartTooltip — glass popover (zinc-10/80% + backdrop-blur). Title + key-value rows in Geist Mono.
+ * ChartTooltip — glass popover on the 2a tint surface (--surface-subtle at 96%
+ * + backdrop-blur), hairline border, warm ink type. Title + key-value rows.
  *
  * Spec: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/ChartPrimitives.html
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/charts/ChartPrimitives.jsx
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked: 180px min width · 8px 2px dot · uppercase Geist Mono 10.5px title.
+ * Locked: 180px min width · 8px 2px dot · uppercase 10.5px sans title.
  */
 
 export interface ChartTooltipRow {
   label: React.ReactNode;
   value: React.ReactNode;
-  /** Optional — defaults to the monochrome cream→gold palette by row index. */
+  /** Optional — defaults to the monochrome brown ramp (CHART_SERIES_PALETTE in ChartShell) by row index. */
   color?: string;
 }
 
@@ -40,16 +41,21 @@ export const ChartTooltip = forwardRef<HTMLDivElement, ChartTooltipProps>(functi
         padding: '10px 12px',
         fontFamily: 'var(--font-sans)',
         borderColor: 'var(--border-soft)',
-        background: 'rgba(24, 38, 56, 0.92)', // --surface-subtle @ 92%
+        // Reads the token rather than restating #F3EDE3, so the glass follows
+        // --surface-subtle if the tint is ever retuned.
+        background: 'color-mix(in srgb, var(--surface-subtle) 96%, transparent)',
         color: 'var(--fg)',
         ...style,
       }}
       {...props}
     >
       {title && (
+        // 10.5px on the tinted surface: --fg-muted only reaches 4.37:1 there
+        // (fails AA), so the title takes --fg-dim = 6.79:1. Same trap as the
+        // CommandPalette footer.
         <div
           className="mb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.1em]"
-          style={{ fontFamily: 'var(--font-sans)', color: 'var(--fg-muted)' }}
+          style={{ fontFamily: 'var(--font-sans)', color: 'var(--fg-dim)' }}
         >
           {title}
         </div>

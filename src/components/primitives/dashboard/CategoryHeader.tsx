@@ -36,7 +36,9 @@ export function CategoryHeader({
         'text-left transition-all duration-150',
         clickable && [
           'cursor-pointer',
-          // Hover bg must CONTRAST with --page-bg (zinc-100) — use white/zinc-800 not zinc-100/900
+          // Hover lifts to card cream (--card #FAF6EE) — it must stay LIGHTER than
+          // the page cream ground (--page-bg #F0E6D6), never a grey and never a
+          // same-value fill, or the hover reads as nothing.
           'hover:bg-card',
           'hover:border-border',
           'hover:shadow-sm',
@@ -62,9 +64,12 @@ export function CategoryHeader({
       <span
         className={cn(
           'text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors',
+          // The strip is transparent until hover, so the resting ground is the
+          // page cream — where --fg-muted is 4.12:1 and fails AA at 11px.
+          // Dim ink (--fg-dim) is 6.40:1 on the page and stays legal on card hover.
           clickable
-            ? 'text-muted-foreground group-hover:text-foreground'
-            : 'text-muted-foreground'
+            ? 'text-[color:var(--fg-dim)] group-hover:text-foreground'
+            : 'text-[color:var(--fg-dim)]'
         )}
       >
         {label}
@@ -74,9 +79,10 @@ export function CategoryHeader({
         <span
           className={cn(
             'text-[10px] transition-colors',
+            // Same page-cream ground as the label — dim ink, not --fg-muted.
             clickable
-              ? 'text-muted-foreground group-hover:text-foreground'
-              : 'text-muted-foreground'
+              ? 'text-[color:var(--fg-dim)] group-hover:text-foreground'
+              : 'text-[color:var(--fg-dim)]'
           )}
           style={{ fontFamily: 'var(--font-mono)' }}
         >

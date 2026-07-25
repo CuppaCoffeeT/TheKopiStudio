@@ -17,7 +17,7 @@ export function ReportInteractionHistory({ interactions }: { interactions: CrmIn
     <section className="report-section" data-testid="report-interaction-history">
       <h2>Client interaction history</h2>
       {interactions.length === 0 ? (
-        <p className="text-[12px] text-gray-500">No interactions recorded yet.</p>
+        <p className="text-[12px] text-[color:var(--fg-dim)]">No interactions recorded yet.</p>
       ) : (
         <table className="report-table">
           <thead>

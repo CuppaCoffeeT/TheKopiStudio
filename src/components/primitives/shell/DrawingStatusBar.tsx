@@ -38,51 +38,57 @@ type StatusKey = Exclude<keyof DrawingStatusCounts, 'total'>;
 interface StatusToken {
   key: StatusKey;
   label: string;
-  /** Bar segment fill — 400-tint, vivid enough to read at 4–6 px. */
+  /** Bar segment fill — the family's `--status-*-dot`, the saturated mark of
+   *  each pair, so the segment still reads at 4–6 px. */
   bar: string;
-  /** Badge bg + fg pair — 100/700 light, 900/30 · 400 dark. */
+  /** Badge bg + fg pair — the family's `--status-*-bg` / `--status-*-fg`. */
   badge: string;
 }
 
 /**
- * Five AppBase drawing-workflow states. Locked colour families — do NOT
- * remap per-tenant; the colour IS the status semantics here.
+ * Five AppBase drawing-workflow states, mapped onto the `--status-*` families
+ * in `src/index.css` (the same quadruples <StatusBadge> consumes). Kopi 2a
+ * admits no categorical hues, so the five states borrow the six status
+ * families: inert taupe (expired) → brown in-progress (sent) → sage positive
+ * (accepted) → terracotta negative (rejected), with the faint brown draft tint
+ * for the delivered state. Do NOT remap per-tenant; the colour IS the status
+ * semantics here.
  */
 const STATUS_SEGMENTS: readonly StatusToken[] = [
   {
     key: 'to_prepare',
     label: 'To Prepare',
-    bar: 'bg-zinc-400 dark:bg-zinc-500',
+    bar: 'bg-[color:var(--status-expired-dot)]',
     badge:
-      'bg-zinc-100 text-zinc-700 dark:bg-zinc-900/40 dark:text-zinc-300',
+      'bg-[color:var(--status-expired-bg)] text-[color:var(--status-expired-fg)]',
   },
   {
     key: 'to_check',
     label: 'To Check',
-    bar: 'bg-amber-400 dark:bg-amber-500',
+    bar: 'bg-[color:var(--status-sent-dot)]',
     badge:
-      'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+      'bg-[color:var(--status-sent-bg)] text-[color:var(--status-sent-fg)]',
   },
   {
     key: 'approved',
     label: 'Approved',
-    bar: 'bg-emerald-400 dark:bg-emerald-500',
+    bar: 'bg-[color:var(--status-accepted-dot)]',
     badge:
-      'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+      'bg-[color:var(--status-accepted-bg)] text-[color:var(--status-accepted-fg)]',
   },
   {
     key: 'submitted',
     label: 'Submitted',
-    bar: 'bg-blue-400 dark:bg-blue-500',
+    bar: 'bg-[color:var(--status-draft-dot)]',
     badge:
-      'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+      'bg-[color:var(--status-draft-bg)] text-[color:var(--status-draft-fg)]',
   },
   {
     key: 'rejected',
     label: 'Rejected',
-    bar: 'bg-red-400 dark:bg-red-500',
+    bar: 'bg-[color:var(--status-rejected-dot)]',
     badge:
-      'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+      'bg-[color:var(--status-rejected-bg)] text-[color:var(--status-rejected-fg)]',
   },
 ] as const;
 

@@ -23,19 +23,25 @@ const SIZE_CLASSES: Record<AvatarSize, string> = {
 /**
  * Deterministic colour hash — ensures the same initials always get the same
  * colour across sessions without requiring a persisted colour map.
- * Returns a CSS colour-hash palette entry.
+ * Returns a CSS colour-hash palette entry. The avatar sits on card cream
+ * #FAF6EE (or the page cream behind it), never a dark surface.
  */
 function hashColour(key: string): string {
-  // Small curated palette — picks that work against white and zinc-950.
+  // Kopi 2a warm palette — the avatar is a FILL carrying white initials at
+  // 9–13px, so every entry must clear 4.5:1 against #FFF. Measured ratios are
+  // noted per line. Differentiation comes from depth steps across the brand's
+  // three hues (brown · sage · terracotta) plus the warm ink neutrals; the
+  // lighter ramp steps (--chart-ramp-2..4) are deliberately absent because
+  // they bottom out at 3.32:1 and below under white text.
   const palette = [
-    '#475569', // slate-600
-    '#b91c1c', // red-700 — brand accent
-    '#15803d', // green-700
-    '#c2410c', // orange-700
-    '#7e22ce', // purple-700
-    '#0f766e', // teal-700
-    '#a16207', // amber-700
-    '#0369a1', // sky-700
+    '#8b6a47', // brown  — --brand-brown            4.94:1
+    '#6d5233', // brown  — --cta-primary-bg-active   7.23:1
+    '#806241', // brown  — --brown-text              5.61:1
+    '#5a7a5e', // sage   — --brand-sage              4.79:1
+    '#4a6a4e', // sage   — sage hover                6.06:1
+    '#ab4925', // terracotta — --negative-text       5.66:1
+    '#7d6b5b', // warm neutral — --fg-muted          5.09:1
+    '#5d4f3f', // warm neutral — --fg-dim            7.91:1
   ];
   let h = 0;
   for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;

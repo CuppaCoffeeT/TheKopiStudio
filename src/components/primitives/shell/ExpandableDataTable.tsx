@@ -115,15 +115,17 @@ function EDTCheckbox({ checked = false, indeterminate = false, disabled = false,
           ? 'border-border opacity-50 cursor-not-allowed'
           : filled
             ? 'bg-foreground border-foreground cursor-pointer'
-            : 'bg-transparent border-zinc-400 cursor-pointer'
+            : 'bg-transparent border-[color:var(--hairline-frame)] cursor-pointer'
       )}
     >
       {checked && (
         <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
-          <path d="M1.5 5L4 7.5L8.5 2.5" stroke="#fff" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M1.5 5L4 7.5L8.5 2.5" stroke="var(--cta-primary-fg)" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       )}
-      {indeterminate && !checked && <span className="w-[7px] h-[1.5px] bg-white" />}
+      {indeterminate && !checked && (
+        <span className="w-[7px] h-[1.5px] bg-[color:var(--cta-primary-fg)]" />
+      )}
     </span>
   );
 }
@@ -469,7 +471,7 @@ function BodyRow<TRow, TKey extends string | number>({
                 aria-expanded={isExpanded}
                 aria-controls={panelId}
                 onClick={() => onExpandRow(isExpanded ? null : id)}
-                className="inline-flex w-7 h-7 items-center justify-center rounded-md border-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-1"
+                className="inline-flex w-7 h-7 items-center justify-center rounded-md border-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[color:hsl(var(--ring))]"
                 style={{
                   background: isExpanded ? 'hsl(var(--muted))' : 'transparent',
                   color: 'var(--fg-muted)',

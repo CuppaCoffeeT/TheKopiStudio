@@ -1,13 +1,14 @@
 /**
- * TabNav — Horizontal detail-page tabs with red-700 active underline.
+ * TabNav — Horizontal detail-page tabs with a brown active underline.
  *
  * Spec: docs/99-refactor/_system/design/handoffs/2026-04-20-MUmgnpT1/project/preview/component-tabnav.html
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-MUmgnpT1/project/ui_kits/appbase/src/TabNav.jsx
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
  * Locked:
- *  - 40px (md) / 36px (sm) row height. 2px underline on active (red-700 · dark:red-400).
- *  - Count chip right-aligned in tab, red-tint background when the tab is active.
+ *  - 40px (md) / 36px (sm) row height. 2px underline on active (`--primary`,
+ *    the Kopi brown — one of the sanctioned brown-as-punctuation slots).
+ *  - Count chip right-aligned in tab, soft brown tint when the tab is active.
  *
  * Responsive behaviour (added 2026-05-27):
  *  - On narrow viewports (when the natural tab strip exceeds container width),
@@ -60,9 +61,11 @@ export function TabNav({ tabs, value, onChange, size = 'md', sticky = false, cla
     <span
       className={cn(
         'inline-flex items-center justify-center px-1.5 py-[1px] rounded-full text-[10.5px] font-medium tracking-wide',
+        // 10.5px chip → AA-safe --brown-text, never raw --primary (4.00 on page cream, misses
+        // AA as small type). Inactive arm takes --fg-dim; --fg-muted is 4.37:1 on the tint.
         isActive
-          ? 'bg-primary/10 dark:bg-primary/15 text-primary'
-          : 'bg-secondary text-muted-foreground'
+          ? 'bg-[color:var(--accent-red-soft-bg)] text-[color:var(--accent-red-soft-fg)]'
+          : 'bg-secondary text-[color:var(--fg-dim)]'
       )}
       style={{ fontFamily: 'var(--font-mono)' }}
     >
@@ -74,18 +77,16 @@ export function TabNav({ tabs, value, onChange, size = 'md', sticky = false, cla
     <div
       className={cn(
         sticky && 'sticky top-0 z-20',
-        'relative bg-white/70 dark:bg-zinc-950/70 backdrop-blur-md backdrop-saturate-150',
+        'relative bg-[color:var(--surface-translucent-bg)] backdrop-blur-md backdrop-saturate-150',
         'border-b border-border',
         className
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
     >
       {/* Tab strip — always mounted so the overflow hook can measure it.
-       * `role="tablist"` lives on the strip itself, NOT the outer container,
-       * so when overflow trips and the strip goes `inert`, the role+children
-       * leave the a11y tree together. Putting it on the outer container left
-       * an empty <div role="tablist"> (axe aria-required-children) because
-       * inert hides the children from a11y. */}
+       * `role="tablist"` lives on the strip, NOT the outer container: on overflow the strip
+       * goes `inert`, so role + children must leave the a11y tree together. On the outer
+       * container it left an empty <div role="tablist"> (axe aria-required-children). */}
       <div
         ref={stripRef}
         role="tablist"
@@ -174,8 +175,9 @@ export function TabNav({ tabs, value, onChange, size = 'md', sticky = false, cla
                         'w-full px-3 py-2 inline-flex items-center justify-between gap-2 rounded',
                         fontSize,
                         isActive
-                          ? 'bg-primary/10 dark:bg-primary/15 text-primary font-semibold'
-                          : 'text-muted-foreground hover:bg-secondary',
+                          ? 'bg-[color:var(--accent-red-soft-bg)] text-[color:var(--accent-red-soft-fg)] font-semibold'
+                          // --fg-dim survives the hover tint; --fg-muted drops to 4.37:1 on it.
+                          : 'text-[color:var(--fg-dim)] hover:bg-secondary',
                         isDisabled && 'opacity-50 cursor-not-allowed'
                       )}
                     >

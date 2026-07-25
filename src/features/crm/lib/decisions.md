@@ -254,3 +254,65 @@ live inside the feature folder.
 **Impact**: route registration lazy-imports from `features/crm/pages/`; any
 future cross-feature dashboard widgets must be promoted to primitives/hooks
 rather than imported across features.
+
+## 2026-07-25 — Kopi 2a: `ModalSection tone="amber"` keeps its name, paints brown
+
+**Decision**: the `ModalSection` warning fieldset (`components/modals/shared.tsx`)
+now paints the Kopi attention tone (`--status-revised-bg/-border/-fg`) but the
+prop union member stays literally `'amber'`.
+**Why**: the palette migration was visual-only — renaming the union member is a
+caller-facing API change, and the sole caller (`PolicyHospitalSection`) plus any
+future one would have to move in lockstep. The old `text-amber-500` measured
+1.99:1 on cream and `bg-amber-950/20` was a dark-era wash.
+**Impact**: the value name no longer describes the hue — the interface comment
+says so explicitly. Rename it only as a deliberate API change, not as a
+"consistency" cleanup.
+
+## 2026-07-25 — Kopi 2a: report greys → `--fg-dim`, band tones untouched
+
+**Decision**: every `text-gray-500/600` and `border-gray-200/300` in
+`components/report/*` moved to `--fg-dim` / `--border-soft`. The band-tone trio
+(`#047857`/`#92400e`/`#b91c1c`), its tinted backgrounds and the CPF/RA panel
+hexes were NOT migrated.
+**Why**: the greys were cool zinc-era neutrals that clash with the warm ground
+and mostly failed AA (gray-500 = 4.48:1 on card cream); `--fg-dim` (#5D4F3F)
+measures 6.5-7.1:1 across the three band tints and 7.34 on card. The band trio
+is the oracle-locked, axe-pinned WCAG divergence recorded in the 2026-06-12
+entry above — recolouring it would break `financeReportBands` tests.
+**Impact**: report type is warm and AA-clean; the legacy semantic band palette
+remains a deliberate, tested island inside the Kopi system.
+
+## 2026-07-25 — Kopi 2a: report/print surface fully migrated (band tones included)
+
+**Decision**: `report-print.css`, `financeReportBands.ts` and the remaining
+inline accent hexes in `components/report/*` now carry the Kopi Studio palette.
+Band trio → `#4A6A4E` on `#D9E8E0` (4.78) · `#7D5F3D` on `#F0E2CF` (4.61) ·
+`#AB4925` on `#FAE0D6` (4.50). The hero's navy→blue gradient became a flat
+`#8B6A47` with `#FAF6EE` type (4.58); the six `report-grad-card` fills became a
+flat warm ramp closed by a `#D9CCC0` hairline; table headers and the "primary"
+callout took the reports-only grey `#E8E6E0`; `--success` took the reports-only
+green box `#D9E8E0`.
+**Why**: the previous entry deferred the band trio to avoid breaking
+`financeReportExtension.test.ts`, but that test's oracle pins band LOGIC and
+LABELS — the tone/bg pair is a presentation constant the oracle comment already
+flagged as a deliberate divergence. Updating the constant in both places keeps
+the oracle meaningful and leaves no legacy-palette island in a printed
+artifact the client actually receives.
+**Impact**: 140 tests still pass. Print values stay LITERAL hexes, never
+`var(--…)`, so a future app re-theme cannot leak into the printed artifact —
+same decoupling as `features/profiler/lib/print.css`.
+**Supersedes**: 2026-07-25 — Kopi 2a: report greys → `--fg-dim`, band tones untouched
+
+## 2026-07-25 — Report accent type never uses raw sage/terracotta
+
+**Decision**: report accent numerals use `#4A6A4E` (positive), `#AB4925`
+(negative), `#806241` (neutral brown, white/cream backings only) and `#5D4F3F`
+(on tinted rows). Ramp step `#A58868` is deliberately unused as a card fill.
+**Why**: every accent in the report is live text under 18px on one of five
+backings, so a single value per hue has to clear 4.5:1 on all of them. Raw sage
+`#5A7A5E` tops out at 4.51 and raw terracotta `#D97551` at 2.95; even
+`--sage-text` `#526F56` fails on the tints (4.38-4.43). `#A58868` measures 3.96
+against the ink it would carry.
+**Impact**: `opacity` was removed from `.report-hero-sub`, `.report-stat
+.label/.note` and `.report-grad-card .label/.note` — dimming cream to 75% over
+brown drops it to ~3.3:1. Hierarchy is carried by size and weight instead.

@@ -73,24 +73,25 @@ export function ReportRetirementEconomics({
                 <td className="num">{money(bankAt65)}</td>
                 <td className="num">{money(totalRetirementSum)}</td>
               </tr>
-              {/* emerald-700 / red-700 (legacy #059669/#dc2626) — axe AA needs
-                  4.5:1 on the warning-callout (#fff3cd) and loss-row (#fee2e2)
-                  backings; the legacy tones sat at ~3.4–3.95:1. */}
+              {/* Kopi sage #4A6A4E / terracotta #AB4925 — 13px cells need
+                  4.5:1 on the in-progress warning-callout (#F0E2CF, 4.76) and
+                  the error loss-row (#FAE0D6, 4.50). The raw brand sage and
+                  terracotta both miss AA at this size. */}
               <tr>
                 <td>If invested (6% returns)</td>
-                <td className="num" style={{ color: '#047857', fontWeight: 500 }}>
+                <td className="num" style={{ color: '#4a6a4e', fontWeight: 500 }}>
                   {money(investedBankAt65)}
                 </td>
-                <td className="num" style={{ color: '#047857', fontWeight: 500 }}>
+                <td className="num" style={{ color: '#4a6a4e', fontWeight: 500 }}>
                   {money(totalIfInvested)}
                 </td>
               </tr>
               <tr className="report-row-loss" data-testid="report-retirement-opportunity-cost">
                 <td>Opportunity cost</td>
-                <td className="num" style={{ color: '#b91c1c', fontWeight: 500 }}>
+                <td className="num" style={{ color: '#ab4925', fontWeight: 500 }}>
                   {money(bankOpportunityCost)}
                 </td>
-                <td className="num" style={{ color: '#b91c1c', fontWeight: 500 }}>
+                <td className="num" style={{ color: '#ab4925', fontWeight: 500 }}>
                   {money(totalOpportunityCost)}
                 </td>
               </tr>

@@ -10,7 +10,7 @@ interface LoadingSkeletonProps {
 
 /**
  * Shimmer-animated skeleton placeholder. 5 variants.
- * Color: zinc-200 light / zinc-800 dark. Animation is Tailwind's `animate-pulse`.
+ * Color: `--skeleton` (#E0D3C3, the warm hairline step). Animation is Tailwind's `animate-pulse`.
  */
 export function LoadingSkeleton({ variant = 'row', rowCount = 5, className }: LoadingSkeletonProps) {
   if (variant === 'row') {
@@ -104,7 +104,7 @@ export function LoadingSkeleton({ variant = 'row', rowCount = 5, className }: Lo
 function Block({ w, h = 10, r = 4 }: { w: number | string; h?: number | string; r?: number }) {
   return (
     <div
-      className="bg-zinc-200 dark:bg-zinc-800 animate-pulse flex-shrink-0"
+      className="bg-[color:var(--skeleton)] animate-pulse flex-shrink-0"
       style={{
         width: typeof w === 'number' ? `${w}px` : w,
         height: typeof h === 'number' ? `${h}px` : h,

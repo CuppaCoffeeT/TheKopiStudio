@@ -13,7 +13,8 @@ interface TooltipContentProps
 }
 
 /**
- * TooltipContent — inverted-contrast pill. Zinc-900 in light, zinc-100 in dark.
+ * TooltipContent — inverted-contrast pill: warm ink (`bg-foreground`) with cream
+ * type (`text-background`). Light-pinned, no dark arm.
  * Optionally shows a Kbd chip inline (e.g. for toolbar hints).
  */
 export const TooltipContent = ({

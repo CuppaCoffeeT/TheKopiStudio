@@ -30,15 +30,17 @@ export function ObservationScreen({ groupIndex, nv, onToggle }: ObservationScree
         </span>
         <div>
           <h2 className="m-0 text-[16px] font-normal text-foreground">{group.tt}</h2>
-          <p className="m-0 text-[11px] text-muted-foreground">{group.st}</p>
+          {/* Both strings sit ABOVE the Card, i.e. on the page cream, where
+              --fg-muted is 4.12:1. --fg-dim reads 6.40:1 there. */}
+          <p className="m-0 text-[11px] text-[color:var(--fg-dim)]">{group.st}</p>
         </div>
       </div>
-      <p className="m-0 text-[13px] leading-5 text-muted-foreground">
+      <p className="m-0 text-[13px] leading-5 text-[color:var(--fg-dim)]">
         Tick everything you observed.
       </p>
       <p
-        className="m-0 text-accent"
-        style={{ fontFamily: 'var(--font-pixel)', fontSize: 11 }}
+        className="m-0 text-[color:var(--brown-text)]"
+        style={{ fontFamily: 'var(--font-sans)', fontSize: 11 }}
         data-testid="wizard-observations-count"
       >
         {tickedCount === 0

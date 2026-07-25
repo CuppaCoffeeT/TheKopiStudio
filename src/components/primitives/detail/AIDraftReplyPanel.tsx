@@ -1,10 +1,10 @@
 /**
  * AIDraftReplyPanel — review + approve/edit/decline an AI-generated draft reply.
  *
- * Spec: docs/99-refactor/_system/design/handoffs/2026-04-23-rNq9eFQw/project/preview/component-email-inbox.html (AI panel #3 · blue accent, conditional)
+ * Spec: docs/99-refactor/_system/design/handoffs/2026-04-23-rNq9eFQw/project/preview/component-email-inbox.html (AI panel #3 · `blue` accent — brown under 2a, conditional)
  * Adopters: email-inbox detail pane.
  *
- * Composes: `AIPanel` (blue accent) + raw-draft status pill + subject + body
+ * Composes: `AIPanel` (`blue` accent = brown in-progress) + raw-draft status pill + subject + body
  * preview + three actions (Approve / Edit / Decline).
  *
  * Supports three modes: view, editing (inline textarea + Save + Cancel), and
@@ -93,7 +93,7 @@ export function AIDraftReplyPanel({
               kind="ghost"
               onClick={() => setMode('declining')}
               disabled={isPending}
-              className="text-red-700 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+              className="text-[color:var(--negative-text)] hover:brightness-90"
             >
               <X className="w-3.5 h-3.5" aria-hidden />
               Decline

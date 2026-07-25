@@ -11,17 +11,24 @@ interface ImpersonationBannerProps {
 }
 
 /**
- * Red-50 strip rendered directly under AppHeader when super_admin is impersonating.
- * Pulsing red-700 dot + "Test mode · Engineer" + keyboard shortcut hint.
+ * Terracotta-tint strip (--red-soft) rendered directly under AppHeader when
+ * super_admin is impersonating. Pulsing --brand-terracotta dot +
+ * "Test mode · Engineer" + keyboard shortcut hint. Copy is 12px, so it takes
+ * the AA-safe --negative-text step, not the raw terracotta fill.
+ *
+ * The account email recedes via a COLOUR step (--fg-dim, 6.29:1 on --red-soft),
+ * never an alpha knock-down: --negative-text at 80% composites to ~#BB6748 and
+ * measures 3.24:1. This strip is safety-critical chrome — it tells a super_admin
+ * whose account they are acting as — so every glyph on it stays above AA.
  */
 export function ImpersonationBanner({ role, email = 'agent@example.com', onExit, className }: ImpersonationBannerProps) {
   return (
     <div
       className={cn(
         'h-8 flex items-center gap-3 px-5',
-        'bg-red-50 dark:bg-red-950/30',
-        'border-b border-red-200 dark:border-red-900/50',
-        'text-red-700 dark:text-red-400',
+        'bg-[color:var(--red-soft)]',
+        'border-b border-[color:var(--status-rejected-border)]',
+        'text-[color:var(--negative-text)]',
         className
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
@@ -29,12 +36,12 @@ export function ImpersonationBanner({ role, email = 'agent@example.com', onExit,
       aria-live="polite"
     >
       <span className="relative w-2 h-2 inline-block" aria-hidden>
-        <span className="absolute inset-0 rounded-full bg-red-700 dark:bg-red-400" />
-        <span className="absolute -inset-0.5 rounded-full border-[1.5px] border-red-700 dark:border-red-400 opacity-50 animate-ping" />
+        <span className="absolute inset-0 rounded-full bg-[color:var(--brand-terracotta)]" />
+        <span className="absolute -inset-0.5 rounded-full border-[1.5px] border-[color:var(--brand-terracotta)] opacity-50 animate-ping" />
       </span>
       <span className="text-xs font-medium">
         Test mode · <strong className="font-bold">{role}</strong>
-        <span className="ml-2 opacity-80" style={{ fontFamily: 'var(--font-mono)' }}>
+        <span className="ml-2 text-[color:var(--fg-dim)]" style={{ fontFamily: 'var(--font-mono)' }}>
           · {email}
         </span>
       </span>
@@ -42,10 +49,10 @@ export function ImpersonationBanner({ role, email = 'agent@example.com', onExit,
       {onExit && (
         <button
           onClick={onExit}
-          className="inline-flex items-center gap-2 text-xs font-medium text-red-700 dark:text-red-400 hover:underline"
+          className="inline-flex items-center gap-2 text-xs font-medium text-[color:var(--negative-text)] hover:underline"
         >
           Exit test
-          <Kbd className="border-red-300 dark:border-red-900/50 bg-transparent">⌘⇧I</Kbd>
+          <Kbd className="border-[color:var(--status-rejected-border)] bg-transparent">⌘⇧I</Kbd>
         </button>
       )}
     </div>

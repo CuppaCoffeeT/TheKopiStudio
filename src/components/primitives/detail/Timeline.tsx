@@ -7,8 +7,9 @@
  *
  * Locked:
  *  - Variants: `full` (activity tab) · `sidebar` (compact side-rail card).
- *  - `scrollProgress` (0..1) drives a red-700 beam fill with soft glow.
- *  - Mobile: beam disabled, single-column flat list with a tiny red dot.
+ *  - `scrollProgress` (0..1) drives a brown (`--primary`) beam fill with a soft
+ *    warm glow; the track behind it is the `--timeline-rail-color` hairline.
+ *  - Mobile: beam disabled, single-column flat list with a tiny brown dot.
  */
 
 import type { ReactNode } from 'react';
@@ -27,7 +28,7 @@ export type TimelineVariant = 'full' | 'sidebar';
 interface TimelineProps {
   events: TimelineEvent[];
   variant?: TimelineVariant;
-  /** 0..1 — fraction of beam filled with red. Drives scroll-reveal effect. */
+  /** 0..1 — fraction of beam filled with brown. Drives scroll-reveal effect. */
   scrollProgress?: number;
   className?: string;
 }
@@ -45,13 +46,13 @@ export function Timeline({ events, variant = 'full', scrollProgress = 0, classNa
       {/* Beam track — desktop only */}
       <div
         aria-hidden
-        className="hidden md:block absolute top-3.5 bottom-3.5 w-px bg-gradient-to-b from-zinc-900/5 via-zinc-900/10 to-zinc-900/5 dark:from-white/5 dark:via-white/10 dark:to-white/5"
+        className="hidden md:block absolute top-3.5 bottom-3.5 w-px bg-[color:var(--timeline-rail-color)]"
         style={{ left: beamInset }}
       />
       {/* Beam fill */}
       <div
         aria-hidden
-        className="hidden md:block absolute top-3.5 w-px bg-gradient-to-b from-primary via-primary to-transparent shadow-[0_0_12px_rgba(185,28,28,0.28)] dark:shadow-[0_0_12px_rgba(248,113,113,0.45)]"
+        className="hidden md:block absolute top-3.5 w-px bg-gradient-to-b from-primary via-primary to-transparent shadow-[0_0_12px_rgb(139_106_71_/_0.28)]"
         style={{ left: beamInset, height: `calc(${fillPct}% - 28px)` }}
       />
 
@@ -75,7 +76,7 @@ export function Timeline({ events, variant = 'full', scrollProgress = 0, classNa
                   'rounded-full border-2',
                   compact ? 'w-2.5 h-2.5' : 'w-3.5 h-3.5',
                   passed
-                    ? 'bg-primary border-primary shadow-[0_0_0_3px_rgba(201,168,76,0.14)]'
+                    ? 'bg-primary border-primary shadow-[0_0_0_3px_rgb(139_106_71_/_0.14)]'
                     : 'bg-card border-border'
                 )}
               />

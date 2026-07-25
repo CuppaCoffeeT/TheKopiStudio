@@ -1,10 +1,11 @@
 /**
  * RouteError — React Router errorElement.
  *
- * Mirrors NotFound.tsx aesthetic (massive Geist Pixel Grid code, uppercase mono
- * sub-header, Roboto body, mono path chip w/ red ×, slate-800 + ghost CTAs,
- * red-700 accent dot). Difference: the big code is "500" (or whatever HTTP code
- * the error carries), and the path chip shows the error message instead of URL.
+ * Mirrors NotFound.tsx aesthetic (massive Instrument Serif code, uppercase mono
+ * sub-header, IBM Plex Sans body, mono path chip w/ terracotta ×, brown +
+ * ghost CTAs, brown accent dot). Difference: the big code is "500" (or whatever
+ * HTTP code the error carries), and the path chip shows the error message
+ * instead of the URL.
  */
 import { useEffect } from 'react';
 import { isRouteErrorResponse, useNavigate, useRouteError } from 'react-router-dom';
@@ -60,7 +61,7 @@ const RouteError = () => {
 
         <div
           className="text-sm uppercase tracking-[0.2em] mb-2"
-          style={{ fontFamily: 'var(--font-subheader)', color: 'var(--fg-muted)' }}
+          style={{ fontFamily: 'var(--font-subheader)', color: 'var(--fg-dim)' }}
         >
           {subhead}
         </div>
@@ -77,7 +78,7 @@ const RouteError = () => {
           style={{
             background: 'var(--surface-subtle)',
             borderColor: 'var(--border-soft)',
-            color: 'var(--fg-muted)',
+            color: 'var(--fg-dim)',
             fontFamily: 'var(--font-mono)',
             fontSize: 12,
           }}
@@ -114,9 +115,9 @@ const RouteError = () => {
 
       <div
         className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[11px]"
-        style={{ color: 'var(--fg-muted)', fontFamily: 'var(--font-mono)' }}
+        style={{ color: 'var(--fg-dim)', fontFamily: 'var(--font-mono)' }}
       >
-        AppBase · error {code}
+        Insurance CRM · error {code}
       </div>
     </div>
   );

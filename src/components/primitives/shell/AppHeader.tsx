@@ -8,9 +8,9 @@
  * Decomposed (W09 ≤200 LOC rule) into siblings:
  *   - AppHeaderLogo · AppHeaderUserMenu · AppHeaderMobileBar · AppHeaderDesktopBar.
  *
- * Locked: sticky top-0 z-30 · glass bg rgba(255,255,255,0.72) / rgba(9,9,11,0.70)
- *         + backdrop-blur-xl saturate-140 · border-bottom #ececee / #202024.
- *         Mobile bar 52px · Desktop bar 56px (set inside each bar).
+ * Locked: sticky top-0 z-30 · glass bg card cream @ 72% (`bg-card/[0.72]`)
+ *         + backdrop-blur-xl saturate-140 · border-bottom hairline `--border`
+ *         (#D9CCC0). Mobile bar 52px · Desktop bar 56px (set inside each bar).
  */
 import { type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
@@ -99,8 +99,8 @@ export function AppHeader({
     <header
       className={cn(
         'sticky top-0 z-30 backdrop-blur-xl backdrop-saturate-[1.4]',
-        'bg-card/[0.72] dark:bg-card/70',
-        'border-b border-[#ececee] dark:border-[#202024]',
+        'bg-card/[0.72]',
+        'border-b border-border',
         className,
       )}
       style={{ fontFamily: 'var(--font-sans)' }}

@@ -1,5 +1,5 @@
 /**
- * ScrollArea — Radix ScrollArea wrapper with AppBase tokens (thin red-700 thumb).
+ * ScrollArea — Radix ScrollArea wrapper (thin warm --hairline-frame thumb).
  *
  * Shadcn-compat API: <ScrollArea><children /></ScrollArea>.
  */
@@ -43,7 +43,7 @@ export const ScrollBar = forwardRef<
       )}
       {...props}
     >
-      <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+      <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-[color:var(--hairline-frame)]" />
     </ScrollAreaPrimitive.ScrollAreaScrollbar>
   );
 });

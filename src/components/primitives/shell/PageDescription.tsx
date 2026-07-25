@@ -13,8 +13,9 @@
  *
  * Locked:
  *  - Size ramp: 14px mobile → 16px sm+.
- *  - Color: zinc-600 / dark:zinc-400.
- *  - Family: `--font-sans` (Roboto).
+ *  - Color: `--fg-dim` (#5D4F3F) — AA-safe on the page cream, where every
+ *    list frame renders this paragraph.
+ *  - Family: `--font-sans` (IBM Plex Sans).
  *  - Top margin: `mt-2` (stacks under PageTitle).
  */
 
@@ -30,7 +31,7 @@ export function PageDescription({ children, className }: PageDescriptionProps) {
   return (
     <p
       className={cn(
-        'mt-2 text-sm sm:text-base text-muted-foreground',
+        'mt-2 text-sm sm:text-base text-[color:var(--fg-dim)]',
         className,
       )}
       style={{ fontFamily: 'var(--font-sans)' }}

@@ -36,42 +36,47 @@ export const AccessibleStatusBadge: React.FC<AccessibleStatusBadgeProps> = ({
   showIcon = true,
   ariaLabel
 }) => {
+  // Kopi Studio status pills: tint fill + darkened same-hue text, never a
+  // saturated fill. The --status-* triples already carry the AA-verified pairs
+  // (sage positive, brown in-progress, terracotta error), so small pill text
+  // never falls back to a raw brand hex. Info/loading have no hue in this
+  // brand — they read as quiet neutrals.
   const getStatusConfig = () => {
     switch (status) {
       case 'success':
         return {
           icon: <CheckCircle className="h-3 w-3" />,
-          className: 'bg-green-100 text-green-800 border-green-200',
+          className: 'bg-[var(--status-accepted-bg)] text-[color:var(--status-accepted-fg)] border-[color:var(--status-accepted-border)]',
           ariaLabel: ariaLabel || `Success: ${children}`
         };
       case 'warning':
         return {
           icon: <AlertCircle className="h-3 w-3" />,
-          className: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+          className: 'bg-[var(--status-sent-bg)] text-[color:var(--status-sent-fg)] border-[color:var(--status-sent-border)]',
           ariaLabel: ariaLabel || `Warning: ${children}`
         };
       case 'error':
         return {
           icon: <XCircle className="h-3 w-3" />,
-          className: 'bg-red-100 text-red-800 border-red-200',
+          className: 'bg-[var(--status-rejected-bg)] text-[color:var(--status-rejected-fg)] border-[color:var(--status-rejected-border)]',
           ariaLabel: ariaLabel || `Error: ${children}`
         };
       case 'info':
         return {
           icon: <Info className="h-3 w-3" />,
-          className: 'bg-blue-100 text-blue-800 border-blue-200',
+          className: 'bg-[var(--status-draft-bg)] text-[color:var(--status-draft-fg)] border-[color:var(--status-draft-border)]',
           ariaLabel: ariaLabel || `Info: ${children}`
         };
       case 'loading':
         return {
           icon: <RefreshCw className="h-3 w-3 animate-spin" />,
-          className: 'bg-accent text-foreground border-border',
+          className: 'bg-secondary text-secondary-foreground border-border',
           ariaLabel: ariaLabel || `Loading: ${children}`
         };
       default:
         return {
           icon: null,
-          className: 'bg-accent text-foreground',
+          className: 'bg-secondary text-secondary-foreground',
           ariaLabel: ariaLabel || String(children)
         };
     }
@@ -150,31 +155,35 @@ export const AccessibleAlert: React.FC<AccessibleAlertProps> = ({
   onDismiss,
   live = 'polite'
 }) => {
+  // Same tint-fill + darkened-text pairing as the status pills above, so a
+  // banner and a badge for the same condition read as one system. Body copy
+  // here is 14px, which is why every foreground is an AA-verified variant
+  // rather than a raw brand hex.
   const getAlertConfig = () => {
     switch (type) {
       case 'success':
         return {
           icon: <CheckCircle className="h-4 w-4" />,
-          className: 'border-green-200 bg-green-50 text-green-800',
+          className: 'border-[color:var(--status-accepted-border)] bg-[var(--status-accepted-bg)] text-[color:var(--status-accepted-fg)]',
           role: 'status' as const
         };
       case 'warning':
         return {
           icon: <AlertCircle className="h-4 w-4" />,
-          className: 'border-yellow-200 bg-yellow-50 text-yellow-800',
+          className: 'border-[color:var(--status-sent-border)] bg-[var(--status-sent-bg)] text-[color:var(--status-sent-fg)]',
           role: 'alert' as const
         };
       case 'error':
         return {
           icon: <XCircle className="h-4 w-4" />,
-          className: 'border-red-200 bg-red-50 text-red-800',
+          className: 'border-[color:var(--status-rejected-border)] bg-[var(--status-rejected-bg)] text-[color:var(--status-rejected-fg)]',
           role: 'alert' as const
         };
       case 'info':
       default:
         return {
           icon: <Info className="h-4 w-4" />,
-          className: 'border-blue-200 bg-blue-50 text-blue-800',
+          className: 'border-[color:var(--status-draft-border)] bg-[var(--status-draft-bg)] text-[color:var(--status-draft-fg)]',
           role: 'status' as const
         };
     }
@@ -248,7 +257,9 @@ export const AccessibleProgress: React.FC<AccessibleProgressProps> = ({
           )}
         </div>
       )}
-      <div className="w-full bg-muted rounded-full h-2">
+      {/* Progress bar per the 2a loading spec: --border-faint track, brown fill.
+          The fill is the only brown in the component. */}
+      <div className="w-full bg-[var(--border-faint)] rounded-full h-2">
         <div
           id={progressId}
           role="progressbar"
@@ -257,7 +268,7 @@ export const AccessibleProgress: React.FC<AccessibleProgressProps> = ({
           aria-valuemax={max}
           aria-labelledby={label ? labelId : undefined}
           aria-valuetext={`${percentage}% complete`}
-          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+          className="bg-primary h-2 rounded-full transition-all duration-300"
           style={{ width: `${percentage}%` }}
         />
       </div>
@@ -275,7 +286,7 @@ export const SkipLink: React.FC<{ href: string; children: React.ReactNode }> = (
   return (
     <a
       href={href}
-      className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded z-50"
+      className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-primary-foreground px-4 py-2 rounded z-50"
     >
       {children}
     </a>

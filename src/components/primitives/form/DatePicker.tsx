@@ -12,8 +12,9 @@
  * Placeholder + focus-seed follow suit. Default is short app-wide so every date picker reads
  * the same; pass `format="long"` only where a spelled-out month is explicitly wanted.
  *
- * Locked: focus ring red-700 never silent; selected day = slate-800; today = red-700 ring; Sun-first week;
- *         default display format dd/mm/yy; range uses faint red fill between endpoints.
+ * Locked (2a): focus ring = --ring brown, never silent; selected day = --primary brown;
+ *         today = brown outline; Sun-first week; default display format dd/mm/yy;
+ *         range uses a faint brown fill between endpoints.
  *
  * Positioning: OUTSIDE a Radix Dialog the panel auto-portals to body (escapes
  * `overflow:hidden|auto` ancestors — Card wrappers, scrolling tables). INSIDE a Dialog it

@@ -7,7 +7,7 @@ type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'wide' | 'full';
 /**
  * `wide` (1024px) and `full` (1152px) added 2026-05-23 for multi-panel dialogs
  * (e.g. drafter dashboard's BulkCompleteDrawingsDialog). The `tall` prop pairs
- * with these to opt the inner shell into `h-[80vh] flex flex-col` so callers
+ * with these to opt the inner shell into `h-[80dvh] flex flex-col` so callers
  * can scroll inside.
  */
 const SIZE_PX: Record<ModalSize, number> = {
@@ -27,7 +27,7 @@ interface ModalProps {
   description?: React.ReactNode;
   destructive?: boolean;
   size?: ModalSize;
-  /** Fix the inner shell to `80vh` and switch to a column flex so callers can scroll inside the body. */
+  /** Fix the inner shell to `80dvh` and switch to a column flex so callers can scroll inside the body. */
   tall?: boolean;
   /** Replace the default `px-5 py-4 grid gap-3` body classes (e.g. `'p-0 flex-1 overflow-hidden'` for full-bleed panels). */
   bodyClassName?: string;
@@ -42,9 +42,11 @@ interface ModalProps {
 }
 
 /**
- * Modal — wraps shadcn Dialog with glass backdrop + slate-800 header + destructive variant.
- * The title renders in Geist Pixel Square crisp (per W08 h1 rule).
- * Pass action row via `footer` (usually slate-800 primary + ghost cancel).
+ * Modal — wraps shadcn Dialog with a glass backdrop, a hairline-ruled header and
+ * a destructive variant. The surface is the 2a raised white (`--popover`); the
+ * title renders in the brand serif (`--font-pixel`) at 22px, safely above the
+ * 18px serif floor. Pass the action row via `footer` (usually a brown
+ * `ModalPrimaryAction` + a `ModalGhostAction` cancel).
  *
  * `size='wide' | 'full'` + `tall` + `bodyClassName` enable multi-panel layouts
  * like the drafter dashboard's bulk NAS-file linker.
@@ -93,11 +95,15 @@ export function Modal({
         <div
           className={cn(
             'pointer-events-auto rounded-xl',
-            // 1a: modal surface is one step lighter than card — #182638 (--popover)
+            // 2a: the modal is the RAISED surface — white #FFFFFF (--popover),
+            // the top rung of the cream ladder (page #F0E6D6 → card #FAF6EE →
+            // raised white), hairlined with #D9CCC0.
             'bg-popover',
             'border border-border',
-            'shadow-[0_1px_2px_rgba(0,0,0,0.04),0_24px_64px_rgba(24,24,27,0.14)]',
-            'dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_24px_64px_rgba(0,0,0,0.5)]',
+            // Floating surfaces are the only 2a surfaces that cast a shadow, and
+            // it is warm ink rather than black. The app is light-pinned, so no
+            // `dark:` counterpart is declared.
+            'shadow-[var(--floating-shadow)]',
             'group-data-[state=open]:animate-in group-data-[state=closed]:animate-out',
             'group-data-[state=open]:zoom-in-95 group-data-[state=closed]:zoom-out-95',
             'group-data-[state=open]:fade-in-0 group-data-[state=closed]:fade-out-0',
@@ -113,12 +119,13 @@ export function Modal({
               <DialogPrimitive.Title
                 className={cn(
                   'text-[22px] leading-tight m-0 font-normal',
-                  destructive ? 'text-red-700 dark:text-red-400' : 'text-foreground'
+                  // Raw terracotta #D97551 only reaches 2.95:1, so even at 22px
+                  // the destructive title takes the AA-safe text variant.
+                  destructive ? 'text-[color:var(--negative-text)]' : 'text-foreground'
                 )}
                 style={{
                   fontFamily: 'var(--font-pixel)',
                   letterSpacing: '-0.01em',
-                  WebkitFontSmoothing: 'none',
                 }}
               >
                 {title}
@@ -159,7 +166,11 @@ export function Modal({
   );
 }
 
-/** Convenience primary action for use in Modal `footer`. Slate-800 / red-700 when destructive. */
+/**
+ * Convenience primary action for use in Modal `footer`. Brown CTA (#8B6A47) with
+ * a cream label; AA-safe terracotta (#AB4925) when destructive. Both darken on
+ * hover/active — terracotta has no hover token, so it steps down in brightness.
+ */
 export function ModalPrimaryAction({
   children,
   destructive = false,
@@ -182,9 +193,10 @@ export function ModalPrimaryAction({
         'h-8 px-3.5 rounded-lg text-[12.5px] font-semibold',
         'disabled:opacity-40 disabled:cursor-not-allowed',
         'focus-visible:outline-2 focus-visible:outline-[color:var(--cta-primary-bg)] focus-visible:outline-offset-2',
+        'text-[color:var(--cta-primary-fg)]',
         destructive
-          ? 'bg-red-700 hover:bg-red-800 active:bg-red-900 text-white'
-          : 'bg-[var(--cta-primary-bg)] hover:bg-[var(--cta-primary-bg-hover)] active:bg-[var(--cta-primary-bg-active)] text-[color:var(--cta-primary-fg)]'
+          ? 'bg-[var(--cta-destructive-bg)] hover:brightness-95 active:brightness-90'
+          : 'bg-[var(--cta-primary-bg)] hover:bg-[var(--cta-primary-bg-hover)] active:bg-[var(--cta-primary-bg-active)]'
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
     >

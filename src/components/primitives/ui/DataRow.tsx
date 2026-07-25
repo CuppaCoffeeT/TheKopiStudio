@@ -5,7 +5,11 @@
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/table/DataTablePrimitives.jsx
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked: compact 44h · cozy 56h · selected bg red-50 + left-rail red-700 · hover zinc-100 differs from page zinc-100 via contrast w/ white surface.
+ * Locked: compact 44h · cozy 56h · rows sit on card cream and separate with the
+ * --border-faint repetition hairline; hover/selected are translucent brown
+ * washes (--row-hover / --row-selected) so the state reads on BOTH the page
+ * cream (dashboard table) and the card cream (list table) — a solid tint would
+ * vanish on one of them. Focus is the inset 2px brown ring.
  */
 
 import { forwardRef } from 'react';
@@ -69,7 +73,7 @@ export const DataRow = forwardRef<HTMLDivElement, DataRowProps>(function DataRow
 ) {
   const disabled = state === 'disabled';
   // `selected` prop promotes visual state to 'selected' so checkbox-selection and
-  // state-driven selection share one code path (2px red-7 left rail + red-50 bg).
+  // state-driven selection share one code path (--row-selected brown wash).
   const effectiveState = selected && state === 'default' ? 'selected' : state;
   // Keyboard activation for clickable rows (WCAG 2.1.1): a row with an onClick
   // is focusable, so Enter/Space must trigger it too — mouse-only would strand
@@ -97,13 +101,13 @@ export const DataRow = forwardRef<HTMLDivElement, DataRowProps>(function DataRow
         'border-b border-[color:var(--border-faint)]',
         // Surface default
         'bg-card',
-        // Hover — cream wash token, visible on the raised card navy (1a)
+        // Hover — translucent brown wash; reads on page cream AND card cream
         !disabled &&
           effectiveState !== 'selected' &&
           'hover:bg-[color:var(--row-hover)]',
         effectiveState === 'hover' && 'bg-[color:var(--row-hover)]',
         effectiveState === 'selected' &&
-          'bg-primary/[0.06] hover:bg-primary/[0.08] dark:bg-primary/[0.08] dark:hover:bg-primary/[0.10]',
+          'bg-[color:var(--row-selected)] hover:bg-primary/[0.16]',
         effectiveState === 'focused' &&
           'shadow-[inset_0_0_0_2px_var(--cta-primary-bg)]',
         disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
@@ -154,7 +158,9 @@ export const DataRow = forwardRef<HTMLDivElement, DataRowProps>(function DataRow
               cell.wrap
                 ? 'whitespace-normal break-words min-w-0'
                 : 'whitespace-nowrap overflow-hidden text-ellipsis',
-              // 1a: primary (first) cell cream, remaining cells dim cream, meta muted
+              // 2a ink ladder: primary (first) cell --fg, remaining cells
+              // --fg-dim, meta --fg-muted. Hierarchy is carried by these steps
+              // and the hairlines — never by brown.
               cell.muted
                 ? 'text-muted-foreground'
                 : i === 0

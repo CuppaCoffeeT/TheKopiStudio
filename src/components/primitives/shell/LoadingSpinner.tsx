@@ -1,13 +1,15 @@
 /**
- * LoadingSpinner — neutral gold ring spinner.
+ * LoadingSpinner — brown ring spinner.
  *
  * 2026-07-07 de-AppBase: replaced the JL logo-mark Lottie animation with a
- * plain CSS ring spinner in the brand gold (--primary). No external animation
+ * plain CSS ring spinner in the brand accent (--primary). No external animation
  * data, no company logo. Respects `prefers-reduced-motion` (motion-reduce).
  *
- * 2026-07-21 (1a Masthead): when a `label` is passed, renders the 1a loading
- * state instead — thin gold progress bar + Georgia italic verb. Unlabeled
- * usage keeps the gold ring (backward compatible for inline spinners).
+ * 2026-07-25 (Kopi Studio 2a): when a `label` is passed, renders the 2a loading
+ * state instead — Instrument Serif italic verb over a thin brown bar on the
+ * faint hairline track. Unlabeled usage keeps the ring (backward compatible for
+ * inline spinners). Spec: docs/05-implementation/design-handoffs/
+ * 2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md → "States → Loading".
  */
 
 import React from 'react';
@@ -41,7 +43,8 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   const px = SIZES[size];
 
   if (label) {
-    // 1a Masthead loading state: serif italic verb + thin gold progress bar.
+    // 2a loading state: Instrument Serif italic verb at the spec'd 19px (also
+    // the serif floor) + a thin brown progress bar.
     return (
       <div
         role="status"
@@ -50,14 +53,14 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
         className={cn('flex flex-col items-center justify-center gap-3', className)}
       >
         <span
-          className="text-[15px] italic text-[color:var(--fg-dim)]"
-          style={{ fontFamily: 'var(--font-prose, Georgia, serif)' }}
+          className="text-[19px] italic text-[color:var(--fg-dim)]"
+          style={{ fontFamily: 'var(--font-prose)' }}
         >
           {label}
         </span>
         <span
           aria-hidden="true"
-          className="block h-[3px] rounded-[2px] overflow-hidden bg-[color:var(--border-faint,#22303F)]"
+          className="block h-[3px] rounded-[2px] overflow-hidden bg-[color:var(--border-faint)]"
           style={{ width: Math.max(px * 3, 120) }}
         >
           <span className="block h-full w-[55%] bg-primary animate-pulse motion-reduce:animate-none" />

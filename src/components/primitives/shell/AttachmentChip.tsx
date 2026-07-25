@@ -7,7 +7,7 @@
  * States:
  *   - idle (default) — paperclip icon, filename, size, chevron-down or download icon
  *   - loading — spinner icon, opacity 0.7
- *   - error — red tint, alert icon
+ *   - error — terracotta tint (--red-soft / --negative-text), alert icon
  */
 
 import { forwardRef } from 'react';
@@ -44,8 +44,8 @@ export const AttachmentChip = forwardRef<HTMLButtonElement, AttachmentChipProps>
           'text-[11.5px] font-medium whitespace-nowrap',
           'transition-colors',
           isError
-            ? 'border-red-200 dark:border-red-900/40 bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-300'
-            : 'border-border bg-card text-muted-foreground hover:bg-secondary',
+            ? 'border-[color:var(--status-rejected-border)] bg-[color:var(--red-soft)] text-[color:var(--negative-text)]'
+            : 'border-border bg-card text-[color:var(--fg-dim)] hover:bg-secondary',
           isLoading && 'opacity-70 cursor-wait',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
           'disabled:opacity-40 disabled:cursor-not-allowed',
@@ -57,7 +57,7 @@ export const AttachmentChip = forwardRef<HTMLButtonElement, AttachmentChipProps>
         <LeadingIcon
           className={cn(
             'w-4 h-4 shrink-0',
-            isError ? 'text-red-700 dark:text-red-300' : 'text-muted-foreground',
+            isError ? 'text-[color:var(--negative-text)]' : 'text-muted-foreground',
           )}
           aria-hidden
         />

@@ -5,7 +5,8 @@
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/table/DataTablePrimitives.jsx
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked: min-h 72 (>= 44h tap target) · red-50 selected + left-rail · meta Geist Mono.
+ * Locked: min-h 72 (>= 44h tap target) · selected = --row-selected brown wash +
+ * 3px brown left rail · meta in the mono stack, tabular-nums.
  */
 
 import { forwardRef } from 'react';
@@ -54,7 +55,7 @@ export const MobileListCard = forwardRef<HTMLDivElement, MobileListCardProps>(
           state === 'hover' && 'bg-secondary',
           state !== 'selected' && hasOnClick && 'hover:bg-secondary',
           state === 'selected' &&
-            'bg-primary/[0.06] hover:bg-primary/[0.08] dark:bg-primary/[0.08] dark:hover:bg-primary/[0.10]',
+            'bg-[color:var(--row-selected)] hover:bg-primary/[0.16]',
           'text-foreground',
           hasOnClick && 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
           className
@@ -75,7 +76,7 @@ export const MobileListCard = forwardRef<HTMLDivElement, MobileListCardProps>(
           {subtitle && (
             <div
               className={cn(
-                'text-[12px] text-muted-foreground mt-[2px]',
+                'text-[12px] text-[color:var(--fg-dim)] mt-[2px]',
                 subtitleWrap ? 'break-words' : 'whitespace-nowrap overflow-hidden text-ellipsis',
               )}
             >
@@ -84,7 +85,7 @@ export const MobileListCard = forwardRef<HTMLDivElement, MobileListCardProps>(
           )}
           {meta && (
             <div
-              className="flex flex-wrap gap-2 mt-1 text-[11px] text-muted-foreground"
+              className="flex flex-wrap gap-2 mt-1 text-[11px] text-[color:var(--fg-dim)]"
               style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}
             >
               {meta}

@@ -95,7 +95,7 @@ Full enforcement patterns: [`.claude/rules/`](../.claude/rules/) (auto-load by `
 | **Dates** | `@/utils/timezoneUtils` only (SGT, UTC+8) — never raw `date-fns` formatting | `.claude/rules/timezone.md` |
 | **Toasts** | `showSuccess` / `showError` from `@/utils/toastHelper` — no `useToast` | `.claude/rules/toast-system.md` |
 | **Query keys** | `queryKeys` factory; mutations invalidate `.all` + `.detail(id)` | `.claude/rules/react-query.md` |
-| **Dark mode** | Page one shade lighter than cards; pair every light util with a `dark:` variant | `.claude/rules/dark-mode.md` |
+| **Theme** | Light-pinned Kopi Studio cream; cards sit one shade LIGHTER than the page; no `dark:` variants, no cool neutrals | `.claude/rules/light-theme.md` |
 | **Mobile** | `dvh` not `vh`; 16px touch inputs; 44px targets; long forms = fullscreen Dialog | `.claude/rules/mobile-web.md` |
 | **URLs** | single-concept = no hyphens (`/clientprofiles`); multi-word = hyphens (`/ot-calculator`). New lists use `useURLPagination` | `.claude/rules/url-standards.md` |
 | **Hygiene** | Touching a file → 4 checks (inconsistency, redundancy, clarity, up-to-dateness); never delete debugging-history sections | `.claude/rules/code-hygiene.md` |

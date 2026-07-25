@@ -14,13 +14,13 @@ interface ModuleCardProps {
   description?: string;
   /** Optional count badge (new items, pending, etc.) */
   count?: number | string | null;
-  /** Override count-critical detection (forces red) */
+  /** Override count-critical detection (forces the terracotta error tone) */
   urgent?: boolean;
   /** Whether module is pinned (filled pin icon) */
   pinned?: boolean;
   /** Show pin icon at all (hides if user can't pin) */
   showPin?: boolean;
-  /** Starred favourite (yellow overlay) */
+  /** Starred favourite (filled dim-ink star overlay) */
   starFav?: boolean;
   /** Disabled state (insufficient permissions) */
   disabled?: boolean;
@@ -74,7 +74,9 @@ export const ModuleCard = forwardRef<HTMLButtonElement, ModuleCardProps>(functio
           'bg-card',
           'border-border',
           'transition-all duration-[120ms] ease-out',
-          !disabled && 'hover:-translate-y-px hover:shadow-[0_4px_14px_rgba(24,24,27,0.06)] hover:bg-secondary hover:border-primary',
+          // Interactive card hover per 2a: warm-ink lift + --border-hover.
+          // Brown is punctuation, so the border does NOT go to the CTA brown.
+          !disabled && 'hover:-translate-y-px hover:shadow-[var(--card-shadow-hover)] hover:bg-secondary hover:border-[color:var(--border-hover)]',
           compact ? 'h-14 px-3.5 flex items-center gap-2.5' : 'min-h-[92px] py-3.5 px-4 flex flex-col items-start gap-2',
           disabled && 'opacity-50 cursor-not-allowed',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
@@ -104,8 +106,10 @@ export const ModuleCard = forwardRef<HTMLButtonElement, ModuleCardProps>(functio
             <div className="text-[14px] font-medium text-foreground leading-tight">
               {name}
             </div>
+            {/* Dim ink, not --fg-muted — muted is 4.72:1 at rest on the card but
+                drops to 4.37:1 the moment the hover swaps in the secondary tint. */}
             {showDesc && (
-              <div className="w-full truncate text-[11.5px] text-muted-foreground leading-tight">
+              <div className="w-full truncate text-[11.5px] text-[color:var(--fg-dim)] leading-tight">
                 {description}
               </div>
             )}

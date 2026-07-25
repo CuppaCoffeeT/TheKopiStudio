@@ -45,7 +45,8 @@ interface DropdownMenuItemProps
 
 /**
  * DropdownMenuItem — leading icon slot + label + optional keyboard shortcut.
- * `destructive` flips to red-700 for terminal actions (Delete, Sign out).
+ * `destructive` flips to the AA-safe terracotta (`--negative-text`) for terminal
+ * actions (Delete, Sign out).
  */
 export const DropdownMenuItem = ({
   icon,
@@ -59,9 +60,13 @@ export const DropdownMenuItem = ({
     className={cn(
       'flex items-center gap-2 px-2 py-1.5 rounded-[5px]',
       'text-xs cursor-pointer outline-none select-none',
+      // A tint fill alone is ~1.1:1 against the cream menu surface, so keyboard
+      // focus gets its own inset brown ring and the deeper --row-selected fill;
+      // hover stays on the lighter --row-hover so the two states differ.
+      'focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring',
       destructive
-        ? 'text-red-700 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-950/40 hover:bg-red-50 dark:hover:bg-red-950/40'
-        : 'text-foreground focus:bg-secondary hover:bg-secondary',
+        ? 'text-[color:var(--negative-text)] focus:bg-[color:var(--red-soft)] hover:bg-[color:var(--red-soft)]'
+        : 'text-foreground focus:bg-[color:var(--row-selected)] hover:bg-[color:var(--row-hover)]',
       'data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed',
       className
     )}
@@ -72,7 +77,7 @@ export const DropdownMenuItem = ({
       <span
         className={cn(
           'w-3.5 text-center text-xs',
-          destructive ? 'text-red-700 dark:text-red-400' : 'text-muted-foreground'
+          destructive ? 'text-[color:var(--negative-text)]' : 'text-muted-foreground'
         )}
       >
         {icon}
@@ -93,7 +98,7 @@ export const DropdownMenuLabel = ({
       'px-2 py-1.5 text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground',
       className
     )}
-    style={{ fontFamily: 'var(--font-pixel)' }}
+    style={{ fontFamily: 'var(--font-sans)' }}
     {...props}
   />
 );

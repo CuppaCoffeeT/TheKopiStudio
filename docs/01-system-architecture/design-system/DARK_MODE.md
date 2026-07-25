@@ -1,8 +1,10 @@
 # Dark Mode
 
+> ⛔ **SUPERSEDED 2026-07-25** — the app is now light-pinned on The Kopi Studio cream/brown palette; the navy/gold always-dark contract below is historical. Authority: [KOPI_2A_SPEC.md](../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md) · enforcement: [.claude/rules/light-theme.md](../../../.claude/rules/light-theme.md).
+
 **Created**: 2026-05-13 SGT
-**Last Updated**: 2026-07-14 SGT
-**Status**: 🟢 Production
+**Last Updated**: 2026-07-25 SGT
+**Status**: 🔴 Deprecated
 **Priority**: 🟡 High
 
 👉 Parent: [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md) · Sibling: [COLORS.md](./COLORS.md) · [TOKENS.md](./TOKENS.md)
@@ -104,7 +106,6 @@ The sections below record the class-toggled zinc light/dark system that preceded
 - [TOKENS.md](./TOKENS.md) — every `@theme` token group
 - [PHILOSOPHY.md](./PHILOSOPHY.md) — 11 design-reuse principles
 - [../DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md) — design-system router
-- [.claude/rules/dark-mode.md](../../../.claude/rules/dark-mode.md) — auto-loaded enforcement rule
-- [.claude/rules/design-system.md](../../../.claude/rules/design-system.md) — visual-verification protocol
-- [src/index.css](../../../src/index.css) — runtime tokens (`:root` + `.dark`)
+- [.claude/rules/light-theme.md](../../../.claude/rules/light-theme.md) — auto-loaded enforcement rule (supersedes the retired `dark-mode.md`)
+- [src/index.css](../../../src/index.css) — runtime tokens (single `:root`, no `.dark`)
 - [src/lib/design/ThemeProvider.tsx](../../../src/lib/design/ThemeProvider.tsx) — mode activation

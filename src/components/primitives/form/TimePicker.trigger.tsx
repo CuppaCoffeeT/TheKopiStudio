@@ -41,11 +41,13 @@ export const TimePickerTrigger = forwardRef<HTMLButtonElement, TimePickerTrigger
           heightClass,
           textSizeClass,
           'tabular-nums text-left appearance-none transition-[box-shadow,border-color,background] duration-150',
-          error || open ? 'border-red-700 dark:border-red-400' : 'border-border',
-          open && 'ring-[3px] ring-ring/15',
+          // Open is a brown state, not an error state — only `error` gets the terracotta border.
+          error ? 'border-destructive' : open ? 'border-ring' : 'border-border',
+          // 2a: brown ring at 50% — the 15% alpha it replaced composited to 1.2:1 and read as no ring at all.
+          open && !error && 'ring-[3px] ring-ring/50',
           'hover:border-border',
           'active:bg-secondary',
-          'focus-visible:outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/15',
+          'focus-visible:outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
           'disabled:bg-secondary disabled:cursor-not-allowed disabled:opacity-80',
           display ? 'text-foreground' : 'text-muted-foreground',
         )}

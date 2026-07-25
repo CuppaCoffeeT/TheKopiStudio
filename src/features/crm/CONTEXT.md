@@ -14,7 +14,7 @@ Insurance CRM (SHIPPED): clients/policies/interactions/bank + dashboards + repor
 ## Constraints
 
 - MATH PURITY: components format only; all numbers from lib (1.025/1.06 kept; oracle tests cite legacy JSX)
-- Band tones WCAG-darkened (#047857/#92400e/#b91c1c) — logic/labels legacy-exact; premiums ANNUALISED (footnoted)
+- Band tones Kopi + WCAG-darkened (#4A6A4E/#7D5F3D/#AB4925) — logic/labels legacy-exact; premiums ANNUALISED (footnoted)
 - report-canvas light-locked; `.no-print` chrome; window.print()
 - Comm card: LOCAL DISC palette (no profiler import); ONE neutral empty state (never-converted ≡ RLS-hidden)
 - Legacy quirks per decisions.md — never "fix"; soft delete (exc. replaceProjections); bank recompute owns derived cols

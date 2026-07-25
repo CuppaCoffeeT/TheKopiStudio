@@ -6,7 +6,8 @@
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
  * Locked:
- *  - Hover = white bg + shadow-sm (not zinc-100, which matches page-bg → invisible).
+ *  - Hover = `--row-hover`, the translucent brown wash. A solid cream would be
+ *    invisible here because the card it sits in is already cream.
  *  - Row min-height 44px — matches mobile tap-target rule.
  *  - Avatar is initials-based; falls back to `•` glyph when initials omitted.
  */
@@ -110,8 +111,7 @@ export function RelatedRecordsCard({
                   'min-h-11 px-3.5 py-2 no-underline',
                   !isLast && 'border-b border-border',
                   'text-foreground',
-                  'hover:bg-card hover:shadow-[inset_0_0_0_1px_#ececee,0_1px_2px_rgba(24,24,27,0.04)]',
-                  'dark:hover:bg-white/[0.04] dark:hover:shadow-none',
+                  'hover:bg-[color:var(--row-hover)] hover:shadow-[inset_0_0_0_1px_var(--border-hover),var(--card-shadow-hover)]',
                   'active:translate-x-[1px]',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:-ring-offset-2',
                   item.disabled && 'opacity-50 cursor-not-allowed pointer-events-none'

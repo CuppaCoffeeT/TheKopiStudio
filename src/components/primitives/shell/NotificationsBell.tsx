@@ -44,7 +44,7 @@ export function NotificationsBell({ items, total, onPick }: NotificationsBellPro
           <Bell className="w-4 h-4" strokeWidth={1.3} />
           {total > 0 && (
             <span
-              className="absolute top-[3px] right-[3px] w-[7px] h-[7px] rounded-full ring-[1.5px] ring-white dark:ring-zinc-950"
+              className="absolute top-[3px] right-[3px] w-[7px] h-[7px] rounded-full ring-[1.5px] ring-card"
               style={{ background: 'var(--brand-red)' }}
             />
           )}
@@ -53,8 +53,8 @@ export function NotificationsBell({ items, total, onPick }: NotificationsBellPro
 
       <PopoverContent align="end" sideOffset={8} className="w-[320px] p-0">
         <div className="px-3 pt-3 pb-2 flex items-center gap-2 border-b border-border">
-          <AlertCircle className="h-3.5 w-3.5 text-red-500" />
-          <span className="text-[11px] font-medium uppercase tracking-widest text-red-500">
+          <AlertCircle className="h-3.5 w-3.5 text-[color:var(--negative-text)]" />
+          <span className="text-[11px] font-medium uppercase tracking-widest text-[color:var(--negative-text)]">
             Needs your attention
           </span>
           {total > 0 && (
@@ -66,7 +66,7 @@ export function NotificationsBell({ items, total, onPick }: NotificationsBellPro
 
         {items.length === 0 ? (
           <div className="px-3 py-6 flex items-center justify-center gap-2 text-sm text-muted-foreground">
-            <Check className="w-4 h-4 text-green-500" />
+            <Check className="w-4 h-4 text-[color:var(--sage-text)]" />
             You're all caught up
           </div>
         ) : (
@@ -78,10 +78,12 @@ export function NotificationsBell({ items, total, onPick }: NotificationsBellPro
                   key={item.path}
                   type="button"
                   onClick={() => handlePick(item.path)}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-red-50/30 dark:hover:bg-red-950/20 focus-visible:outline-none focus-visible:bg-red-50/30 dark:focus-visible:bg-red-950/20 text-left"
+                  // Inset ring, not an offset one: the row is full-bleed inside an
+                  // overflow-clipped scroller, so an outset ring would be cropped.
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
                 >
                   <Icon className="w-4 h-4 text-muted-foreground shrink-0" strokeWidth={1.5} />
-                  <span className="flex-1 text-sm text-muted-foreground truncate">
+                  <span className="flex-1 text-sm text-[color:var(--fg-dim)] truncate">
                     {item.name}
                   </span>
                   {item.count > 0 && (

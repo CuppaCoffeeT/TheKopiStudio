@@ -2,7 +2,9 @@
 
 👉 Parent: [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md)
 
-Every design sub-guide for Insurance CRM (navy/gold/serif Editorial system, locked 2026-07-14). Scoped routers — each file covers one slice. Read the parent router first for the topic matrix.
+Every design sub-guide for the app (**The Kopi Studio, direction 2a "Kopi House" — light-pinned cream/brown, locked 2026-07-25**). Scoped routers — each file covers one slice. Read the parent router first for the topic matrix.
+
+⚠️ **Several files here are era-marked.** The 2026-07-14 Editorial navy/gold system and the AppBase zinc system before it are both retired — there is no navy and no gold in this brand. Live authority: [KOPI_2A_SPEC.md](../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md) · enforcement: [.claude/rules/light-theme.md](../../../.claude/rules/light-theme.md) · runtime: [src/index.css](../../../src/index.css). Files below marked ⛔ are kept for archaeology only.
 
 ## Scope
 
@@ -13,13 +15,13 @@ Every design sub-guide for Insurance CRM (navy/gold/serif Editorial system, lock
 
 | File | Purpose |
 |---|---|
-| [PHILOSOPHY.md](./PHILOSOPHY.md) | Editorial navy/gold/serif direction (2026-07-14 reversal), what it supersedes, 11 reuse principles |
-| [TYPOGRAPHY.md](./TYPOGRAPHY.md) | System sans + Georgia serif stacks, `--font-pixel` alias situation, h1-h6 scale |
-| [COLORS.md](./COLORS.md) | Navy/cream/gold palette, semantic tokens, 6-status palette, always-dark contract |
-| [SPACING_MOTION.md](./SPACING_MOTION.md) | Spacing scale, radii, shadow variants, motion durations + easings |
-| [TOKENS.md](./TOKENS.md) | All 11 `@theme` token groups with exact values + source line numbers |
+| [PHILOSOPHY.md](./PHILOSOPHY.md) | **Current** — quiet-broadsheet direction (2026-07-25 Kopi 2a), what it supersedes, 11 reuse principles |
+| [TYPOGRAPHY.md](./TYPOGRAPHY.md) | **Current** — Instrument Serif / IBM Plex Sans stacks, the 18px serif floor, `--font-pixel` alias situation, h1-h6 scale |
+| [COLORS.md](./COLORS.md) | ⛔ Superseded — navy/gold palette, kept for archaeology. Live palette: KOPI_2A_SPEC.md |
+| [SPACING_MOTION.md](./SPACING_MOTION.md) | **Current** — spacing scale, radii, shadow variants, motion durations + easings (shadow + hover rule re-cut for cream) |
+| [TOKENS.md](./TOKENS.md) | 🟡 Names current, **values superseded** — all `@theme` token groups. Read values from `src/index.css` |
 | [PRIMITIVES.md](./PRIMITIVES.md) | 79-primitive inventory by group, import paths, adoption state |
-| [DARK_MODE.md](./DARK_MODE.md) | Always-dark contract — raised-card layering, token chain, verification protocol |
+| [DARK_MODE.md](./DARK_MODE.md) | ⛔ Superseded — the retired always-dark contract. The app is light-pinned; see `.claude/rules/light-theme.md` |
 | [ARCHETYPES.md](./ARCHETYPES.md) | 6 page archetypes (list · detail · form · dashboard · settings · tool) with folder shape |
 | [DESIGN_LAB_CATALOG.md](./DESIGN_LAB_CATALOG.md) | Handoff HTML preview catalog — how to open, what's inside each session |
 

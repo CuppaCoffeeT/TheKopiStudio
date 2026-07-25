@@ -5,7 +5,8 @@
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/table/DataTablePrimitives.jsx
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked: 16×16 box · CTA slate-800 when on · border zinc-300 / hover zinc-400.
+ * Locked: 16×16 box · brown CTA fill when on · hairline border at rest,
+ * --border-hover (#C0A68C) on hover.
  */
 
 import { forwardRef } from 'react';
@@ -42,7 +43,7 @@ export const TableCheckbox = forwardRef<HTMLButtonElement, TableCheckboxProps>(
           'w-4 h-4 rounded-[4px] border-[1.5px] transition-colors',
           on
             ? 'bg-primary border-primary'
-            : 'bg-card border-border hover:border-border',
+            : 'bg-card border-border hover:border-[color:var(--border-hover)]',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
           disabled && 'opacity-40 cursor-not-allowed',
           className

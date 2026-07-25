@@ -4,9 +4,15 @@
  *
  * Session 1 List/Table archetype output. Consumes v4 status-* tokens from
  * src/index.css: 6 variants (draft · sent · accepted · rejected · expired
- * · revised) × light+dark × bg/fg/border/dot. Each variant = semantic colour
- * per construction-ops domain (draft=grey, sent=blue, accepted=green,
- * rejected=red, expired=orange, revised=purple).
+ * · revised) × bg/fg/border/dot. The app is light-pinned, so there is one
+ * token set per variant — no dark counterpart.
+ *
+ * Kopi 2a collapses status to three meanings, each a tint fill + darkened
+ * same-hue text (never a saturated fill):
+ *   · sage positive     → accepted
+ *   · brown in-progress → sent · revised
+ *   · terracotta error  → rejected
+ * with warm muted neutrals for the inert states (draft · expired).
  *
  * Deep import per Q-W07-b. No barrel re-export.
  *

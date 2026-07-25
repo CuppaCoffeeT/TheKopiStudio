@@ -8,23 +8,25 @@ import { cn } from '@/lib/utils';
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/charts/ChartPrimitives.jsx
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked: canvas height defaults to 280 · header divider + footer divider use zinc-200/800.
+ * Locked: canvas height 280 default · header/footer dividers `border-border` · title = 2a section
+ *         head, Instrument Serif (`--font-pixel`) 22px (the serif floor); subtitle/footer mono, rest sans.
  */
 
 /**
- * 1a Masthead monochrome cream→gold series palette (2026-07-21).
- * Primary gold · secondary dim cream · further series step down cream opacity.
- * No green/blue/purple categoricals inside charts.
- */
+ * 2a "Kopi House" chart palette (2026-07-25) — ONE brown ramp, 4 steps assigned by SERIES ORDER
+ * (never by value) so a series keeps its step across renders. No gold, no categorical hues:
+ * sage/terracotta stay semantic (positive/negative), never decoration. Steps 2–4 measure
+ * 3.08 / 2.15 / 1.47 on card cream — decorative only, so every segment needs its legend label and
+ * any colour-encoded figure must also appear as text. Values: `--chart-ramp-1..4` in src/index.css;
+ * literals here are unstyled-case fallbacks only. */
 export const CHART_SERIES_PALETTE = [
-  'var(--chart-pipeline, #C9A84C)', // gold — primary series
-  'var(--chart-accepted, #D6CCB4)', // dim cream — second series
-  'rgba(240, 234, 214, 0.55)',      // cream @ 55%
-  'rgba(240, 234, 214, 0.35)',      // cream @ 35%
-  'rgba(240, 234, 214, 0.2)',       // cream @ 20%
+  'var(--chart-ramp-1, #8b6a47)', // brown — ramp anchor, primary series
+  'var(--chart-ramp-2, #a58868)', // second series
+  'var(--chart-ramp-3, #c0a68c)', // third series
+  'var(--chart-ramp-4, #dccbb6)', // fourth series
 ] as const;
 
-/** Series color by index — clamps to the last (faintest) cream step. */
+/** Series color by index — clamps to the last (faintest) brown step. */
 export function chartSeriesColor(index: number): string {
   return CHART_SERIES_PALETTE[Math.min(Math.max(index, 0), CHART_SERIES_PALETTE.length - 1)];
 }
@@ -47,7 +49,9 @@ export const ChartShell = forwardRef<HTMLDivElement, ChartShellProps>(function C
     <div
       ref={ref}
       className={cn(
-        'overflow-hidden rounded-xl border shadow-sm',
+        // 2a cards rest FLAT: lift = the cream-on-page colour step, not a shadow. Carries
+        // `--card-shadow` (`none`), never a black `shadow-sm`.
+        'overflow-hidden rounded-xl border shadow-[var(--card-shadow)]',
         'border-border bg-card',
         className
       )}
@@ -64,8 +68,10 @@ export const ChartShell = forwardRef<HTMLDivElement, ChartShellProps>(function C
       >
         <div className="min-w-0 flex-1">
           <div
-            className="text-[18px] text-foreground"
-            style={{ fontFamily: 'Georgia, serif' }}
+            // Section head per KOPI_2A_SPEC — Instrument Serif 22px on warm ink, above the
+            // 18px floor the brand serif may not go under.
+            className="text-[22px] text-foreground"
+            style={{ fontFamily: 'var(--font-pixel)' }}
           >
             {title}
           </div>
@@ -108,10 +114,7 @@ export const ChartShell = forwardRef<HTMLDivElement, ChartShellProps>(function C
   );
 });
 
-// ─────────────────────────────────────────────────────────────
-// Helpers — AxisY / AxisX / GridLines (used by AreaChart + BarChart)
-// Inlined here per spec so chart files can import from ChartShell.
-// ─────────────────────────────────────────────────────────────
+// ─── Helpers — AxisY / AxisX / GridLines (AreaChart + BarChart); inlined per spec so chart files import them from here ───
 
 export interface AxisTick {
   pos: number; // 0..1

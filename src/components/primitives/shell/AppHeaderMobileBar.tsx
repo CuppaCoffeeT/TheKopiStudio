@@ -59,7 +59,7 @@ export function AppHeaderMobileBar({
       )}
     >
       <AppHeaderLogo mobile />
-      <div className="h-3.5 w-px bg-[#ececee] dark:bg-[#202024] flex-shrink-0" />
+      <div className="h-3.5 w-px bg-[color:var(--border-soft)] flex-shrink-0" />
       <div className="flex-1 min-w-0 text-[13px] font-medium text-muted-foreground truncate">
         {last?.label}
       </div>

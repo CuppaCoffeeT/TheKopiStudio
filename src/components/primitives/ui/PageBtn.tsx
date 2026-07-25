@@ -5,7 +5,10 @@
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/table/DataTablePrimitives.jsx
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked: 32×32 square · CTA slate-800 when active · Geist Mono tabular-nums · hover zinc-100.
+ * Locked: 32×32 square · brown CTA fill + cream label when active (--primary /
+ * --primary-foreground) · tabular-nums mono figures · idle is a hairline outline
+ * with a --fg-dim numeral, which survives the tint hover fill (bg-secondary) at
+ * 6.79:1 — --fg-muted would drop to 4.37:1 there and fail AA at 12px.
  */
 
 import { forwardRef } from 'react';
@@ -32,7 +35,7 @@ export const PageBtn = forwardRef<HTMLButtonElement, PageBtnProps>(function Page
         'border',
         active
           ? 'bg-primary border-primary text-primary-foreground'
-          : 'bg-transparent border-border text-muted-foreground hover:bg-secondary',
+          : 'bg-transparent border-border text-[color:var(--fg-dim)] hover:bg-secondary',
         'disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         className

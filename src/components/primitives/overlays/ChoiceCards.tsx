@@ -6,8 +6,10 @@
  * 2-large-button picker used as the entry step of Add Work Entry (Trial Trench/General Works)
  * AND Add OT Entry (Work Entry/Leave). Desktop grid-cols-2 · mobile stack inside Drawer.
  *
- * All 5 states per card: default / hover / active / focus-visible / disabled (light + dark).
- * Accent colors: blue (TT) · green (GW) · slate-primary (OT Work) · amber-outline (OT Leave).
+ * All 5 states per card: default / hover / active / focus-visible / disabled. The app is
+ * light-pinned, so no `dark:` counterparts are declared.
+ * Accent tones are the 2a semantic set: brown (authority/primary) · sage (positive) ·
+ * terracotta (negative) · muted (neutral ink). No categorical green/blue/purple.
  *
  * Composition: native button styled via Tailwind v4 tokens — no new primitive .jsx. Built
  * to compose cleanly inside primitive Modal/Drawer body slot.
@@ -16,7 +18,7 @@
 import { ChevronRight, type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-type AccentTone = 'blue' | 'green' | 'slate' | 'amber';
+type AccentTone = 'brown' | 'sage' | 'terracotta' | 'muted';
 
 export interface ChoiceCardOption {
   key: string;
@@ -24,7 +26,7 @@ export interface ChoiceCardOption {
   accent: AccentTone;
   title: string;
   description: string;
-  /** When true, card renders as filled (slate-700 background); otherwise outline. */
+  /** When true, card renders as filled (brown CTA background); otherwise outline. */
   variant?: 'outline' | 'primary';
   disabled?: boolean;
   testId?: string;
@@ -35,11 +37,15 @@ interface ChoiceCardsProps {
   onSelect: (key: string) => void;
 }
 
+/**
+ * Icon chips: an AA-safe glyph on a low-alpha wash of the same hue, all four
+ * carrying the shared hairline — hairline borders carry the layout in 2a.
+ */
 const accentIcon: Record<AccentTone, string> = {
-  blue:   'text-blue-600 dark:text-blue-400 bg-blue-50/60 dark:bg-blue-950/40 border-blue-200 dark:border-blue-900',
-  green:  'text-green-600 dark:text-green-400 bg-green-50/60 dark:bg-green-950/40 border-green-200 dark:border-green-900',
-  slate:  'text-white bg-slate-700 dark:bg-slate-200 dark:text-slate-900',
-  amber:  'text-amber-700 dark:text-amber-300 bg-amber-50/60 dark:bg-amber-950/40 border-amber-200 dark:border-amber-900',
+  brown:      'text-[color:var(--brown-text)] bg-[color:var(--accent-red-soft-bg)] border-border',
+  sage:       'text-[color:var(--sage-text)] bg-[color:var(--delta-positive-bg)] border-border',
+  terracotta: 'text-[color:var(--negative-text)] bg-[color:var(--delta-negative-bg)] border-border',
+  muted:      'text-[color:var(--fg-dim)] bg-[color:var(--status-expired-bg)] border-border',
 };
 
 export function ChoiceCards({ options, onSelect }: ChoiceCardsProps) {
@@ -61,31 +67,33 @@ export function ChoiceCards({ options, onSelect }: ChoiceCardsProps) {
               'min-h-[140px] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
               'disabled:opacity-40 disabled:cursor-not-allowed',
               isPrimary
-                ? 'bg-slate-700 text-white hover:bg-slate-800 active:scale-[0.98] border-transparent dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white'
-                : 'bg-card border-border text-foreground hover:bg-secondary hover:border-border active:scale-[0.98]',
+                ? 'bg-[color:var(--cta-primary-bg)] text-[color:var(--cta-primary-fg)] hover:bg-[color:var(--cta-primary-bg-hover)] active:scale-[0.98] border-transparent'
+                : 'bg-card border-border text-foreground hover:bg-[color:var(--row-hover)] hover:border-[color:var(--border-hover)] active:scale-[0.98]',
             )}
           >
             <span
               className={cn(
                 'inline-flex items-center justify-center h-10 w-10 rounded-md border',
                 isPrimary
-                  ? 'bg-white/15 border-white/20 text-white dark:bg-slate-900/10 dark:border-slate-900/20 dark:text-slate-900'
+                  ? 'bg-[color:var(--cta-primary-bg-active)] border-[color:var(--border-hover)] text-[color:var(--cta-primary-fg)]'
                   : accentIcon[opt.accent],
               )}
               aria-hidden
             >
               <Icon className="h-5 w-5" strokeWidth={2} />
             </span>
-            <span className={cn('text-base font-semibold leading-tight', isPrimary ? 'text-white dark:text-slate-900' : 'text-foreground')}>
+            <span className={cn('text-base font-semibold leading-tight', isPrimary ? 'text-[color:var(--cta-primary-fg)]' : 'text-foreground')}>
               {opt.title}
             </span>
-            <span className={cn('text-xs leading-relaxed', isPrimary ? 'text-white/85 dark:text-slate-900/80' : 'text-muted-foreground')}>
+            {/* Full-strength cream, not a faded one: cream on brown is 4.58:1 and
+                any alpha on top of that drops the 12px description under AA. */}
+            <span className={cn('text-xs leading-relaxed', isPrimary ? 'text-[color:var(--cta-primary-fg)]' : 'text-muted-foreground')}>
               {opt.description}
             </span>
             <ChevronRight
               className={cn(
                 'absolute right-3 top-3 h-4 w-4 opacity-50 group-hover:opacity-100 transition-opacity',
-                isPrimary ? 'text-white dark:text-slate-900' : 'text-muted-foreground',
+                isPrimary ? 'text-[color:var(--cta-primary-fg)]' : 'text-muted-foreground',
               )}
               aria-hidden
               strokeWidth={2.4}

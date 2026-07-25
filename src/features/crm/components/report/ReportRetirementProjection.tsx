@@ -3,7 +3,7 @@
  * report/RetirementProjection.jsx:1-129 plus the ClientReportModal.jsx:429-437
  * render guard, git c09c549).
  *
- * Three gradient cards (ILP / bank / total via heroTotals), the conditional
+ * Three stat cards (ILP / bank / total via heroTotals), the conditional
  * bank-balance-history table, the component table with the
  * currentHoldingsTotal row, then the economic block
  * (ReportRetirementEconomics — entirely lib/financeReportEconomics math).
@@ -134,8 +134,8 @@ export function ReportRetirementProjection({
                 {policy.type} — {policy.provider}
               </td>
               <td className="num">{moneyExact(toFloat(policy.currentAccountValue))}</td>
-              {/* emerald-700 (legacy #059669 ≈3.97:1) — axe AA needs 4.5:1 on white. */}
-              <td className="num" style={{ color: '#047857', fontWeight: 500 }}>
+              {/* Kopi sage #4A6A4E — 6.06:1 on the white report paper. */}
+              <td className="num" style={{ color: '#4a6a4e', fontWeight: 500 }}>
                 {money(toFloat(policy.illustratedValueAge65))}
               </td>
               <td>From benefit illustration</td>
@@ -144,7 +144,10 @@ export function ReportRetirementProjection({
           <tr>
             <td>Bank balance</td>
             <td className="num">{moneyExact(balance)}</td>
-            <td className="num" style={{ color: '#2563eb', fontWeight: 500 }}>
+            {/* Brown #806241 — the AA-safe brown for type under 18px (5.61:1
+                on white). Bank growth is neither positive nor negative, so it
+                takes the neutral brand accent rather than a semantic hue. */}
+            <td className="num" style={{ color: '#806241', fontWeight: 500 }}>
               {money(hero.bankBalanceAt65)}
             </td>
             <td>0.5% annual interest</td>
@@ -155,7 +158,9 @@ export function ReportRetirementProjection({
           >
             <td>Total</td>
             <td className="num">{moneyExact(currentHoldingsTotal(balance, investmentPolicies))}</td>
-            <td className="num" style={{ color: '#7c3aed' }}>
+            {/* Dim ink #5D4F3F — 6.34:1 on the total-row tint (#E8E6E0). The
+                row is already bold, so the figure needs no accent hue. */}
+            <td className="num" style={{ color: '#5d4f3f' }}>
               {money(hero.totalRetirementValue)}
             </td>
             <td />

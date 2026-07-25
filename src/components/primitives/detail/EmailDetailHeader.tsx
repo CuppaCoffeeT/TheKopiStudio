@@ -51,7 +51,7 @@ export const EmailDetailHeader = forwardRef<HTMLDivElement, EmailDetailHeaderPro
         className={cn(
           'sticky top-0 z-10',
           'flex items-center gap-2.5 px-4 py-2.5',
-          'backdrop-blur-md bg-white/70 dark:bg-zinc-950/70',
+          'backdrop-blur-md bg-[color:var(--surface-translucent-bg)]',
           'border-b border-border',
           className,
         )}
@@ -92,7 +92,7 @@ export const EmailDetailHeader = forwardRef<HTMLDivElement, EmailDetailHeaderPro
         </h2>
         {messageCount !== undefined && messageCount > 0 && (
           <span
-            className="text-[10.5px] text-muted-foreground bg-secondary px-1.5 rounded-sm tabular-nums shrink-0"
+            className="text-[10.5px] text-[color:var(--fg-dim)] bg-secondary px-1.5 rounded-sm tabular-nums shrink-0"
             style={{ fontFamily: 'var(--font-mono)' }}
           >
             {messageCount}
@@ -116,8 +116,10 @@ export const EmailDetailHeader = forwardRef<HTMLDivElement, EmailDetailHeaderPro
             <Star
               className={cn(
                 'w-3.5 h-3.5',
+                // Icon fill, not type — raw brand brown is correct here; the AA
+                // text variants are reserved for glyphs that carry copy.
                 isStarred &&
-                  'fill-amber-400 text-amber-400 dark:fill-amber-400 dark:text-amber-400',
+                  'fill-[color:var(--brand-brown)] text-[color:var(--brand-brown)]',
               )}
             />
           </button>

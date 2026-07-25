@@ -21,7 +21,7 @@
  * most primitives in `primitives/**`. It was promoted from feature code
  * (W09 P3 · M2 AgentInbox, 2026-04-23) when the pattern was needed on
  * multiple pages. All other primitive requirements are honoured:
- *   - v4 tokens only (--font-sans, --font-mono, slate/zinc/red scale)
+ *   - Kopi 2a tokens only (--font-sans, --font-mono, cream/brown/sage/terracotta)
  *   - All 5 interactive states (default / hover / active / focus-visible / disabled)
  *   - Registered in primitives/CONTEXT.md + DESIGN_CATALOG.md
  *   - Re-exported from primitives/shell/index.ts
@@ -42,7 +42,7 @@ import { cn } from '@/lib/utils';
 export interface InboxChipProps {
   /** Tasks / notifications pending. Renders inside the inner count pill. */
   count: number;
-  /** Promotes the inner count pill + icon color to red-700 (blocker tone). */
+  /** Promotes the inner count pill + icon color to brown (blocker tone). */
   hasBlocker?: boolean;
   onClick: () => void;
   disabled?: boolean;
@@ -78,11 +78,17 @@ export function InboxChip({
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
         disabled
           ? 'opacity-60 cursor-not-allowed'
-          : 'hover:bg-secondary active:bg-zinc-100 dark:active:bg-white/[0.05]',
+          : 'hover:bg-secondary active:bg-[color:var(--tint-pressed)]',
         className,
       )}
     >
-      <Inbox className={cn('w-3.5 h-3.5 flex-shrink-0', hasBlocker ? 'text-primary' : 'text-muted-foreground')} aria-hidden />
+      <Inbox
+        className={cn(
+          'w-3.5 h-3.5 flex-shrink-0',
+          hasBlocker ? 'text-[color:var(--brown-text)]' : 'text-[color:var(--fg-dim)]',
+        )}
+        aria-hidden
+      />
       <span
         className={cn(
           'inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full text-[11px] tabular-nums',
@@ -102,7 +108,7 @@ export function InboxChip({
 export interface SituationBarProps {
   /** Info line to display. When empty AND `count === 0`, the bar self-hides. */
   sentence: string;
-  /** Red left-accent + red icon when the record is in a blocked state. */
+  /** Brown left-accent + brown icon when the record is in a blocked state. */
   isBlocker?: boolean;
   /** Chip props — the inbox count to badge + whether it shows the blocker tone. */
   count: number;
@@ -186,7 +192,10 @@ export function SituationBar({
             title={sentence}
           >
             <Info
-              className={cn('w-3.5 h-3.5 flex-shrink-0', isBlocker ? 'text-primary' : 'text-muted-foreground')}
+              className={cn(
+                'w-3.5 h-3.5 flex-shrink-0',
+                isBlocker ? 'text-[color:var(--brown-text)]' : 'text-[color:var(--fg-dim)]',
+              )}
               aria-hidden
             />
             <p
@@ -288,7 +297,7 @@ export function InboxRailPanel({
           'flex items-center gap-2.5 rounded-[10px] px-3.5 py-2.5 w-full h-10',
           'border border-border',
           'bg-card',
-          'hover:bg-secondary active:bg-zinc-100 dark:active:bg-white/[0.05]',
+          'hover:bg-secondary active:bg-[color:var(--tint-pressed)]',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
         )}
       >

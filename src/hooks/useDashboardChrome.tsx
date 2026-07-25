@@ -4,13 +4,14 @@
  *
  * Returns the props AppHeader needs, derived from AuthContext, plus an
  * impersonation sub-object for rendering `<ImpersonationBanner>`.
- * Theme is pinned dark (navy/gold) by ThemeProvider, so no theme-toggle
- * props are passed — AppHeader hides the toggle when `onThemeChange` is absent.
+ * Theme is pinned light (The Kopi Studio cream/brown) by ThemeProvider, so no
+ * theme-toggle props are passed — AppHeader hides the toggle when
+ * `onThemeChange` is absent.
  *
  * Usage:
  *   const chrome = useDashboardChrome();
  *   return (
- *     <div className="min-h-screen" style={{ background: 'var(--page-bg, #f4f4f5)' }}>
+ *     <div className="min-h-screen" style={{ background: 'var(--page-bg, #f0e6d6)' }}>
  *       <AppHeader breadcrumb={[{ label: 'Workspace', href: '/dashboard' }, { label: 'My Page' }]} {...chrome.appHeaderProps} />
  *       {chrome.impersonation.active && <ImpersonationBanner {...chrome.impersonation.props} />}
  *       …page content…

@@ -1,14 +1,29 @@
 # Colors
 
+> ⛔ **SUPERSEDED 2026-07-25** — the app is now light-pinned on The Kopi Studio cream/brown palette; every navy/gold value below is historical. Authority: [KOPI_2A_SPEC.md](../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md) · enforcement: [.claude/rules/light-theme.md](../../../.claude/rules/light-theme.md) · runtime: [src/index.css](../../../src/index.css) single `:root` block.
+
 **Created**: 2026-04-19 SGT
-**Last Updated**: 2026-07-14 SGT
-**Status**: 🟢 Production
+**Last Updated**: 2026-07-25 SGT
+**Status**: 🔴 Deprecated
+**Priority**: 🟡 High
 
 👉 Parent: [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md)
 
-Always-dark navy/gold system (2026-07-14 reversal — see [PHILOSOPHY.md](./PHILOSOPHY.md)). Runtime source: [src/index.css](../../../src/index.css) `:root` (`.dark` mirrors it — the app never renders light).
+## Current palette — where to look instead
 
-## Core palette
+| Need | Read |
+|---|---|
+| Core palette, CTA, status pills, viz ramp | [KOPI_2A_SPEC.md](../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md) |
+| Surface contract + AA text variants + anti-patterns | [.claude/rules/light-theme.md](../../../.claude/rules/light-theme.md) |
+| Live token values | [src/index.css](../../../src/index.css) `:root` |
+
+In one line: warm cream canvas `#F0E6D6` → card `#FAF6EE` → raised white `#FFFFFF`, warm ink `#3A2E24`, brown `#8B6A47` as punctuation (CTA, focus ring, active nav), sage `#5A7A5E` positive, terracotta `#D97551` negative, hairline `#D9CCC0`. Text under 18px in a brand hue takes its AA-safe sibling (`--brown-text` / `--sage-text` / `--negative-text`).
+
+## Historical — navy/gold era (locked 2026-07-14, retired 2026-07-25)
+
+> Everything below described the always-dark Editorial navy/gold system. Kept for archaeology — the token NAMES survived the migration, the values did not. Do not use these hexes.
+
+### Core palette
 
 | Role | Hex | HSL token | Used for |
 |---|---|---|---|
@@ -23,7 +38,7 @@ Always-dark navy/gold system (2026-07-14 reversal — see [PHILOSOPHY.md](./PHIL
 | **Destructive** | `#C0392B` DISC-D red | `--destructive: 6 64% 47%` | Delete / danger only — never brand accent |
 | **Border / input** | navy hairline | `--border` / `--input: 210 25% 24%` | All hairlines |
 
-## Semantic CTA tokens (LOCKED_PICKS v3.1, retuned 2026-07-14)
+### Semantic CTA tokens (LOCKED_PICKS v3.1, retuned 2026-07-14)
 
 | Role | Hex | Token |
 |---|---|---|
@@ -37,7 +52,7 @@ Always-dark navy/gold system (2026-07-14 reversal — see [PHILOSOPHY.md](./PHIL
 
 **Supersedes** slate-800 CTA / red-700 accent (2026-04-19 lock) — user reversal 2026-07-14, recorded in [LOCKED_PICKS.md](../../99-refactor/_system/LOCKED_PICKS.md).
 
-## Text hierarchy (v4 cream scale)
+### Text hierarchy (v4 cream scale)
 
 | Token | Hex | Use |
 |---|---|---|
@@ -45,7 +60,7 @@ Always-dark navy/gold system (2026-07-14 reversal — see [PHILOSOPHY.md](./PHIL
 | `--fg-dim` | `#D6CCB4` dim cream | Secondary content |
 | `--fg-muted` | `#8A8070` warm muted | Labels, meta, placeholders |
 
-## Surfaces + borders (v4)
+### Surfaces + borders (v4)
 
 | Token | Value | Role |
 |---|---|---|
@@ -57,7 +72,7 @@ Always-dark navy/gold system (2026-07-14 reversal — see [PHILOSOPHY.md](./PHIL
 | `--row-selected` | gold @ 10% | Selected row tint |
 | `--skeleton` / `--skeleton-hi` | `#182638` / `#21324A` | Loading shimmer |
 
-## Status palette (v4 — translucent tints on navy)
+### Status palette (v4 — translucent tints on navy)
 
 Hue semantics preserved from the AppBase lock; values retuned to translucent tints + lifted fg for navy contrast. Tokens: `--status-<tone>-bg/-fg/-border/-dot` in `src/index.css`. Consumed by `StatusBadge`.
 
@@ -70,7 +85,7 @@ Hue semantics preserved from the AppBase lock; values retuned to translucent tin
 | **expired** | orange @ 15% | `#FB923C` | `#EA580C` |
 | **revised** | purple @ 15% | `#C084FC` | `#9333EA` |
 
-## Chart palette
+### Chart palette
 
 | Role | Hex | Token |
 |---|---|---|
@@ -78,7 +93,7 @@ Hue semantics preserved from the AppBase lock; values retuned to translucent tin
 | Secondary / positive series | `#4ADE80` green-400 | `--chart-accepted` |
 | Grid dashes | dash-array `2 4` | `--chart-grid-dasharray` |
 
-## Delta badge (KpiTile)
+### Delta badge (KpiTile)
 
 | Direction | Bg | Fg |
 |---|---|---|
@@ -87,7 +102,7 @@ Hue semantics preserved from the AppBase lock; values retuned to translucent tin
 
 Tokens: `--delta-positive-bg/fg`, `--delta-negative-bg/fg`.
 
-## Glass surface (AppHeader)
+### Glass surface (AppHeader)
 
 | Property | Value | Token |
 |---|---|---|
@@ -95,14 +110,16 @@ Tokens: `--delta-positive-bg/fg`, `--delta-negative-bg/fg`.
 | Backdrop blur | `8px` | `--surface-translucent-blur` |
 | Border | navy hairline @ 60% | `--surface-translucent-border` |
 
-## Zinc + red Radix scales (legacy, still defined)
+### Zinc + red Radix scales (deleted 2026-07-25)
 
-The `@theme` block still exposes `--color-zinc-1..12` and `--color-red-1..12` (AppBase-era). They remain for any lingering utility references but are **not** part of the navy/gold vocabulary — do not use them in new code; use the semantic tokens above.
+The `@theme` block used to expose `--color-zinc-1..12` and `--color-red-1..12` (AppBase-era). Both scales were **deleted** in the Kopi migration — cool grey and pure red fight the warm cream ground, and no component, test or doc consumed them. Tailwind's own `zinc-*` / `red-*` defaults are a separate thing and are likewise not part of this brand.
 
 ## 📚 Related
 
+- [KOPI_2A_SPEC.md](../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md) — **current** palette authority
+- [.claude/rules/light-theme.md](../../../.claude/rules/light-theme.md) — enforcement + anti-patterns
 - [TOKENS.md](./TOKENS.md) — full token value table
 - [TYPOGRAPHY.md](./TYPOGRAPHY.md) — text-color pairings
-- [DARK_MODE.md](./DARK_MODE.md) — always-dark surface contract
+- [DARK_MODE.md](./DARK_MODE.md) — superseded always-dark surface contract
 - [src/index.css](../../../src/index.css) — runtime tokens
-- [LOCKED_PICKS.md](../../99-refactor/_system/LOCKED_PICKS.md) — 2026-07-14 reversal entry
+- [LOCKED_PICKS.md](../../99-refactor/_system/LOCKED_PICKS.md) — 2026-07-14 reversal entry (also superseded)

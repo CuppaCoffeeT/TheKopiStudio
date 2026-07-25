@@ -90,13 +90,15 @@ export function LineItemRow({
         'grid gap-1 md:gap-2.5',
         'px-3 py-2 md:py-2',
         !isLast && 'border-b border-border',
+        // Drag/lift are in-progress states, so they read brown; the lifted row
+        // is a floating surface and takes the cream glass + `--floating-shadow`.
         isDrag
-          ? 'bg-red-50/60 dark:bg-red-900/10 shadow-[0_0_0_1.5px_theme(colors.red.700)] dark:shadow-[0_0_0_1.5px_theme(colors.red.400)]'
+          ? 'bg-[color:var(--row-selected)] shadow-[0_0_0_1.5px_var(--cta-primary-bg)]'
           : isPLifted
-          ? 'bg-white/35 dark:bg-zinc-950/35 backdrop-blur-md shadow-2xl ring-1 ring-zinc-300 dark:ring-zinc-700'
+          ? 'bg-[color:var(--surface-translucent-bg)] backdrop-blur-md shadow-[var(--floating-shadow)] ring-1 ring-[color:var(--border-hover)]'
           : isNotes
-          ? 'bg-zinc-50/40 dark:bg-white/[0.015]'
-          : 'hover:bg-secondary dark:hover:bg-white/[0.03]',
+          ? 'bg-secondary'
+          : 'hover:bg-[color:var(--row-hover)]',
         pDragIndex !== null && !isPLifted && 'transition-transform duration-200 ease-out',
       )}
       style={{
@@ -126,9 +128,9 @@ export function LineItemRow({
               isNotes
                 ? 'cursor-default text-muted-foreground'
                 : isPLifted
-                  ? 'cursor-grabbing text-red-700 dark:text-red-400'
+                  ? 'cursor-grabbing text-[color:var(--brand-brown)]'
                   : 'cursor-grab text-muted-foreground hover:text-muted-foreground',
-              isDrag && 'text-red-700 dark:text-red-400',
+              isDrag && 'text-[color:var(--brand-brown)]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
               'touch-none select-none',
             )}
@@ -163,7 +165,7 @@ export function LineItemRow({
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <span
-                      className="mt-[3px] text-[9.5px] uppercase tracking-wider px-1 py-px rounded-[3px] bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 flex-shrink-0 cursor-help"
+                      className="mt-[3px] text-[9.5px] uppercase tracking-wider px-1 py-px rounded-[3px] bg-[color:var(--status-sent-bg)] text-[color:var(--status-sent-fg)] flex-shrink-0 cursor-help"
                       style={{ fontFamily: 'var(--font-mono)' }}
                     >
                       locked
@@ -215,7 +217,9 @@ export function LineItemRow({
                 'text-[12.5px] leading-snug text-muted-foreground',
                 'whitespace-pre-wrap break-words',
                 'px-2 py-1.5 rounded',
-                'focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:bg-card',
+                // Focus: full-opacity brown ring (4.58:1 on card — an alpha ring
+                // composites under SC 1.4.11's 3:1) + raised white input surface.
+                'focus-visible:ring-2 focus-visible:ring-ring focus-visible:bg-popover',
               )}
             />
           </div>
@@ -311,7 +315,7 @@ export function LineItemRow({
                   onClick={() => onRemoveItem(item.id)}
                   className={cn(
                     'w-5 h-5 rounded inline-flex items-center justify-center cursor-pointer',
-                    'text-muted-foreground hover:text-red-700 hover:bg-secondary',
+                    'text-muted-foreground hover:text-[color:var(--negative-text)] hover:bg-secondary',
                     'opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100',
                     'transition-opacity duration-150',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
@@ -336,7 +340,7 @@ export function LineItemRow({
               onCommit={(v) => patch(item.id, { label: v })}
               placeholder="Note text…"
               rows={2}
-              className="w-full resize-none bg-transparent outline-none italic text-muted-foreground text-[12.5px] px-2 py-1 rounded focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:bg-card"
+              className="w-full resize-none bg-transparent outline-none italic text-muted-foreground text-[12.5px] px-2 py-1 rounded focus-visible:ring-2 focus-visible:ring-ring focus-visible:bg-popover"
             />
           ) : (
             <div className="italic text-muted-foreground">{displayLabel}</div>
@@ -364,7 +368,7 @@ export function LineItemRow({
                 onCommit={(v) => patch(item.id, { description: v })}
                 placeholder="Description…"
                 rows={2}
-                className="w-full resize-none bg-transparent outline-none text-[12.5px] leading-snug text-muted-foreground px-2 py-1 rounded focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:bg-card border border-border"
+                className="w-full resize-none bg-transparent outline-none text-[12.5px] leading-snug text-muted-foreground px-2 py-1 rounded focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-ring focus-visible:bg-popover border border-border"
               />
             )}
             {/* 4-col grid: qty · unit · price · tax */}
@@ -394,7 +398,7 @@ export function LineItemRow({
                     type="button"
                     aria-label="Remove row"
                     onClick={() => onRemoveItem(item.id)}
-                    className="w-6 h-6 rounded text-muted-foreground hover:text-red-700 hover:bg-secondary inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="w-6 h-6 rounded text-muted-foreground hover:text-[color:var(--negative-text)] hover:bg-secondary inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <X className="w-3 h-3" />
                   </button>

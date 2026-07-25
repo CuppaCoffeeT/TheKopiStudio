@@ -6,10 +6,15 @@
  * `StatusTabs` (list-archetype status segment bar).
  *
  * Spec: docs/99-refactor/_system/design/handoffs/2026-04-28-OOvqzmEe/project/preview/component-tabs.html
- *       (axe-playwright contrast fix · 2026-04-28 · zinc-500→zinc-600 light · zinc-400→zinc-300 dark)
  *
- * Styling locked to AppBase tokens: slate-800 active underline · red-700
- * focus ring · no colored backgrounds. Active label is font-medium.
+ * 2026-04-28 axe-playwright contrast fix (kept — the failure it prevents still bites):
+ *  · the inactive label had to darken one step. The zinc classes that carried it
+ *    were replaced by `text-muted-foreground` in the 2026-07-25 Kopi migration,
+ *    but the RULE holds: an inactive tab must never sit at the lightest neutral
+ *    available, or axe colour-contrast fails.
+ *
+ * Styling: brown active underline (`border-primary`) · brown focus ring
+ * (`--ring`) · no colored backgrounds. Active label is font-medium.
  *
  * Mobile: horizontal-scroll when content overflows (`overflow-x-auto`).
  * Replaces shadcn `@/components/ui/tabs` for new code.

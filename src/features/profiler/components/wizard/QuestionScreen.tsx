@@ -30,7 +30,10 @@ export function QuestionScreen({ batch, batchNumber, prospectName, answers, onSe
         <h2 className="m-0 text-[19px] font-normal text-foreground">
           Profiling {prospectName}
         </h2>
-        <p className="m-0 mt-1 text-[13px] leading-6 text-muted-foreground">
+        {/* This header block is outside the per-question Card, so it paints on
+            the page cream where --fg-muted is 4.12:1. --fg-dim reads 6.40:1;
+            the Eyebrow above already defaults to it. */}
+        <p className="m-0 mt-1 text-[13px] leading-6 text-[color:var(--fg-dim)]">
           Weave into conversation. Pick the best match.
         </p>
       </div>
@@ -40,14 +43,23 @@ export function QuestionScreen({ batch, batchNumber, prospectName, answers, onSe
         const isOpen = q.ph === 'open';
         return (
           <Card key={qi} data-testid={`wizard-question-${qi}`}>
+            {/* Phase tag. 2a admits no categorical hues, so the two phases
+                separate on the brown/neutral axis instead of brown vs blue:
+                Opening is the brown tint, Discovery an inert neutral. Both
+                labels are 9.5px, so both take AA-safe ink rather than the raw
+                brand brown or the muted token. Opening uses
+                --brown-text-on-wash, not --brown-text: on its own brown@15%
+                wash the latter is 4.33:1, the former 5.58:1. Keeping the wash
+                at 15% is what holds the brown/neutral axis apart from
+                Discovery's --secondary tint. */}
             <span
               className={cn(
                 'inline-flex rounded-full px-2.5 py-0.5 uppercase mb-2',
                 isOpen
-                  ? 'bg-accent/15 text-accent'
-                  : 'bg-sky-950/60 text-sky-400',
+                  ? 'bg-accent/15 text-[color:var(--brown-text-on-wash)]'
+                  : 'bg-secondary text-[color:var(--fg-dim)]',
               )}
-              style={{ fontFamily: 'var(--font-pixel)', fontSize: 9.5, fontWeight: 700, letterSpacing: '0.12em' }}
+              style={{ fontFamily: 'var(--font-sans)', fontSize: 9.5, fontWeight: 700, letterSpacing: '0.12em' }}
             >
               {isOpen ? 'Opening' : 'Discovery'}
             </span>
@@ -80,7 +92,16 @@ export function QuestionScreen({ batch, batchNumber, prospectName, answers, onSe
                       labelClassName="flex w-full items-start gap-3 p-3 min-h-[44px] [&>span:last-child]:flex-1 [&>span:last-child]:min-w-0"
                       label={
                         <span className="flex w-full items-start justify-between gap-3">
-                          <span className="text-[13.5px] leading-5 text-muted-foreground">
+                          {/* Selected flips to the ink token, same as
+                              ObservationScreen: the DISC tint that marks the
+                              chosen row drops --fg-muted to 4.21–4.33:1, so the
+                              one row that must read best was the one failing. */}
+                          <span
+                            className={cn(
+                              'text-[13.5px] leading-5',
+                              selected ? 'text-foreground' : 'text-muted-foreground',
+                            )}
+                          >
                             {opt.t}
                           </span>
                           <DiscBadge d={opt.d} className="mt-0.5" />

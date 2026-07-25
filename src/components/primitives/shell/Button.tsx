@@ -28,15 +28,15 @@ function resolveSize(s: ButtonSize): 'xs' | 'sm' | 'md' | 'lg' {
 
 /**
  * S-shell Button — formal variant + size spec from W08 Session 3.
- * CTA primary = gold (--cta-primary-bg, 1a Masthead 2026-07-21): hover
+ * CTA primary = brown (--cta-primary-bg, Kopi 2a 2026-07-25): hover
  * --cta-primary-bg-hover, active --cta-primary-bg-active, text --cta-primary-fg.
- * Secondary/ghost = cream text, hairline border or none, hover card bg.
- * Destructive = red-700.
+ * Secondary/ghost = --fg-dim ink, hairline border or none, hover card bg.
+ * Destructive = terracotta (--destructive / --destructive-foreground).
  * Icon variant renders a square button; children are the icon node.
  * All 5 states wired (2026-04-26): cursor-pointer when enabled, hover
  * bg shift, :active darker bg + scale-[0.97] press feedback, disabled
  * cursor-not-allowed + opacity-40 (and scale lock so press doesn't fire),
- * focus-visible red-700 ring with offset.
+ * focus-visible brown ring (--ring) with offset.
  *
  * `loading` (added 2026-04-26): replaces leadingIcon with an animated
  * Loader2 spinner, sets aria-busy, and disables the button. Use for
@@ -89,7 +89,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   const variantClass = {
     primary:
       'bg-[var(--cta-primary-bg)] hover:bg-[var(--cta-primary-bg-hover)] active:bg-[var(--cta-primary-bg-active)] text-[color:var(--cta-primary-fg)] font-semibold',
-    destructive: 'bg-red-700 hover:bg-red-800 active:bg-red-900 text-white',
+    destructive: 'bg-destructive hover:bg-destructive/90 active:bg-destructive/80 text-destructive-foreground',
     ghost: 'bg-transparent hover:bg-card active:bg-secondary text-[color:var(--fg-dim)]',
     outline: 'bg-transparent hover:bg-card active:bg-secondary text-[color:var(--fg-dim)] border border-border',
   }[variant];

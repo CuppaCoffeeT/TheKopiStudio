@@ -92,7 +92,7 @@ export const FilterBar = forwardRef<HTMLInputElement, FilterBarProps>(function F
         {hasActive && onClearAll && (
           <button
             onClick={onClearAll}
-            className="h-9 px-2.5 rounded-md text-[12.5px] font-medium text-muted-foreground hover:bg-secondary"
+            className="h-9 px-2.5 rounded-md text-[12.5px] font-medium text-[color:var(--fg-dim)] hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             Clear all
           </button>
@@ -105,7 +105,7 @@ export const FilterBar = forwardRef<HTMLInputElement, FilterBarProps>(function F
               <button
                 type="button"
                 onClick={onClearFilters}
-                className="h-9 px-3 rounded-md text-[12px] font-medium text-muted-foreground hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="h-9 px-3 rounded-md text-[12px] font-medium text-[color:var(--fg-dim)] hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 style={{ fontFamily: 'var(--font-sans)' }}
                 data-testid={clearFiltersTestId}
               >
@@ -131,16 +131,16 @@ export const FilterBar = forwardRef<HTMLInputElement, FilterBarProps>(function F
           {activeFilters.map((f) => (
             <span
               key={f.key}
-              className="inline-flex items-center gap-1.5 h-6 pl-2.5 pr-1.5 rounded-full bg-secondary border border-border text-muted-foreground"
+              className="inline-flex items-center gap-1.5 h-6 pl-2.5 pr-1.5 rounded-full bg-secondary border border-border text-[color:var(--fg-dim)]"
               style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5 }}
             >
-              <span className="text-muted-foreground">{f.label}:</span>
+              <span className="text-[color:var(--fg-dim)]">{f.label}:</span>
               <span className="text-foreground">{f.value}</span>
               {f.onRemove && (
                 <button
                   onClick={f.onRemove}
                   aria-label={`Remove filter ${f.label}`}
-                  className="w-3.5 h-3.5 rounded-full inline-flex items-center justify-center text-muted-foreground hover:text-foreground"
+                  className="w-3.5 h-3.5 rounded-full inline-flex items-center justify-center text-[color:var(--fg-dim)] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <X className="w-2 h-2" strokeWidth={1.5} />
                 </button>

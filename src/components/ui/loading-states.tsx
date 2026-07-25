@@ -110,7 +110,7 @@ export const ProjectValidationLoading: React.FC = () => {
 export const FileUploadLoading: React.FC<{ text?: string }> = ({ text = 'Uploading files...' }) => {
   return (
     <div className="flex flex-col items-center justify-center p-8 space-y-4">
-      <Upload className="h-12 w-12 text-blue-600 animate-pulse" />
+      <Upload className="h-12 w-12 text-primary animate-pulse" />
       <div className="text-center space-y-2">
         <p className="font-medium">{text}</p>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -142,9 +142,10 @@ export const ProgressLoading: React.FC<ProgressLoadingProps> = ({
         <p className="font-medium">{text}</p>
         {subText && <p className="text-sm text-muted-foreground">{subText}</p>}
       </div>
-      <div className="w-full bg-muted rounded-full h-2">
-        <div 
-          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+      {/* 2a loading bar: --border-faint track, brown fill — the only brown here. */}
+      <div className="w-full bg-[var(--border-faint)] rounded-full h-2">
+        <div
+          className="bg-primary h-2 rounded-full transition-all duration-300"
           style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
         />
       </div>
@@ -176,7 +177,7 @@ export const OperationLoading: React.FC<OperationLoadingProps> = ({
       lg: 'h-8 w-8'
     };
 
-    const iconClass = cn('animate-spin text-blue-600', sizeClasses[size]);
+    const iconClass = cn('animate-spin text-primary', sizeClasses[size]);
 
     switch (operation) {
       case 'verifying':
@@ -234,16 +235,16 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
       <Card className="w-full max-w-md mx-4">
         <CardContent className="p-6">
           <div className="text-center space-y-4">
-            <RefreshCw className="h-12 w-12 animate-spin text-blue-600 mx-auto" />
+            <RefreshCw className="h-12 w-12 animate-spin text-primary mx-auto" />
             <div className="space-y-2">
               <p className="font-medium text-lg">{text}</p>
               {subText && <p className="text-sm text-muted-foreground">{subText}</p>}
             </div>
             {progress !== undefined && (
               <div className="space-y-2">
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div 
-                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                <div className="w-full bg-[var(--border-faint)] rounded-full h-2">
+                  <div
+                    className="bg-primary h-2 rounded-full transition-all duration-300"
                     style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
                   />
                 </div>

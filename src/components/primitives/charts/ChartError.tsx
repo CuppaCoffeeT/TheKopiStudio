@@ -9,7 +9,9 @@ import { cn } from '@/lib/utils';
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/charts/ChartPrimitives.jsx
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked: accent red-700 (light) / red-400 (dark) icon circle · "Error <code> · chart service unreachable" sub-line.
+ * Locked: terracotta icon circle — `--red-soft` tint fill under a `--negative-text`
+ *         glyph, the 2a error pair · "Error <code> · chart service unreachable" sub-line.
+ *         The app is light-pinned, so there is no second colour pair to swap to.
  */
 
 interface ChartErrorProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -35,7 +37,7 @@ export const ChartError = forwardRef<HTMLDivElement, ChartErrorProps>(function C
       <span
         className={cn(
           'inline-flex items-center justify-center rounded-full',
-          'bg-red-50 text-red-700 dark:bg-red-400/15 dark:text-red-400'
+          'bg-[color:var(--red-soft)] text-[color:var(--negative-text)]'
         )}
         style={{ width: 36, height: 36 }}
       >

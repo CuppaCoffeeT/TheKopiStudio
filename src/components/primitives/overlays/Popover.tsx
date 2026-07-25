@@ -15,7 +15,7 @@ interface PopoverContentProps extends React.ComponentPropsWithoutRef<typeof Popo
  * PopoverContent — glass-surface overlay content.
  *
  * Spec: docs/99-refactor/_system/design/session-02-overlays/export/appbase/project/overlays/OverlayPrimitives.jsx
- *   - glass surface (bg-white/72, backdrop-blur-12, saturate-140)
+ *   - glass surface (bg-card/75, backdrop-blur-md, backdrop-saturate-150 — cream glass)
  *   - optional arrow via `<PopoverPrimitive.Arrow>` — pass `withArrow` to enable
  *   - always Portal'd → safe inside `<Modal>` / `<DrawerRoot>`
  */

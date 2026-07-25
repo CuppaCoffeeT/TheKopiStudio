@@ -112,8 +112,6 @@ export function LineItemsEditor({
           style={{
             fontFamily: 'var(--font-pixel)',
             letterSpacing: '-0.01em',
-            WebkitFontSmoothing: 'none',
-            imageRendering: 'pixelated',
           }}
         >
           no line items yet
@@ -128,7 +126,9 @@ export function LineItemsEditor({
             data-testid="line-items-add-item"
             className={cn(
               'mt-3.5 h-8 px-3.5 rounded-md inline-flex items-center gap-1.5 cursor-pointer',
-              'bg-primary text-primary-foreground hover:bg-primary/90',
+              // Brown CTA steps DOWN on hover/active; `bg-primary/90` would
+              // lighten it against the cream ground.
+              'bg-[var(--cta-primary-bg)] text-[color:var(--cta-primary-fg)] hover:bg-[var(--cta-primary-bg-hover)] active:bg-[var(--cta-primary-bg-active)]',
               'text-[13px] font-medium',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
             )}
@@ -226,7 +226,7 @@ export function LineItemsEditor({
       </div>
 
       {/* Add row + clear all */}
-      <div className="flex items-center gap-2 px-3 py-2.5 border-t border-border bg-zinc-50/40 dark:bg-white/[0.015]">
+      <div className="flex items-center gap-2 px-3 py-2.5 border-t border-border bg-secondary">
         {onAddItem && (
           <button
             type="button"
@@ -258,7 +258,7 @@ export function LineItemsEditor({
           <button
             type="button"
             onClick={onClearAll}
-            className="h-7 px-2.5 rounded-[5px] text-[12px] font-medium text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer"
+            className="h-7 px-2.5 rounded-[5px] text-[12px] font-medium text-[color:var(--negative-text)] hover:bg-[color:var(--red-soft)] cursor-pointer"
           >
             Clear all
           </button>

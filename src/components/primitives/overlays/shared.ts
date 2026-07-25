@@ -1,6 +1,7 @@
 /**
  * Overlay primitives — shared tokens.
  * Produced from W08 Session 2 (Claude Design handoff, 2026-04-19).
+ * Repainted onto The Kopi Studio 2a palette (2026-07-25).
  */
 export type OverlayVariant = 'success' | 'error' | 'info' | 'warning';
 
@@ -12,48 +13,57 @@ export const VARIANT_ICON: Record<OverlayVariant, string> = {
 };
 
 /**
- * Accent colours per variant. Light + dark values.
- * Mirrors v4 status-badge palette in `src/index.css`.
+ * Accent colour per variant, keyed to the 2a semantic set: sage is positive,
+ * terracotta is negative, brown is in-progress, muted ink is neutral.
+ *
+ * `light` is the only arm because the app is light-pinned — there is no dark
+ * theme to switch to. Every accent is the AA-safe step of its hue
+ * (`--sage-text` / `--negative-text` / `--brown-text` / `--fg-dim`) rather than
+ * the raw brand hue, because these fills carry an 11px cream glyph in
+ * Alert/Toaster and raw sage (4.45:1) and raw terracotta (2.95:1) do not clear
+ * the AA text floor. `softLight` is the matching wash for tinted variant
+ * surfaces; it points at the shared alpha tokens rather than copying their
+ * values, because those alphas are a contrast budget that `src/index.css` owns.
  */
 export const VARIANT_ACCENT: Record<
   OverlayVariant,
-  { light: string; dark: string; softLight: string; softDark: string }
+  { light: string; softLight: string }
 > = {
   success: {
-    light: '#16a34a',
-    dark: '#4ade80',
-    softLight: 'rgba(22,163,74,0.08)',
-    softDark: 'rgba(74,222,128,0.12)',
+    light: 'var(--sage-text)',
+    softLight: 'var(--delta-positive-bg)',
   },
   error: {
-    light: '#b91c1c',
-    dark: '#f87171',
-    softLight: 'rgba(185,28,28,0.08)',
-    softDark: 'rgba(248,113,113,0.14)',
+    light: 'var(--negative-text)',
+    softLight: 'var(--delta-negative-bg)',
   },
   info: {
-    light: '#2563eb',
-    dark: '#60a5fa',
-    softLight: 'rgba(37,99,235,0.08)',
-    softDark: 'rgba(96,165,250,0.12)',
+    light: 'var(--fg-dim)',
+    softLight: 'var(--status-expired-bg)',
   },
   warning: {
-    light: '#d97706',
-    dark: '#fbbf24',
-    softLight: 'rgba(217,119,6,0.08)',
-    softDark: 'rgba(251,191,36,0.12)',
+    light: 'var(--brown-text)',
+    softLight: 'var(--accent-red-soft-bg)',
   },
 };
 
-/** Tailwind class stack for a glass surface (backdrop-blur + semi-transparent bg). */
+/**
+ * Tailwind class stack for a glass surface (backdrop-blur + semi-transparent bg).
+ * Floating surfaces are the only 2a surfaces that cast a shadow, and it is warm
+ * ink (`--floating-shadow`) rather than black or zinc. The app is light-pinned,
+ * so no `dark:` counterpart is declared.
+ */
 export const GLASS_SURFACE =
   'backdrop-blur-md backdrop-saturate-150 ' +
   'bg-card/75 ' +
   'border border-border/60 ' +
-  'shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_rgba(24,24,27,0.08)] ' +
-  'dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_12px_32px_rgba(0,0,0,0.35)]';
+  'shadow-[var(--floating-shadow)]';
 
-/** Tailwind class stack for a glass backdrop behind modals/drawers. */
+/**
+ * Tailwind class stack for a glass backdrop behind modals/drawers.
+ * Warm ink scrim (`--drawer-overlay`) — the same scrim `ui/dialog.tsx` and
+ * `ui/sheet.tsx` paint, so every dimmed surface in the app matches.
+ */
 export const GLASS_BACKDROP =
   'backdrop-blur-sm backdrop-saturate-125 ' +
-  'bg-white/45 dark:bg-zinc-950/55';
+  'bg-[color:var(--drawer-overlay)]';

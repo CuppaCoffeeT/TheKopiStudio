@@ -18,9 +18,9 @@ const intMoney = (value: string): string => `$${parseInt(value || '0', 10).toLoc
 function ValueCard({ label, value, testId }: { label: string; value: number; testId: string }) {
   return (
     <div className="rounded-md bg-white p-2" data-testid={testId}>
-      <div className="text-[11px] text-gray-500">{label}</div>
-      {/* emerald-700 (legacy used #059669) — 20px/500 text needs 4.5:1 on white. */}
-      <div className="text-[20px] font-medium" style={{ color: '#047857' }}>
+      <div className="text-[11px] text-[color:var(--fg-dim)]">{label}</div>
+      {/* Kopi sage #4A6A4E — 6.06:1 on the white value card. */}
+      <div className="text-[20px] font-medium" style={{ color: '#4a6a4e' }}>
         ${Math.round(value).toLocaleString()}
       </div>
     </div>
@@ -71,7 +71,7 @@ export function ReportIlpAnalysis({ policies }: { policies: CrmPolicy[] }) {
               </div>
             </div>
             {(age55 > 0 || age65 > 0) && (
-              <div className="mt-3 grid grid-cols-1 gap-3 border-t border-gray-300 pt-3 sm:grid-cols-2">
+              <div className="mt-3 grid grid-cols-1 gap-3 border-t border-[color:var(--border-soft)] pt-3 sm:grid-cols-2">
                 {age55 > 0 && (
                   <ValueCard
                     label="Pre-retirement (age 55)"

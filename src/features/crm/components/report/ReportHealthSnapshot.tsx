@@ -80,7 +80,7 @@ export function ReportHealthSnapshot({
   return (
     <section className="report-section" data-testid="report-health-snapshot">
       <h2>Financial health snapshot</h2>
-      <p className="mb-3 text-[12px] text-gray-500">
+      <p className="mb-3 text-[12px] text-[color:var(--fg-dim)]">
         Quick health check against industry benchmarks
       </p>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -91,12 +91,13 @@ export function ReportHealthSnapshot({
             style={{ background: card.status.bg, borderColor: card.status.tone }}
             data-testid={`report-health-card-${card.id}`}
           >
-            <div className="text-[12px] font-semibold text-gray-600">{card.title}</div>
+            <div className="text-[12px] font-semibold text-[color:var(--fg-dim)]">{card.title}</div>
             <div className="mt-1 text-[26px] font-bold" style={{ color: card.status.tone }}>
               {card.value}
             </div>
-            {/* gray-600 (not 500) — 11px text on the tinted band bg needs ≥4.5:1. */}
-            <div className="text-[11px] text-gray-600">{card.guide}</div>
+            {/* --fg-dim (not --fg-muted) — 11px on the tinted band bg needs ≥4.5:1;
+                #5D4F3F measures 6.2-6.3:1 across the three Kopi band tints. */}
+            <div className="text-[11px] text-[color:var(--fg-dim)]">{card.guide}</div>
             <div className="mt-1 text-[12px] font-semibold" style={{ color: card.status.tone }}>
               {card.status.label}
             </div>

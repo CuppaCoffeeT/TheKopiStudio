@@ -61,10 +61,10 @@ export function AppHeaderUserMenu({
             'h-8 rounded-md inline-flex items-center gap-2 cursor-pointer',
             'bg-transparent text-foreground',
             'hover:bg-secondary',
-            'active:bg-zinc-300 dark:active:bg-zinc-700',
+            'active:bg-[color:var(--tint-pressed)]',
             'transition-colors',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-            'data-[state=open]:bg-zinc-200 dark:data-[state=open]:bg-zinc-800',
+            'data-[state=open]:bg-secondary',
             showName ? 'pr-2 pl-1' : 'px-1',
           )}
           style={{ fontFamily: 'var(--font-sans)' }}
@@ -92,8 +92,13 @@ export function AppHeaderUserMenu({
             {userEmail}
           </div>
           <div className="mt-1.5">
+            {/* -fg-strong, not --brown-text: this dropdown is a GLASS_SURFACE
+                (bg-card/75), so the 10% brown chip wash composites over a
+                lightened ground (~#EDE4D8) where --brown-text is 4.47:1. At
+                9.5px — the smallest type in the header chrome — that misses AA.
+                The deeper step reads 5.76:1 and keeps the soft-brown chip. */}
             <span
-              className="inline-block px-1.5 py-0.5 rounded bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 uppercase tracking-[0.06em]"
+              className="inline-block px-1.5 py-0.5 rounded bg-[color:var(--accent-red-soft-bg)] text-[color:var(--accent-red-soft-fg-strong)] uppercase tracking-[0.06em]"
               style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, fontWeight: 500 }}
             >
               {userRole}
@@ -113,7 +118,7 @@ export function AppHeaderUserMenu({
             <span className="flex-1">Notifications</span>
             {unreadCount != null && unreadCount > 0 && (
               <span
-                className="text-[10px] text-white bg-red-700 dark:bg-red-400 dark:text-zinc-950 rounded-full px-1.5"
+                className="text-[10px] text-[color:var(--cta-primary-fg)] bg-[color:var(--cta-destructive-bg)] rounded-full px-1.5"
                 style={{ fontFamily: 'var(--font-mono)' }}
               >
                 {unreadCount}

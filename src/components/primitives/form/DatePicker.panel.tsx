@@ -68,7 +68,9 @@ export function CalendarPanel({
         'w-[296px] rounded-[10px] p-3.5',
         'bg-card',
         'border border-border',
-        'shadow-[0_12px_40px_rgba(0,0,0,0.12)]',
+        // Warm-ink float, matching TIME_PICKER_PANEL_CLASS — 2a tints its
+        // shadows with the ink (#3A2E24), never black.
+        'shadow-[0_12px_40px_rgb(58_46_36_/_0.12)]',
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
     >
@@ -105,7 +107,7 @@ export function CalendarPanel({
 
       <div
         className="grid grid-cols-7 gap-1 mb-1 text-muted-foreground uppercase"
-        style={{ fontFamily: 'var(--font-pixel)', fontSize: 10, letterSpacing: '0.08em' }}
+        style={{ fontFamily: 'var(--font-sans)', fontSize: 10, letterSpacing: '0.08em' }}
       >
         {WEEKDAYS.map((w, i) => (
           <span key={i} className="w-8 h-5 inline-flex items-center justify-center">{w}</span>
@@ -150,7 +152,7 @@ export function CalendarPanel({
                 isDisabledDay && !muted && 'text-muted-foreground cursor-not-allowed line-through',
                 !isInactive && 'cursor-pointer',
                 !isInactive && !isSelected && !isRangeStart && !isRangeEnd && !isInRange && 'text-muted-foreground hover:bg-secondary',
-                isInRange && 'bg-primary/10 text-primary',
+                isInRange && 'bg-primary/10 text-[color:var(--brown-text)]',
                 (isSelected || isRangeStart || isRangeEnd) && 'bg-primary text-primary-foreground font-semibold',
                 isToday && !isSelected && !isRangeStart && !isRangeEnd
                   ? 'border-primary font-semibold'
@@ -170,7 +172,7 @@ export function CalendarPanel({
           type="button"
           onClick={onToday}
           data-testid={todayTestId}
-          className="h-[26px] px-2.5 rounded-md border border-border text-primary hover:bg-secondary"
+          className="h-[26px] px-2.5 rounded-md border border-border text-[color:var(--brown-text)] hover:bg-secondary"
           style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}
         >
           Today

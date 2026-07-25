@@ -5,8 +5,9 @@
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-05-26-9eon4QqA/project/ui_kits/appbase/src/ui/EditableListCard.jsx
  * Adopters: tracked in DESIGN_CATALOG_PRIMITIVES.md.
  *
- * Locked: bg-card (white / zinc-950 — recesses from page-bg per dark-mode cardinal rule) ·
- *         1px border zinc-200/zinc-800 · radius 10 · pad 12 · gap 10 ·
+ * Locked: bg-card (#FAF6EE card cream — LIFTS off the #F0E6D6 page; the 2a
+ *         surface ladder runs page → card → raised, lightest last) ·
+ *         1px --border hairline · radius 10 · pad 12 · gap 10 ·
  *         disabled = opacity-50 + pointer-events-none on whole card ·
  *         same 14px outer gutter as MobileListCard so mixed lists align.
  *
@@ -93,7 +94,7 @@ export const EditableListCard = forwardRef<HTMLDivElement, EditableListCardProps
             {header.index != null && (
               <span
                 style={{ fontFamily: 'var(--font-mono)' }}
-                className="w-5 shrink-0 text-[11px] tabular-nums text-muted-foreground tracking-[0.02em]"
+                className="w-5 shrink-0 text-[11px] tabular-nums text-[color:var(--fg-dim)] tracking-[0.02em]"
               >
                 {header.index}
               </span>
@@ -105,7 +106,7 @@ export const EditableListCard = forwardRef<HTMLDivElement, EditableListCardProps
               {header.subtitle && (
                 <span
                   style={{ fontFamily: 'var(--font-mono)' }}
-                  className="text-[11px] text-muted-foreground tabular-nums whitespace-nowrap"
+                  className="text-[11px] text-[color:var(--fg-dim)] tabular-nums whitespace-nowrap"
                 >
                   {header.subtitle}
                 </span>

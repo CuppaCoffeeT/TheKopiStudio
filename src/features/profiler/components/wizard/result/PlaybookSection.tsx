@@ -45,8 +45,11 @@ interface PlaybookSectionProps {
 }
 
 export function PlaybookSection({ primary, profile }: PlaybookSectionProps) {
+  // Border-only accent — `bg-accent/5` replaced Card's bg-card (twMerge) and
+  // composited over the page cream, taking the eyebrow + intro to 3.90:1.
+  // On card cream the intro reads 4.72:1.
   return (
-    <Card className="border-accent/30 bg-accent/5" data-testid="result-playbook">
+    <Card className="border-accent/30" data-testid="result-playbook">
       <Eyebrow>Communication Playbook — DISC-{primary}</Eyebrow>
       <p className="m-0 mb-3.5 text-[12px] leading-6 text-muted-foreground">
         Ready-to-use statements. Replace [Name], [Day], [detail] with real info. Tap the copy icon
@@ -64,8 +67,8 @@ export function PlaybookSection({ primary, profile }: PlaybookSectionProps) {
             >
               <div className="border-b border-border px-3.5 py-2.5">
                 <span
-                  className="uppercase text-accent"
-                  style={{ fontFamily: 'var(--font-pixel)', fontSize: 9.5, fontWeight: 700, letterSpacing: '0.16em' }}
+                  className="uppercase text-[color:var(--brown-text)]"
+                  style={{ fontFamily: 'var(--font-sans)', fontSize: 9.5, fontWeight: 700, letterSpacing: '0.16em' }}
                 >
                   {CATEGORY_ICONS[cat]} {section.lbl}
                 </span>

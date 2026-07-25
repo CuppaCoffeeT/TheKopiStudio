@@ -69,7 +69,7 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div
           className="min-h-screen flex items-center justify-center"
-          style={{ background: 'var(--page-bg, #f4f4f5)' }}
+          style={{ background: 'var(--page-bg, #f0e6d6)' }}
         >
           <ErrorState
             code="500"

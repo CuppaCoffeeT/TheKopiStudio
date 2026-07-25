@@ -4,11 +4,16 @@
  * Spec: docs/99-refactor/_system/design/handoffs/2026-04-20-MUmgnpT1/project/preview/component-badges.html
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked status formula: 50-tint bg · 700-sat fg · 200-same-hue border · 5px fg-hue dot.
- * Counts are mono, 10.5px, tabular. Critical counts (≥10 or `critical`) use red-7 solid fill.
- * Tones: neutral (zinc) · success (emerald) · warning (amber) · danger (red) · info (blue) · accent (purple).
+ * Locked status formula (Kopi 2a, 2026-07-25): every tone reads its bg / fg /
+ * border / dot straight off the `--status-*` token family in index.css, so the
+ * six tones stay inside the cream-brown-sage-terracotta system.
+ * Tone → token set: neutral → expired · success → accepted (sage) ·
+ * warning → sent (brown) · danger → rejected (terracotta) · info → draft ·
+ * accent → revised (deep brown).
+ * Counts are mono, 10.5px, tabular. Critical counts (≥10 or `critical`) use the
+ * solid terracotta `--cta-destructive-bg` fill with a cream label.
  * Status badges expose `data-tone` so E2E specs can assert the semantic tone
- * (e.g. the CRM follow-up badge turning amber) without coupling to classes.
+ * (e.g. the CRM follow-up badge turning brown) without coupling to classes.
  *
  * Replaces shadcn `@/components/ui/badge` in new code. For interactive chips
  * (toggle/tab), use the Chip primitive instead.
@@ -24,7 +29,7 @@ export type BadgeVariant = 'status' | 'count' | 'outline' | 'secondary' | 'destr
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   tone?: BadgeTone;
   variant?: BadgeVariant;
-  /** Count badges only — if true, forces red-7 solid fill regardless of tone. */
+  /** Count badges only — if true, forces the solid terracotta fill regardless of tone. */
   critical?: boolean;
   /** Show the leading dot for `variant='status'`. Default: true. */
   dot?: boolean;
@@ -37,21 +42,21 @@ function normalizeVariant(variant: BadgeVariant, tone: BadgeTone): { kind: 'stat
 }
 
 const STATUS_TONE: Record<BadgeTone, string> = {
-  neutral: 'bg-secondary text-muted-foreground border-border',
-  success: 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900/40',
-  warning: 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900/40',
-  danger: 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border-red-200 dark:border-red-900/40',
-  info: 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-900/40',
-  accent: 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-900/40',
+  neutral: 'bg-[color:var(--status-expired-bg)] text-[color:var(--status-expired-fg)] border-[color:var(--status-expired-border)]',
+  success: 'bg-[color:var(--status-accepted-bg)] text-[color:var(--status-accepted-fg)] border-[color:var(--status-accepted-border)]',
+  warning: 'bg-[color:var(--status-sent-bg)] text-[color:var(--status-sent-fg)] border-[color:var(--status-sent-border)]',
+  danger: 'bg-[color:var(--status-rejected-bg)] text-[color:var(--status-rejected-fg)] border-[color:var(--status-rejected-border)]',
+  info: 'bg-[color:var(--status-draft-bg)] text-[color:var(--status-draft-fg)] border-[color:var(--status-draft-border)]',
+  accent: 'bg-[color:var(--status-revised-bg)] text-[color:var(--status-revised-fg)] border-[color:var(--status-revised-border)]',
 };
 
 const DOT_TONE: Record<BadgeTone, string> = {
-  neutral: 'bg-zinc-400 dark:bg-zinc-500',
-  success: 'bg-emerald-600 dark:bg-emerald-400',
-  warning: 'bg-amber-600 dark:bg-amber-400',
-  danger: 'bg-red-700 dark:bg-red-400',
-  info: 'bg-blue-600 dark:bg-blue-400',
-  accent: 'bg-purple-600 dark:bg-purple-400',
+  neutral: 'bg-[color:var(--status-expired-dot)]',
+  success: 'bg-[color:var(--status-accepted-dot)]',
+  warning: 'bg-[color:var(--status-sent-dot)]',
+  danger: 'bg-[color:var(--status-rejected-dot)]',
+  info: 'bg-[color:var(--status-draft-dot)]',
+  accent: 'bg-[color:var(--status-revised-dot)]',
 };
 
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
@@ -72,8 +77,8 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
           'inline-flex items-center justify-center min-w-6 h-5 px-1.5 rounded-full',
           'text-[10.5px] font-semibold tabular-nums',
           isCritical
-            ? 'bg-red-700 text-white'
-            : 'bg-secondary text-muted-foreground',
+            ? 'bg-[color:var(--cta-destructive-bg)] text-[color:var(--cta-primary-fg)]'
+            : 'bg-secondary text-[color:var(--fg-dim)]',
           className,
         )}
         style={{ fontFamily: 'var(--font-mono)' }}
@@ -91,7 +96,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
         className={cn(
           'inline-flex flex-row flex-nowrap items-center gap-1.5 px-2 py-0.5 rounded-full whitespace-nowrap',
           'text-[11px] font-medium',
-          'bg-transparent border border-border text-muted-foreground',
+          'bg-transparent border border-border text-[color:var(--fg-dim)]',
           className,
         )}
         style={{ fontFamily: 'var(--font-sans)' }}

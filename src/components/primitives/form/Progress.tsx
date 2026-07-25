@@ -7,7 +7,10 @@ import { cn } from '@/lib/utils';
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/form/FormPrimitives.jsx
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked: indeterminate anim runs via Tailwind; neutral = slate-800; active = red-700.
+ * Locked: indeterminate anim runs via Tailwind. 2a tones — neutral = --fg-dim,
+ * active = brown (--primary), success = sage, error = the AA-safe terracotta.
+ * These are brand fills, not type — but the bar still has to clear 3:1 against
+ * the --secondary track, which raw #D97551 misses (2.71:1) and #AB4925 clears.
  */
 
 export type ProgressTone = 'neutral' | 'active' | 'success' | 'error';
@@ -41,18 +44,20 @@ export function Progress({
   const fillClass = {
     neutral: 'bg-[color:var(--fg-dim)]',
     active: 'bg-primary',
-    success: 'bg-green-700 dark:bg-green-400',
-    error: 'bg-red-700 dark:bg-red-400',
+    success: 'bg-[color:var(--brand-sage)]',
+    error: 'bg-[color:var(--cta-destructive-bg)]',
   }[tone];
 
   return (
     <div className={cn('flex flex-col gap-1.5 w-full', className)}>
       {label && (
         <div className="flex items-center gap-2">
-          {/* 1a: loading verb label = Georgia italic dim-cream */}
+          {/* 2a: the bar's inline label is 13px — under the 18px Instrument
+              Serif floor — so it stays italic but inherits IBM Plex Sans. The
+              serif loading VERB lives in <LoadingSpinner label> at 19px. */}
           <span
             className="italic text-[color:var(--fg-dim)]"
-            style={{ fontFamily: 'Georgia, serif', fontSize: 13 }}
+            style={{ fontSize: 13 }}
           >
             {label}
           </span>

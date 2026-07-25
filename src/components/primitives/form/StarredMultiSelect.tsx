@@ -105,10 +105,11 @@ export function StarredMultiSelect({
                     className={cn(
                       'transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm',
                       isPrimary
-                        ? 'text-yellow-500'
-                        : 'text-muted-foreground hover:text-yellow-500 dark:hover:text-yellow-400',
+                        ? 'text-[color:var(--brand-brown)]'
+                        : 'text-muted-foreground hover:text-[color:var(--brand-brown)]',
                     )}
                   >
+                    {/* Primary is carried by the filled/outlined star shape as well as colour. */}
                     <Star className={cn('h-3 w-3', isPrimary && 'fill-current')} aria-hidden="true" />
                   </button>
                 )}
@@ -123,7 +124,7 @@ export function StarredMultiSelect({
                     type="button"
                     onClick={() => handleRemove(value)}
                     aria-label={`Remove ${opt.label}`}
-                    className="ml-1 text-muted-foreground hover:text-red-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+                    className="ml-1 text-muted-foreground hover:text-[color:var(--negative-text)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
                   >
                     <X className="h-3 w-3" aria-hidden="true" />
                   </button>

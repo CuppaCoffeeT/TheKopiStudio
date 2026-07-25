@@ -3,7 +3,8 @@
  * + page-bg backdrop + content frame + PageTitle/PageDescription header block.
  * Internalises the ViewAsSelector + NotificationsBell slot fillers (via the
  * `useViewAs` + `useNotificationsBell` connector hooks) +
- * useAuth/sign-out wiring. (Theme is pinned dark navy/gold — no toggle wired.)
+ * useAuth/sign-out wiring. (Theme is pinned light — The Kopi Studio cream/brown,
+ * 2026-07-25; no toggle wired.)
  *
  * Spec: docs/99-refactor/_system/design/handoffs/2026-04-29-aNOsBrg/project/project/src/AppHeaderShell.jsx
  * Showcase: docs/99-refactor/_system/design/handoffs/2026-04-29-aNOsBrg/project/project/AppHeaderShell.html
@@ -168,7 +169,7 @@ export function AppHeaderShell({
     contentClassName ?? 'max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10';
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--page-bg, #f4f4f5)' }}>
+    <div className="min-h-screen" style={{ background: 'var(--page-bg, #f0e6d6)' }}>
       <AppHeader
         breadcrumb={resolvedBreadcrumb}
         userName={userName}

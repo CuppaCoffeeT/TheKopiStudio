@@ -2,36 +2,60 @@
  * CRM report stylesheet — PRINT-CSS CONTRACT (REPORTS_LINK_PRD.md P2), shared
  * by /clients/:id/report and the portfolio report page:
  * - Print-first: `.report-canvas` is locked white bg + dark ink ON SCREEN AND
- *   IN PRINT — the dark-mode pairing rule is deliberately waived so the
- *   screen preview is the printed artifact.
+ *   IN PRINT — the screen preview IS the printed artifact.
  * - `.no-print` on every interactive affordance (action bar, buttons).
  * - `.report-page-break` = break BEFORE a section (legacy: sections [4][8][9]).
  * - `.report-print-root` marks the ONLY printable region (visibility pattern,
  *   same as profiler lib/print.css `.print-area`) so chrome/portals never print.
  * - @page is A4 / 12mm margins (legacy index.html print block).
+ *
+ * Kopi Studio palette contract (paper is NOT app chrome):
+ *   - Paper stays WHITE with Kopi ink. The cream page background (#F0E6D6) is
+ *     never carried into print — printed output is its own contract, not a
+ *     screenshot of the app surface.
+ *   - Values are literal hexes, not `var(--…)` tokens, so a future app
+ *     re-theme can never leak into the printed artifact. Same deliberate
+ *     decoupling as `features/profiler/lib/print.css`.
+ *   - Ink: #3A2E24 body copy · #5D4F3F dim · #7D6B5B meta. Hairlines #D9CCC0.
+ *   - Tints are the reports-only extended palette (#E8E6E0 grey, #D9E8E0 green
+ *     box) plus the two semantic tints (#F0E2CF in-progress, #FAE0D6 error).
+ *     App chrome never uses the first two.
+ *   - Recesses on a DARK fill are ink (rgb(58 46 36 / x)), never a cream wash:
+ *     a translucent cream lifts the local ground and eats the contrast the
+ *     inherited cream type depends on. See `.report-stat`.
+ *   - Accent TYPE under 18px is AA-darkened: #4A6A4E positive · #AB4925
+ *     negative · #806241 brown · #5D4F3F on tinted rows. The raw brand sage
+ *     (#5A7A5E) and terracotta (#D97551) are fills/borders only.
+ *   - Type: Instrument Serif for display >= 18px, IBM Plex Sans below it.
+ *     Instrument Serif ships weight 400 only (see index.html), so serif type
+ *     here never asks for bold — the browser would synthesise it.
  */
 
 /* ── Report canvas (screen + print; light styling locked) ─────────────── */
 .report-canvas {
   background: #fff;
-  color: #111827;
+  color: #3a2e24;
   border-radius: 12px;
   padding: 20px;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'IBM Plex Sans', Helvetica, Arial, sans-serif;
 }
 
 .report-section {
   margin-top: 28px;
 }
 
+/* 20px clears the 18px serif floor. Weight stays 400 — Instrument Serif has
+   no bold face, and faux-bold wrecks it (legacy asked for 700 Arial). */
 .report-section h2 {
-  font-size: 19px;
-  font-weight: 700;
+  font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  font-size: 20px;
+  font-weight: 400;
   margin: 0 0 12px;
   padding-bottom: 6px;
-  border-bottom: 2px solid #e5e7eb;
+  border-bottom: 2px solid #d9ccc0;
 }
 
+/* Below the serif floor — stays IBM Plex Sans (inherited from .report-canvas). */
 .report-section h3 {
   font-size: 15px;
   font-weight: 600;
@@ -39,9 +63,12 @@
 }
 
 /* ── Section [1] hero strip ───────────────────────────────────────────── */
+/* Flat brand brown, not a gradient: 2a spends brown as a solid authority
+   fill and has no page-header gradient. Cream on brown is the spec's own
+   sanctioned pairing at 4.58:1. */
 .report-hero {
-  background: linear-gradient(135deg, #0f172a, #1e3a8a);
-  color: #fff;
+  background: #8b6a47;
+  color: #faf6ee;
   border-radius: 12px;
   padding: 22px;
   print-color-adjust: exact;
@@ -49,13 +76,17 @@
 }
 
 .report-hero h1 {
+  font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif;
   font-size: 26px;
-  font-weight: 700;
+  font-weight: 400;
   margin: 0 0 4px;
 }
 
+/* No `opacity` on hero type: cream dimmed to 75% over brown drops to ~3.3:1.
+   Hierarchy is carried by size and weight, so every line sitting DIRECTLY on
+   the brown keeps its 4.58:1. Type inside `.report-stat` sits on that rule's
+   ink recess instead and measures 5.03:1 — see the note there. */
 .report-hero-sub {
-  opacity: 0.75;
   font-size: 13px;
   margin: 0 0 16px;
 }
@@ -66,8 +97,15 @@
   gap: 10px;
 }
 
+/* Ink recess, NOT a cream lift. This panel sits on the brown hero and inherits
+   its cream type, so the recess has to step DOWN: a 16% cream wash composited
+   UP to #9D8062 and dropped the inherited cream to 3.42:1, failing the 11px
+   .label/.note below (the .value only cleared as large text). 10% Kopi ink
+   composites to #836444 and restores every line to 5.03:1, while still reading
+   as a distinct block against the #8B6A47 hero. Prints as shown —
+   print-color-adjust is inherited from .report-hero. */
 .report-stat {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgb(58 46 36 / 0.1);
   border-radius: 8px;
   padding: 10px 12px;
 }
@@ -76,7 +114,6 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  opacity: 0.75;
 }
 
 .report-stat .value {
@@ -87,7 +124,6 @@
 
 .report-stat .note {
   font-size: 11px;
-  opacity: 0.75;
 }
 
 /* ── Tables (sections [4][5][6][10][12] share this) ───────────────────── */
@@ -99,14 +135,15 @@
 
 .report-table th,
 .report-table td {
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #d9ccc0;
   padding: 6px 8px;
   text-align: left;
   vertical-align: top;
 }
 
+/* Reports-only extended grey — never app chrome. */
 .report-table th {
-  background: #f9fafb;
+  background: #e8e6e0;
   font-weight: 600;
 }
 
@@ -117,7 +154,7 @@
 /* Bold totals row (legacy inline `fontWeight:600, background:#fef3c7`). */
 .report-row-total {
   font-weight: 600;
-  background: #fef3c7;
+  background: #f0e2cf;
   print-color-adjust: exact;
   -webkit-print-color-adjust: exact;
 }
@@ -139,9 +176,11 @@
   -webkit-print-color-adjust: exact;
 }
 
-/* Bootstrap bg-warning-subtle / bg-success-subtle (legacy hosp/ILP cards). */
-.report-callout--warning { background: #fff3cd; }
-.report-callout--success { background: #d1e7dd; }
+/* Tone names are legacy Bootstrap keys (the callers pass `--${alert.tone}`);
+   the VALUES are Kopi. warning = in-progress tint · success = the reports-only
+   green box · see the second block below for danger/primary. */
+.report-callout--warning { background: #f0e2cf; }
+.report-callout--success { background: #d9e8e0; }
 
 /* ── Print rules ──────────────────────────────────────────────────────── */
 @media print {
@@ -152,7 +191,7 @@
 
   body {
     background: #fff !important;
-    color: #111 !important;
+    color: #3a2e24 !important;
   }
 
   .no-print {
@@ -195,7 +234,7 @@
   }
 }
 
-/* ── Sections [8][9] — gradient stat cards + RA panel (appended by the
+/* ── Sections [8][9] — stat cards + RA panel (appended by the
    sections [8]-[13] author; same light-locked print-color contract) ────── */
 
 .report-card-grid {
@@ -205,17 +244,21 @@
   margin: 12px 0;
 }
 
+/* `grad` is a legacy name — 2a has no gradients. The cards are flat fills
+   closed by a hairline, which is what makes the palest ones read on paper. */
 .report-grad-card {
-  color: #fff;
+  color: #3a2e24;
+  border: 1px solid #d9ccc0;
   border-radius: 12px;
   padding: 16px;
   print-color-adjust: exact;
   -webkit-print-color-adjust: exact;
 }
 
+/* No `opacity` here either — see .report-hero-sub. At 11px these need the
+   full ink, and size alone separates them from .value. */
 .report-grad-card .label {
   font-size: 11px;
-  opacity: 0.8;
 }
 
 .report-grad-card .value {
@@ -226,38 +269,45 @@
 
 .report-grad-card .note {
   font-size: 11px;
-  opacity: 0.8;
 }
 
-/* Legacy styles.css .cpf-card / .retirement-card gradients (git c09c549). */
-.report-grad-card--oa { background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%); }
-.report-grad-card--sa { background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%); }
-.report-grad-card--ma { background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); }
-.report-grad-card--ilp { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-.report-grad-card--bank { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
-.report-grad-card--total { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
+/* One warm ramp, assigned by card identity so a card keeps its step across
+   renders. Every fill clears 4.5:1 with the ink above (5.69 → 12.21); only
+   `--total` inverts to cream-on-brown (4.58), which is why it is the anchor.
+   Ramp step #A58868 is deliberately unused — ink measures 3.96 on it. */
+.report-grad-card--oa { background: #c0a68c; }
+.report-grad-card--sa { background: #dccbb6; }
+.report-grad-card--ma { background: #e8e6e0; }
+.report-grad-card--ilp { background: #f0e6d6; }
+.report-grad-card--bank { background: #faf6ee; }
+.report-grad-card--total {
+  background: #8b6a47;
+  border-color: #8b6a47;
+  color: #faf6ee;
+}
 
-/* Bootstrap alert tones the callout set above lacks (legacy Alert
+/* Legacy Bootstrap alert keys the callout set above lacks (Alert
    variant="danger" / variant="primary" in sections [9] and [11]). */
-.report-callout--danger { background: #f8d7da; }
-.report-callout--primary { background: #cfe2ff; }
+.report-callout--danger { background: #fae0d6; }
+.report-callout--primary { background: #e8e6e0; }
 
-/* Total-row tints for the CPF (#f0fdf4) and retirement (#f3e8ff) tables —
-   declared after .report-row-total so the combination overrides its amber. */
-.report-row-total--green { background: #f0fdf4; }
-.report-row-total--violet { background: #f3e8ff; }
+/* Total-row tints for the CPF and retirement tables — declared after
+   .report-row-total so the combination overrides its in-progress tint. The
+   `green`/`violet` suffixes are legacy names kept for the callers. */
+.report-row-total--green { background: #d9e8e0; }
+.report-row-total--violet { background: #e8e6e0; }
 
 /* Opportunity-cost row highlight (legacy inline background #fee2e2). */
 .report-row-loss {
-  background: #fee2e2;
+  background: #fae0d6;
   print-color-adjust: exact;
   -webkit-print-color-adjust: exact;
 }
 
 /* RA assessment panel (legacy CPFProjection.jsx:120-208 inline styles). */
 .report-ra-panel {
-  background: #f0f9ff;
-  border: 2px solid #0284c7;
+  background: #faf6ee;
+  border: 2px solid #8b6a47;
   border-radius: 12px;
   padding: 14px;
   margin-top: 12px;
@@ -266,7 +316,7 @@
 }
 
 .report-ra-cohort {
-  background: #fef3c7;
+  background: #f0e2cf;
   border-radius: 8px;
   padding: 10px;
   margin-bottom: 12px;
@@ -283,13 +333,13 @@
 
 .report-ra-value {
   background: #fff;
-  border: 1px solid #0284c7;
+  border: 1px solid #d9ccc0;
   border-radius: 8px;
   padding: 14px;
 }
 
 .report-cpf-life {
-  background: #fefce8;
+  background: #f0e6d6;
   border-radius: 6px;
   padding: 10px;
   margin-top: 12px;

@@ -7,10 +7,10 @@ import { cn } from '@/lib/utils';
  * Spec: docs/99-refactor/_system/design/handoffs/2026-04-20-13pEBoyg/project/preview/component-stepper.html
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked: current step = red-700 with 3px red-200 halo (light) / red-900/40 (dark).
- * Completed = green-600 bg + white check. Upcoming = white/transparent + zinc border;
- * dim conveyed via zinc-500/400 text (NOT opacity — opacity-50 violates WCAG AA on
- * the label text and was flagged by axe on /agent/setup, 2026-05-28).
+ * Locked (2a): current step = --primary brown with a 3px brown halo. Completed = sage bg
+ * + cream check. Upcoming = card cream + hairline border; dim conveyed via --fg-muted text
+ * (NOT opacity — opacity-50 violates WCAG AA on the label text and was flagged by axe on
+ * /agent/setup, 2026-05-28).
  * Current step's label uses var(--font-sans) medium; others use fg-dim.
  * Step numbers + any mono glyph use var(--font-mono).
  */
@@ -46,7 +46,7 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
               className="inline-flex items-center gap-1.5"
             >
               {isCompleted && (
-                <span className="w-7 h-7 rounded-full inline-flex items-center justify-center bg-green-600 text-white">
+                <span className="w-7 h-7 rounded-full inline-flex items-center justify-center bg-[color:var(--brand-sage)] text-[color:var(--cta-primary-fg)]">
                   <Check className="w-3 h-3" strokeWidth={2.4} />
                 </span>
               )}
@@ -55,7 +55,7 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
                   className={cn(
                     'w-7 h-7 rounded-full inline-flex items-center justify-center',
                     'bg-primary text-primary-foreground font-semibold text-[11.5px]',
-                    'shadow-[0_0_0_3px] shadow-red-200 dark:shadow-red-900/40',
+                    'shadow-[0_0_0_3px] shadow-primary/25',
                   )}
                   style={{ fontFamily: 'var(--font-mono)' }}
                 >

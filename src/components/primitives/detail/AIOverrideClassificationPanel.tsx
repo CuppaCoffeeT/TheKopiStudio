@@ -1,10 +1,10 @@
 /**
  * AIOverrideClassificationPanel — staff-facing manual override for AI classification.
  *
- * Spec: docs/99-refactor/_system/design/handoffs/2026-04-23-rNq9eFQw/project/preview/component-email-inbox.html (AI panel #2 · blue accent)
+ * Spec: docs/99-refactor/_system/design/handoffs/2026-04-23-rNq9eFQw/project/preview/component-email-inbox.html (AI panel #2 · `blue` accent — brown under 2a)
  * Adopters: email-inbox detail pane.
  *
- * Composes: `AIPanel` (blue accent) + AI-picked vs Manual-override grid
+ * Composes: `AIPanel` (`blue` accent = brown in-progress) + AI-picked vs Manual-override grid
  * + reason textarea + save/clear actions + collapsible `HistoryTrailList`.
  *
  * Controlled: caller passes selected category + reason and handles save.
@@ -66,7 +66,7 @@ export function AIOverrideClassificationPanel({
   return (
     <AIPanel
       accent="blue"
-      icon={<ShieldCheck className="w-full h-full text-blue-700 dark:text-blue-400" />}
+      icon={<ShieldCheck className="w-full h-full" />}
       title="Override classification"
       statusPill={
         correctedCount > 0 ? (

@@ -26,8 +26,12 @@ export const ModuleSearch = forwardRef<HTMLInputElement, ModuleSearchProps>(func
         'w-full h-[42px] px-3.5 flex items-center gap-2.5',
         'bg-card',
         'border border-border rounded-lg',
+        // Focus indicator = opaque brown ring (4.58:1 on card, 4.00:1 on page).
+        // Alpha halos do not work on the cream ground: brown needs ~75% opacity
+        // before it clears the SC 1.4.11 3:1 floor, so anything softer is
+        // decorative and leaves the border swap carrying focus on its own.
         'focus-within:border-ring',
-        'focus-within:ring-[3px] focus-within:ring-ring/15',
+        'focus-within:ring-[3px] focus-within:ring-ring',
         'transition-colors',
         className
       )}

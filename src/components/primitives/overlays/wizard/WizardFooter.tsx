@@ -9,7 +9,7 @@
  *  - Switches Next → Submit on last step (with `submitLabel` + `isSubmitting` spinner)
  *  - `extraAction` slot rendered between Back and Next/Submit (e.g. supervisor-drafts "Save as Draft")
  *
- * Resubmit CTA stays primary (slate-800) — NOT destructive — per locked picks v3.
+ * Resubmit CTA stays primary (brown) — NOT destructive — per locked picks v3.
  * Mobile sticky-at-bottom + safe-area inset handled at the parent shell (drawer
  * applies `pb-[env(safe-area-inset-bottom)]` on its outer container).
  */

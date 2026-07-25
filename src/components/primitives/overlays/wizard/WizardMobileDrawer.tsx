@@ -95,7 +95,6 @@ export function WizardMobileDrawer({
               style={{
                 fontFamily: 'var(--font-pixel)',
                 letterSpacing: '-0.01em',
-                WebkitFontSmoothing: 'none',
               }}
             >
               {title}

@@ -46,7 +46,7 @@ const SEARCH_PILL_CLASS = cn(
   'inline-flex items-center gap-2 h-7 px-2.5 rounded-md',
   'border border-border',
   'text-muted-foreground',
-  'hover:bg-secondary hover:border-zinc-300 dark:hover:border-zinc-700',
+  'hover:bg-secondary hover:border-[color:var(--border-hover)]',
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
 );
 
@@ -92,7 +92,7 @@ export function AppHeaderDesktopBar({
     >
       <div className="inline-flex items-center gap-[18px]">
         <AppHeaderLogo />
-        <div className="h-4 w-px bg-[#ececee] dark:bg-[#202024]" />
+        <div className="h-4 w-px bg-[color:var(--border-soft)]" />
         <Breadcrumb segments={breadcrumb} />
       </div>
 

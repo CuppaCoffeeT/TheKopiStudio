@@ -1,10 +1,10 @@
 /**
  * AIClassificationPanel — AI category annotation + reasoning + feedback actions.
  *
- * Spec: docs/99-refactor/_system/design/handoffs/2026-04-23-rNq9eFQw/project/preview/component-email-inbox.html (AI panel #1 · green accent)
+ * Spec: docs/99-refactor/_system/design/handoffs/2026-04-23-rNq9eFQw/project/preview/component-email-inbox.html (AI panel #1 · `green` accent — sage under 2a)
  * Adopters: email-inbox detail pane.
  *
- * Composes: `AIPanel` (green accent) + `EmailCategoryBadge` (badge variant)
+ * Composes: `AIPanel` (`green` accent = sage positive) + `EmailCategoryBadge` (badge variant)
  * + reply-needed pill + reasoning + summary + three actions (Correct /
  * Wrong category / Notes).
  *
@@ -42,10 +42,12 @@ interface AIClassificationPanelProps {
   isPending?: boolean;
 }
 
+/** 2a status pills: tint fill + darkened same-hue text, never a saturated fill.
+ *  `yes` = sage positive · `maybe` = brown in-progress · `no` = inert neutral. */
 const REPLY_NEEDED_TONE = {
-  yes: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-900/40',
+  yes: 'bg-[color:var(--status-accepted-bg)] text-[color:var(--status-accepted-fg)] border-[color:var(--status-accepted-border)]',
   no: 'bg-secondary text-muted-foreground border-border',
-  maybe: 'bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-900/40',
+  maybe: 'bg-[color:var(--status-sent-bg)] text-[color:var(--status-sent-fg)] border-[color:var(--status-sent-border)]',
 } as const;
 
 export function AIClassificationPanel({

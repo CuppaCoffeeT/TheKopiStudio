@@ -33,7 +33,7 @@ export function IntakeForm({ intake, onChange, onStart }: IntakeFormProps) {
     <div className="flex flex-col gap-5" data-testid="wizard-intake-screen">
       <div className="text-center pt-4">
         <div className="text-[42px] leading-none mb-2" aria-hidden="true">🎯</div>
-        <Eyebrow className="text-accent">Prospect Profiling</Eyebrow>
+        <Eyebrow className="text-[color:var(--brown-text)]">Prospect Profiling</Eyebrow>
         <PageTitle className="text-[26px] sm:text-[30px] md:text-[34px]">Read Any Prospect</PageTitle>
         <PageDescription className="mt-1">
           8 questions + body language = instant DISC &amp; MBTI profile
@@ -110,8 +110,12 @@ export function IntakeForm({ intake, onChange, onStart }: IntakeFormProps) {
         </div>
       </Card>
 
-      <Card className="border-accent/30 bg-accent/10">
-        <Eyebrow className="text-accent">How it works</Eyebrow>
+      {/* Border-only accent. `bg-accent/10` composited brown over the PAGE cream
+          (cn is twMerge, so it replaced Card's bg-card), which both inverted the
+          raised-card ladder and dropped this block's copy to 3.68–4.06:1. On
+          card cream the list reads 4.72:1 and the eyebrow 5.21:1. */}
+      <Card className="border-accent/30">
+        <Eyebrow className="text-[color:var(--brown-text)]">How it works</Eyebrow>
         <ol className="m-0 list-decimal pl-4 text-[13px] leading-7 text-muted-foreground">
           <li>Answer 8 profiling questions</li>
           <li>Tick body language signals</li>

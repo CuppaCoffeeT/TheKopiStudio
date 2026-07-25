@@ -126,3 +126,118 @@ the single neutral caption 'No visible profiling results' for both, and the
 profiler feature deliberately exposes NO API to disambiguate (doing so would
 leak row existence past RLS). Full rationale + palette decision:
 `src/features/crm/lib/decisions.md` (2026-06-12 P4 entry).
+
+## 2026-07-25 — print.css repointed to Kopi Studio; paper is a SEPARATE contract from app chrome
+
+`print.css` was moved off the navy/gold values (gold `#C9A84C` rule + kicker,
+`#111` ink, Arial) onto Kopi Studio. Three defaults locked here so they are
+not re-litigated:
+
+1. **Paper stays white.** The cream page background `#F0E6D6` is deliberately
+   NOT carried into print — a printed report is its own artifact, not a
+   screenshot of the app surface. `body{background:#fff!important}` stays.
+2. **Literal hexes, never `var(--…)`.** Even though `src/index.css` now
+   defines every Kopi token, the print sheet hardcodes. A future app re-theme
+   (or a returning dark mode) must not be able to leak into the printed
+   output. Same deliberate decoupling as `crm/lib/report-print.css`.
+3. **Raw brand brown is a MARK, not type.** `#8B6A47` carries the `.rph` rule;
+   the sub-18px `.rph-kicker` takes the AA-safe `#806241` (`--brown-text`),
+   because the raw brown is 4.00:1 on cream and fails AA as small text.
+
+Type follows the same >=18px serif floor as the app: `.rph-name` (22px) is
+Instrument Serif at weight **400** — the face ships 400 only (index.html loads
+`Instrument+Serif:ital@0;1`), so the legacy `font-weight:bold` would have been
+browser-synthesised faux-bold. Everything smaller is IBM Plex Sans. Both
+stacks keep a generic serif/sans-serif fallback because a print job can render
+before the Google Fonts link resolves. Scoping selectors, the `.print-area`
+visibility pattern and `@page` were left untouched — colour and type only.
+
+The extended report-only palette (grey `#E8E6E0`, green box `#D9E8E0`) is
+permitted on paper but is NOT declared here: nothing in this sheet paints a
+box, and adding unused classes would be dead CSS.
+
+## 2026-07-25 — Screen report repointed to Kopi 2a: DISC hue is a TINT, semantics are sage/terracotta
+
+Second pass over the profiler's SCREEN components (print.css was already
+done — see the entry above). Four defaults locked so they are not
+re-litigated:
+
+1. **DISC identity is always a tint over cream, never a slab.** `ResultHero`
+   was a `linear-gradient(135deg, col+EE, col+88)` band with white type — the
+   only dark surface left in the feature. It is now a flat `col+24` tint on
+   the card, with type on the ink ladder (`--fg` / `--fg-dim`). This makes the
+   hero match what `DiscChip`, `DiscBadge`, `TraitsCard`, `OpeningLineCard`,
+   `QuestionScreen` and `ObservationScreen` already did, and makes contrast
+   independent of which of the four DISC hexes won. The DISC hexes themselves
+   (`#C0392B` `#D4680A` `#1A7A40` `#1A5F8A`) are FROZEN legacy content data,
+   not app chrome — they are never repointed at the brand palette.
+2. **Do/Avoid and Watch-For are the report's semantic pair, so they take sage
+   and terracotta** — not the retired `green-*` / `red-*` Tailwind scales.
+   Fills use the brand tints (`--delta-positive-bg` / `--delta-negative-bg`,
+   `bg-destructive/10`), borders the 0.28 alphas
+   (`--status-accepted-border` / `--status-rejected-border`). Every string in
+   these blocks is under 18px, so text resolves to `--sage-text` /
+   `--negative-text` and NEVER to raw `#5A7A5E` or `#D97551`.
+3. **`text-accent` is banned under 18px in this feature.** `--accent` is the
+   raw brown `#8B6A47`, which measures 4.00 on page and 4.58 on card — legal
+   only as a fill. Every sub-18px brown string (eyebrows, phase tags, playbook
+   category heads, MBTI winners, the occupation chip) now uses
+   `--brown-text`. `bg-accent/*` and `border-accent/*` are untouched: raw
+   brown stays correct as a fill and a border.
+4. **No categorical hues survive.** `QuestionScreen`'s Discovery tag was
+   `bg-sky-950/60 text-sky-400`; 2a admits no third hue, so the two phases now
+   separate on the brown/neutral axis (Opening = brown tint, Discovery =
+   `bg-secondary` + `--fg-dim`) rather than brown vs blue.
+
+Progress-bar tracks (`ScoreCard`, `MbtiCard`) moved to `--border-faint`. The
+old tracks (`bg-secondary`, `bg-background/60`) were dark-era recesses that on
+the cream ground land within a hair of the tile fill and stop reading as an
+unfilled remainder.
+
+The `font-mono` numerals (`{pts} pts`, playbook ordinals) were deliberately
+LEFT ALONE: 2a's "everything else is IBM Plex Sans" is a display-type rule,
+and `index.css` keeps the mono stack as a sanctioned exception for tabular
+numerals. They are numerals, not display type.
+
+## 2026-07-25 — Accent washes are borders, not fills; DISC hex freeze upheld
+
+Third adversarial pass over the 2a repoint. Four refinements, all colour-only:
+
+1. **`bg-accent/*` on a `Card` is banned; the accent lives in the border.**
+   `IntakeForm`, `PlaybookSection`, `FollowUpCard` and the `ResultActions`
+   login CTA each passed `bg-accent/5`–`/10` to `Card`. `cn` is twMerge, so
+   that REPLACED `bg-card` — the tint then composited over the PAGE cream, not
+   over card cream. Two failures at once: the card rendered DARKER than the
+   page (the raised-card ladder inverted), and the muted copy inside fell to
+   3.68–4.06:1. All four are now `border-accent/*` only, on `bg-card`, where
+   the same copy reads 4.72:1. A brown wash over the page ground is not a
+   legal card surface in 2a.
+2. **`Eyebrow` defaults to `--fg-dim`, not `--fg-muted`** (the swap StatusTabs
+   and TabNav already made). At 10.5px `--fg-muted` only clears 4.5:1 on a flat
+   cream ground, and the eyebrow is used on grounds that are not flat: the
+   wizard page cream (4.12:1) and `OpeningLineCard`'s DISC tint (3.73–3.83:1).
+   `--fg-dim` clears every one — 6.40 page, 7.34 card, 5.78–5.95 on the four
+   DISC tints. This supersedes the "Eyebrow keeps its muted token" note that
+   was inline in `ResultSections`.
+3. **New token `--brown-text-on-wash` `#6D5233`** for small brown type on a
+   brown wash of its own hue (`ScoreCard`'s occupation chip, `QuestionScreen`'s
+   Opening phase tag, both `bg-accent/15`). Entry 3 of the 2026-07-25 decision
+   above locked `--brown-text` for every sub-18px brown string; that value is
+   calibrated for the two flat cream grounds (4.54 / 5.21) and drops to 4.33:1
+   on brown@15%-over-card. Refines — does not reverse — that entry:
+   `--brown-text` still governs the flat grounds. The wash stayed at 15%
+   deliberately: dropping it to 8% would have fixed contrast too, but 8% over
+   card cream is indistinguishable from Discovery's `--secondary` tint and
+   would have collapsed the brown/neutral phase axis locked in entry 4.
+4. **DISC hex freeze re-affirmed.** The pass proposed repointing
+   `#C0392B`/`#D4680A`/`#1A7A40`/`#1A5F8A` onto `--chart-ramp-1..4` or the
+   `--status-*` families as brand drift. Declined — entry 1 of the 2026-07-25
+   decision above froze these as legacy CONTENT data, and the ramp is a
+   sequential brown scale, so using it for a 4-way categorical encoding would
+   have taken the selected-row `borderColor` to `#DCCBB6` (~1.1:1 on cream) and
+   destroyed the selection affordance. The two a11y defects the proposal was
+   rooted in were fixed at the text layer instead (items 2 above and 5 below).
+5. **`QuestionScreen`'s selected option flips to `text-foreground`**, mirroring
+   `ObservationScreen`. The DISC tint that marks the chosen row dropped
+   `--fg-muted` to 4.21–4.33:1, so the one row that must read best was the only
+   one failing; on the tint the ink token reads 10.9–11.2:1.

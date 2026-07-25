@@ -8,12 +8,12 @@ import { chartSeriesColor } from './ChartShell';
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/charts/ChartPrimitives.jsx
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked: Geist Mono 11px label · tabular-nums value.
+ * Locked: mono-stack (--font-mono) 11px label · tabular-nums value.
  */
 
 export interface LegendItem {
   label: React.ReactNode;
-  /** Optional — defaults to the monochrome cream→gold palette by item index. */
+  /** Optional — defaults to the monochrome brown ramp (CHART_SERIES_PALETTE in ChartShell) by item index. */
   color?: string;
   value?: React.ReactNode;
 }
