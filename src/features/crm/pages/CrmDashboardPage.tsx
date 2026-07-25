@@ -152,9 +152,9 @@ export default function CrmDashboardPage() {
 
       {isError && !stats && (
         <ErrorState
-          subhead="STATS UNAVAILABLE"
-          body="The dashboard stats could not be loaded. Check your connection and retry."
-          path="/crm"
+          variant="compact"
+          subhead="The dashboard stats didn't load."
+          body="Your book could not be read. Check your connection and retry."
           onRetry={() => refetch()}
         />
       )}

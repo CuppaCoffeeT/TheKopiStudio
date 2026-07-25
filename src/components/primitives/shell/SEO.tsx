@@ -8,6 +8,7 @@
  * (no slot-filler sanction — pure primitive, no data coupling).
  */
 import { Helmet } from 'react-helmet-async';
+import { PRODUCT_NAME } from '@/lib/product';
 
 export interface SEOProps {
   title?: string;
@@ -23,7 +24,7 @@ export const SEO = ({
     <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
     <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
 
-    <title>{title} - Insurance CRM</title>
+    <title>{`${title} - ${PRODUCT_NAME}`}</title>
     <meta name="description" content={description} />
 
     <meta property="og:robots" content="noindex, nofollow" />

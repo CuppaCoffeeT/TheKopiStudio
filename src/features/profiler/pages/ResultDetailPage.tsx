@@ -134,11 +134,10 @@ export default function ResultDetailPage() {
 
       {detail.isError && (
         <ErrorState
-          subhead="Failed to load result"
-          body="The saved result could not be loaded. Check your connection and try again."
-          path={`/profiler-results/${id ?? ''}`}
+          variant="compact"
+          subhead="This saved result didn't load."
+          body="The profiling result could not be read. Check your connection and try again."
           onRetry={() => void detail.refetch()}
-          className="rounded-2xl"
         />
       )}
 

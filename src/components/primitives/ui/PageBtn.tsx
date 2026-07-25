@@ -6,9 +6,13 @@
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
  * Locked: 32×32 square · brown CTA fill + cream label when active (--primary /
- * --primary-foreground) · tabular-nums mono figures · idle is a hairline outline
+ * --primary-foreground) · tabular-nums figures · idle is a hairline outline
  * with a --fg-dim numeral, which survives the tint hover fill (bg-secondary) at
  * 6.79:1 — --fg-muted would drop to 4.37:1 there and fail AA at 12px.
+ *
+ * 2a "Kopi House" (2026-07-25): the numeral is IBM Plex Sans with tabular
+ * figures, not the mono stack — 2a has no mono anywhere, and `tabular-nums`
+ * already keeps every page button the same width.
  */
 
 import { forwardRef } from 'react';
@@ -40,7 +44,7 @@ export const PageBtn = forwardRef<HTMLButtonElement, PageBtnProps>(function Page
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         className
       )}
-      style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}
+      style={{ fontFamily: 'var(--font-sans)', fontVariantNumeric: 'tabular-nums' }}
       {...props}
     >
       {children}

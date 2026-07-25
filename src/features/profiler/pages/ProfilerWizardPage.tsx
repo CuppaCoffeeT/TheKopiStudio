@@ -14,6 +14,13 @@
  *
  * All handlers/derived state live in useWizardController — this file is
  * composition only.
+ *
+ * Reading column: `max-w-[42rem]` — Tailwind's OWN stock `2xl`, written as a
+ * literal on purpose. `src/index.css` sets `--container-2xl: 1400px` as a
+ * leftover v3 `container`-plugin shim, and in v4 that variable IS the source
+ * for `max-w-2xl`, so the class silently resolved to 1400px and this tool went
+ * full-bleed. The same literal is mirrored in `WizardTopBar` so the bar, the
+ * progress rail, the content and the footer nav share one column.
  */
 
 import { SEO } from '@/components/primitives/shell/SEO';
@@ -38,21 +45,25 @@ export default function ProfilerWizardPage() {
   return (
     <div className="min-h-dvh bg-background">
       <SEO title="Prospect Profiler" description="Run a DISC × MBTI prospect profile" />
-      <WizardTopBar subtitle={c.subtitle} isAuthenticated={Boolean(c.user)} />
-
-      {inFlow && (
-        <div className="print-hide sticky top-[53px] z-30 border-b border-border/80 bg-card/85 backdrop-blur-md">
-          <div className="mx-auto w-full max-w-2xl px-4 py-2.5" data-testid="wizard-progress">
-            <Progress
-              value={screen as number}
-              max={TOTAL_STEPS}
-              label={`Step ${screen} of ${TOTAL_STEPS}`}
-            />
+      {/* ONE sticky block for the bar + the progress rail. Pinning them
+          separately needed a hardcoded `top-[53px]` that silently broke
+          whenever the bar's height changed; nesting removes the constant. */}
+      <div className="print-hide sticky top-0 z-40">
+        <WizardTopBar subtitle={c.subtitle} isAuthenticated={Boolean(c.user)} />
+        {inFlow && (
+          <div className="border-b border-border bg-card">
+            <div className="mx-auto w-full max-w-[42rem] px-4 py-2.5" data-testid="wizard-progress">
+              <Progress
+                value={screen as number}
+                max={TOTAL_STEPS}
+                label={`Step ${screen} of ${TOTAL_STEPS}`}
+              />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
-      <main className={`mx-auto w-full max-w-2xl px-4 py-5 ${inFlow ? 'pb-28' : 'pb-10'}`}>
+      <main className={`mx-auto w-full max-w-[42rem] px-4 py-5 ${inFlow ? 'pb-28' : 'pb-10'}`}>
         {screen === 0 && (
           <IntakeForm intake={wizard.intake} onChange={wizard.setIntake} onStart={wizard.start} />
         )}
@@ -90,8 +101,8 @@ export default function ProfilerWizardPage() {
       </main>
 
       {inFlow && (
-        <div className="print-hide fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-card/90 backdrop-blur-md pb-[env(safe-area-inset-bottom)]">
-          <div className="mx-auto flex w-full max-w-2xl gap-2.5 px-4 py-3">
+        <div className="print-hide fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card pb-[env(safe-area-inset-bottom)]">
+          <div className="mx-auto flex w-full max-w-[42rem] gap-2.5 px-4 py-3">
             <Button size="lg" variant="outline" onClick={c.handleBack} data-testid="wizard-back-btn">
               ← Back
             </Button>

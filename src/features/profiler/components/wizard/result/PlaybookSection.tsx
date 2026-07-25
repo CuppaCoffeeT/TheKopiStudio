@@ -21,15 +21,6 @@ const CATEGORY_ORDER: readonly PlaybookCategoryKey[] = [
   'close',
 ];
 
-/** Legacy category icons (`catIcons`) — literal unicode. */
-const CATEGORY_ICONS: Record<PlaybookCategoryKey, string> = {
-  engage: '💬',
-  appt: '📅',
-  followup: '📲',
-  objections: '🛡',
-  close: '✅',
-};
-
 async function copyStatement(text: string): Promise<void> {
   try {
     await navigator.clipboard.writeText(text);
@@ -57,7 +48,7 @@ export function PlaybookSection({ primary, profile }: PlaybookSectionProps) {
       </p>
 
       <div className="flex flex-col gap-3.5">
-        {CATEGORY_ORDER.map((cat) => {
+        {CATEGORY_ORDER.map((cat, ci) => {
           const section = profile.msgs[cat];
           return (
             <div
@@ -65,12 +56,17 @@ export function PlaybookSection({ primary, profile }: PlaybookSectionProps) {
               className="overflow-hidden rounded-xl border border-border/80 bg-card"
               data-testid={`result-playbook-${cat}`}
             >
+              {/* The legacy `catIcons` emoji (💬📅📲🛡✅) that used to prefix
+                  each label are gone — no emoji anywhere in /profiler. The
+                  categories are a frozen ordered set, so the spec's device for
+                  one replaces them: a zero-padded index, same size and same
+                  --brown-text as the label it leads. */}
               <div className="border-b border-border px-3.5 py-2.5">
                 <span
                   className="uppercase text-[color:var(--brown-text)]"
                   style={{ fontFamily: 'var(--font-sans)', fontSize: 9.5, fontWeight: 700, letterSpacing: '0.16em' }}
                 >
-                  {CATEGORY_ICONS[cat]} {section.lbl}
+                  {String(ci + 1).padStart(2, '0')} · {section.lbl}
                 </span>
               </div>
               <ol className="m-0 flex list-none flex-col p-0">

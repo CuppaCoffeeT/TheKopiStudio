@@ -68,7 +68,7 @@ function CountPill({ count, tone, active }: { count: number; tone?: StatusTabTon
               ? 'bg-secondary text-foreground border-border'
               : 'bg-secondary text-[color:var(--fg-dim)] border-border'
       )}
-      style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}
+      style={{ fontFamily: 'var(--font-sans)', fontVariantNumeric: 'tabular-nums' }}
     >
       {count.toLocaleString('en-SG')}
     </span>

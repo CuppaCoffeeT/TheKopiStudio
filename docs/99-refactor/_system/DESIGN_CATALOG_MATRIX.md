@@ -1,7 +1,7 @@
 # DESIGN_CATALOG — Module × primitive matrix
 
 **Created**: 2026-04-28 SGT (extracted from `DESIGN_CATALOG.md` to clear 6.9× budget overflow)
-**Last Updated**: 2026-04-28 SGT
+**Last Updated**: 2026-07-25 SGT — `/dashboard` row: launcher trio marked RETIRED, archetype flipped to 2a Overview
 **Status**: 🟢 Production
 **Priority**: 🔴 Critical
 
@@ -13,7 +13,7 @@ Per-module consumption of primitive groups. Columns = primitive groups. `●` = 
 
 | Module (route) | COMPONENT_MAP cnt | Archetype | Shells | Atoms | Overlays | States | Form | Motion | Migration |
 |---|---:|---|---|---|---|---|---|---|---|
-| /dashboard | 8 dashboard/ | **Module Launcher** (not KPI/chart) | ● **AppHeader · GreetingHeader · ModuleCard · ModuleSearch · CategoryHeader · NeedsAttentionPill · AttentionHeader · CountBadge** | — | ● Popover (ImpersonationSelector) · DropdownMenu (UserMenu) · **CommandPalette (⌘K)** · Toaster | — | — | — | **🟢 MIGRATED 2026-04-19 · W09 #1 · commit d49cf78 · CommandPalette added eod+15h** |
+| /dashboard | 8 dashboard/ | **2a Overview** (was Module Launcher) | ● **AppHeader · GreetingHeader · KpiIndexCard** · ⚠️ ~~ModuleCard~~ ~~ModuleSearch~~ ~~CategoryHeader~~ **RETIRED 2026-07-25** (files deleted with the launcher grid — see [DEPRECATIONS.md](./DEPRECATIONS.md)); NeedsAttentionPill · AttentionHeader · CountBadge survive but are unadopted here | — | ● Popover (ImpersonationSelector) · DropdownMenu (UserMenu) · **CommandPalette (⌘K)** · Toaster | — | — | — | **🟢 MIGRATED 2026-04-19 · W09 #1 · commit d49cf78 · CommandPalette added eod+15h · rebuilt as the Kopi 2a Overview 2026-07-25** |
 | /admin-overview | 2 | Dashboard | ● DataTable · AppHeader | ● Button · Badge | ● Toast · Modal | ● Empty | — | — | 🔴 |
 | /admin (dashboard) | — | Dashboard | ● KpiTile · AppHeader | ● Button | ● Toast | ● Empty | — | — | 🔴 |
 | /superadmin | — | Dashboard | ● KpiTile · AppHeader | ● Button | ● Toast | ● Empty | — | — | 🔴 |

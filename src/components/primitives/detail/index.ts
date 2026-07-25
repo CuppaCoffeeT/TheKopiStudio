@@ -1,6 +1,12 @@
 export * from './DetailPageFrame';
 export * from './PageShell';
+// Component only — `PageShellStatusTone` is re-exported by ./PageShell, which
+// stays the import path adopters know.
+export { PageShellStatusPill } from './PageShellStatusPill';
 export * from './TabNav';
+
+// 2a dossier body vocabulary — the panels that fill PageShell's two columns.
+export * from './dossier';
 export * from './Timeline';
 export * from './StatusTransitionModal';
 export * from './RelatedRecordsCard';

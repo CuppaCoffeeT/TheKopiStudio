@@ -314,6 +314,27 @@
   --chart-anim-duration: 800ms;
   --chart-anim-stagger: 200ms;
 
+  /* DISC taxonomy — DOMAIN DATA, EXEMPT FROM BROWN DISCIPLINE.
+     The one sanctioned set of categorical hues in 2a. These are the frozen
+     legacy profiler content hexes, not app chrome: the D/I/S/C quadrants are
+     an external psychometric instrument, so the encoding travels with the
+     content and is never repointed at the brand palette. Repointing them onto
+     --chart-ramp-1..4 was proposed twice and DECLINED twice (see
+     src/features/profiler/lib/decisions.md, 2026-07-25 entry 1 and entry 4):
+     the ramp is a SEQUENTIAL brown scale, so a 4-way categorical encoding
+     would land the selected-option borderColor on #dccbb6 (~1.1:1 on cream)
+     and destroy the selection affordance in the wizard.
+     Usage is tint + border + a decorative dot ONLY — the DISC letter and the
+     profile name always carry the meaning, never the hue. As solid marks on
+     card cream these measure 5.05 / 3.37 / 4.99 / 6.39:1, all clearing the
+     3:1 floor for non-text UI. They MUST NOT be used as text: at 10–11px
+     every one of them fails 4.5:1 on the tint, which is why every DISC pill
+     puts its letter on --fg. */
+  --disc-d: #c0392b;                                  /* Dominant */
+  --disc-i: #d4680a;                                  /* Influential */
+  --disc-s: #1a7a40;                                  /* Steady */
+  --disc-c: #1a5f8a;                                  /* Conscientious */
+
   /* =====================================================================
    * LOCKED_PICKS v3 — cross-cutting patterns
    * ================================================================== */

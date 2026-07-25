@@ -1,7 +1,7 @@
 # Universal Components — Rulebook
 
 **Created**: 2026-04-19 SGT
-**Last Updated**: 2026-04-19 SGT (eod+15g: overlays + list atoms confirmed aligned with Claude Design handoff — App root now uses primitive Toaster · `ui/sonner` is a shim)
+**Last Updated**: 2026-07-25 SGT (dashboard import block: `ModuleCard` / `CategoryHeader` / `ModuleSearch` deleted with the launcher grid — see [DEPRECATIONS.md](./DEPRECATIONS.md)) · 2026-04-19 SGT (eod+15g: overlays + list atoms confirmed aligned with Claude Design handoff — App root now uses primitive Toaster · `ui/sonner` is a shim)
 **Status**: 🟢 Production
 **Priority**: 🔴 Critical
 
@@ -55,10 +55,11 @@ import {
   Kbd,
 } from '@/components/primitives/overlays';
 
-// Dashboard (module-launcher composition)
+// Dashboard (Overview composition — ModuleCard/CategoryHeader/ModuleSearch
+// were deleted with the launcher grid 2026-07-25, see DEPRECATIONS.md)
 import {
-  GreetingHeader, ModuleCard, NeedsAttentionPill, AttentionHeader,
-  CategoryHeader, ModuleSearch, CountBadge,
+  GreetingHeader, KpiIndexCard, KpiTile, NumberTicker,
+  NeedsAttentionPill, AttentionHeader, CountBadge,
 } from '@/components/primitives/dashboard';
 
 // Atoms (root)

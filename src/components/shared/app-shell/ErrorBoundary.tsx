@@ -71,7 +71,11 @@ export class ErrorBoundary extends Component<Props, State> {
           className="min-h-screen flex items-center justify-center"
           style={{ background: 'var(--page-bg, #f0e6d6)' }}
         >
+          {/* The one deliberate `hero` adopter: a whole viewport is what
+              failed, so the full-screen 500 shape is the honest one. Everything
+              rendering INSIDE the app layout uses `variant="compact"`. */}
           <ErrorState
+            variant="hero"
             code="500"
             subhead="Something went wrong"
             body="An unexpected error occurred. Your work is preserved — try refreshing, or send us a report if this keeps happening."

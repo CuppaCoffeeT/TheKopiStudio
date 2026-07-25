@@ -17,7 +17,7 @@
 | **root atoms** | 4 | deep import | `Avatar` · `IconButton` · `IconGlyph` · `StatusBadge` |
 | **[shell/](../../../src/components/primitives/shell/)** | 17 | `@/components/primitives/shell` | `AppHeader` · `Button` · `Card` · `Badge` · `Breadcrumb` · `Chip` · `FilterBar` · `FilterDropdown` · `FilterPill` · `FloatingCTA` · `ImpersonationBanner` · `LoadingSkeleton` · `LoadingSpinner` · `ErrorState` · `NoResultsState` · `PageTitle` · `PageDescription` · `SearchInput` + cells (`DateCell` · `DateTimeCell` · `CurrencyCell` · `NumberCell`) |
 | **[overlays/](../../../src/components/primitives/overlays/)** | 11 | `@/components/primitives/overlays` | `Alert` · `CommandPalette` · `ContextMenu` · `Drawer` · `DropdownMenu` · `Kbd` · `Modal` · `Popover` · `SearchableMultiSelect` · `Toaster` · `Tooltip` |
-| **[dashboard/](../../../src/components/primitives/dashboard/)** | 9 | `@/components/primitives/dashboard` | `AttentionHeader` · `CategoryHeader` · `CountBadge` · `GreetingHeader` · `KpiTile` · `ModuleCard` · `ModuleSearch` · `NeedsAttentionPill` · `NumberTicker` |
+| **[dashboard/](../../../src/components/primitives/dashboard/)** | 8 | `@/components/primitives/dashboard` | `AttentionHeader` · `CDWProgressTimeline` · `CountBadge` · `GreetingHeader` · `KpiIndexCard` · `KpiTile` · `NeedsAttentionPill` · `NumberTicker` — `ModuleCard` / `CategoryHeader` / `ModuleSearch` were **deleted 2026-07-25**, see [DEPRECATIONS.md](../../99-refactor/_system/DEPRECATIONS.md) |
 | **[detail/](../../../src/components/primitives/detail/)** | 10 | `@/components/primitives/detail` | `ActivityLogTimeline` · `DestructiveConfirmDialog` · `DetailPageFrame` · `LineItemsEditor` · `PageShell` · `RelatedRecordsCard` · `SendEmailDialog` · `StatusTransitionModal` · `TabNav` · `Timeline` |
 | **[form/](../../../src/components/primitives/form/)** | 11 | `@/components/primitives/form` | `Input` · `Textarea` · `Select` · `Checkbox` · `Radio` · `Switch` · `DatePicker` · `FileUpload` · `Field` · `Progress` · `Stepper` |
 | **[ui/](../../../src/components/primitives/ui/)** | 10 | `@/components/primitives/ui` | `DataTable` · `DataRow` · `TableHeader` · `SortIcon` · `TableCheckbox` · `Pagination` · `PageBtn` · `MobileListCard` · `StatusTabs` · `ListPageFrame` |
@@ -29,7 +29,7 @@
 |---|---|---|
 | List page | `ListPageFrame` (ui/) | `AppHeader` · title · description · `FilterBar` · `DataTable` + `Pagination` |
 | Detail page | `DetailPageFrame` (detail/) | `AppHeader` · `PageShell` (hero) · `TabNav` · sideRail · mobileActionBar |
-| Dashboard | `AppHeader` + bespoke layout | `GreetingHeader` · `ModuleCard` grid or `KpiTile` grid + `ChartShell` |
+| Dashboard | `AppHeader` + bespoke layout | `GreetingHeader` · `KpiIndexCard` row (2a Overview) or `KpiTile` grid + `ChartShell` (role dashboards) |
 | Form | `AppHeader` + `Field`-wrapped inputs | `Input` · `Select` · `Checkbox` · `DatePicker` · `Stepper` (multi-step) · `Button` |
 
 ## Sub-component rules

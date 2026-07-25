@@ -1,7 +1,7 @@
 # AppBase_REFACTOR — Design Reuse Principles
 
 **Created**: 2026-04-19 SGT
-**Last Updated**: 2026-04-19 SGT
+**Last Updated**: 2026-07-25 SGT — `primitives/dashboard/` description + hover-example caveat updated for the deleted launcher trio
 **Status**: 🟢 Production (active rules — future agents MUST read)
 **Priority**: 🔴 Critical
 
@@ -37,7 +37,7 @@ Before writing a new component, grep `src/components/` and read [DESIGN_CATALOG.
 ### 2. Design primitives stay in `src/components/primitives/`
 - `primitives/shell/` — chrome (AppHeader, Breadcrumb, ImpersonationBanner, Button, Chip, FilterBar, FloatingCTA, LoadingSkeleton, ErrorState, NoResultsState)
 - `primitives/overlays/` — system-level floating UI (Modal, Drawer, Popover, Tooltip, DropdownMenu, ContextMenu, Alert, Toaster, SearchableMultiSelect, Kbd)
-- `primitives/dashboard/` — module-launcher specific (GreetingHeader, ModuleCard, NeedsAttentionPill, etc.)
+- `primitives/dashboard/` — dashboard-surface specific (GreetingHeader, KpiIndexCard, KpiTile, NeedsAttentionPill, etc.). The launcher trio (ModuleCard, CategoryHeader, ModuleSearch) was **deleted 2026-07-25** — see [DEPRECATIONS.md](./DEPRECATIONS.md)
 
 These are the canonical building blocks. A new page **composes** them.
 
@@ -152,7 +152,7 @@ The page bg is `--page-bg = zinc-100 (#f4f4f5)`. If a button uses `hover:bg-zinc
 
 **Rule**: hover bg must VISUALLY differ from the current container bg. If the surface is already `var(--page-bg)`, skip to zinc-200+ or white. If the surface is white/surface-card, zinc-50/100 is fine.
 
-**Examples (what good feedback looks like in AppBase today)**:
+**Examples (recorded in the zinc/slate era — the palette is retired, the PRINCIPLE is not; `ModuleCard` and `CategoryHeader` were themselves deleted 2026-07-25, see [DEPRECATIONS.md](./DEPRECATIONS.md))**:
 - `<ModuleCard>` — hover: -translate-y-px + shadow + border-slate-800 + bg shift
 - `<Button variant='primary'>` — hover: slate-800 → slate-900 + focus ring red-700
 - `<CategoryHeader>` — hover: bg-zinc-100 + icon/label/count shift to darker + chevron flips to red-700

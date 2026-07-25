@@ -2,7 +2,8 @@ import { cn } from '@/lib/utils';
 
 interface GreetingHeaderProps {
   name: string;
-  role: string;
+  /** Optional — 2a's dateline is `weekday · date · one live stat`, no role. */
+  role?: string;
   /** ISO date or formatted string — rendered in the uppercase dateline */
   dateText: string;
   /** "morning" / "afternoon" / "evening" — caller computes in SGT */
@@ -33,7 +34,10 @@ export function GreetingHeader({
   contextStat,
   className,
 }: GreetingHeaderProps) {
-  const datelineParts = [dateText, role, contextStat].filter(Boolean);
+  // The dateline is middot-separated end to end, so the comma en-GB puts after
+  // the weekday ("Saturday, 25 July 2026") becomes one too. A no-op on an ISO
+  // date or an already-clean string.
+  const datelineParts = [dateText.replace(', ', ' · '), role, contextStat].filter(Boolean);
   return (
     <div
       className={cn('w-full border-b pb-5', className)}

@@ -11,9 +11,16 @@ import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '@/utils/queryKeys';
 import { getDashboardStats } from '../api/dashboardService';
 
-export function useDashboardStats() {
+/**
+ * @param enabled `false` parks the query — the /dashboard Overview reads these
+ *   stats at page level and must not fetch for a viewer who does not hold the
+ *   `/clients` module. `CrmDashboardPage` leaves the default `true`: its own
+ *   `/crm` route guard has already established access by the time it renders.
+ */
+export function useDashboardStats(enabled = true) {
   return useQuery({
     queryKey: queryKeys.crmDashboard.stats(),
     queryFn: getDashboardStats,
+    enabled,
   });
 }

@@ -32,27 +32,36 @@ export async function listLinkedResultsByClient(
   return data ?? [];
 }
 
+/** One newest-first `results` row as the /dashboard Overview feed reads it. */
+export interface RecentProfilerResult {
+  id: string;
+  prospect_name: string;
+  created_at: string;
+}
+
+/** The newest saved profiles plus the RLS-visible total behind them. */
+export interface RecentProfilerResultsPage {
+  rows: RecentProfilerResult[];
+  /** Total visible `results` rows — the /dashboard "profiles saved" figure. */
+  count: number;
+}
+
 /**
- * Batched "profiled" flags for one page of clients (/dashboard progress
- * widget): which of `clientIds` have at least one linked `results` row.
- * ONE query for the whole page, capped at `clientIds.length × 10` rows IN
- * AGGREGATE (not per client); ordered by client_id so truncation is
- * deterministic. A single client with more than 10×N linked results can
- * crowd out later client_ids' flags — acceptable for the 8-row home widget;
- * revisit with a distinct-client_id RPC if this ever feeds a bigger surface.
+ * Newest saved profiling results for the /dashboard "Latest additions" feed
+ * (KOPI_STUDIO_REDESIGN_PRD P4). Same crm-owned-read sanction as the linked
+ * lookup above: the feed merges CRM clients with profiler results, and
+ * importing profiler's `resultsService` from this feature would be a
+ * cross-feature drift error.
+ *
+ * `count: 'exact'` rides along with the page so the Overview's profiler KPI
+ * never needs a second round trip.
  */
-export async function getProfiledClientIds(clientIds: string[]): Promise<Set<string>> {
-  if (clientIds.length === 0) return new Set();
-  const { data, error } = await supabase
+export async function listRecentResults(limit: number): Promise<RecentProfilerResultsPage> {
+  const { data, count, error } = await supabase
     .from('results')
-    .select('client_id')
-    .in('client_id', clientIds)
-    .order('client_id', { ascending: true })
-    .limit(clientIds.length * 10);
+    .select('id, prospect_name, created_at', { count: 'exact' })
+    .order('created_at', { ascending: false })
+    .range(0, limit - 1);
   if (error) throw error;
-  return new Set(
-    (data ?? [])
-      .map((row) => row.client_id)
-      .filter((id): id is string => id != null),
-  );
+  return { rows: data ?? [], count: count ?? 0 };
 }

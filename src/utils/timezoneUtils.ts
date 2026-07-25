@@ -213,10 +213,29 @@ export const getDisplayDayName = (dateTime: Date | string): string => {
 
 /**
  * Get current Singapore time
- * @returns Date object representing current time in Singapore
+ *
+ * ⚠️ Returns a plain `new Date()` — the instant is correct, but every getter on
+ * it (`getHours`, `getFullYear`, …) and every `toLocaleString` without an
+ * explicit `timeZone` reads the BROWSER's zone, not SGT. Use it only where an
+ * instant is wanted (comparisons, "now" arguments). For anything a user reads
+ * or a number derived from the SG calendar, use a `formatDisplay*` helper or
+ * `getSingaporeYear()` / `getLocalDateString()`.
+ *
+ * @returns Date object representing the current instant
  */
 export const getCurrentSingaporeTime = (): Date => {
   return new Date();
+};
+
+/**
+ * Calendar year on the SG clock — e.g. 2026.
+ *
+ * `new Date().getFullYear()` is browser-local: west of SGT it returns last year
+ * for the first hours of 1 January. Used for reference-year math that must
+ * match the Singapore calendar (CPF retirement sums, age-from-DOB).
+ */
+export const getSingaporeYear = (date: Date = new Date()): number => {
+  return Number(getLocalDateString(date).slice(0, 4));
 };
 
 /**

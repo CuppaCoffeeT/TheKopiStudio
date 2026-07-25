@@ -24,15 +24,34 @@ export function ObservationScreen({ groupIndex, nv, onToggle }: ObservationScree
 
   return (
     <div className="flex flex-col gap-3" data-testid={`wizard-observations-screen-${groupIndex}`}>
-      <div className="flex items-center gap-2.5">
-        <span className="text-[22px]" aria-hidden="true">
-          {group.em}
+      {/* Section head, 2a type scale. The 22px group emoji (`group.em`) that
+          used to lead this row is no longer rendered: 2a admits no
+          illustration and no icon, and a colour emoji is the one mark the
+          brown/neutral palette cannot absorb. The spec's own device for an
+          ordered set replaces it — the Instrument Serif index numeral, one of
+          brown's four sanctioned appearances. `NVG[].em` itself is left intact:
+          content/observations.ts is under a frozen parity contract.
+          The numeral takes --brown-text, not the comp's raw #8B6A47, because
+          here it lands on the PAGE cream (4.00:1) rather than the comp's card
+          cream (4.58:1). */}
+      <div className="flex items-baseline gap-3 border-b border-border pb-4">
+        <span
+          aria-hidden="true"
+          className="flex-none text-[18px] leading-none text-[color:var(--brown-text)]"
+          style={{ fontFamily: 'var(--font-pixel)', fontWeight: 400 }}
+        >
+          {String(groupIndex + 1).padStart(2, '0')}
         </span>
-        <div>
-          <h2 className="m-0 text-[16px] font-normal text-foreground">{group.tt}</h2>
+        <div className="min-w-0">
+          <h2
+            className="m-0 text-[20px] leading-tight text-foreground"
+            style={{ fontFamily: 'var(--font-pixel)', fontWeight: 400 }}
+          >
+            {group.tt}
+          </h2>
           {/* Both strings sit ABOVE the Card, i.e. on the page cream, where
               --fg-muted is 4.12:1. --fg-dim reads 6.40:1 there. */}
-          <p className="m-0 text-[11px] text-[color:var(--fg-dim)]">{group.st}</p>
+          <p className="m-0 mt-1 text-[12px] text-[color:var(--fg-dim)]">{group.st}</p>
         </div>
       </div>
       <p className="m-0 text-[13px] leading-5 text-[color:var(--fg-dim)]">

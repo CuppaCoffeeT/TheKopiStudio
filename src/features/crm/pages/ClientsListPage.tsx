@@ -147,6 +147,7 @@ export default function ClientsListPage() {
     <>
       <ListPageFrame
         title="Clients"
+        kicker="Clients · CRM"
         description="Client book — policies, reviews and balances."
         primaryAction={{ label: 'Add client', onClick: () => setAddOpen(true) }}
         searchQuery={searchInput}

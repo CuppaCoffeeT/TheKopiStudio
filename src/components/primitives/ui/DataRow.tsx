@@ -10,30 +10,34 @@
  * washes (--row-hover / --row-selected) so the state reads on BOTH the page
  * cream (dashboard table) and the card cream (list table) — a solid tint would
  * vanish on one of them. Focus is the inset 2px brown ring.
+ *
+ * Interactivity is opt-in via `onClick`: only a row that has a handler becomes a
+ * tab stop and takes the pointer/hover/focus affordances. Rows without one (e.g.
+ * the read-only ManageAccounts table) stay inert so keyboard users don't walk a
+ * run of focusable rows that do nothing.
+ *
+ * `surface="bare"` (2a list archetype, 2026-07-25): the row drops its own fill
+ * and sits straight on the page cream, so the ONLY thing separating one row
+ * from the next is the `--border-faint` hairline — carried as `border-top` per
+ * the comp, which is why the bare TableHeader drops its bottom rule (otherwise
+ * the two double up). Hover then has to be a solid step (card cream), because
+ * the 6%-brown wash is invisible against the page ground. Meta cells shift from
+ * `--fg-muted` to a 12px `--fg-dim`: #7d6b5b is 4.12:1 on the page and fails AA,
+ * so the meta step is carried by size instead of by a lighter ink.
  */
 
 import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 import { TableCheckbox } from './TableCheckbox';
+import { DataRowCells, type DataRowCell } from './DataRowCells';
+
+export type { DataRowCell, DataRowCellTone } from './DataRowCells';
 
 export type DataRowDensity = 'compact' | 'cozy' | 'comfortable';
 export type DataRowState = 'default' | 'hover' | 'selected' | 'focused' | 'disabled';
-
-export interface DataRowCell {
-  key?: string;
-  content: React.ReactNode;
-  align?: 'left' | 'right';
-  /** Flex basis / preferred px width. Acts as the column's resting size. */
-  width?: number;
-  /** Hard minimum px width. Defaults to `width` (no shrink) when grow is unset. */
-  minWidth?: number;
-  /** Flex grow weight. Defaults to 0 when `width` is set, 1 otherwise. */
-  grow?: number;
-  /** Allow content to wrap onto multiple lines. Defaults to false (truncate). */
-  wrap?: boolean;
-  mono?: boolean;
-  muted?: boolean;
-}
+/** `card` — row paints card cream inside a bordered shell. `bare` — row sits
+ *  directly on the page cream, separated only by the repetition hairline. */
+export type DataRowSurface = 'card' | 'bare';
 
 const DENSITY_MIN_H: Record<DataRowDensity, string> = {
   compact: 'min-h-[44px]',
@@ -54,6 +58,8 @@ export interface DataRowProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
   selected?: boolean;
   cells: DataRowCell[];
   onSelectedChange?: (checked: boolean) => void;
+  /** Defaults to `card`. `bare` drops the fill + gutters for the 2a list. */
+  surface?: DataRowSurface;
 }
 
 export const DataRow = forwardRef<HTMLDivElement, DataRowProps>(function DataRow(
@@ -64,6 +70,7 @@ export const DataRow = forwardRef<HTMLDivElement, DataRowProps>(function DataRow
     selected = false,
     cells,
     onSelectedChange,
+    surface = 'card',
     className,
     onClick,
     onKeyDown,
@@ -71,7 +78,13 @@ export const DataRow = forwardRef<HTMLDivElement, DataRowProps>(function DataRow
   },
   ref
 ) {
+  const bare = surface === 'bare';
   const disabled = state === 'disabled';
+  // Interactivity is derived from the handler, never assumed. A row with no
+  // `onClick` is inert: it must not be a tab stop (Enter/Space would be no-ops,
+  // stranding keyboard users in a run of dead `role="row"` elements) and must
+  // not advertise a click affordance the row does not honour.
+  const clickable = !disabled && !!onClick;
   // `selected` prop promotes visual state to 'selected' so checkbox-selection and
   // state-driven selection share one code path (--row-selected brown wash).
   const effectiveState = selected && state === 'default' ? 'selected' : state;
@@ -91,28 +104,44 @@ export const DataRow = forwardRef<HTMLDivElement, DataRowProps>(function DataRow
       role="row"
       aria-selected={selected}
       aria-disabled={disabled}
-      tabIndex={disabled ? -1 : 0}
+      tabIndex={clickable ? 0 : undefined}
       onClick={disabled ? undefined : onClick}
       onKeyDown={handleKeyDown}
       className={cn(
-        'group relative flex items-center px-[14px]',
+        'group relative flex items-center',
+        bare ? 'px-0' : 'px-[14px]',
         DENSITY_MIN_H[density],
         DENSITY_PY[density],
-        'border-b border-[color:var(--border-faint)]',
+        // Repetition hairline. Bare rows carry it on TOP so the header rule and
+        // the first row rule can't double up (2a comp).
+        bare
+          ? 'border-t border-[color:var(--border-faint)]'
+          : 'border-b border-[color:var(--border-faint)]',
         // Surface default
-        'bg-card',
-        // Hover — translucent brown wash; reads on page cream AND card cream
-        !disabled &&
+        bare ? 'bg-transparent' : 'bg-card',
+        // Hover — translucent brown wash on card cream; a solid card-cream step
+        // on the page ground, where a 6% wash would be invisible. Only clickable
+        // rows take it, so the fill never promises an interaction that isn't there.
+        clickable &&
           effectiveState !== 'selected' &&
-          'hover:bg-[color:var(--row-hover)]',
+          (bare ? 'hover:bg-card active:bg-secondary' : 'hover:bg-[color:var(--row-hover)]'),
         effectiveState === 'hover' && 'bg-[color:var(--row-hover)]',
         effectiveState === 'selected' &&
           'bg-[color:var(--row-selected)] hover:bg-primary/[0.16]',
         effectiveState === 'focused' &&
           'shadow-[inset_0_0_0_2px_var(--cta-primary-bg)]',
-        disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
+        disabled ? 'opacity-50 cursor-not-allowed' : clickable ? 'cursor-pointer' : 'cursor-default',
         'text-[13px] text-[color:var(--fg-dim)]',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+        // Bare rows butt straight against their neighbours, so the focus ring is
+        // drawn INSIDE the row — an outward ring would sit on the hairlines
+        // above and below (KOPI_2A_SPEC → "Rows are interactive"). Scoped to
+        // clickable rows; if an adopter forces a tabIndex of its own, the global
+        // :focus-visible rule in index.css still paints a brown ring, never silent.
+        clickable && 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+        clickable &&
+          (bare
+            ? 'focus-visible:ring-inset'
+            : 'focus-visible:ring-offset-2 focus-visible:ring-offset-background'),
         className
       )}
       style={{ fontFamily: 'var(--font-sans)' }}
@@ -141,43 +170,7 @@ export const DataRow = forwardRef<HTMLDivElement, DataRowProps>(function DataRow
           />
         </div>
       )}
-      {cells.map((cell, i) => {
-        const grow = cell.grow ?? (cell.width ? 0 : 1);
-        const allowShrink = cell.minWidth !== undefined || !cell.width;
-        const shrink = allowShrink ? 1 : 0;
-        const basis = cell.width ?? 0;
-        const minWidth = cell.minWidth ?? cell.width ?? 0;
-        return (
-          <div
-            key={cell.key || i}
-            role="cell"
-            className={cn(
-              'flex gap-2 px-2',
-              cell.wrap ? 'items-start' : 'items-center',
-              cell.align === 'right' ? 'justify-end' : 'justify-start',
-              cell.wrap
-                ? 'whitespace-normal break-words min-w-0'
-                : 'whitespace-nowrap overflow-hidden text-ellipsis',
-              // 2a ink ladder: primary (first) cell --fg, remaining cells
-              // --fg-dim, meta --fg-muted. Hierarchy is carried by these steps
-              // and the hairlines — never by brown.
-              cell.muted
-                ? 'text-muted-foreground'
-                : i === 0
-                  ? 'text-foreground'
-                  : 'text-[color:var(--fg-dim)]'
-            )}
-            style={{
-              flex: `${grow} ${shrink} ${basis}px`,
-              minWidth,
-              fontFamily: cell.mono ? 'var(--font-mono)' : 'var(--font-sans)',
-              fontVariantNumeric: cell.mono ? 'tabular-nums' : 'normal',
-            }}
-          >
-            {cell.content}
-          </div>
-        );
-      })}
+      <DataRowCells cells={cells} bare={bare} selectable={selectable} />
     </div>
   );
 });

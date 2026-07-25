@@ -147,6 +147,7 @@ export default function ManageAccountsPage() {
   return (
     <ListPageFrame
       title="Manage Accounts"
+      kicker="Accounts · Admin"
       description="Approve new sign-ups and manage user roles."
       tabs={tabs}
       activeTab={tab}

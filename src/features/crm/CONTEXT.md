@@ -4,12 +4,12 @@ Insurance CRM (SHIPPED): clients/policies/interactions/bank + dashboards + repor
 
 ## Map
 
-- `pages/` — DashboardHomePage (/dashboard landing: module cards + KPI row + client-progress) · CrmDashboardPage · ClientsListPage · ClientDetailPage (4 tabs + comm card) · ClientReportPage (13 sections) · PortfolioReportPage
-- `api/` — clients/policies/interactions/bank/dashboard + portfolioService (bounded) + linkedResultsService (results by client_id .limit(10) · getProfiledClientIds)
-- `hooks/` — detail(id) sub-keys incl. linkedResults · usePortfolioReport
-- Keys: crmClients (incl. profiledFlags)/crmDashboard only
-- `lib/` — finance.ts (exact port) · financeReport barrel + Bands/Economics/Portfolio/Sections (oracle-locked math) · followUps · mapping · report-print.css · decisions.md
-- `components/` — report/ (format-only) · detail/ · modals/ · FollowUpBadge
+- `pages/` — DashboardHomePage (/dashboard 2a Overview: dateline masthead + 2 index KPI cards + Latest additions table; NO launcher) · CrmDashboardPage · ClientsListPage · ClientDetailPage (4 tabs + comm card) · ClientReportPage (13 sections) · PortfolioReportPage
+- `api/` — clients/policies/interactions/bank/dashboard + portfolioService (bounded) + linkedResultsService (crm-owned `results` reads: by client_id .limit(10) · listRecentResults for the Overview feed)
+- `hooks/` — detail(id) sub-keys incl. linkedResults · usePortfolioReport · useLatestAdditions (fetch+merge only; owns the Overview's ONE held-record-module set + per-source `resultsStatus`)
+- Keys: crmClients/crmDashboard (incl. recentResults) only
+- `lib/` — finance.ts (exact port) · financeReport barrel + Bands/Economics/Portfolio/Sections (oracle-locked math) · followUps · latestAdditions (Overview row shape + mappers + the two record-module paths) · mapping · report-print.css · decisions.md
+- `components/` — report/ (format-only) · detail/ · modals/ · FollowUpBadge · LatestAdditionsTable · OverviewKpiRow (per-card skeleton + quiet retry)
 
 ## Constraints
 

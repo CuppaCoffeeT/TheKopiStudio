@@ -84,9 +84,8 @@ export function PoliciesTab({ clientId, readOnly, policies }: PoliciesTabProps) 
         isLoading={policies.isLoading}
         isError={policies.isError}
         onRetry={() => void policies.refetch()}
-        errorSubhead="Failed to load policies"
-        errorBody="The client's policies could not be loaded. Check your connection and try again."
-        retryPath={`/clients/${clientId}`}
+        errorSubhead="Policies didn't load."
+        errorBody="The client's policies could not be read. Check your connection and try again."
         isEmpty={rows.length === 0}
         emptyTitle="No policies yet"
         emptySubtext={

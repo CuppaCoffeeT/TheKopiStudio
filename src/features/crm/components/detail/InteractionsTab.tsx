@@ -74,9 +74,8 @@ export function InteractionsTab({ clientId, readOnly, interactions, refDate }: I
         isLoading={interactions.isLoading}
         isError={interactions.isError}
         onRetry={() => void interactions.refetch()}
-        errorSubhead="Failed to load interactions"
-        errorBody="The client's interactions could not be loaded. Check your connection and try again."
-        retryPath={`/clients/${clientId}`}
+        errorSubhead="Interactions didn't load."
+        errorBody="The client's interactions could not be read. Check your connection and try again."
         isEmpty={rows.length === 0}
         emptyTitle="No interactions yet"
         emptySubtext={

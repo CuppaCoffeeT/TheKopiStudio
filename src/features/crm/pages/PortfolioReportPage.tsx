@@ -11,62 +11,107 @@
  * the dark-mode pairing rule is waived per the print-css contract); the
  * action bar is `.no-print`; `.report-print-root` keeps app chrome off the
  * paper.
+ *
+ * 2a "Kopi House" (2026-07-25): 2a mocks no report screen, so the page
+ * *around* the canvas is assembled from its documented parts — breadcrumb →
+ * serif title → hairline (AppHeaderShell, Detail archetype), the print CTA
+ * kept prominent as the brown primary on its own `.no-print` row with a
+ * muted caption, the comp's dashed loading placeholder (serif italic verb +
+ * thin brown bar), and the comp's empty state (serif italic line + one quiet
+ * secondary action, no primary CTA, no illustration). The printed artifact
+ * is untouched — it is its own contract in report-print.css.
  */
 
 import { useNavigate } from 'react-router-dom';
 import { Printer } from 'lucide-react';
 import { AppHeaderShell } from '@/components/primitives/shell/AppHeaderShell';
 import { Button } from '@/components/primitives/shell/Button';
-import { Card, CardDescription, CardTitle } from '@/components/primitives/shell/Card';
 import { ErrorState } from '@/components/primitives/shell/ErrorState';
-import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
-import { getCurrentSingaporeTime } from '@/utils/timezoneUtils';
+import { formatDisplayDateTimeLong } from '@/utils/timezoneUtils';
 import { usePortfolioReport } from '../hooks/usePortfolioReport';
 import { PortfolioSummary } from '../components/report/PortfolioSummary';
 import { PortfolioClientDetails } from '../components/report/PortfolioClientDetails';
 import '../lib/report-print.css';
 
-/** Legacy `new Date().toLocaleString()` header, on the SG clock. */
+/**
+ * "Generated: …" header, on the SG clock.
+ *
+ * Goes through `formatDisplayDateTimeLong` rather than a bare
+ * `toLocaleString('en-SG', …)`: `getCurrentSingaporeTime()` returns a plain
+ * `new Date()`, so every getter and every `toLocaleString` without an explicit
+ * `timeZone` reads the BROWSER's zone. This stamp is printed onto a financial
+ * PDF — it was wrong by hours on any non-SGT machine. See
+ * `src/features/crm/lib/lessons.md` (2026-07-14).
+ */
 function generatedTimestamp(): string {
-  return getCurrentSingaporeTime().toLocaleString('en-SG', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  return formatDisplayDateTimeLong(new Date());
 }
 
-/** Empty book — nothing to report on yet (legacy showed a muted placeholder). */
+/**
+ * Loading — the comp's dashed placeholder: serif italic verb, a thin brown bar
+ * on the `--border-faint` track, then the 11.5px caption. The bar pulses whole
+ * rather than filling to a percentage; the query reports no progress, and a
+ * part-filled bar would state one it does not have.
+ */
+function CompilingNotice() {
+  return (
+    <div
+      className="rounded-xl border border-dashed border-[color:var(--hairline-frame)] bg-card px-[22px] py-10 text-center"
+      data-testid="portfolio-report-loading"
+    >
+      <p
+        className="m-0 text-[19px] italic leading-tight text-foreground"
+        style={{ fontFamily: 'var(--font-pixel)', fontWeight: 400 }}
+      >
+        Compiling the portfolio…
+      </p>
+      <div className="mx-auto mt-3 h-1 w-[70%] overflow-hidden rounded-[2px] bg-[color:var(--border-faint)]">
+        <div className="h-full w-full animate-pulse bg-[color:var(--brand-brown)]" />
+      </div>
+      <p className="mt-2.5 text-[11.5px] text-muted-foreground">
+        Reading every client, policy and premium visible to you.
+      </p>
+    </div>
+  );
+}
+
+/** Empty book — 2a empty state: serif italic line, one muted explanatory line,
+ *  one quiet secondary action. No illustration, no primary CTA. */
 function EmptyBookNotice({ onGoToClients }: { onGoToClients: () => void }) {
   return (
-    <Card
-      className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between"
+    <div
+      className="border-t border-[color:var(--border-soft)] px-4 pb-2 pt-10 text-center"
       data-testid="report-portfolio-empty"
     >
-      <div>
-        <CardTitle as="h2">No clients to report on</CardTitle>
-        <CardDescription className="mt-1.5">
-          The portfolio report covers every client visible to you — add your first client and
-          their policies, then generate the report again.
-        </CardDescription>
-      </div>
+      <p
+        className="m-0 text-[20px] italic leading-tight text-foreground"
+        style={{ fontFamily: 'var(--font-pixel)', fontWeight: 400 }}
+      >
+        No clients to report on yet.
+      </p>
+      <p className="mx-auto mt-1.5 max-w-md text-[12.5px] leading-relaxed text-[color:var(--fg-dim)]">
+        The portfolio report covers every client visible to you — add your first client and their
+        policies, then generate the report again.
+      </p>
       <Button
-        variant="primary"
+        variant="outline"
         size="lg"
-        className="min-h-[44px] shrink-0"
+        className="mt-3.5"
         onClick={onGoToClients}
         data-testid="portfolio-report-go-clients-btn"
       >
         Go to clients
       </Button>
-    </Card>
+    </div>
   );
 }
 
 export default function PortfolioReportPage() {
   const navigate = useNavigate();
   const { data, isLoading, isError, refetch } = usePortfolioReport();
+
+  const clientCount = data?.totals.totalClients ?? 0;
+  const printable = clientCount > 0;
 
   return (
     <AppHeaderShell
@@ -79,13 +124,22 @@ export default function PortfolioReportPage() {
       ]}
       testId="crm-portfolio-report"
     >
-      <div className="no-print mb-4 flex flex-wrap items-center gap-3">
+      <div className="no-print mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        {/* Caption waits for the query: until it resolves neither count nor
+            "nothing to print" is a claim this page can make. */}
+        {data && (
+          <p className="m-0 text-[12.5px] leading-relaxed text-[color:var(--fg-dim)]">
+            {printable
+              ? `${clientCount} ${clientCount === 1 ? 'client' : 'clients'} · prints A4 with 12 mm margins`
+              : 'Nothing to print until the book has a client.'}
+          </p>
+        )}
         <Button
           variant="primary"
           size="lg"
-          className="min-h-[44px]"
+          className="min-h-[44px] w-full sm:ml-auto sm:w-auto"
           onClick={() => window.print()}
-          disabled={!data || data.totals.totalClients === 0}
+          disabled={!printable}
           leadingIcon={<Printer className="h-4 w-4" strokeWidth={1.8} />}
           data-testid="portfolio-report-print-btn"
         >
@@ -93,26 +147,20 @@ export default function PortfolioReportPage() {
         </Button>
       </div>
 
-      {isLoading && (
-        <div data-testid="portfolio-report-loading">
-          <LoadingSkeleton variant="table-rows" rowCount={6} />
-        </div>
-      )}
+      {isLoading && <CompilingNotice />}
 
       {isError && !data && (
         <ErrorState
-          subhead="REPORT UNAVAILABLE"
-          body="The portfolio report could not be loaded. Check your connection and retry."
-          path="/crm-reports"
+          variant="compact"
+          subhead="The portfolio report didn't load."
+          body="Your book could not be read. Check your connection and retry."
           onRetry={() => void refetch()}
         />
       )}
 
-      {data && data.totals.totalClients === 0 && (
-        <EmptyBookNotice onGoToClients={() => navigate('/clients')} />
-      )}
+      {data && !printable && <EmptyBookNotice onGoToClients={() => navigate('/clients')} />}
 
-      {data && data.totals.totalClients > 0 && (
+      {data && printable && (
         <div className="report-print-root report-canvas" data-testid="report-portfolio">
           <PortfolioSummary totals={data.totals} generatedAt={generatedTimestamp()} />
           <PortfolioClientDetails clients={data.clients} />

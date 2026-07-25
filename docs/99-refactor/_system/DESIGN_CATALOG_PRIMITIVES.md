@@ -1,7 +1,7 @@
 # DESIGN_CATALOG — Primitive inventory
 
 **Created**: 2026-04-28 SGT (extracted from `DESIGN_CATALOG.md` to clear 6.9× budget overflow)
-**Last Updated**: 2026-04-28 SGT
+**Last Updated**: 2026-07-25 SGT — section H: `ModuleCard` / `CategoryHeader` / `ModuleSearch` marked RETIRED (files deleted with the launcher grid, Kopi Studio 2a P4); `KpiIndexCard` row added
 **Status**: 🟢 Production
 **Priority**: 🔴 Critical
 
@@ -100,17 +100,20 @@ Per-primitive Design · Impl · Adopted matrix, organised by **12 design-intent 
 | `<SpatialPicker>` ← NEW | Pin / region selector on `<MapCanvas>` · snap-to-parcel · bulk-select · keyboard nav | S11 Spatial | 🔴 | 🔴 | 0/3 (plan-purchase parts · CDW parts · location-pinning) |
 | `<DrawingModal>` ← NEW | Drafter draw-on-plan canvas · tools (line · polygon · text · arrow) · layer stack · save to NAS · version history | S11 Spatial + S2 Overlays | 🔴 | 🔴 | 0/1 (projects/:id drafter tab) |
 
-### H. Dashboard (7) — /dashboard module launcher (NEW · S3 ✅ 2026-04-19)
+### H. Dashboard (7 designed · 3 RETIRED 2026-07-25) — was the /dashboard module launcher (S3 ✅ 2026-04-19)
+
+> ⚠️ **The module-launcher grid was deleted 2026-07-25** (Kopi Studio 2a redesign, P4 — sidebar rail + ⌘K `CommandPalette` already route by module). `<ModuleCard>`, `<CategoryHeader>` and `<ModuleSearch>` went with it: **the .tsx files no longer exist — do not import them.** Rows kept struck-through as history; see [DEPRECATIONS.md](./DEPRECATIONS.md). The 2a Overview surface composes `GreetingHeader` + `KpiIndexCard` instead.
 
 | Primitive | Purpose | Unblocked by session | Design | Impl | Adopted |
 |---|---|---|---|---|---|
-| `<GreetingHeader>` ← NEW | "good morning, Sky." (Geist Pixel Grid crisp, clamp 26-36px) + SGT date + role chip + view-as-user field (super_admin) + logout + `rightSlot` escape hatch. Replaces `DashboardGreeting.tsx`. | S3 ✅ | 🟢 | 🟢 at `src/components/primitives/dashboard/GreetingHeader.tsx` | **2 (/dashboard ✅ 2026-04-19 · crm /dashboard home ✅ 2026-07-14)** |
-| `<ModuleCard>` ← NEW | Launcher tile · 2 sizes (compact 56h for QuickAccessRow · default 92h for ModuleGrid) · icon + name + description + count + pin + star · hover lift + slate-800 border accent. | S3 ✅ | 🟢 | 🟢 at `src/components/primitives/dashboard/ModuleCard.tsx` | **2 (/dashboard ✅ · crm /dashboard home ✅ 2026-07-14)** |
-| `<NeedsAttentionPill>` ← NEW | 44px tap-target pill · module icon + name + count badge + chevron · used in NeedsAttentionStrip. | S3 ✅ | 🟢 | 🟢 at `src/components/primitives/dashboard/NeedsAttentionPill.tsx` | **1/1 (/dashboard ✅)** |
-| `<AttentionHeader>` ← NEW | Red-dot "Needs your attention · N" label above pills · mono uppercase. | S3 ✅ | 🟢 | 🟢 at `src/components/primitives/dashboard/AttentionHeader.tsx` | **1/1 (/dashboard ✅)** |
-| `<CategoryHeader>` ← NEW | Uppercase mono group label above module sub-sections (Client Ops · Field Ops · Finance · Admin). Collapsible via chevron. | S3 ✅ | 🟢 | 🟢 at `src/components/primitives/dashboard/CategoryHeader.tsx` | **1/1 (/dashboard ✅)** |
-| `<ModuleSearch>` ← NEW | Search input w/ ⌘K hint · used when user has >6 modules · filters ModuleGrid. | S3 ✅ | 🟢 | 🟢 at `src/components/primitives/dashboard/ModuleSearch.tsx` | **1/1 (/dashboard ✅)** |
-| `<CountBadge>` ← NEW | Pill badge for counts (compact + default sizes) · flips red ≥ 10 or `urgent`. Shared across ModuleCard + NeedsAttentionPill. | S3 ✅ | 🟢 | 🟢 at `src/components/primitives/dashboard/CountBadge.tsx` | **1/many (/dashboard ✅)** |
+| `<GreetingHeader>` ← NEW | "good morning, Sky." (Instrument Serif, clamp 26-36px) + SGT date + role chip + view-as-user field (super_admin) + logout + `rightSlot` escape hatch. Replaces `DashboardGreeting.tsx`. | S3 ✅ | 🟢 | 🟢 at `src/components/primitives/dashboard/GreetingHeader.tsx` | **1 (crm /dashboard home ✅ 2026-07-14 · 2a masthead 2026-07-25)** |
+| `<KpiIndexCard>` ← NEW 2026-07-25 | 2a "Overview" KPI tile — uppercase module label + Instrument Serif index numeral on one baseline, serif 32px figure with inline sans unit, 12.5px meta line. Flat card cream + hairline; hover shadow only when interactive. Deliberately NOT `KpiTile` (no icons/deltas/tickers/sparklines). Renders on a CARD ground — its `--fg-muted` label fails AA on the page cream. | Kopi 2a P4 | 🟢 | 🟢 at `src/components/primitives/dashboard/KpiIndexCard.tsx` | **1 (crm /dashboard home ✅ via `OverviewKpiRow`)** |
+| ~~`<ModuleCard>`~~ | ⚠️ **RETIRED 2026-07-25** — file deleted with the launcher grid (Kopi 2a P4). Was: launcher tile · 2 sizes · icon + name + description + count + pin + star. Replaced by `KpiIndexCard` on the surface and ⌘K `CommandPalette` for module jump. | S3 ✅ | 🟢 | ⚫ deleted | 0 (was 2) |
+| `<NeedsAttentionPill>` ← NEW | 44px tap-target pill · module icon + name + count badge + chevron · used in NeedsAttentionStrip. | S3 ✅ | 🟢 | 🟢 at `src/components/primitives/dashboard/NeedsAttentionPill.tsx` | 0 — unadopted since the launcher went (2026-07-25) |
+| `<AttentionHeader>` ← NEW | "Needs your attention · N" label above pills. | S3 ✅ | 🟢 | 🟢 at `src/components/primitives/dashboard/AttentionHeader.tsx` | 0 — unadopted since the launcher went (2026-07-25) |
+| ~~`<CategoryHeader>`~~ | ⚠️ **RETIRED 2026-07-25** — file deleted with the launcher grid (Kopi 2a P4). Was: uppercase group label above module sub-sections (Client Ops · Field Ops · Finance · Admin), collapsible. No replacement — the 2a Overview has no module categories. | S3 ✅ | 🟢 | ⚫ deleted | 0 (was 1) |
+| ~~`<ModuleSearch>`~~ | ⚠️ **RETIRED 2026-07-25** — file deleted with the launcher grid (Kopi 2a P4). Was: search input w/ ⌘K hint filtering ModuleGrid. Replaced by `overlays/CommandPalette.tsx`. | S3 ✅ | 🟢 | ⚫ deleted | 0 (was 1) |
+| `<CountBadge>` ← NEW | Pill badge for counts (compact + default sizes) · flips to the negative tone ≥ 10 or `urgent`. Paired with `NeedsAttentionPill`. | S3 ✅ | 🟢 | 🟢 at `src/components/primitives/dashboard/CountBadge.tsx` | 0 — unadopted since the launcher went (2026-07-25). Distinct from `src/components/ui/count-badge.tsx`, which has its own callers. |
 
 ### I. Form kit (12) — S6 FormPrimitives (NEW · 2026-04-20 eod+2 · `StarredMultiSelect` added 2026-05-25)
 

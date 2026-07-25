@@ -117,11 +117,10 @@ export default function ClientDetailPage() {
 
       {client.isError && (
         <ErrorState
-          subhead="Failed to load client"
-          body="The client record could not be loaded. Check your connection and try again."
-          path={`/clients/${id ?? ''}`}
+          variant="compact"
+          subhead="This client didn't load."
+          body="The client record could not be read. Check your connection and try again."
           onRetry={() => void client.refetch()}
-          className="rounded-2xl"
         />
       )}
 

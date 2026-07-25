@@ -20,6 +20,10 @@ interface FilterBarProps {
    *  Opt-in ONLY when the consumer has wired up a `CommandPalette` hotkey —
    *  showing the hint without a working hotkey lies to users. */
   showCommandHint?: boolean;
+  /** Render the search field. Defaults to `true`. The 2a list archetype sets
+   *  this `false` because search sits on the title row there, leaving this bar
+   *  to carry only the filter popovers and the columns/export controls. */
+  showSearch?: boolean;
   /** Filter trigger buttons (popovers) rendered after the search input — caller provides. */
   filters?: ReactNode;
   /** Active filters row, each removable. Rendered below main row. */
@@ -56,6 +60,7 @@ export const FilterBar = forwardRef<HTMLInputElement, FilterBarProps>(function F
     onQueryChange,
     searchPlaceholder = 'Search…',
     showCommandHint = false,
+    showSearch = true,
     filters,
     activeFilters = [],
     onClearAll,
@@ -76,16 +81,18 @@ export const FilterBar = forwardRef<HTMLInputElement, FilterBarProps>(function F
   return (
     <div className={cn('w-full', className)} style={{ fontFamily: 'var(--font-sans)' }}>
       <div className="flex items-center gap-2 flex-wrap">
-        <SearchInput
-          ref={ref}
-          query={query}
-          onQueryChange={onQueryChange}
-          placeholder={searchPlaceholder}
-          size="md"
-          showKbd={showCommandHint}
-          clearable={false}
-          inputTestId={searchTestId}
-        />
+        {showSearch && (
+          <SearchInput
+            ref={ref}
+            query={query}
+            onQueryChange={onQueryChange}
+            placeholder={searchPlaceholder}
+            size="md"
+            showKbd={showCommandHint}
+            clearable={false}
+            inputTestId={searchTestId}
+          />
+        )}
 
         {filters}
 
@@ -132,7 +139,7 @@ export const FilterBar = forwardRef<HTMLInputElement, FilterBarProps>(function F
             <span
               key={f.key}
               className="inline-flex items-center gap-1.5 h-6 pl-2.5 pr-1.5 rounded-full bg-secondary border border-border text-[color:var(--fg-dim)]"
-              style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5 }}
+              style={{ fontFamily: 'var(--font-sans)', fontSize: 10.5, fontVariantNumeric: 'tabular-nums' }}
             >
               <span className="text-[color:var(--fg-dim)]">{f.label}:</span>
               <span className="text-foreground">{f.value}</span>

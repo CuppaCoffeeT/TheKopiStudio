@@ -1,7 +1,7 @@
 # Module System Documentation
 
 **Created**: 2025-09-12 08:15:00 SGT  
-**Last Updated**: 2026-05-31 SGT  
+**Last Updated**: 2026-07-25 SGT — frame-primitive note: launcher atoms retired, `KpiIndexCard` named  
 **Status**: 🟢 Production  
 **Priority**: 🔴 Critical  
 
@@ -123,7 +123,7 @@ New and migrated module pages MUST use the page-shell **frame primitives**. Pick
 | Detail page (single record) | `DetailPageFrame` | `@/components/primitives/detail` |
 | List / table page | `ListPageFrame` | `@/components/primitives/ui` |
 
-`AppHeaderShell` bundles the app header + impersonation banner + page-bg backdrop + content frame + title/description block, and internalises the `ViewAsSelector` + `NotificationsBell` slot fillers via the `useViewAs` / `useNotificationsBell` connector hooks. The dashboard grid header atoms (`GreetingHeader`, `AttentionHeader`, `CategoryHeader`) live in `@/components/primitives/dashboard`.
+`AppHeaderShell` bundles the app header + impersonation banner + page-bg backdrop + content frame + title/description block, and internalises the `ViewAsSelector` + `NotificationsBell` slot fillers via the `useViewAs` / `useNotificationsBell` connector hooks. The dashboard header + tile atoms (`GreetingHeader`, `AttentionHeader`, `KpiIndexCard`) live in `@/components/primitives/dashboard`. `ModuleCard`, `CategoryHeader` and `ModuleSearch` were **deleted 2026-07-25** with the module-launcher grid — module navigation is the sidebar rail plus the ⌘K `CommandPalette`. See [DEPRECATIONS.md](../99-refactor/_system/DEPRECATIONS.md).
 
 ```tsx
 import { AppHeaderShell } from '@/components/primitives/shell';

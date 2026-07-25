@@ -14,6 +14,11 @@
  * two-segment default (`Workspace / <title>`) would just repeat the H1 sitting
  * directly beneath it, and no 2a comp puts a crumb over a dashboard or list.
  *
+ * Header block = [breadcrumb | `kicker`] → H1 → description, closed by the
+ * `--border-soft` hairline every 2a comp draws under its header. `kicker` is
+ * the uppercase context line the List/Dashboard comps open with; Detail-style
+ * pages lead with the breadcrumb instead and pass none.
+ *
  * Sibling to: AppHeaderMobileBar (the < lg bar) · AppSidebar (the >= lg rail).
  * NOT a replacement for: DetailPageFrame · ListPageFrame.
  * IS a replacement for: per-feature <XPageShell> wrappers (Payment, Comms,
@@ -38,6 +43,15 @@ export interface AppHeaderShellProps {
   description?: string;
   /** Page content. */
   children: ReactNode;
+
+  /**
+   * Optional 2a kicker — the uppercase 11px `.14em` context line that opens
+   * every comp's header block (`CLIENTS · CRM`). Sits above the H1, takes
+   * `--fg-dim` because the header block paints straight onto the page cream
+   * where `--fg-muted` measures 4.12:1. Pages that lead with a breadcrumb
+   * (the Detail archetype) pass none — crumb and kicker are the same job.
+   */
+  kicker?: string;
 
   /**
    * Optional breadcrumb. Passing one renders it inline above the H1 and labels
@@ -83,6 +97,7 @@ export function AppHeaderShell({
   title,
   description,
   children,
+  kicker,
   breadcrumb,
   viewAsSlotOverride,
   onSignOutOverride,
@@ -131,8 +146,19 @@ export function AppHeaderShell({
       />
       {chrome.impersonation.active && <ImpersonationBanner {...chrome.impersonation.props} />}
       <div data-testid={testId} className={cn(wrapperClass)}>
-        <div className="mb-6 sm:mb-8">
+        {/* Every 2a header block — masthead, list header, detail header — is
+            closed by the structure hairline, so the rule is unconditional
+            rather than a per-page opt-in. */}
+        <div className="mb-6 sm:mb-8 border-b border-[color:var(--border-soft)] pb-5">
           {hasInlineBreadcrumb && <Breadcrumb segments={barBreadcrumb} className="mb-4" />}
+          {kicker && (
+            <p
+              className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--fg-dim)]"
+              style={{ fontFamily: 'var(--font-sans)' }}
+            >
+              {kicker}
+            </p>
+          )}
           <PageTitle>{title}</PageTitle>
           {description && <PageDescription>{description}</PageDescription>}
         </div>

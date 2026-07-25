@@ -142,7 +142,7 @@ export {
   updateBankRecord,
   softDeleteBankRecord,
 } from './api/bankService';
-export { getProfiledClientIds } from './api/linkedResultsService';
+export { listRecentResults } from './api/linkedResultsService';
 export { computeDashboardStats, getDashboardStats } from './api/dashboardService';
 export type { StatsPolicyRow } from './api/dashboardService';
 

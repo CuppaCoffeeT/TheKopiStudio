@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { isRouteErrorResponse, useNavigate, useRouteError } from 'react-router-dom';
 import { ArrowLeft, RefreshCw } from 'lucide-react';
 import { Button, PageTitle } from '@/components/primitives/shell';
+import { PRODUCT_NAME } from '@/lib/product';
 
 const RouteError = () => {
   const error = useRouteError();
@@ -117,7 +118,7 @@ const RouteError = () => {
         className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[11px]"
         style={{ color: 'var(--fg-dim)', fontFamily: 'var(--font-mono)' }}
       >
-        Insurance CRM · error {code}
+        {PRODUCT_NAME} · error {code}
       </div>
     </div>
   );

@@ -63,13 +63,13 @@ Full rules: [CANONICAL_FORM_PAGE_PATTERN.md](../canonical-page-patterns/CANONICA
 
 ## 4. Dashboard
 
-Home launcher (module grid) OR role dashboard (KPIs + charts + activity).
+Home Overview (masthead + KPI row + feed) OR role dashboard (KPIs + charts + activity).
 
-**Module-launcher primary**: `GreetingHeader` · `CategoryHeader` · `ModuleCard` · `NeedsAttentionPill` · `AttentionHeader` · `ModuleSearch` · `CountBadge`.
+**Home-Overview primary**: `GreetingHeader` · `KpiIndexCard` · `DataRow` feed. The module-launcher composition it replaced (`CategoryHeader` · `ModuleCard` · `ModuleSearch`) was **deleted 2026-07-25** — module navigation is the sidebar rail plus the ⌘K `CommandPalette`. See [DEPRECATIONS.md](../../99-refactor/_system/DEPRECATIONS.md). `NeedsAttentionPill` · `AttentionHeader` · `CountBadge` survive but have no current adopter.
 
 **Role / operational primary**: `KpiTile` (+ bundled `NumberTicker`) · `ChartShell` + `AreaChart` / `BarChart` / `HBarChart` · `ChartTooltip` / `LegendRow` · activity section via `DataRow`.
 
-**Live examples**: `/dashboard` (module launcher, W09 #1) · role dashboards pending.
+**Live examples**: `/dashboard` (2a Overview, rebuilt 2026-07-25) · role dashboards pending.
 
 Full rules: [CANONICAL_DASHBOARD_PAGE_PATTERN.md](../canonical-page-patterns/CANONICAL_DASHBOARD_PAGE_PATTERN.md).
 

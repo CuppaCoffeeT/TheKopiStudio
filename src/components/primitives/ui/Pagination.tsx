@@ -1,11 +1,13 @@
 /**
- * Pagination — first · prev · page numbers · next · last. "1–100 of 487" in the mono stack (--font-mono).
- *
+ * Pagination — first · prev · page numbers · next · last, with a "1–100 of 487" range label.
  * Spec: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/DataTablePrimitives.html
  * JSX source: docs/99-refactor/_system/design/handoffs/2026-04-20-nl73fwyg/project/ui_kits/appbase/src/table/DataTablePrimitives.jsx
  * Adopters: tracked in DESIGN_CATALOG.md.
  *
- * Locked: 12px 14px padding · border-top · surface bg · en-dash "1–100 of 487" range label · 5-page window + ellipsis + last.
+ * Locked: 12px 14px padding · border-top · surface bg · en-dash range label · 5-page window + ellipsis + last.
+ * 2a (2026-07-25): figures are IBM Plex Sans + `tabular-nums` — the comp carries no mono stack, and
+ * tabular figures already fix the column widths. Bare list pages pass `className="bg-transparent px-0"`
+ * so the footer rule alone closes the table off the page ground.
  */
 
 import { cn } from '@/lib/utils';
@@ -132,7 +134,7 @@ export function Pagination({
     >
       <span
         className="text-[12px] text-[color:var(--fg-dim)]"
-        style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}
+        style={{ fontFamily: 'var(--font-sans)', fontVariantNumeric: 'tabular-nums' }}
       >
         {from}&ndash;{to} of {total.toLocaleString('en-SG')}
       </span>
@@ -148,7 +150,7 @@ export function Pagination({
             onChange={(e) => onRowsPerPageChange?.(Number(e.target.value))}
             aria-label="Rows per page"
             className="h-7 pl-2 pr-6 rounded-md bg-card border border-border text-[12px] text-foreground hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}
+            style={{ fontFamily: 'var(--font-sans)', fontVariantNumeric: 'tabular-nums' }}
           >
             {rowsPerPageOptions.map((opt) => (
               <option key={opt} value={opt}>

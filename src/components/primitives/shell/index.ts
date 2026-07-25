@@ -22,6 +22,7 @@ export { NoResultsState } from './NoResultsState';
 export { PageTitle } from './PageTitle';
 export { PageDescription } from './PageDescription';
 export { TruncatedText } from './TruncatedText';
+export { Wordmark } from './Wordmark';
 export { SEO, type SEOProps } from './SEO';
 export {
   NotificationsBell,

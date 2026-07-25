@@ -31,14 +31,18 @@ export function IntakeForm({ intake, onChange, onStart }: IntakeFormProps) {
 
   return (
     <div className="flex flex-col gap-5" data-testid="wizard-intake-screen">
-      <div className="text-center pt-4">
-        <div className="text-[42px] leading-none mb-2" aria-hidden="true">🎯</div>
+      {/* 2a masthead block: kicker over the serif display line, closed by one
+          hairline. Left-aligned and illustration-free by direction — "no
+          illustration, no icon" (KOPI_2A_SPEC → States), which is what retired
+          the 42px 🎯 that used to sit above the kicker. It was the app's only
+          saturated off-palette mark; the serif line carries the screen now. */}
+      <header className="border-b border-border pb-5 pt-2">
         <Eyebrow className="text-[color:var(--brown-text)]">Prospect Profiling</Eyebrow>
-        <PageTitle className="text-[26px] sm:text-[30px] md:text-[34px]">Read Any Prospect</PageTitle>
-        <PageDescription className="mt-1">
+        <PageTitle className="text-[30px] sm:text-[34px]">Read Any Prospect</PageTitle>
+        <PageDescription className="mt-1.5">
           8 questions + body language = instant DISC &amp; MBTI profile
         </PageDescription>
-      </div>
+      </header>
 
       <Card>
         <Eyebrow>Your Details</Eyebrow>

@@ -72,9 +72,8 @@ export function BankHistoryTab({ clientId, readOnly, client, bankHistory }: Bank
         isLoading={bankHistory.isLoading}
         isError={bankHistory.isError}
         onRetry={() => void bankHistory.refetch()}
-        errorSubhead="Failed to load bank history"
-        errorBody="The client's bank-balance history could not be loaded. Check your connection and try again."
-        retryPath={`/clients/${clientId}`}
+        errorSubhead="Bank history didn't load."
+        errorBody="The client's bank-balance history could not be read. Check your connection and try again."
         isEmpty={rows.length === 0}
         emptyTitle="No bank records yet"
         emptySubtext={

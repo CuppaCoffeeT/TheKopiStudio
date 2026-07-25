@@ -1,7 +1,7 @@
 # Deprecations Log
 
 **Created**: 2026-05-25 SGT
-**Last Updated**: 2026-05-25 SGT
+**Last Updated**: 2026-07-25 SGT
 **Status**: 🟢 Production
 **Priority**: 🔴 Critical
 
@@ -20,6 +20,28 @@ Single source of truth for routes, components, hooks, and services that have bee
 ---
 
 ## Active deprecations
+
+### 2026-07-25 — Module-launcher primitives (Kopi Studio 2a redesign, P4)
+
+The `/dashboard` module-launcher grid was removed from `DashboardHomePage` — the sidebar rail and the ⌘K `CommandPalette` both route by module, so a third launcher was duplication. The three primitives that existed only to build that grid were **deleted** in the same change:
+
+| Type | Name | Replaced by |
+|---|---|---|
+| Primitive | `src/components/primitives/dashboard/ModuleCard.tsx` | `KpiIndexCard` (index-numeral KPI card) for the surface; `CommandPalette` (⌘K) + sidebar rail for module navigation |
+| Primitive | `src/components/primitives/dashboard/CategoryHeader.tsx` | — (no module categories to head; the 2a Overview is a masthead + KPI row + feed table) |
+| Primitive | `src/components/primitives/dashboard/ModuleSearch.tsx` | `CommandPalette` at `src/components/primitives/overlays/CommandPalette.tsx` |
+
+**Survivors in `primitives/dashboard/`**: `AttentionHeader` · `CDWProgressTimeline` · `CountBadge` · `GreetingHeader` · `KpiDeltaBadge` · `KpiIndexCard` · `KpiTile` · `NeedsAttentionPill` · `NumberTicker`. Only `GreetingHeader` (`DashboardHomePage`), `KpiIndexCard` (`OverviewKpiRow`) and `KpiTile` (`CrmDashboardPage`) have live adopters; the rest are unadopted, not deleted.
+
+**Driver**: [KOPI_STUDIO_REDESIGN_PRD.md](../../05-implementation/active/KOPI_STUDIO_REDESIGN_PRD.md) P4.
+
+**Doc rows are marked retired, not removed** — the design catalog is a history as well as an index, so `DESIGN_CATALOG_PRIMITIVES.md` / `DESIGN_CATALOG.md` / `DESIGN_CATALOG_MATRIX.md` keep struck-through rows pointing here. Prose lists that read as build instructions (`UNIVERSAL_COMPONENTS.md`, `MODULE_SYSTEM.md`, `PRIMITIVES.md`, `ARCHETYPES.md`, `DESIGN_REUSE_PRINCIPLES.md`) drop the names outright.
+
+**Verification** — the only expected hit is the historical JSDoc line in `DashboardHomePage.tsx` recording that the launcher and these three went together; that one is intentional and may stay:
+
+```bash
+grep -rn "ModuleCard\|CategoryHeader\|ModuleSearch" src/ tests/ --include="*.tsx" --include="*.ts"
+```
 
 ### 2026-05-25 — `/projects/create` standalone page (W09 #12)
 

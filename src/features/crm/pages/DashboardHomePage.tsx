@@ -1,378 +1,178 @@
 /**
- * /dashboard home — module launcher + CRM widgets (INSURANCE_CRM_REDESIGN_PRD P3).
+ * /dashboard — the Kopi 2a "Overview" (KOPI_STUDIO_REDESIGN_PRD P4).
  *
- * Composition: GreetingHeader hero · ModuleSearch filter · CategoryHeader
- * sections of ModuleCards from `useAuth().modules` (the /dashboard card itself
- * is filtered out) · KPI row (only when the user holds the /crm module) ·
- * client-progress widget (only with /clients or /crm) — derived completeness %
- * per client + "Profiled" badge from one batched `results.client_id` lookup.
+ * Top to bottom, per the 2a comp's dashboard mockup: the dateline masthead
+ * (uppercase kicker carrying one live stat, over the Instrument Serif greeting,
+ * closed by a hairline) → the index-numeral KPI cards → the "Latest additions"
+ * serif section head with the brown `+ New client` CTA → the hairline feed
+ * table, no card wrapper.
  *
- * Testid contract (tests/workflows/crm/dashboard.spec.ts): the grid keeps
- * data-testid="home-module-grid" and each card "home-module-tile-<path>".
+ * The module-launcher grid is GONE (user decision, 2026-07-25): the sidebar
+ * rail and the ⌘K palette both route by module, so a third launcher was pure
+ * duplication. `ModuleCard` / `ModuleSearch` / `CategoryHeader` went with it.
+ *
+ * Everything on the page is live, RLS-scoped data — the book is empty until
+ * the CRM import lands, so each surface has a real empty state instead of
+ * sample rows, never a placeholder zero. Each KPI figure carries its own
+ * query's loading skeleton and quiet retry line (`OverviewKpiRow`).
+ *
+ * ONE derived set of held record modules drives the whole page, owned by
+ * `useLatestAdditions`: `hasClients` / `hasResults` / `hasSource`, over
+ * `/clients` + `/profiler-results` — the only modules that own rows this page
+ * lists. The KPI cards, the stats query, the dateline's stat clause, the feed
+ * and the nothing-granted line all read that one set, so a populated card can
+ * never sit above copy saying nothing is granted. `/crm` is NOT in the set: it
+ * grants aggregate figures on its own dashboard, not records here.
+ *
+ * Testid contract (tests/workflows/crm/dashboard.spec.ts): `home-kpi-row` with
+ * `home-kpi-profiler` / `home-kpi-clients` tiles, `home-latest-additions` with
+ * `home-latest-row-<id>` rows and `home-latest-empty`, `home-add-client-btn`.
  */
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { Banknote, CalendarClock, ChevronRight, ShieldCheck, Users } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
-import { clearAuthStorage } from '@/utils/authStorage';
-import { showError, showSuccess } from '@/utils/toastHelper';
-import { queryKeys } from '@/utils/queryKeys';
-import { getModuleIcon } from '@/lib/iconLookup';
-import { getSingaporeGreeting, groupModulesByCategory } from '@/utils/dashboardHelpers';
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  ErrorState,
-  LoadingSkeleton,
-  NoResultsState,
-} from '@/components/primitives/shell';
-import {
-  CategoryHeader,
-  GreetingHeader,
-  KpiTile,
-  ModuleCard,
-  ModuleSearch,
-} from '@/components/primitives/dashboard';
-import { Progress } from '@/components/primitives/form';
-import { getProfiledClientIds } from '../api/linkedResultsService';
-import { useClientsList } from '../hooks/useClientsList';
+import { Button } from '@/components/primitives/shell';
+import { GreetingHeader } from '@/components/primitives/dashboard';
+import { getSingaporeGreeting } from '@/utils/dashboardHelpers';
+import { formatCurrency } from '@/utils/currencyHelper';
+import { LatestAdditionsTable } from '../components/LatestAdditionsTable';
+import { OverviewKpiRow, type OverviewKpiCard } from '../components/OverviewKpiRow';
+import { ClientFormModal } from '../components/modals/ClientFormModal';
 import { useDashboardStats } from '../hooks/useDashboardStats';
-import type { ClientRow } from '../types';
+import { useLatestAdditions } from '../hooks/useLatestAdditions';
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
+/** The comp shows a short "top of the book" feed, not a paginated list. */
+const FEED_ROWS = 6;
 
-function formatRole(role: string): string {
-  return role
-    .split('_')
-    .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : ''))
-    .join(' ');
+const EM_DASH = '—';
+
+function plural(count: number, one: string, many: string): string {
+  return count === 1 ? one : many;
 }
-
-/**
- * Key profile fields for the completeness bar (PRD Resolved Decision #3):
- * % non-empty over name / email / phone / DOB / occupation / annual income /
- * risk profile + the two review dates. Raw row values (not `clientFromRow`)
- * so mapper defaults like 'Moderate' don't inflate the score.
- */
-const COMPLETENESS_FIELDS = [
-  'name',
-  'email',
-  'phone',
-  'date_of_birth',
-  'occupation',
-  'annual_income',
-  'risk_profile',
-  'last_review_date',
-  'next_review_date',
-] as const satisfies readonly (keyof ClientRow)[];
-
-function clientCompleteness(row: ClientRow): number {
-  const filled = COMPLETENESS_FIELDS.filter((field) => {
-    const value = row[field];
-    return value != null && String(value).trim() !== '';
-  }).length;
-  return Math.round((filled / COMPLETENESS_FIELDS.length) * 100);
-}
-
-/** Widget page size — a bounded "top of the book" list, newest first. */
-const PROGRESS_WIDGET_ROWS = 8;
-
-// ---------------------------------------------------------------------------
-// KPI row (gated on /crm module)
-// ---------------------------------------------------------------------------
-
-function CrmKpiRow() {
-  const { data: stats, isLoading, isError, refetch } = useDashboardStats();
-
-  if (isLoading) {
-    return (
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {['clients', 'policies', 'premium', 'follow-ups'].map((key) => (
-          <LoadingSkeleton key={key} variant="kpi-tile" className="w-full" />
-        ))}
-      </div>
-    );
-  }
-  if (isError && !stats) {
-    return (
-      <ErrorState
-        subhead="STATS UNAVAILABLE"
-        body="The dashboard stats could not be loaded. Check your connection and retry."
-        path="/dashboard"
-        onRetry={() => refetch()}
-        className="py-8"
-      />
-    );
-  }
-  if (!stats) return null;
-
-  return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4" data-testid="home-kpi-row">
-      <KpiTile label="Total clients" value={stats.totalClients} icon={Users} testId="home-kpi-total-clients" />
-      <KpiTile
-        label="Active policies"
-        value={stats.activePolicies}
-        icon={ShieldCheck}
-        testId="home-kpi-active-policies"
-      />
-      <KpiTile
-        label="Annual premium"
-        value={stats.totalAnnualPremium}
-        prefix="$"
-        icon={Banknote}
-        testId="home-kpi-annual-premium"
-      />
-      <KpiTile
-        label="Upcoming follow-ups"
-        value={stats.upcomingFollowUps}
-        icon={CalendarClock}
-        alert={stats.upcomingFollowUps > 0}
-        testId="home-kpi-follow-ups"
-      />
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Client-progress widget (gated on /clients or /crm module)
-// ---------------------------------------------------------------------------
-
-function ClientProgressWidget() {
-  const navigate = useNavigate();
-  const { data: page, isLoading, isError, refetch } = useClientsList({
-    search: '',
-    page: 1,
-    rowsPerPage: PROGRESS_WIDGET_ROWS,
-  });
-
-  const rows = useMemo(() => page?.rows ?? [], [page?.rows]);
-  const clientIds = useMemo(() => rows.map((row) => row.id), [rows]);
-
-  const { data: profiledIds } = useQuery({
-    queryKey: queryKeys.crmClients.profiledFlags(clientIds),
-    queryFn: () => getProfiledClientIds(clientIds),
-    enabled: clientIds.length > 0,
-  });
-
-  return (
-    <Card data-testid="home-client-progress">
-      <CardHeader>
-        <CardTitle as="h2">Client profile progress</CardTitle>
-        <CardDescription>
-          Data completeness across your newest clients — tap a row to open the client.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {isLoading && (
-          <div className="space-y-3">
-            {['a', 'b', 'c'].map((key) => (
-              <LoadingSkeleton key={key} variant="text" className="h-11 w-full" />
-            ))}
-          </div>
-        )}
-
-        {!isLoading && isError && rows.length === 0 && (
-          <ErrorState
-            subhead="CLIENTS UNAVAILABLE"
-            body="Your client list could not be loaded. Check your connection and retry."
-            path="/dashboard"
-            onRetry={() => refetch()}
-            className="py-8"
-          />
-        )}
-
-        {!isLoading && !isError && rows.length === 0 && (
-          <div
-            data-testid="home-client-progress-empty"
-            className="flex flex-col items-center gap-3 py-8 text-center"
-          >
-            <p className="text-sm font-medium text-foreground">No clients yet</p>
-            <p className="max-w-sm text-sm text-muted-foreground">
-              Your book is empty — add your first client to start tracking profile completeness.
-            </p>
-            <Button
-              variant="outline"
-              className="pointer-coarse:min-h-11"
-              onClick={() => navigate('/clients')}
-            >
-              Go to clients
-            </Button>
-          </div>
-        )}
-
-        {!isLoading && rows.length > 0 && (
-          <ul className="m-0 list-none space-y-1 p-0">
-            {rows.map((row) => {
-              const pct = clientCompleteness(row);
-              return (
-                <li key={row.id}>
-                  <Button
-                    variant="ghost"
-                    className="h-auto min-h-11 w-full justify-start px-3 py-2.5 text-left"
-                    onClick={() => navigate(`/clients/${row.id}`)}
-                    data-testid={`home-client-progress-row-${row.id}`}
-                  >
-                    <span className="flex w-full items-center gap-3">
-                      <span className="min-w-0 flex-1">
-                        <span className="mb-1 flex items-center gap-2">
-                          <span className="truncate text-sm font-medium text-foreground">
-                            {row.name || row.email || 'Unnamed client'}
-                          </span>
-                          {profiledIds?.has(row.id) && (
-                            <Badge variant="status" tone="success" dot={false}>
-                              Profiled
-                            </Badge>
-                          )}
-                        </span>
-                        <Progress
-                          size="sm"
-                          tone={pct === 100 ? 'success' : 'active'}
-                          value={pct}
-                          aria-label={`Profile ${pct}% complete`}
-                        />
-                      </span>
-                      <span className="w-10 shrink-0 text-right text-xs tabular-nums text-muted-foreground">
-                        {pct}%
-                      </span>
-                      <ChevronRight
-                        className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
-                        strokeWidth={1.5}
-                      />
-                    </span>
-                  </Button>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-
-        {!isLoading && !isError && (page?.count ?? 0) > PROGRESS_WIDGET_ROWS && (
-          <div className="mt-3">
-            <Button
-              variant="outline"
-              size="sm"
-              className="pointer-coarse:min-h-11"
-              onClick={() => navigate('/clients')}
-              data-testid="home-client-progress-view-all"
-            >
-              View all {page?.count} clients
-            </Button>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Page
-// ---------------------------------------------------------------------------
 
 export default function DashboardHomePage() {
   const navigate = useNavigate();
-  const { user, profile, modules } = useAuth();
-  const [search, setSearch] = useState('');
+  const { user, profile } = useAuth();
+  const [addOpen, setAddOpen] = useState(false);
   const { timeOfDay, dateText } = getSingaporeGreeting();
 
-  const hasCrm = modules.some((m) => m.path === '/crm');
-  const hasClients = modules.some((m) => m.path === '/clients');
+  // The single derived set of held record modules — see the file docblock.
+  const feed = useLatestAdditions(FEED_ROWS);
+  const statsQuery = useDashboardStats(feed.hasClients);
+  const stats = statsQuery.data;
 
-  const launcherModules = useMemo(() => {
-    const term = search.trim().toLowerCase();
-    return modules.filter(
-      (m) =>
-        m.path !== '/dashboard' &&
-        (!term ||
-          m.name.toLowerCase().includes(term) ||
-          m.description.toLowerCase().includes(term)),
-    );
-  }, [modules, search]);
+  // Cards are collected in render order; OverviewKpiRow numbers them.
+  const cards: OverviewKpiCard[] = [];
 
-  const categoryGroups = useMemo(
-    () => groupModulesByCategory(launcherModules),
-    [launcherModules],
-  );
+  if (feed.hasResults) {
+    const count = feed.resultCount;
+    cards.push({
+      tile: {
+        label: 'Prospect Profiler',
+        value: count === null ? EM_DASH : count.toLocaleString('en-SG'),
+        unit: count === null ? undefined : plural(count, 'profile saved', 'profiles saved'),
+        meta: feed.newestResult
+          ? `Newest: ${feed.newestResult.name} · ${feed.newestResult.addedLabel}`
+          : count === 0
+            ? 'No profiles saved yet — run one from the profiler wizard.'
+            : undefined,
+        onClick: () => navigate('/profiler-results'),
+        testId: 'home-kpi-profiler',
+      },
+      isLoading: feed.resultsStatus.isLoading,
+      isError: feed.resultsStatus.isError,
+      onRetry: feed.resultsStatus.refetch,
+    });
+  }
 
-  async function signOut() {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) showError('There was an issue signing out. Clearing session anyway.');
-      clearAuthStorage();
-      showSuccess('Logged out successfully');
-      navigate('/login', { replace: true });
-    } catch {
-      showError('An unexpected error occurred during logout');
-    }
+  if (feed.hasClients) {
+    cards.push({
+      tile: {
+        label: 'Clients · CRM',
+        value: stats ? stats.totalClients.toLocaleString('en-SG') : EM_DASH,
+        unit: stats ? plural(stats.totalClients, 'client', 'clients') : undefined,
+        meta: !stats
+          ? undefined
+          : stats.totalClients === 0
+            ? 'No clients yet — add your first to open the book.'
+            : `${stats.activePolicies} ${plural(stats.activePolicies, 'active policy', 'active policies')} · ${formatCurrency(stats.totalAnnualPremium)} annual premium`,
+        onClick: () => navigate('/clients'),
+        testId: 'home-kpi-clients',
+      },
+      isLoading: statsQuery.isLoading,
+      isError: statsQuery.isError,
+      onRetry: () => void statsQuery.refetch(),
+    });
   }
 
   return (
-    <div className="min-h-dvh bg-background px-4 py-6 sm:px-6 sm:py-10">
-      <div className="mx-auto max-w-5xl space-y-8">
-        <div className="flex items-start justify-between gap-4">
-          <GreetingHeader
-            name={profile?.name || user?.email?.split('@')[0] || 'there'}
-            role={formatRole(profile?.role || '')}
-            dateText={dateText}
-            timeOfDay={timeOfDay}
-          />
-          <Button variant="outline" className="pointer-coarse:min-h-11" onClick={signOut}>
-            Sign out
-          </Button>
-        </div>
+    <div className="min-h-dvh bg-background px-4 py-6 sm:px-10 sm:py-[34px]">
+      <div className="mx-auto max-w-5xl">
+        <GreetingHeader
+          className="mb-[26px]"
+          name={profile?.name || user?.email?.split('@')[0] || 'there'}
+          dateText={dateText}
+          timeOfDay={timeOfDay}
+          contextStat={
+            stats
+              ? `${stats.upcomingFollowUps} ${plural(stats.upcomingFollowUps, 'follow-up', 'follow-ups')} upcoming`
+              : undefined
+          }
+        />
 
-        {hasCrm && <CrmKpiRow />}
+        <OverviewKpiRow cards={cards} />
 
-        <div className="space-y-5">
-          <ModuleSearch value={search} onChange={setSearch} />
+        {feed.hasSource ? (
+          <section aria-labelledby="home-latest-heading">
+            <div className="flex items-baseline justify-between gap-4 border-b border-border pb-2.5">
+              <h2
+                id="home-latest-heading"
+                className="text-[22px] leading-tight text-foreground"
+                style={{ fontFamily: 'var(--font-pixel)' }}
+              >
+                Latest additions
+              </h2>
+              {feed.hasClients && (
+                <Button
+                  className="flex-none pointer-coarse:min-h-11"
+                  onClick={() => setAddOpen(true)}
+                  data-testid="home-add-client-btn"
+                >
+                  + New client
+                </Button>
+              )}
+            </div>
 
-          <div className="space-y-6" data-testid="home-module-grid">
-            {categoryGroups.length === 0 && (
-              <NoResultsState
-                query={search.trim() || undefined}
-                onClearSearch={() => setSearch('')}
-              />
-            )}
-            {categoryGroups.map((group) => (
-              <section key={group.key}>
-                <CategoryHeader
-                  label={group.label}
-                  icon={getModuleIcon(group.icon)}
-                  count={group.modules.length}
-                  chevron={false}
-                />
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {group.modules.map((mod) => (
-                    <div
-                      key={mod.path}
-                      data-testid={`home-module-tile${mod.path.replace(/\//g, '-')}`}
-                    >
-                      <ModuleCard
-                        name={mod.name}
-                        description={mod.description}
-                        icon={getModuleIcon(mod.icon_name)}
-                        showPin={false}
-                        onClick={() => navigate(mod.path)}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
-        </div>
-
-        {(hasCrm || hasClients) && <ClientProgressWidget />}
+            <LatestAdditionsTable
+              testId="home-latest-additions"
+              rows={feed.rows}
+              isLoading={feed.isLoading}
+              isError={feed.isError}
+              onRetry={feed.refetch}
+              onOpen={(row) => navigate(row.href)}
+              emptyAction={
+                feed.hasClients ? (
+                  <Button
+                    variant="outline"
+                    className="pointer-coarse:min-h-11"
+                    onClick={() => navigate('/clients')}
+                  >
+                    Go to clients
+                  </Button>
+                ) : undefined
+              }
+            />
+          </section>
+        ) : (
+          <p className="text-[13px] leading-[1.6] text-[color:var(--fg-dim)]">
+            No record modules are granted to your account yet, so there is nothing to list here. An
+            administrator can grant them from Manage accounts.
+          </p>
+        )}
       </div>
+
+      {feed.hasClients && <ClientFormModal open={addOpen} onOpenChange={setAddOpen} />}
     </div>
   );
 }

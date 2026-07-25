@@ -316,3 +316,49 @@ against the ink it would carry.
 **Impact**: `opacity` was removed from `.report-hero-sub`, `.report-stat
 .label/.note` and `.report-grad-card .label/.note` — dimming cream to 75% over
 brown drops it to ~3.3:1. Hierarchy is carried by size and weight instead.
+
+## 2026-07-25 — /dashboard Overview merges CRM + profiler through a crm-owned `results` read
+
+**Decision**: the "Latest additions" feed (`hooks/useLatestAdditions.ts`) reads
+clients via `clientsService.getClientsPaginated` AND saved profiles via a new
+`linkedResultsService.listRecentResults`, then merges and re-sorts them into one
+table. It does NOT import `features/profiler/api/resultsService`.
+**Why**: the comp's MODULE column exists to distinguish CRM rows from Profiler
+rows, so a clients-only feed would ship a constant column. But
+`.dependency-cruiser.cjs` `no-cross-feature-imports` makes
+`features/crm → features/profiler` an error. `linkedResultsService` already
+carries the sanction for this exact shape ("an own-feature api hitting shared
+tables"), so the new reader goes there.
+**Impact**: each source is gated on `useAuth().modules` (`/clients`,
+`/profiler-results`), so neither query fires for a viewer without the module and
+the index numerals renumber themselves (one card is "01", never a gap).
+
+## 2026-07-25 — The Overview dateline stat is upcoming follow-ups, not "reviews due this week"
+
+**Decision**: the masthead kicker renders `<n> follow-ups upcoming` from
+`useDashboardStats().upcomingFollowUps`, and drops the clause entirely when the
+viewer holds no CRM module.
+**Why**: the 2a comp's exemplar reads "4 reviews due this week", but nothing in
+the schema stores a weekly review window — `clients.next_review_date` is a single
+date and `interactions.follow_up` is the only live "something is due" figure the
+app already computes. Inventing a week-scoped count would have meant a fourth
+query for a figure no other surface uses, and hardcoding the comp's "4" would
+have been fake data on an empty book.
+**Impact**: the clause is real on day one and stays correct as the book fills.
+If a genuine weekly-review count is ever needed, it belongs in
+`dashboardService.getDashboardStats` next to the other three, not in the page.
+
+## 2026-07-25 — DISC chip colours move from local literals to the `--disc-*` tokens
+**Decision**: `CommunicationStyleRows`' `DISC_COLORS` map is replaced by `DISC_TOKENS` pointing at `--disc-d/i/s/c`, with the tint and border derived through `color-mix()` instead of appended hex alpha. The neutral fallback becomes `var(--fg-muted)`.
+**Why**: The values were four raw literals inside a component built for the 2a dossier. They are the right values — the DISC hex freeze was re-affirmed, see the handoff `decisions.md` — but a 2a component should not carry the palette itself. `color-mix()` is what makes the token usable where `${col}1A` previously forced a literal.
+**Impact**: Supersedes the "DISC chip colours … are LOCAL constants duplicating the profiler palette hexes by design" clause in the 2026-06 entry above. The *duplication* rationale still holds — `no-cross-feature-imports` is a dependency-cruiser error, so CRM still cannot import from profiler — but the duplication is now of a token NAME, not of four hexes. That entry's "letters keep zinc text" note is also stale twice over: the letters have been `text-foreground` since the navy era and are unaffected here.
+
+## 2026-07-25 — The /dashboard Overview derives ONE set of held record modules; `/crm` is not in it
+**Decision**: `useLatestAdditions` owns the single derivation (`hasClients` / `hasResults` / `hasSource`, over `/clients` + `/profiler-results`, whose path constants now live once in `lib/latestAdditions`). Every Overview surface reads it: both KPI cards, the `useDashboardStats` enable flag, the dateline's follow-ups clause, the feed section and the nothing-granted line. The Clients KPI card no longer falls back to `|| hasCrm`, and its tile always targets `/clients`.
+**Why**: the card list and the empty-state test derived from different module sets, so a viewer granted `/crm` but not `/clients` got a populated Clients card sitting directly above copy reading "No record modules are granted to your account yet". Widening the feed to `/crm` instead would have been worse — the feed does not query the client book for a `/crm`-only viewer, so the card would have claimed N clients above a table saying "Your book is empty", and its rows would have linked into a route that viewer cannot open.
+**Impact**: `/crm` grants aggregate figures on its own dashboard, not records here; a `/crm`-only viewer now gets the honest nothing-granted line. No effect on real grants — the registration migration hands `/crm` and `/clients` to the same roles, so the divergence was only reachable through a `user_modules` override.
+
+## 2026-07-25 — Overview KPI states are per-card, not per-row
+**Decision**: `components/OverviewKpiRow` renders each tile's own query state — `LoadingSkeleton variant="kpi-tile"` while in flight, and on failure an em-dash figure whose meta line carries one terracotta sentence plus a Retry action. An errored tile drops its `onClick`.
+**Why**: the two cards read two different queries (`useDashboardStats` vs the feed's `/profiler-results` source), so a shared row-level state would blank a healthy profiler figure whenever the clients stats failed. `useLatestAdditions` therefore also exposes `resultsStatus` — the results source alone — beside the merged-feed flags. Dropping `onClick` is required, not cosmetic: `KpiIndexCard` becomes `role="button"` when it has one, and a nested Retry control inside it would swallow the click into a navigation.
+**Impact**: per KOPI_2A_SPEC → "States → Error" the failure stays row-level and quiet — the tile keeps its hairline border and card cream, no panel fill. `ErrorState` (the giant serif 500 hero) is deliberately NOT used inside a KPI tile; it remains the page/section-level surface.

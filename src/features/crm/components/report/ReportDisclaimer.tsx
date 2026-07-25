@@ -3,13 +3,16 @@
  * ClientReportModal.jsx:548-559, git c09c549; copy ported VERBATIM).
  *
  * The inflation percentage interpolates MEDICAL_INFLATION_RATE and the BHS
- * line interpolates BHS_2026 exactly like legacy; the generated timestamp
- * uses the SG clock (timezoneUtils) instead of the legacy bare `new Date()`.
- * Page passes the hero-computed currentAge / yearsToRetirement. Print-first
- * light-locked per the report-print.css contract.
+ * line interpolates BHS_2026 exactly like legacy; the generated timestamp goes
+ * through `formatDisplayDateTimeLong`, which pins `timeZone: Asia/Singapore`.
+ * `getCurrentSingaporeTime().toLocaleString('en-SG')` — what this used to call
+ * — is browser-local despite the name, so the stamp was wrong by hours off SGT
+ * (see `src/features/crm/lib/lessons.md`, 2026-07-14). Page passes the
+ * hero-computed currentAge / yearsToRetirement. Print-first light-locked per
+ * the report-print.css contract.
  */
 
-import { getCurrentSingaporeTime } from '@/utils/timezoneUtils';
+import { formatDisplayDateTimeLong } from '@/utils/timezoneUtils';
 import { BHS_2026, MEDICAL_INFLATION_RATE } from '../../lib/finance';
 
 interface ReportDisclaimerProps {
@@ -18,7 +21,7 @@ interface ReportDisclaimerProps {
 }
 
 export function ReportDisclaimer({ currentAge, yearsToRetirement }: ReportDisclaimerProps) {
-  const generatedAt = getCurrentSingaporeTime().toLocaleString('en-SG');
+  const generatedAt = formatDisplayDateTimeLong(new Date());
 
   return (
     <section className="report-section" data-testid="report-disclaimer">

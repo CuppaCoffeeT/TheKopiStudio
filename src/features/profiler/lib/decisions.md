@@ -241,3 +241,25 @@ Third adversarial pass over the 2a repoint. Four refinements, all colour-only:
    `ObservationScreen`. The DISC tint that marks the chosen row dropped
    `--fg-muted` to 4.21–4.33:1, so the one row that must read best was the only
    one failing; on the tint the ink token reads 10.9–11.2:1.
+
+## 2026-07-25 — No emoji in the profiler flow; DISC hues stay as a scoped exception
+
+Two rulings, both recorded in full at
+[docs/05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/decisions.md](../../../../docs/05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/decisions.md).
+
+1. **No emoji anywhere in `/profiler`, result screens included.** `ResultHero`'s
+   `{p.em}`, `PlaybookSection`'s `catIcons`, `ScoreCard`'s occupation glyph and
+   `ResultSections`' Watch-For glyph are gone, replaced by an Instrument Serif
+   DISC monogram, a zero-padded index numeral and plain labels. `PR[].em` and
+   `NVG[].em` stay in `lib/content/` under the parity contract — do not delete
+   the data, and do not render it. Monochrome `✓` / `✕` marks are not emoji and
+   stay.
+2. **The DISC hues stay** — they encode the quadrant, which is this tool's whole
+   output. They are FILLS only: the letter and the profile name carry the
+   meaning, and text over a tint always takes `--fg` or `--fg-dim`. Measured on
+   the hero band's 14% fill over page cream, `--fg` is 8.72–9.20:1 and
+   `--fg-dim` 5.24–5.53:1; `--fg-muted` is 3.37–3.56:1 there and is banned. As
+   text the raw hexes are 4.40 / 2.94 / 4.36 / 5.58 — DISC-I fails — which is
+   why no small type is ever coloured with them. Extends entry 4 of the
+   2026-07-25 decision above; this is the fourth time the repoint has been
+   declined.

@@ -81,7 +81,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
             : 'bg-secondary text-[color:var(--fg-dim)]',
           className,
         )}
-        style={{ fontFamily: 'var(--font-mono)' }}
+        style={{ fontFamily: 'var(--font-sans)', fontVariantNumeric: 'tabular-nums' }}
         {...props}
       >
         {children}

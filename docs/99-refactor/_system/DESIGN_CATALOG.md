@@ -1,7 +1,7 @@
 # AppBase_REFACTOR — Design Catalog
 
 **Created**: 2026-04-19 SGT
-**Last Updated**: 2026-04-28 SGT — split into 3 files to clear 6.9× budget overflow: this router (state · adoption · approval · composition · roll-up) + [DESIGN_CATALOG_PRIMITIVES.md](DESIGN_CATALOG_PRIMITIVES.md) (per-primitive Design · Impl · Adopted inventory · sections A–N) + [DESIGN_CATALOG_MATRIX.md](DESIGN_CATALOG_MATRIX.md) (module × primitive matrix). Historical day-by-day W09 entries moved to [RECENT_CHANGES.md](RECENT_CHANGES.md).
+**Last Updated**: 2026-07-25 SGT — S3 Dashboard rows: `ModuleCard` / `CategoryHeader` / `ModuleSearch` marked RETIRED (deleted with the launcher grid, see [DEPRECATIONS.md](DEPRECATIONS.md)). Earlier, 2026-04-28 SGT — split into 3 files to clear 6.9× budget overflow: this router (state · adoption · approval · composition · roll-up) + [DESIGN_CATALOG_PRIMITIVES.md](DESIGN_CATALOG_PRIMITIVES.md) (per-primitive Design · Impl · Adopted inventory · sections A–N) + [DESIGN_CATALOG_MATRIX.md](DESIGN_CATALOG_MATRIX.md) (module × primitive matrix). Historical day-by-day W09 entries moved to [RECENT_CHANGES.md](RECENT_CHANGES.md).
 **Status**: 🟢 Production
 **Priority**: 🔴 Critical
 
@@ -43,7 +43,7 @@ Router for the AppBase design catalog. Tracks the design-system roll-out state �
 | **S1 List/Table** | 🟢 | 🟢 `DataTable` · `StatusBadge` · `Avatar` · `IconButton` | production adopters — see DESIGN_CATALOG_PRIMITIVES.md Adopted column | ✅ LOCKED |
 | **S2 Overlays** | 🟢 | 🟢 9 primitives (Modal · Drawer · Popover · Tooltip · DropdownMenu · ContextMenu · Alert · Toaster · SearchableMultiSelect) + Kbd atom | **Toaster root-mounted in `App.tsx` (all toasts now glass-styled) · AppHeader/ImpersonationSelector consume Popover + DropdownMenu · W09 migrates legacy shadcn callers per page** | 🟢 spec re-verified 2026-04-19 |
 | **S-shell** (App Header + Phase A atoms + states) | 🟢 | 🟢 11 primitives (AppHeader · Breadcrumb · ImpersonationBanner · Button · Chip · FilterBar · **SearchInput** · FloatingCTA · LoadingSkeleton · ErrorState · NoResultsState) + 4 cells (DateCell · DateTimeCell · CurrencyCell · NumberCell) | `/dashboard` + cells available for any DataTable adopter | 🟢 live |
-| **S3 Dashboard** (module launcher) | 🟢 | 🟢 9 primitives (GreetingHeader · ModuleCard · NeedsAttentionPill · AttentionHeader · CategoryHeader · ModuleSearch · CountBadge · **KpiTile** · **NumberTicker**) | `/dashboard` | 🟢 live |
+| **S3 Dashboard** (was module launcher) | 🟢 | 🟢 6 live (GreetingHeader · NeedsAttentionPill · AttentionHeader · CountBadge · **KpiTile** · **NumberTicker**) + **KpiIndexCard** (Kopi 2a) · ⚠️ 3 **RETIRED 2026-07-25**: ~~ModuleCard~~ · ~~CategoryHeader~~ · ~~ModuleSearch~~ (files deleted with the launcher grid — see [DEPRECATIONS.md](./DEPRECATIONS.md)) | `/dashboard` — 2a Overview: GreetingHeader masthead + KpiIndexCard row + feed table | 🟢 live (rebuilt 2026-07-25) |
 | **S4a Detail — Heavyweight** (9 primitives) | 🟢 | 🟢 9 primitives — PageShell · TabNav · Timeline · StatusTransitionModal · RelatedRecordsCard · ActivityLogTimeline · SendEmailDialog · LineItemsEditor · DestructiveConfirmDialog | `4/5 full` — CompanyDetail (W09 #2) · PersonDetail (W09 #18 · 2026-04-26) · InvoiceDetail (W09 · 2026-04-27) · **ProjectDetail (W09 #28 · 2026-05-27 · P1–P11 closed)**; QuotationDetail P2 header-lift only (W09 #10, body pending P3) | 🟢 live (4 adopters) |
 | **S4b Detail — Medium** (3 pages) | 🔴 | 🔴 | — | queued after S4a W09 |
 | **S4c Detail — Light** (5 pages) | 🔴 | 🔴 | — | queued after S4b |
@@ -195,7 +195,7 @@ Live adopters as of 2026-04-28. Full per-page primitive consumption + day-of-mig
 |---|---|
 | S1 List/Table ✅ (2026-04-19) | `<DataTable>`, `<StatusBadge>` tokens, `<AppHeader>` spec, `<Button>` primary-rebuild spec, `<FilterBar>` spec, `<FloatingCTA>` spec |
 | S2 Overlays | All of Group C (8 primitives) + `<Alert>` + confirm Sonner wrapper spec |
-| S3 Dashboard ✅ 2026-04-19 | `<GreetingHeader>`, `<ModuleCard>`, `<NeedsAttentionPill>`, `<AttentionHeader>`, `<CategoryHeader>`, `<ModuleSearch>`, `<CountBadge>`, `<KpiTile>` (2026-04-21), `<NumberTicker>` (2026-04-21) — 9 shipped at `src/components/primitives/dashboard/` |
+| S3 Dashboard ✅ 2026-04-19 | `<GreetingHeader>`, `<NeedsAttentionPill>`, `<AttentionHeader>`, `<CountBadge>`, `<KpiTile>` (2026-04-21), `<NumberTicker>` (2026-04-21) at `src/components/primitives/dashboard/`; ~~`<ModuleCard>`~~, ~~`<CategoryHeader>`~~, ~~`<ModuleSearch>`~~ ⚠️ **RETIRED 2026-07-25** — deleted with the launcher grid, see [DEPRECATIONS.md](./DEPRECATIONS.md) |
 | S4 Detail | `<PageShell>`, `<Timeline>`, refine `<ConfirmDialog>` |
 | S5 LineItemsEditor | `<LineItemsEditor>` · edit-in-place + drag-reorder + in-built dropdowns |
 | S6 Form | `<Stepper>`, `<MobileDrawer>`, refine Group E FieldRows (`<InputRow>`, `<SelectRow>`, `<DateRow>`, `<MultiSelectRow>`) |

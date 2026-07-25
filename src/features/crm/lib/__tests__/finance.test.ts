@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-import { getCurrentSingaporeTime } from '@/utils/timezoneUtils';
+import { getSingaporeYear } from '@/utils/timezoneUtils';
 import {
   AVERAGE_CRITICAL_ILLNESS_COST,
   AVERAGE_EARLY_CI_COST,
@@ -167,6 +167,9 @@ describe('caller-inline ports without golden vectors', () => {
   });
 
   it('currentRefYear returns the Singapore calendar year (app-side clock for refYear params)', () => {
-    expect(currentRefYear()).toBe(getCurrentSingaporeTime().getFullYear());
+    // Asserted against getSingaporeYear(), not `new Date().getFullYear()` — the
+    // latter is browser-local, so the old assertion agreed with a wrong
+    // implementation on every machine except during the SGT new-year window.
+    expect(currentRefYear()).toBe(getSingaporeYear());
   });
 });

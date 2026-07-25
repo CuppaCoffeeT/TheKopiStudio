@@ -125,14 +125,13 @@ export default function ClientReportPage() {
 
         {!loading && failed && (
           <ErrorState
-            subhead="Failed to load report"
-            body="The client report could not be loaded. Check your connection and try again."
-            path={`/clients/${id ?? ''}/report`}
+            variant="compact"
+            subhead="This report didn't load."
+            body="The client and their policies could not be read. Check your connection and try again."
             onRetry={() => {
               void client.refetch();
               void policies.refetch();
             }}
-            className="rounded-2xl"
           />
         )}
 

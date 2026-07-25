@@ -37,6 +37,7 @@ import { queryKeys } from '@/utils/queryKeys';
 import { groupModulesByCategory, type DashboardModule } from '@/utils/dashboardHelpers';
 import { cn } from '@/lib/utils';
 import { AppSidebarFooter } from './AppSidebarFooter';
+import { Wordmark } from './Wordmark';
 
 /**
  * Rail width, as the two literal Tailwind classes it produces — Tailwind scans
@@ -163,13 +164,11 @@ export function AppSidebar() {
       <Link
         to={HOME_PATH}
         aria-label="The Kopi Studio — Home"
-        className={cn(
-          'block flex-none px-[22px] pb-[18px] text-[22px] leading-[1.15] text-sidebar-foreground',
-          FOCUS_RING,
-        )}
-        style={{ fontFamily: 'var(--font-pixel)', fontWeight: 400 }}
+        className={cn('block flex-none px-[22px] pb-[18px] text-sidebar-foreground', FOCUS_RING)}
       >
-        The Kopi <i className="text-sidebar-primary">Studio</i>
+        {/* Shared lockup — the mobile bar and the public /profiler chrome render
+            the same component, so the three identity surfaces cannot drift. */}
+        <Wordmark className="block text-[22px] leading-[1.15]" />
       </Link>
 
       {/* The nav is the only scroller — the footer stays pinned to the rail's

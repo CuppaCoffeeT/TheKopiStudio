@@ -21,7 +21,6 @@ interface ListSectionProps {
   onRetry: () => void;
   errorSubhead: string;
   errorBody: string;
-  retryPath: string;
   isEmpty: boolean;
   emptyTitle: string;
   emptySubtext: string;
@@ -39,7 +38,6 @@ export function ListSection({
   onRetry,
   errorSubhead,
   errorBody,
-  retryPath,
   isEmpty,
   emptyTitle,
   emptySubtext,
@@ -66,9 +64,9 @@ export function ListSection({
 
       {!isLoading && isError && (
         <ErrorState
+          variant="compact"
           subhead={errorSubhead}
           body={errorBody}
-          path={retryPath}
           onRetry={onRetry}
           className="rounded-b-2xl"
         />

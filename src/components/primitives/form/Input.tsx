@@ -12,6 +12,14 @@ import { cn } from '@/lib/utils';
  * borrows the terracotta --destructive border with a solid --negative-text focus outline;
  * prefix/suffix mono-font.
  *
+ * Do NOT add `outline-none` to the bare `<input>`. In Tailwind 4 `.outline-none`
+ * emits `--tw-outline-style: none` + `outline-style: none`, while `.focus:outline-2`
+ * only emits `outline-style: var(--tw-outline-style)` — so on the SAME element the
+ * focus outline resolves back to `none` and never paints, and the utility also
+ * defeats the global `:focus-visible` rule in index.css. The slot-mode branch below
+ * is safe because there `outline-none` sits on the inner input and the
+ * `focus-within:outline-*` utilities sit on the container — different elements.
+ *
  * Compat: when no prefix/suffix/leadingIcon slots are used, renders a bare
  * styled `<input>` so it works inside shadcn `<FormControl>`/Radix Slot
  * cloneElement (which forwards id/aria/ref to the first rendered element).
@@ -68,7 +76,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           disabled ? 'bg-secondary opacity-80 cursor-not-allowed' : 'bg-card',
           'text-foreground',
           'placeholder:text-muted-foreground',
-          'outline-none',
           mono && 'tabular-nums',
           className,
         )}

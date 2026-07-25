@@ -150,6 +150,7 @@ export default function ResultsListPage() {
   return (
     <ListPageFrame
       title="Results"
+      kicker="Results · Profiler"
       description="Saved profiling results and communication playbooks."
       searchQuery={searchInput}
       onSearchChange={setSearchInput}

@@ -25,15 +25,21 @@ interface QuestionScreenProps {
 export function QuestionScreen({ batch, batchNumber, prospectName, answers, onSelect }: QuestionScreenProps) {
   return (
     <div className="flex flex-col gap-3" data-testid={`wizard-questions-screen-${batchNumber}`}>
-      <div>
+      {/* Section head, 2a type scale: kicker over Instrument Serif 22px ink,
+          closed by a hairline. Brown never carries a heading in this
+          direction, so the title stays --fg. */}
+      <div className="border-b border-border pb-4">
         <Eyebrow>Questions {batchNumber === 1 ? '1-4' : '5-8'}</Eyebrow>
-        <h2 className="m-0 text-[19px] font-normal text-foreground">
+        <h2
+          className="m-0 text-[22px] leading-tight text-foreground"
+          style={{ fontFamily: 'var(--font-pixel)', fontWeight: 400 }}
+        >
           Profiling {prospectName}
         </h2>
         {/* This header block is outside the per-question Card, so it paints on
             the page cream where --fg-muted is 4.12:1. --fg-dim reads 6.40:1;
             the Eyebrow above already defaults to it. */}
-        <p className="m-0 mt-1 text-[13px] leading-6 text-[color:var(--fg-dim)]">
+        <p className="m-0 mt-1.5 text-[13px] leading-6 text-[color:var(--fg-dim)]">
           Weave into conversation. Pick the best match.
         </p>
       </div>
@@ -63,7 +69,14 @@ export function QuestionScreen({ batch, batchNumber, prospectName, answers, onSe
             >
               {isOpen ? 'Opening' : 'Discovery'}
             </span>
-            <p className="m-0 text-[12px] italic leading-5 text-muted-foreground">💡 {q.tip}</p>
+            {/* Advisor tip. The 💡 that used to prefix it is gone — 2a admits
+                no illustration and no icon, and a colour emoji is the one mark
+                the brown/neutral palette can never absorb. A neutral hairline
+                in the margin marks it as an aside instead; brown is reserved
+                for CTA, focus and index numerals. */}
+            <p className="m-0 border-l border-border pl-2.5 text-[12px] italic leading-5 text-muted-foreground">
+              {q.tip}
+            </p>
             <p className="m-0 mt-1.5 mb-3 text-[15px] leading-6 text-foreground">{q.ask}</p>
 
             <div className="flex flex-col gap-2" role="radiogroup" aria-label={q.ask}>

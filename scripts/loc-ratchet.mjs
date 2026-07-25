@@ -10,6 +10,13 @@
  *   npm run loc:baseline    # re-baseline AFTER a deliberate, reviewed reduction
  *
  * Excludes generated Supabase types + tests. Tracks git-tracked src/*.ts(x) only.
+ *
+ * `git ls-files` reports the INDEX, not the worktree, so a file deleted but not
+ * yet staged is still listed and used to crash the run with ENOENT. Such files
+ * are skipped: a file that is not on disk has no lines and can never be an
+ * offender, so skipping it cannot let an oversized file through the gate. Note
+ * that files that are new and unstaged are likewise invisible to `git ls-files`
+ * — the gate only becomes authoritative once changes are staged.
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { execSync } from 'node:child_process';
@@ -22,7 +29,8 @@ const files = execSync("git ls-files 'src/*.ts' 'src/*.tsx' 'src/**/*.ts' 'src/*
   .split('\n')
   .filter(Boolean)
   .filter((f) => f !== 'src/integrations/supabase/types.ts')
-  .filter((f) => !/\.(test|spec)\.tsx?$/.test(f));
+  .filter((f) => !/\.(test|spec)\.tsx?$/.test(f))
+  .filter((f) => existsSync(f)); // tracked but deleted in the worktree — see header
 
 const over = files
   .map((f) => ({ f, loc: readFileSync(f, 'utf8').split('\n').length }))

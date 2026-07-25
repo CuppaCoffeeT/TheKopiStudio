@@ -86,7 +86,7 @@ export const MobileListCard = forwardRef<HTMLDivElement, MobileListCardProps>(
           {meta && (
             <div
               className="flex flex-wrap gap-2 mt-1 text-[11px] text-[color:var(--fg-dim)]"
-              style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}
+              style={{ fontFamily: 'var(--font-sans)', fontVariantNumeric: 'tabular-nums' }}
             >
               {meta}
             </div>

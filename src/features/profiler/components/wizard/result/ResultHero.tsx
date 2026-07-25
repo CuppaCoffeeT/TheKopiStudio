@@ -3,9 +3,12 @@
  * in the primary profile's colour, identity line, DISC/MBTI badges and the
  * "Advisor Quick Read" strip.
  *
- * The DISC hue is a TINT over the card cream, never a saturated slab: type sits
- * on the ink ladder (`--fg` / `--fg-dim`) exactly as it does in DiscChip and
- * TraitsCard, so contrast is independent of which DISC colour won.
+ * The DISC hue is a TINT over the cream ground, never a saturated slab: type
+ * sits on the ink ladder (`--fg` / `--fg-dim`) exactly as it does in DiscChip
+ * and TraitsCard, so contrast is independent of which DISC colour won. At the
+ * band's 14% fill the worst quadrant (C, on the page cream) still reads 8.72:1
+ * for `--fg` and 5.24:1 for `--fg-dim`; `--fg-muted` would fail there (3.37:1)
+ * and is why nothing in this band uses it.
  */
 
 import type { ReactNode } from 'react';
@@ -67,8 +70,20 @@ export function ResultHero({
       data-testid="result-hero"
     >
       <div className="px-4 pt-5 pb-3.5" style={{ backgroundColor: `${p.col}24` }}>
-        <span className="float-right text-4xl" aria-hidden="true">
-          {p.em}
+        {/* Identity monogram. Replaces the 36px colour emoji (`p.em`) that used
+            to float here — no emoji anywhere in /profiler, and intake,
+            questions and observations already dropped theirs. The DISC letter
+            in Instrument Serif is the same device (a display-size mark of the
+            profile) without leaving the palette, and it rides --fg rather than
+            p.col so the mark's contrast does not depend on which quadrant won.
+            `PR[].em` stays in content/: that file is a frozen parity contract.
+            aria-hidden — the DISC badge below announces the same letter. */}
+        <span
+          aria-hidden="true"
+          className="float-right ml-3 text-[36px] leading-none text-foreground"
+          style={{ fontFamily: 'var(--font-pixel)', fontWeight: 400 }}
+        >
+          {profile.pri}
         </span>
         <div
           className="uppercase mb-1 text-[color:var(--fg-dim)]"

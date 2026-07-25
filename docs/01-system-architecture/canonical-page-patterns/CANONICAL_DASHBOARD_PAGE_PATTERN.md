@@ -20,9 +20,10 @@ Router-style doc — links to real adopters + primitives. Does not duplicate cod
 | Page frame / header | `DashboardHeader` (`@/components/DashboardHeader`) — AppHeader chrome shim · or `AppHeaderShell` (`@/components/primitives/shell`) | hand-rolled `<h1>` + greeting block |
 | Greeting block | `GreetingHeader` (`@/components/primitives/dashboard`) | bespoke welcome text |
 | KPI tile | `KpiTile` (`@/components/primitives/dashboard`) — `prefix/suffix/delta/subtitle/icon/alert/sparkline`, count-up via bundled `NumberTicker` | ad-hoc `<Card>` + big number + hand-rolled delta badge |
+| KPI tile (2a Overview) | `KpiIndexCard` (`@/components/primitives/dashboard`) — uppercase label + brown index numeral + serif value/unit + meta line | a `KpiTile` with the icon/delta slots left empty |
 | Count-up number | `NumberTicker` (`@/components/primitives/dashboard`) | hand-rolled `useEffect` + `setInterval` |
-| Section / category header | `CategoryHeader` · `AttentionHeader` (`@/components/primitives/dashboard`) | bare `<section>` + `<h2>` |
-| Module shortcut card | `ModuleCard` (`@/components/primitives/dashboard`) | bespoke link card |
+| Section / attention header | `AttentionHeader` (`@/components/primitives/dashboard`) | bare `<section>` + `<h2>` |
+| Module navigation | the `AppSidebar` rail + the ⌘K palette | a launcher grid on the page (removed 2026-07-25) |
 | KPI row layout | Tailwind grid (`grid grid-cols-2 md:grid-cols-4 gap-*`) wrapping `KpiTile`s | a bespoke metric-box grid |
 | Charts | `ChartShell` + `AreaChart`/`BarChart`/`HBarChart` (`@/components/primitives/charts`) | raw recharts in the page |
 | Empty / error state | `NoResultsState` · `ErrorState` (`@/components/primitives/shell`) | inline "nothing here" text |
@@ -39,7 +40,7 @@ Full inventory: [src/components/primitives/CONTEXT.md](../../src/components/prim
     <KpiTile value={open}    label="Open"    sparkline={…} />
     {/* … */}
   </div>
-  <CategoryHeader title="This week" />
+  <AttentionHeader title="This week" />
   <ChartShell><BarChart data={…} /></ChartShell>
 </DashboardHeader>
 ```
@@ -48,6 +49,7 @@ Full inventory: [src/components/primitives/CONTEXT.md](../../src/components/prim
 
 | Adopter | File |
 |---------|------|
+| 2a Overview (`/dashboard`) | `src/features/crm/pages/DashboardHomePage.tsx` — dateline masthead + `KpiIndexCard` pair + hairline feed table |
 | Drafter dashboard | `src/features/drafterdashboard/pages/DrafterDashboard.tsx` |
 | Supervisor home KPIs | `src/features/fieldops/work-entry/components/SupervisorKpiSection.tsx` (+ `SupervisorUI.tsx`) |
 | Client-profiles KPI strip | `src/features/clientprofiles/components/ClientProfilesKpis.tsx` |

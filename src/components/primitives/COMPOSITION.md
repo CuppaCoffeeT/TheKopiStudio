@@ -4,7 +4,7 @@ Patterns for composing primitives into pages, plus the rules for editing or crea
 
 ## Page composition pattern
 
-- **Detail pages**: wrap with [`<DetailPageFrame>`](./detail/DetailPageFrame.tsx) — composes `AppHeader` + `PageShell` + `TabNav` + `ImpersonationBanner` internally. Pages pass flat props (breadcrumb · title · status · actions · tabs · sideRail · children). No chrome plumbing. Breadcrumb owns back nav — no back button.
+- **Detail pages**: wrap with [`<DetailPageFrame>`](./detail/DetailPageFrame.tsx) — composes `AppHeaderMobileBar` + `PageShell` + `TabNav` + `ImpersonationBanner` internally. Pages pass flat props (breadcrumb · title · status · actions · tabs · sideRail · children). No chrome plumbing. Breadcrumb owns back nav — no back button. Fill the body with the 2a dossier vocabulary from [`detail/dossier`](./detail/dossier/index.ts) — `DossierPanel` (uppercase tracked label + cream card) wrapping `DossierStatGrid` / `DossierRampBar` / `DossierKeyValueList`, plus `DossierLoadingPanel` for transient states — never ad-hoc cards.
 - **List pages**: `DashboardHeader` shim delegates to `AppHeader` + heading block — 71 pages inherit S-shell glass chrome with zero call-site edits. New list pages should use `<ListPageFrame>` from `primitives/ui` directly.
 - **Form pages**: compose `Field` wrappers around `Input` / `Textarea` / `Select` / `DatePicker` etc. See [form/index.ts](./form/index.ts).
 - **Tables**: compose `DataTable` + `TableHeader` (sortable) + `DataRow` + `Pagination`. Mobile breakpoint swaps `DataRow` for `MobileListCard`. See [ui/index.ts](./ui/index.ts).

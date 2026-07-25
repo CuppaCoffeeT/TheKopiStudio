@@ -13,7 +13,7 @@
  * injectable `refYear` instead of calling `new Date()`. The app passes
  * `currentRefYear()`; golden tests pin 2026 (the vector capture year).
  */
-import { getCurrentSingaporeTime } from '@/utils/timezoneUtils';
+import { getSingaporeYear } from '@/utils/timezoneUtils';
 
 export const MEDICAL_INFLATION_RATE = 0.06;
 export const AVERAGE_CRITICAL_ILLNESS_COST = 150000;
@@ -36,9 +36,15 @@ export function toFloat(value: string | number | null | undefined): number {
   return parseFloat(String(value || 0));
 }
 
-/** Reference year for time-dependent math (SG clock; legacy used `new Date().getFullYear()`). */
+/**
+ * Reference year for time-dependent math (SG calendar; legacy used
+ * `new Date().getFullYear()`). `getSingaporeYear()` pins the zone —
+ * `getCurrentSingaporeTime().getFullYear()`, which this used to call, is
+ * browser-local and rolls the CPF retirement-sum lookup a year early west of
+ * SGT (see `lib/lessons.md`, 2026-07-14).
+ */
 export function currentRefYear(): number {
-  return getCurrentSingaporeTime().getFullYear();
+  return getSingaporeYear();
 }
 
 /** Age as plain year difference (no month/day adjustment); missing dob → 40. */

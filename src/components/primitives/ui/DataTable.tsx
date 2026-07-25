@@ -11,40 +11,31 @@
  * Responsive: when `mobileBody` is provided, desktop rows render on ≥ md and mobile cards render on < md
  *   automatically — no viewport prop needed. Set `variant="mobile"` only for explicit mobile-first override.
  *
+ * `surface="bare"` (2a list archetype, 2026-07-25): the shell disappears
+ * entirely — no border, no radius, no fill — and the rows sit straight on the
+ * page cream, held together by the `--border-faint` row hairlines alone. The
+ * comp's List page has no card around its table; a card there would re-introduce
+ * the boxed sub-card the 2a layout language forbids.
+ *
  * Row expansion (caller-controlled): pass `renderExpanded` + flip `row.expanded`
  * to render an inline panel below the expanded row. Pattern adopted by JLTT /
  * General Works / OT tables — supersedes the older `ExpandableDataTable`
  * (shell) primitive over time. Caller owns the expanded-id state.
+ *
+ * The row strip lives in `DataTableRows`, the non-default bodies in
+ * `DataTableStates` — both split out 2026-07-25 for the LOC ceiling.
  */
 
-import { Fragment } from 'react';
 import { cn } from '@/lib/utils';
-import { FileText, AlertCircle } from 'lucide-react';
 import { TableHeader, type TableHeaderColumn } from './TableHeader';
-import { DataRow, type DataRowCell, type DataRowDensity, type DataRowState } from './DataRow';
+import { type DataRowDensity, type DataRowSurface } from './DataRow';
+import { DataTableRows, type DataTableRow } from './DataTableRows';
+import { DataTableLoadingBody, DataTableState, type DataTableStateAction } from './DataTableStates';
 
-export type DataTableVariant =
-  | 'default'
-  | 'empty'
-  | 'loading'
-  | 'error'
-  | 'no-results'
-  | 'mobile';
+export type { DataTableStateAction } from './DataTableStates';
+export type { DataTableRow } from './DataTableRows';
 
-export interface DataTableRow {
-  id?: string | number;
-  state?: DataRowState;
-  selected?: boolean;
-  /** When true AND `DataTable.renderExpanded` is set, an inline panel is
-   *  rendered immediately below the row (desktop only — mobile cards
-   *  manage their own detail surface). Caller owns the open-state. */
-  expanded?: boolean;
-  cells: DataRowCell[];
-  /** Row click handler — fires on row body (checkbox stops propagation). Optional. */
-  onClick?: () => void;
-  /** Row-level `data-testid` for Playwright. Optional. */
-  testId?: string;
-}
+export type DataTableVariant = 'default' | 'empty' | 'loading' | 'error' | 'no-results' | 'mobile';
 
 export interface DataTableProps {
   density?: DataRowDensity;
@@ -69,100 +60,13 @@ export interface DataTableProps {
    *  to clear the checkbox column). Caller owns expand state — typically a
    *  `useState<string|null>` keyed by row id, toggled in `row.onClick`. */
   renderExpanded?: (row: DataTableRow) => React.ReactNode;
+  /** Defaults to `card`. `bare` drops the shell for the 2a list archetype. */
+  surface?: DataRowSurface;
+  /** The one quiet action offered by the empty / no-results / error state. */
+  stateAction?: DataTableStateAction;
   className?: string;
   /** `data-testid` on the DataTable shell div. */
   testId?: string;
-}
-
-function EmptyState({
-  variant,
-  message,
-  sub,
-}: {
-  variant: 'empty' | 'error' | 'no-results';
-  message: string;
-  sub: string;
-}) {
-  const isError = variant === 'error';
-  return (
-    <div
-      className={cn(
-        'flex flex-col items-center gap-[10px] text-center',
-        'px-5 py-14 bg-card'
-      )}
-      role={isError ? 'alert' : 'status'}
-    >
-      <span
-        className={cn(
-          'inline-flex items-center justify-center w-9 h-9 rounded-full',
-          'border border-dashed border-border',
-          // Raw terracotta is sanctioned for icons — the AA text variants are
-          // only mandatory below 18px of TYPE.
-          isError
-            ? 'text-[color:var(--brand-terracotta)]'
-            : 'text-muted-foreground'
-        )}
-      >
-        {isError ? (
-          <AlertCircle className="w-[18px] h-[18px]" aria-hidden />
-        ) : (
-          <FileText className="w-[18px] h-[18px]" aria-hidden />
-        )}
-      </span>
-      {/* 2a empty-state line — Instrument Serif 20px italic. 20px clears the
-          18px serif floor, so the family is safe to set here. */}
-      <div
-        className="text-[20px] italic text-[color:var(--fg-dim)]"
-        style={{ fontFamily: 'var(--font-pixel)' }}
-      >
-        {message}
-      </div>
-      <div
-        className="text-[11px] text-muted-foreground"
-      >
-        {sub}
-      </div>
-    </div>
-  );
-}
-
-function LoadingBody({
-  density,
-  columnCount,
-}: {
-  density: DataRowDensity;
-  columnCount: number;
-}) {
-  const rows = 6;
-  const cols = Math.max(3, columnCount);
-  return (
-    <>
-      {Array.from({ length: rows }).map((_, i) => (
-        <div
-          key={i}
-          className={cn(
-            'flex items-center gap-[14px] px-[14px]',
-            density === 'comfortable'
-              ? 'min-h-[72px]'
-              : density === 'cozy'
-                ? 'min-h-[56px]'
-                : 'min-h-[44px]',
-            'border-b border-border',
-            'bg-card'
-          )}
-        >
-          <span className="w-4 h-4 rounded-[4px] bg-secondary animate-pulse" />
-          {Array.from({ length: cols }).map((_, j) => (
-            <span
-              key={j}
-              className="flex-1 h-[10px] rounded-[3px] bg-secondary animate-pulse"
-              style={{ opacity: 0.9 - j * 0.1 }}
-            />
-          ))}
-        </div>
-      ))}
-    </>
-  );
 }
 
 export function DataTable({
@@ -184,54 +88,22 @@ export function DataTable({
   noResultsSubtext = 'Clear filters to see everything.',
   mobileBody,
   renderExpanded,
+  surface = 'card',
+  stateAction,
   className,
   testId,
 }: DataTableProps) {
+  const bare = surface === 'bare';
   // Non-default variants (loading / empty / error / no-results / mobile) ignore
   // the responsive split — they render one body full-width on all viewports.
   const fullWidthBody = (() => {
-    if (variant === 'loading') return <LoadingBody density={density} columnCount={columns.length} />;
-    if (variant === 'empty') return <EmptyState variant="empty" message={emptyText} sub={emptySubtext} />;
-    if (variant === 'error') return <EmptyState variant="error" message={errorText} sub={errorSubtext} />;
-    if (variant === 'no-results') return <EmptyState variant="no-results" message={noResultsText} sub={noResultsSubtext} />;
+    if (variant === 'loading') return <DataTableLoadingBody density={density} columnCount={columns.length} bare={bare} selectable={selectable} />;
+    if (variant === 'empty') return <DataTableState variant="empty" message={emptyText} sub={emptySubtext} action={stateAction} bare={bare} />;
+    if (variant === 'error') return <DataTableState variant="error" message={errorText} sub={errorSubtext} action={stateAction} bare={bare} />;
+    if (variant === 'no-results') return <DataTableState variant="no-results" message={noResultsText} sub={noResultsSubtext} action={stateAction} bare={bare} />;
     if (variant === 'mobile') return mobileBody;
     return null;
   })();
-
-  const desktopRows = rows.map((row, i) => {
-    const isExpanded = row.expanded === true && !!renderExpanded;
-    return (
-      <Fragment key={row.id ?? i}>
-        <DataRow
-          density={density}
-          state={row.state || 'default'}
-          selectable={selectable}
-          selected={row.selected}
-          cells={row.cells}
-          onSelectedChange={(checked) => onRowSelectedChange?.(row.id, checked)}
-          onClick={row.onClick}
-          data-testid={row.testId}
-          aria-expanded={renderExpanded ? isExpanded : undefined}
-        />
-        {isExpanded && (
-          <div
-            role="row"
-            data-row-expanded={row.id}
-            className={cn(
-              'border-b border-border',
-              'bg-secondary',
-              // Indent under the checkbox column so the panel aligns with
-              // the first content cell.
-              selectable ? 'pl-[44px]' : 'pl-[14px]',
-              'pr-[14px] py-3',
-            )}
-          >
-            {renderExpanded!(row)}
-          </div>
-        )}
-      </Fragment>
-    );
-  });
 
   return (
     <div
@@ -241,10 +113,9 @@ export function DataTable({
       // scan, so the loading skeleton is never scanned (crm load-a11y.spec).
       data-variant={variant}
       className={cn(
-        'rounded-xl overflow-hidden',
-        'border border-border',
-        'bg-card',
-        'shadow-[var(--card-shadow-rest)]',
+        bare
+          ? 'bg-transparent'
+          : 'rounded-xl overflow-hidden border border-border bg-card shadow-[var(--card-shadow-rest)]',
         className
       )}
     >
@@ -267,9 +138,19 @@ export function DataTable({
                 selectState={selectState}
                 onSelectAllChange={onSelectAllChange}
                 onSort={onSort}
+                surface={surface}
               />
             </div>
-            <div role="rowgroup">{desktopRows}</div>
+            <div role="rowgroup">
+              <DataTableRows
+                rows={rows}
+                density={density}
+                selectable={selectable}
+                surface={surface}
+                onRowSelectedChange={onRowSelectedChange}
+                renderExpanded={renderExpanded}
+              />
+            </div>
           </div>
           {mobileBody && (
             <div role="list" className="md:hidden">{mobileBody}</div>

@@ -61,13 +61,15 @@ export function StyleCard({ profile }: { profile: DiscProfile }) {
       {/* Watch-For is the report's negative note, so it takes terracotta —
           tint fill + hairline, with the label on the AA-safe --negative-text
           (10px) and the body on the ink token. Terracotta never carries the
-          body copy: it fails 4.5:1 raw and would flood the card. */}
+          body copy: it fails 4.5:1 raw and would flood the card. The urgency
+          is carried by that hue and the wording, not by the legacy ⚠ glyph —
+          no emoji anywhere in /profiler. */}
       <div className="mt-3 rounded-xl border border-destructive/30 bg-destructive/10 p-3">
         <div
           className="mb-1 uppercase text-[color:var(--negative-text)]"
           style={{ fontFamily: 'var(--font-sans)', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em' }}
         >
-          ⚠ Watch For — Act Immediately
+          Watch For — Act Immediately
         </div>
         <p className="m-0 text-[12.5px] leading-6 text-foreground">{profile.wf}</p>
       </div>

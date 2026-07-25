@@ -12,6 +12,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { ArrowLeft, Home } from 'lucide-react';
 import { Button, PageTitle } from '@/components/primitives/shell';
+import { PRODUCT_NAME } from '@/lib/product';
 
 const NotFound = () => {
   const location = useLocation();
@@ -115,7 +116,7 @@ const NotFound = () => {
         className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[11px]"
         style={{ color: 'var(--fg-dim)', fontFamily: 'var(--font-mono)' }}
       >
-        Insurance CRM · error 404
+        {PRODUCT_NAME} · error 404
       </div>
     </div>
   );

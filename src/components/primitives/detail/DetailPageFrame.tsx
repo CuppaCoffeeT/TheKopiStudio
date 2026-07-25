@@ -11,6 +11,11 @@
  * as the 2a Detail comp draws it ("Clients / Marcus Tan"). The `breadcrumb`
  * prop API is unchanged; no page needed editing.
  *
+ * The body is now the 2a DOSSIER: a `1.4fr / 1fr` grid of cream panels on the
+ * page cream, 22px gaps (PageShell owns the layout). Fill it with the
+ * `dossier/` vocabulary — DossierPanel · DossierStatGrid · DossierRampBar ·
+ * DossierKeyValueList · DossierLoadingPanel — rather than ad-hoc cards.
+ *
  * Pages pass FLAT props — no nested slot-rendering required. Same auth/theme
  * plumbing as the legacy `DashboardHeader` shim, so all 71+ pages inherit
  * chrome fixes without per-page edits.

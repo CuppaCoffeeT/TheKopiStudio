@@ -13,14 +13,14 @@
 | P1 — Brand token layer: navy/gold dark → Kopi cream/brown light | ✅ | 103 files repainted over 4 adversarial rounds (158→76→23→1). All 5 gates green |
 | P2 — AppSidebar + DashboardLayout mount | ✅ | 200px rail, nav from `useAuth().modules` (shared with ⌘K), data-driven "modules soon", card-cream ground for AA |
 | P3 — Frames drop the top masthead | ✅ | Bar deleted; identity/bell/ViewAs re-homed to sidebar footer; breadcrumb inline per comp |
-| P4 — Dashboard home → 2a Overview (launcher removed) | ⬜ | Parallel-safe after P3 |
-| P5 — List archetype → 2a | ⬜ | Parallel-safe after P3 |
-| P6 — Detail archetype → 2a dossier | ⬜ | Parallel-safe after P3 |
-| P7 — Uncovered screens + profiler wizard restyle | ⬜ | Parallel-safe after P3 |
-| P8 — Rebrand user-facing → "The Kopi Studio" | ⬜ | Parallel-safe after P1 (disjoint: 4 files) |
+| P4 — Dashboard home → 2a Overview (launcher removed) | ✅ | Launcher + ModuleSearch deleted; KpiIndexCard; hairline feed; loading/error states restored |
+| P5 — List archetype → 2a | ✅ | Kicker + serif title + inline count; search/CTA on title row; card wrapper removed |
+| P6 — Detail archetype → 2a dossier | ✅ | Two-column cream dossier; single brown ramp; serif-italic loading verb |
+| P7 — Uncovered screens + profiler wizard restyle | ✅ | Login/settings/portfolio derived + logged; wizard de-emojied; report keeps print contract |
+| P8 — Rebrand user-facing → "The Kopi Studio" | 🟨 | Parallel-safe after P1 (disjoint: 7 files). `PRODUCT_NAME` + SEO/ErrorState/NotFound/RouteError done; AppHeaderLogo · Login · index.html remain |
 | P9 — E2E repair, docs refresh, full gates | ⬜ | Last; depends on all |
 
-Current phase: P4–P7 · Blockers: none
+Current phase: P8 · Blockers: none
 
 ## 📋 Definition
 
@@ -203,12 +203,15 @@ For any file the rebuild touches, in order:
 
 ### P8 — Rebrand user-facing → "The Kopi Studio"  ·  *parallel-safe after P1*
 
-- `primitives/shell/SEO.tsx:26` browser title · `primitives/shell/AppHeaderLogo.tsx` wordmark (now rendered by `AppSidebar`) · `pages/Login.tsx:49` sign-in title · `index.html` title/meta.
+- Product name is one exported constant: `src/lib/product.ts` → `PRODUCT_NAME`. Every surface that prints it to a user reads that constant; no hand-typed brand strings.
+- Consumers: `primitives/shell/SEO.tsx` browser title · `primitives/shell/ErrorState.tsx` + `pages/NotFound.tsx` + `pages/RouteError.tsx` error footers · `primitives/shell/AppHeaderLogo.tsx` wordmark (now rendered by `AppSidebar`) · `pages/Login.tsx:49` sign-in title · `index.html` title/meta.
 - Wordmark treatment: Instrument Serif, brown italic second word — **The Kopi *Studio***.
 - Internal package name stays `prospect-profiler`; this is a user-facing rename only.
 
-**Deliverables**: 4 files; zero "Insurance CRM" strings in user-facing copy.
-**Verify**: `grep -rn "Insurance CRM" src` returns only the `finance.ts` provenance comment.
+**Scope correction (2026-07-25)**: originally written as 4 files, but the error footers in `ErrorState` / `NotFound` / `RouteError` also printed "Insurance CRM", so the completion grep below could never pass at 4. Widened to 7. The constant plus its `SEO` / `ErrorState` / `NotFound` / `RouteError` consumers landed early with the states fix batch; `AppHeaderLogo`, `Login.tsx` and `index.html` remain.
+
+**Deliverables**: 7 files + `src/lib/product.ts`; zero "Insurance CRM" strings in user-facing copy.
+**Verify**: `grep -rn "Insurance CRM" src` returns only provenance references — the `finance.ts` header comment, the `finance-golden-vectors.json` capture note, the `AppHeaderLogo.tsx` history comment and the `features/crm/CONTEXT.md` module description. Zero hits in rendered copy.
 
 ### P9 — E2E repair, docs refresh, full gates  ·  *depends on all*
 
@@ -259,6 +262,7 @@ For any file the rebuild touches, in order:
 | 2026-07-25 | P1 | ✅ Token layer inverted to Kopi cream/brown light. Handoff + `KOPI_2A_SPEC.md` staged; `:root` rewritten; Instrument Serif + IBM Plex Sans loaded; `ThemeProvider` pinned `'light'`. **103 files** repainted across 4 adversarial rounds (158→76→23→1 findings), 33 agents. Notable catches: a `paths:`-scoped `.claude/rules/dark-mode.md` that auto-loaded into every agent and declared the app permanently navy/gold (replaced by `light-theme.md`, history preserved); a surviving navy panel in `ChartTooltip` painting dark ink on dark; gold hidden as `bg-[rgb(201_168_76_/_0.14)]`; the ⌘K palette left with no visible keyboard-selection indicator (1.045:1); the impersonation banner's account email at 3.24:1; and a cream wash on the report hero that *lightened* the ground on the client-facing PDF (3.42:1). Four files trimmed to clear the LOC ratchet (comment inflation only). Gates: tsc 0 · lint 0 err · drift 0 · build ✓ · LOC 37≤38. Visual smoke: 9/9 routes render on cream, 0 console errors. |
 | 2026-07-25 | P2 | ✅ `AppSidebar` built + mounted in `DashboardLayout`. Nav derives from `useAuth().modules` via the same `groupModulesByCategory` pair `GlobalCommandPalette` uses, so the rail and ⌘K cannot drift; zero role strings. "+ N modules soon" is data-driven (active modules minus granted; renders nothing at zero) — verified advisor→1, manager/super_admin→hidden. Deviation accepted: rail ships **card** cream not page cream — the comp's own sidebar div is `#faf6ee`, and idle `--fg-muted` labels measure 4.12:1 on page cream (fails AA) vs 4.72:1 on card cream. Responsive `hidden lg:flex` with the existing mobile bar below 1024px; `print:hidden` + `.no-print` preserve the report contract. Gates: tsc 0 · lint 0 err · drift 0 · build ✓ · LOC 37≤38. |
 | 2026-07-25 | P3 | ✅ Horizontal masthead retired — the rail is the whole desktop chrome. `AppHeader` + `AppHeaderDesktopBar` deleted (newly dead); `useDashboardChrome` now returns prop bags, not JSX. New `AppSidebarFooter` re-homes the existing `AppHeaderUserMenu` / `NotificationsBell` / `ViewAsSelector` (re-homed, not rebuilt). Breadcrumb became content per the Detail comp; all breadcrumb prop APIs unchanged, so zero page edits were needed. **Two pre-existing bugs found and fixed:** the mobile bar was `md:hidden` against the rail's `lg:flex`, leaving 768–1023px with neither nav; and its search button dispatched `open-global-search`, an event with zero listeners repo-wide — repointed to `open-command-palette`, the only touch route to module nav below `lg`. Wordmark unified (mobile bar still said "Insurance CRM"). knip improved 311→309 unused exports. Gates: tsc 0 · lint 0 err · drift 0 · build ✓ · LOC 36≤38. |
+| 2026-07-25 | P4–P7 | ✅ Archetypes rebuilt in 2a language — 5 build agents + 2 adversarial reviewers, then a 4-agent fix round clearing 14 findings. Dashboard: launcher grid + `ModuleSearch` deleted, new `KpiIndexCard` with brown index numerals, hairline "Latest additions" feed. List: kicker + serif title + inline count, search/CTA on the title row, card wrapper removed. Detail: two-column cream dossier, single brown ramp, serif-italic loading verb. Uncovered screens (login/settings/portfolio) derived from 2a and logged as deviations. **Regression caught and reverted:** the dashboard rebuild dropped the KPI loading/error states — a failed query rendered identically to a pending one, re-breaking a bug the 2026-07-14 critic pass had already fixed. **PRD correction:** the claim that 🎯 was "the only saturated off-palette mark" was false — the profiler *result* screens carried four more emoji plus DISC hex tints. Ruling: all emoji removed flow-wide; DISC quadrant hues KEPT as a documented exception because they encode the profiler's data output, softened to pass AA on cream. Five docs advertising the deleted launcher primitives as live were marked retired. Gates: tsc 0 · lint 0 err · drift 0 · build ✓ · LOC pass. 9/9 routes render, 0 console errors. |
 
 ## 📚 Related Documentation
 

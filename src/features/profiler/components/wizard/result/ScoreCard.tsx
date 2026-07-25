@@ -28,7 +28,9 @@ export function ScoreCard({ profile }: { profile: ProfileResult }) {
           style={{ fontFamily: 'var(--font-sans)', fontSize: 10.5, fontWeight: 600 }}
           data-testid="result-occupation-chip"
         >
-          👔 Occupation factored in: {profile.occUsed}
+          {/* Plain label — the legacy 👔 that prefixed this chip is gone; no
+              emoji anywhere in /profiler. */}
+          Occupation factored in: {profile.occUsed}
         </span>
       )}
       <Eyebrow>

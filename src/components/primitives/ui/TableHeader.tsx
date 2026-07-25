@@ -12,6 +12,10 @@
  * adopter mounts the table on, and DataTable is used on BOTH the page cream
  * (dashboard) and the card cream (list pages). --fg-dim clears AA on either
  * (6.40:1 / 7.34:1); --fg-muted fails on the page at 4.12:1.
+ *
+ * `surface="bare"` (2a list archetype): flush gutters and NO bottom rule — the
+ * bare DataRow carries its hairline as `border-top`, so a header rule here
+ * would double it (KOPI_2A_SPEC → "Hairlines do the layout work").
  */
 
 import { cn } from '@/lib/utils';
@@ -40,6 +44,8 @@ export interface TableHeaderProps {
   selectState?: 'none' | 'some' | 'all';
   onSelectAllChange?: (checked: boolean) => void;
   onSort?: (key: string) => void;
+  /** Defaults to `card`. `bare` drops the gutters + the bottom rule. */
+  surface?: 'card' | 'bare';
   className?: string;
 }
 
@@ -49,14 +55,17 @@ export function TableHeader({
   selectState = 'none',
   onSelectAllChange,
   onSort,
+  surface = 'card',
   className,
 }: TableHeaderProps) {
+  const bare = surface === 'bare';
   return (
     <div
       className={cn(
-        'flex items-stretch h-10 px-[14px]',
+        'flex items-stretch h-10',
+        bare ? 'px-0' : 'px-[14px]',
         'bg-transparent',
-        'border-b border-border',
+        bare ? 'border-b-0' : 'border-b border-border',
         'text-[10.5px] font-semibold uppercase tracking-[0.1em]',
         'text-[color:var(--fg-dim)]',
         className
@@ -72,7 +81,7 @@ export function TableHeader({
           />
         </div>
       )}
-      {columns.map((col) => {
+      {columns.map((col, i) => {
         const isSorted = !!col.sortDir;
         const grow = col.grow ?? (col.width ? 0 : 1);
         const allowShrink = col.minWidth !== undefined || !col.width;
@@ -87,6 +96,9 @@ export function TableHeader({
         const showLabel = !!col.label;
         const baseClasses = cn(
           'inline-flex items-center gap-[6px] px-2',
+          // Bare headers run flush to the page gutter, matching the bare rows.
+          bare && i === 0 && !selectable && 'pl-0',
+          bare && i === columns.length - 1 && 'pr-0',
           col.align === 'right' ? 'justify-end' : 'justify-start',
           isSorted
             ? 'text-foreground'
