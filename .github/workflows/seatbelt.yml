@@ -88,7 +88,17 @@ jobs:
           TEST_ADVISOR_PASSWORD: ${{ secrets.TEST_ADVISOR_PASSWORD }}
           TEST_MANAGER_PASSWORD: ${{ secrets.TEST_MANAGER_PASSWORD }}
           TEST_SUPER_ADMIN_PASSWORD: ${{ secrets.TEST_SUPER_ADMIN_PASSWORD }}
-        run: npx playwright test --grep @p0 --project=${{ matrix.project }}
+        # --config is REQUIRED. The default playwright.config.ts defines the two
+        # browser projects but no `setup` project, so nothing mints the per-role
+        # sessions in tests/.auth/. Only playwright.parallel.config.ts declares
+        # setup (testMatch auth.setup.ts) + dependencies: ['setup'] + storageState.
+        # Without it every spec doing test.use({ storageState: authFileFor(...) })
+        # dies with ENOENT tests/.auth/advisor.json — 32 failures, 4 passes.
+        run: >-
+          npx playwright test
+          --config=playwright.parallel.config.ts
+          --grep @p0
+          --project=${{ matrix.project }}
       - name: Upload Playwright report on failure
         if: failure()
         uses: actions/upload-artifact@v4

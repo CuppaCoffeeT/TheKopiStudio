@@ -1,5 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import 'dotenv/config';
+import { authFileFor } from './tests/fixtures/roleAuth';
 
 // E2E_PORT lets parallel worktrees/agent runs use a non-default dev-server port
 // (8080 may be held by another project's dev server). Default unchanged.
@@ -54,14 +55,29 @@ export default defineConfig({
     launchOptions: {},
   },
 
+  // The `setup` project mints tests/.auth/<role>.json once per invocation; the
+  // browser projects depend on it. This wiring lives here — not only in
+  // playwright.parallel.config.ts — so a bare `npx playwright test` works.
+  // Before 2026-07-27 it existed only in the parallel config, so any run that
+  // omitted `--config` (including CI) produced no auth files and every spec
+  // using `test.use({ storageState: authFileFor(...) })` failed with
+  // ENOENT tests/.auth/advisor.json. Green locally, red in CI, same command.
+  // The parallel config replaces `projects` wholesale, so it is unaffected.
   projects: [
     {
+      name: 'setup',
+      testDir: './tests',
+      testMatch: /auth\.setup\.ts/,
+    },
+    {
       name: 'chromium-desktop',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], storageState: authFileFor('super_admin') },
+      dependencies: ['setup'],
     },
     {
       name: 'mobile-safari',
-      use: { ...devices['iPhone 13'] },
+      use: { ...devices['iPhone 13'], storageState: authFileFor('super_admin') },
+      dependencies: ['setup'],
     },
   ],
 
