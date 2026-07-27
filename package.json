@@ -161,5 +161,8 @@
       "eslint --fix --quiet"
     ],
     "*.{js,jsx,json,md,yml,yaml}": []
+  },
+  "engines": {
+    "node": ">=24"
   }
 }
