@@ -29,7 +29,7 @@ mkdir -p src/features/$M/{api,components,hooks,pages,lib}
 #   src/features/$M/types.ts     — flat file, placeholder export (re-export generated DB types where possible)
 #   src/features/$M/CONTEXT.md   — feature memory + nav (house CONTEXT.md template, ≤1,600c)
 ```
-`pages/` gets one stub page that renders a `ListPageFrame`/`DetailPageFrame`/`DashboardHeader` per the intended archetype (reuse existing shared components — `primitives/`, `ui/`, `shared/`; a new design system from Claude Design will replace the old primitive mandates). `api/` is present only where the feature owns data; the others appear as needed but never under different names.
+`pages/` gets one stub page that renders `ListPageFrame` (ui) / `DetailPageFrame` (detail) / `AppHeaderShell` (shell — tool, dashboard, settings) per the intended archetype. Reuse existing shared components (`primitives/`, `shared/`) and paint them with the Kopi Studio light tokens (`.claude/rules/light-theme.md`). **Never scaffold `DashboardHeader`, `AppHeader` or `AppHeaderDesktopBar`** — all deleted 2026-07-25 (`docs/99-refactor/_system/DEPRECATIONS.md`); desktop chrome is the `AppSidebar` rail, mounted once by `DashboardLayout`, and it picks the new module up automatically from `useAuth().modules`. `api/` is present only where the feature owns data; the others appear as needed but never under different names.
 
 **Structure rules (hard — `no-stray-domain-components` fails CI otherwise):**
 - `types.ts` is a **flat file**, never a `types/` directory.

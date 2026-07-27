@@ -1,7 +1,7 @@
 # DESIGN_CATALOG — Primitive inventory
 
 **Created**: 2026-04-28 SGT (extracted from `DESIGN_CATALOG.md` to clear 6.9× budget overflow)
-**Last Updated**: 2026-07-25 SGT — section H: `ModuleCard` / `CategoryHeader` / `ModuleSearch` marked RETIRED (files deleted with the launcher grid, Kopi Studio 2a P4); `KpiIndexCard` row added
+**Last Updated**: 2026-07-27 SGT — section A: `<AppHeader>` marked RETIRED (masthead deleted, Kopi Studio 2a P3); `PageTitle` / `PageDescription` / `ListPageFrame` rows re-pointed off the deleted `DashboardHeader` shim · 2026-07-25 SGT — section H: `ModuleCard` / `CategoryHeader` / `ModuleSearch` marked RETIRED (files deleted with the launcher grid, Kopi Studio 2a P4); `KpiIndexCard` row added
 **Status**: 🟢 Production
 **Priority**: 🔴 Critical
 
@@ -17,9 +17,11 @@ Per-primitive Design · Impl · Adopted matrix, organised by **12 design-intent 
 
 ### A. Shells (7) — page-level composition
 
+> ⚠️ **The horizontal masthead was deleted 2026-07-25** (Kopi Studio 2a redesign, P3 — the 200px `AppSidebar` rail is the whole desktop chrome, and its footer owns account / bell / view-as / sign-out). `<AppHeader>` and `<AppHeaderDesktopBar>` went with it, as did the `DashboardHeader` shim that fanned the masthead out to ~71 pages: **those .tsx files no longer exist — do not import them.** The row below is kept struck-through as history; see [DEPRECATIONS.md](./DEPRECATIONS.md). Replacements: `shell/AppSidebar` + `shell/AppSidebarFooter` (≥ lg) · `shell/AppHeaderMobileBar` (< lg) · `shell/AppHeaderShell` (the page-shell wrapper that kept the name but renders no masthead).
+
 | Primitive | Purpose | Unblocked by session | Design | Impl | Adopted |
 |---|---|---|---|---|---|
-| `<AppHeader>` | Glass **sticky top-0** header — **segmented breadcrumb** (Workspace / Projects / Project #2154 · clickable, replaces back-button) · ⌘K launcher · notification bell · **view-as-user via `viewAsSlot` prop** (caller passes existing `ImpersonationSelector` — reuse, not reinvent) · **user menu** (avatar + name → email · role · account · shortcuts · sign-out) · **impersonation banner** (auto-renders below when active) · theme-toggle props (`themeMode`/`onThemeChange`) retained but unwired since 2026-07-14 permanent-dark lock (LOCKED_PICKS.md reversal) · responsive 56h desktop / 52h mobile via Tailwind `md:` breakpoint | S-shell ✅ | 🟢 | 🟢 at `src/components/primitives/shell/AppHeader.tsx` | **72/80 effective (1 direct: /dashboard ✅ · 71 indirect via `DashboardHeader` shim 2026-04-20 · 8 unaccounted incl. /login + debug pages)** |
+| ~~`<AppHeader>`~~ | ⚠️ **RETIRED 2026-07-25** — file deleted with the top masthead (Kopi 2a P3). Was: glass **sticky top-0** header — **segmented breadcrumb** (Workspace / Projects / Project #2154 · clickable, replaces back-button) · ⌘K launcher · notification bell · **view-as-user via `viewAsSlot` prop** · **user menu** (avatar + name → email · role · account · shortcuts · sign-out) · **impersonation banner** (auto-renders below when active) · theme-toggle props (`themeMode`/`onThemeChange`) retained but unwired since the 2026-07-14 permanent-dark lock · responsive 56h desktop / 52h mobile. Replaced by `AppSidebar` + `AppSidebarFooter` (≥ lg) and `AppHeaderMobileBar` (< lg); breadcrumb became page content inside `AppHeaderShell`. | S-shell ✅ | 🟢 | ⚫ deleted | 0 (was 72/80 effective — 1 direct + 71 indirect via the `DashboardHeader` shim, itself deleted the same day) |
 | `<PageShell>` | Detail-page hero + tabs + optional side-rail | S4 Detail | 🔴 | 🔴 | 0/12 |
 | `<DataTable>` | List/Table archetype · TanStack + Motion · server-paginated | S1 List/Table ✅ | 🟢 | 🟡 refine | 1/26 (/staffmanagement ref) |
 | `<LineItemsEditor>` ← NEW | Editable in-place line items · drag reorder · in-built dropdowns · **borderless edit-in-line** (user pick) · reorganise + clear-lines actions | S5 LineItems | 🔴 | 🔴 | 0/3 (quotation · invoice · progress-claim detail) |
@@ -48,7 +50,7 @@ Per-primitive Design · Impl · Adopted matrix, organised by **12 design-intent 
 
 | Primitive | Purpose | Unblocked by session | Design | Impl | Adopted |
 |---|---|---|---|---|---|
-| `<Toaster>` / `toast()` | Sonner wrapper · glass bg · variant border-left | S2 ✅ 2026-04-19 | 🟢 | 🟢 at `src/components/primitives/overlays/Toaster.tsx` · **root-mounted in [App.tsx](../../src/App.tsx) 2026-04-19** · `ui/sonner` is a shim | **22/22 (ALL — single root mount)** |
+| `<Toaster>` / `toast()` | Sonner wrapper · glass bg · variant border-left | S2 ✅ 2026-04-19 | 🟢 | 🟢 at `src/components/primitives/overlays/Toaster.tsx` · **root-mounted in [App.tsx](../../../src/App.tsx) 2026-04-19** · `ui/sonner` is a shim | **22/22 (ALL — single root mount)** |
 | `<Alert>` | In-page banner · info/warning/error/success variants | S2 ✅ | 🟢 | 🟡 at `src/components/primitives/overlays/Alert.tsx` | 0/? |
 | `<Modal>` | Dialog · glass backdrop · Geist Pixel h1 · destructive variant · 5 sizes (sm 340 · md 460 · lg 520 · xl 560 · xxl 800 added 2026-04-23 for /payslip W09) | S2 ✅ | 🟢 | 🟢 at `src/components/primitives/overlays/Modal.tsx` | EditPayslipModal (xxl) · AddWorkersModal (xl) · EmailTab resend confirm (lg) — /payslip W09 |
 | `<Drawer>` | vaul bottom-sheet · handle pulse · glass backdrop | S2 ✅ (visual) · S6 Form (row spec) | 🟢 | 🟡 at `src/components/primitives/overlays/Drawer.tsx` | 0 |
@@ -153,7 +155,7 @@ Promoted from `2026-04-20-nl73fwyg/DataTablePrimitives.html`. Live at `src/compo
 | `<FilterPill>` | default/active/focus/with-count · lives in shell/ (cross-cutting) | 🟢 | 🟢 at `shell/FilterPill.tsx` | 0/many |
 | `<StatusTabs>` ← NEW | Underlined segment tabs w/ count badges (All 487 · Drafts 24 · Sent 186) · default/warn/alert tones · a11y `role=tablist` | 🟢 (DataTable.jsx#L450) | 🟢 at `ui/StatusTabs.tsx` | 0/88 list pages |
 | `<FilterDropdown>` ← NEW | Filter-popover trigger "Status · 2 selected ▾" · composes `<Popover>` · red count badge · isDate · calendar icon | 🟢 (ListAtoms.jsx#L220 PopoverButton) | 🟢 at `shell/FilterDropdown.tsx` | 0/88 |
-| `<ListPageFrame>` ← NEW | Lego-assembly list archetype: AppHeader + title-row + StatusTabs + FilterBar + DataTable + Pagination + FloatingCTA | 🟢 (DataTable.jsx#L388 PageChrome) | 🟢 at `ui/ListPageFrame.tsx` (192 LOC — over 150 target, composition shell) | 0/88 (target: CompanyList + 40+ list pages) |
+| `<ListPageFrame>` | Lego-assembly list archetype. **Since 2026-07-25 (Kopi 2a P5)**: `AppHeaderMobileBar` (< lg only — the masthead is gone) + kicker + serif title-row with inline count, **search + CTA on the title row** + StatusTabs + FilterBar (filters only) + bare DataTable (no card wrapper) + Pagination + FloatingCTA | 🟢 (DataTable.jsx#L388 PageChrome) | 🟢 at `ui/ListPageFrame.tsx` | live on the CRM + profiler list pages |
 
 ### K. Charts (8) — S3b Chart family (NEW · 2026-04-20 eod+2)
 
@@ -170,11 +172,11 @@ Promoted from `2026-04-20-nl73fwyg/ChartPrimitives.html`. Live at `src/component
 | `<ChartError>` | 503-style inline message + Retry button w/ AlertCircle icon | 🟢 | 🟢 at `charts/ChartError.tsx` | 0/many |
 | `<LegendRow>` | Color dot + label + optional value · horizontal wrap | 🟢 | 🟢 at `charts/LegendRow.tsx` | 0/many |
 
-**Bonus (2026-04-20 eod+2)**: AppHeader v2 shipped per handoff `FmPJtwZw` — pixel lockup (JL Logo + `AppBase` in Geist Pixel) · Bell-first right cluster · 6px gap · glass 72/70 opacity · mobile back-chevron. Patched in-place at `shell/AppHeader.tsx`.
+**Bonus (2026-04-20 eod+2 — ⛔ historical, the component was deleted 2026-07-25)**: AppHeader v2 shipped per handoff `FmPJtwZw` — pixel lockup (JL Logo + `AppBase` in Geist Pixel) · Bell-first right cluster · 6px gap · glass 72/70 opacity · mobile back-chevron. Patched in-place at `shell/AppHeader.tsx`. The identity lockup now lives in `shell/Wordmark.tsx` ("The Kopi Studio", Instrument Serif) inside the sidebar rail.
 
 ### L. Email Inbox (14) — S7 EmailInbox family (NEW · 2026-04-23)
 
-Promoted from `2026-04-23-rNq9eFQw/component-email-inbox.html`. Live across `shell/` · `ui/` · `detail/` · `form/`. First adopter: `/emailinbox` (W09 #15). See [EMAIL_INBOX_PRIMITIVE_LIFT_PLAN.md](../../05-implementation/active/EMAIL_INBOX_PRIMITIVE_LIFT_PLAN.md) for rollout + tone-palette single-source.
+Promoted from `2026-04-23-rNq9eFQw/component-email-inbox.html`. Live across `shell/` · `ui/` · `detail/` · `form/`. First adopter: `/emailinbox` (W09 #15). (The rollout plan `05-implementation/active/EMAIL_INBOX_PRIMITIVE_LIFT_PLAN.md` was an AppBase-template doc and is not in this repo; `/emailinbox` is not a route here either.)
 
 | Primitive | Purpose | Group | Design | Impl | Adopted |
 |---|---|---|---|---|---|
@@ -201,8 +203,8 @@ Earlier W09 sessions promoted these 11 primitives (mostly thin shadcn retrofits 
 |---|---|---|---|---|---|
 | `<Badge>` (status flip) | Neutral status chip — shadcn retrofit promoted to primitive | shell | 🟡 (no dedicated spec; uses tokens from Section B) | 🟢 at `shell/Badge.tsx` | many (replaces `ui/badge` callsites) |
 | `<Card>` | shadcn retrofit — slate borders + tokens · CardHeader/CardTitle/CardContent sub-exports | shell | 🟡 | 🟢 at `shell/Card.tsx` | many |
-| `<PageDescription>` | Slot used by ListPageFrame + DashboardHeader for sub-title under PageTitle | shell | 🟡 | 🟢 at `shell/PageDescription.tsx` | indirect via ListPageFrame |
-| `<PageTitle>` | Geist Pixel hero title slot used by ListPageFrame + DashboardHeader | shell | 🟡 | 🟢 at `shell/PageTitle.tsx` | indirect via ListPageFrame |
+| `<PageDescription>` | Slot used by `ListPageFrame` + `AppHeaderShell` for the sub-title under PageTitle (was: + the deleted `DashboardHeader` shim) | shell | 🟡 | 🟢 at `shell/PageDescription.tsx` | indirect via ListPageFrame / AppHeaderShell |
+| `<PageTitle>` | Instrument Serif hero title slot used by `ListPageFrame` + `AppHeaderShell` (was: Geist Pixel, + the deleted `DashboardHeader` shim) | shell | 🟡 | 🟢 at `shell/PageTitle.tsx` | indirect via ListPageFrame / AppHeaderShell |
 | `<ScrollArea>` | shadcn ScrollArea retrofit · used by Drawer + DropdownMenu + tab content | shell | 🟡 | 🟢 at `shell/ScrollArea.tsx` | many (transitive) |
 | `<Collapsible>` | Radix Collapsible retrofit · used by HistoryTrailList + AIPanel | overlays | 🟡 | 🟢 at `overlays/Collapsible.tsx` | indirect (HistoryTrailList) |
 | `<DialogCompat>` | Radix Dialog primitives re-exported under primitives/ barrel — shim for transitional callsites mid-migration | overlays | 🟡 (compat shim) | 🟢 at `overlays/DialogCompat.tsx` | shim only — prefer `<Modal>` |
@@ -234,5 +236,5 @@ Promoted from `2026-04-26-LWwN0H4g/component-whatsapp-thread-panel.html`. Compos
 
 - [DESIGN_CATALOG.md](./DESIGN_CATALOG.md) — router (sessions · W09 adoption · approval state)
 - [DESIGN_CATALOG_MATRIX.md](./DESIGN_CATALOG_MATRIX.md) — module × primitive matrix
-- [src/components/primitives/CONTEXT.md](../../src/components/primitives/CONTEXT.md) — primitives folder router (by code group)
+- [src/components/primitives/CONTEXT.md](../../../src/components/primitives/CONTEXT.md) — primitives folder router (by code group · ⚠️ last regenerated 2026-05-30, pre-Kopi)
 - [DESIGN_REUSE_PRINCIPLES.md](./DESIGN_REUSE_PRINCIPLES.md) — 11 hard rules

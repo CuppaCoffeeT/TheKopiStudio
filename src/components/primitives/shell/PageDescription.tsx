@@ -2,7 +2,7 @@
  * PageDescription — the locked sub-text primitive paired with `<PageTitle>`.
  *
  * Every archetype frame that renders a description paragraph under the page
- * title (ListPageFrame · DashboardHeader · future FORM/SETTINGS frames) MUST
+ * title (ListPageFrame · AppHeaderShell · future FORM/SETTINGS frames) MUST
  * render it through this component. Single source of truth for description
  * typography — change here, propagates everywhere.
  *

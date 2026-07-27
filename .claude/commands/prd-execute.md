@@ -83,7 +83,7 @@ Derive an explicit **sub-phased** plan from the PRD phases (hold it in head / a 
 |---|---|
 | DB + RLS | migration (tables/enums/FKs) · RLS policies (per-role) · types regen |
 | api/ + hooks | one service/concern (paginated `.range()`) · one hook/query+mutation (queryKeys + invalidation) |
-| UI | each page (archetype + shared components) · each component · mobile · dark-mode · a11y |
+| UI | each page (archetype + shared components) · each component · mobile · light-theme surfaces (`.claude/rules/light-theme.md`) · a11y |
 | Route + registration | App.tsx lazy route · `modules`+`role_modules` rows · module-access wiring |
 | E2E | one spec/story · re-run per role · load+a11y per page (Stage 4) |
 

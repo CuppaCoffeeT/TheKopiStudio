@@ -90,7 +90,7 @@ Runs axe-core against the module's `@p0` Playwright specs. Zero critical + serio
 3. Run: `npx playwright test --grep @p0 tests/workflows/**/*<slug>*.spec.ts`.
 4. Any `critical` or `serious` violation → **HARD FAIL**. `moderate` → warn. Never silence with `axe.disableRules()` — fix at source.
 
-Common culprits: `color-contrast` (zinc-100 hover on zinc-100 bg), `label` (bare `<input>` without `<Field>` wrapper), `button-name` (`<IconButton>` missing `aria-label`), `focus-visible` (missing red-7 ring), `region` (landmark overridden — use `<DetailPageFrame>`).
+Common culprits: `color-contrast` (raw `#5A7A5E` / `#D97551` used as text under 18px — swap to `var(--sage-text)` / `var(--negative-text)`; or a hover tint that matches its resting cream ground), `label` (bare `<input>` without `<Field>` wrapper), `button-name` (`<IconButton>` missing `aria-label`), `focus-visible` (missing brown `--ring`), `region` (landmark overridden — use `<DetailPageFrame>`).
 
 ## Gate 11 — Mobile (mobile-safari)
 
@@ -99,7 +99,7 @@ Detects mobile-specific code paths and confirms Playwright coverage on the `mobi
 1. If archetype is **list** (has `DataTable`) → mobile spec is **required unconditionally** (DataTable renders `MobileListCard` at `< md`).
 2. Otherwise grep for mobile primitives:
    ```bash
-   grep -rnE "MobileListCard|<DrawerRoot|FloatingCTA|md:hidden|hidden md:|PSMobileActionBar|window\.history\.back" src/features/<slug>/
+   grep -rnE "MobileListCard|<DrawerRoot|FloatingCTA|md:hidden|hidden md:|mobileActionBar|window\.history\.back" src/features/<slug>/
    ```
 3. If zero hits and not a list → mobile spec optional; report and continue.
 4. If mobile spec required, verify coverage: `grep -l "@mobile\|mobile-safari" tests/workflows/**/*<slug>*.spec.ts` — missing = **HARD FAIL**.
@@ -122,6 +122,6 @@ A per-gate scorecard table (gate · ✅/❌ · evidence/file:line) covering all 
 - `docs/06-operations/MODULE_COMPLIANCE_CHECKLIST.md` (authority doc)
 - `docs/01-system-architecture/canonical-page-patterns/CANONICAL_FEATURE_FOLDER.md` — the folder shape the Folder-structure gate asserts
 - `.dependency-cruiser.cjs` — `no-stray-domain-components` / `no-pages-to-features` / `no-pages-import-outside-pages` (severity `error`)
-- `.claude/rules/` — query-compliance · rls-policy · timezone · toast-system · mobile-web · dark-mode · react-query
+- `.claude/rules/` — query-compliance (9.4) · module-access (9.2) · timezone (9.3) · toast-system (9.1) · url-standards (9.5) · light-theme (9.6) · mobile-web (9.7) · rls-policy (9.8) · react-query (Other hygiene). `light-theme.md` replaced the retired `dark-mode.md` on 2026-07-25 — the app is light-pinned Kopi Studio cream/brown.
 - `write-workflow-test.md` — new specs should include `injectAxe`/`checkA11y` block + `@mobile` coverage by default
 - `playwright.config.ts` — `mobile-safari` project definition (iPhone 13)

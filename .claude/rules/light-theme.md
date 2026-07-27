@@ -2,10 +2,21 @@
 paths:
   - 'src/**/*.tsx'
   - 'src/**/*.ts'
-  - 'src/index.css'
+  - 'src/**/*.css'
 ---
 
 # Rule: Light Theme — The Kopi Studio (MANDATORY)
+
+> **`src/**/*.css` is deliberate, not a typo.** It covers `src/index.css` **and** the two palette-bearing
+> feature stylesheets — `src/features/crm/lib/report-print.css` and `src/features/profiler/lib/print.css`
+> — which hardcode literal Kopi hexes (no `var(--…)`, on purpose, so a future token shuffle can't silently
+> repaint a client-facing PDF). `report-print.css` shipped a 3.42:1 contrast failure precisely because this
+> rule did not auto-load into it. Do not narrow this glob back to `src/index.css`.
+>
+> **Length exemption (deliberate).** `.claude/CONTEXT.md` and `.claude/rules/CONTEXT.md` set an ≤80-line
+> target for rule files. This one runs longer and is exempt: splitting it would let an agent load the surface
+> ladder without the AA text variants (or vice versa) — the exact half-context that produced the failures in
+> the Historical block. The overflow is the preserved history section, which must never be deleted.
 
 ## Summary
 
@@ -51,6 +62,8 @@ Raw brand hexes are tuned as **fills**; as small type they fail 4.5:1. Any text 
 | terracotta `#D97551` (2.57 / 2.95 — FAILS) | `var(--negative-text)` | `#AB4925` |
 
 Raw hexes stay correct for fills, borders, icons, chart marks and display type ≥ 18px. Status-pill text is the documented exception — pills carry their own tuned pairs (see KOPI_2A_SPEC.md → "Status pills"); do not substitute the page-tuned variants there.
+
+**The variants are ground-specific.** Each is calibrated for the two flat cream grounds. On a tint of its own hue it can fall back under the gate, so two deeper siblings exist — use them and don't re-derive: `var(--brown-text-on-wash)` `#6D5233` for brown text on a brown wash (`bg-accent/10`–`/15`), and `var(--negative-text-on-tint)` `#8F3D1F` for terracotta text on the error tint `#FAE0D6` (`--red-soft`), where `--negative-text` measures only 4.499.
 
 ### Typography
 

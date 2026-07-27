@@ -1,6 +1,8 @@
 # /design-import — Stage a Claude Design handoff, then promote per-file
 
-**Two modes**: STAGE (default) lands the bundle in `docs/.../export/` for review. PROMOTE applies the mapped Edit for ONE file into `src/`. Never wholesale-copy into `src/`.
+**Two modes**: STAGE (default) lands the bundle under `docs/05-implementation/design-handoffs/` for review. PROMOTE applies the mapped Edit for ONE file into `src/`. Never wholesale-copy into `src/`.
+
+> **Staging root moved.** Handoffs used to stage under `docs/99-refactor/_system/design/handoffs/` alongside a `/design-lab/handoffs` viewer route. **That tree, that route and its Vite `docs-assets` plugin were all deleted** — see `docs/99-refactor/_system/UNIVERSAL_COMPONENTS.md` ("these folders are no longer in the repo"). The live, registered location is `docs/05-implementation/design-handoffs/` (`docs/05-implementation/CONTEXT.md` → "Design handoffs"; `docs/DOCUMENTATION_INDEX.md` → "Design handoffs (Layer 4)"). Do not recreate the `99-refactor` tree. Older docs that still name it are dated program history.
 
 ## Invocation
 
@@ -10,7 +12,7 @@
 ```
 
 - URL form: `https://api.anthropic.com/v1/design/h/<id>`
-- Staged path form: `docs/99-refactor/_system/design/handoffs/<YYYY-MM-DD>-<short-hash>/...`
+- Staged path form: `docs/05-implementation/design-handoffs/<YYYY-MM-DD>-<short-hash>/...`
 
 ### Always ask for the latest URL before fetching
 
@@ -38,7 +40,7 @@ Every Claude Design handoff URL returns the **full design system snapshot** — 
 Always:
 
 ```
-docs/99-refactor/_system/design/handoffs/<YYYY-MM-DD>-<short-hash>/
+docs/05-implementation/design-handoffs/<YYYY-MM-DD>-<short-hash>/
 ```
 
 - `<YYYY-MM-DD>` = today SGT
@@ -53,7 +55,7 @@ Do NOT ask about session — the bundle is full-system, not session-scoped.
 
 ### 4. Compute diff vs previous snapshot
 
-Find the most recent prior snapshot under `docs/99-refactor/_system/design/handoffs/` (by folder name). If one exists, compute per-file diff:
+Find the most recent prior snapshot under `docs/05-implementation/design-handoffs/` (by folder name). If one exists, compute per-file diff:
 - `new` — file exists in this snapshot, not previous
 - `changed` — file exists in both, bytes differ
 - `unchanged` — file exists in both, bytes identical
@@ -93,7 +95,7 @@ The 8 groups below mirror Claude Design's own project-page layout. Diff vs previ
 |---|---|---|
 | `project/preview/archetype-*.html` · `project/ui_kits/appbase/*.html` | `ui-kit` | Archetype showcases — Dashboard, Data table, Overlays, Session shell, Heavyweight Detail, etc. |
 | `project/preview/type-*.html` | `type` | Body & UI · Body & mono · Families · Headings · Pixel wordmark |
-| `project/preview/color-*.html` | `colors` | Brand red · Neutrals (zinc) · Semantic tokens · Status |
+| `project/preview/color-*.html` | `colors` | Cream surfaces · Brand brown/sage/terracotta · AA text variants · Semantic tokens · Status |
 | `project/preview/spacing-*.html` | `spacing` | Motion · Radius · Scale · Shadow |
 | `project/preview/component-*.html` | `components` | ALL component previews — existing + new. New ones carry `diff: "new"` |
 | `project/preview/brand-*.html` | `brand` | Iconography · Wordmark & mark |
@@ -106,9 +108,9 @@ The 8 groups below mirror Claude Design's own project-page layout. Diff vs previ
 **Priority ordering within groups** — match Claude Design's own order:
 - ui-kit: Dashboard · Data table · Overlays · Session shell · (session's new archetype last)
 - type: Body & UI · Body & mono · Families · Headings · Pixel wordmark
-- colors: Brand red · Neutrals (zinc) · Semantic tokens · Status
+- colors: Cream surfaces · Brand brown/sage/terracotta · AA text variants · Semantic tokens · Status
 - spacing: Motion · Radius · Scale · Shadow
-- components: App header · Badges & chips · Buttons · Cards · Data row · Inputs · KPI tile · Module tile · Stepper & Timeline · then session's new components alphabetically
+- components: App sidebar · Badges & chips · Buttons · Cards · Data row · Inputs · KPI tile · KPI index card · Stepper & Timeline · then session's new components alphabetically
 - brand: Iconography · Wordmark & mark
 - reference: README · chat · source-tokens.ts · source-index.css · LOCKED_PICKS · W08 · CLAUDE_DESIGN_GAME_PLAN · ui_kits source files
 - fonts: alphabetical
@@ -163,7 +165,7 @@ The 8 groups below mirror Claude Design's own project-page layout. Diff vs previ
 
 ### 6. Auto-archive
 
-If the `handoffs/` folder has > 5 dated snapshots, move the oldest to `handoffs/_archive/`. Never delete.
+If `docs/05-implementation/design-handoffs/` has > 5 dated snapshots, move the oldest to `design-handoffs/_archive/`. Never delete. Do not archive a snapshot that `docs/05-implementation/CONTEXT.md` names as the live brand authority.
 
 ### 7. Report
 
@@ -179,7 +181,7 @@ Print:
 ### 1. Locate manifest
 
 Read the `MANIFEST.json` in the snapshot folder containing the staged file. Resolve path like:
-`docs/99-refactor/_system/design/handoffs/<YYYY-MM-DD>-<hash>/MANIFEST.json`.
+`docs/05-implementation/design-handoffs/<YYYY-MM-DD>-<hash>/MANIFEST.json`.
 
 ### 2. Follow the mapping
 
@@ -191,6 +193,8 @@ Read the `MANIFEST.json` in the snapshot folder containing the staged file. Reso
 | `project/reference/W##_*.md` | matching `docs/99-refactor/_system/workflows/W##_*.md` | Edit (keep repo-only sections) |
 | `project/preview/component-<name>.html` | `src/components/primitives/**/<Name>.tsx` (or wherever the target component lives) | Translate HTML→React as a targeted patch (not copy): re-read the spec, keep the prop API backward-compatible, implement all interaction states |
 | `project/uploads/*.woff2` | `public/fonts/` | Copy |
+
+**Check `docs/99-refactor/_system/DEPRECATIONS.md` before resolving any component target.** A preview whose target primitive was deleted has **no** promote target — set `target: null` / `action: "preview-only"` and say so; never recreate the file. Deleted 2026-07-25: `shell/AppHeader.tsx`, `shell/AppHeaderDesktopBar.tsx`, `dashboard/ModuleCard.tsx`, `dashboard/CategoryHeader.tsx`, `dashboard/ModuleSearch.tsx`, `src/components/DashboardHeader.tsx`. Desktop chrome is `shell/AppSidebar.tsx` + `shell/AppSidebarFooter.tsx`; module jump is `overlays/CommandPalette.tsx`; the launcher surface is `dashboard/KpiIndexCard.tsx`. Note `AppHeaderShell` / `AppHeaderMobileBar` / `AppHeaderLogo` / `AppHeaderUserMenu` **survive** — match exact file names, not the `AppHeader` prefix.
 
 ### 3. Apply the Edit
 
@@ -207,10 +211,10 @@ Read the `MANIFEST.json` in the snapshot folder containing the staged file. Reso
 ## Rules
 
 - **Never** auto-apply without showing the diff summary (both modes).
-- **Never** wholesale-copy bundle HTML prototypes into `src/`. They stay in `docs/.../export/`.
+- **Never** wholesale-copy bundle HTML prototypes into `src/`. They stay under `docs/05-implementation/design-handoffs/`.
 - **Never** run PROMOTE if the staged file's `status != "staged"` — already promoted or unknown → ask.
 - If the chat transcript contradicts the HTML, **transcript wins** — ask user.
-- Archive old exports: if a session folder has > 5 dated exports, move the oldest to `export/_archive/`.
+- Archive old snapshots per step 6 — never delete.
 
 ## Scope
 

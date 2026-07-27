@@ -362,3 +362,28 @@ If a genuine weekly-review count is ever needed, it belongs in
 **Decision**: `components/OverviewKpiRow` renders each tile's own query state — `LoadingSkeleton variant="kpi-tile"` while in flight, and on failure an em-dash figure whose meta line carries one terracotta sentence plus a Retry action. An errored tile drops its `onClick`.
 **Why**: the two cards read two different queries (`useDashboardStats` vs the feed's `/profiler-results` source), so a shared row-level state would blank a healthy profiler figure whenever the clients stats failed. `useLatestAdditions` therefore also exposes `resultsStatus` — the results source alone — beside the merged-feed flags. Dropping `onClick` is required, not cosmetic: `KpiIndexCard` becomes `role="button"` when it has one, and a nested Retry control inside it would swallow the click into a navigation.
 **Impact**: per KOPI_2A_SPEC → "States → Error" the failure stays row-level and quiet — the tile keeps its hairline border and card cream, no panel fill. `ErrorState` (the giant serif 500 hero) is deliberately NOT used inside a KPI tile; it remains the page/section-level surface.
+
+## 2026-07-27 — The report's negative accent moves to the deeper `#8F3D1F`
+
+**Decision**: every sub-18px terracotta in the report drops from `#AB4925` to
+`#8F3D1F` — the `bandFor` / `premiumCardStatus` error tone in
+`financeReportBands.ts` (which is also the health card's border) and the two
+`.report-row-loss` cells in `ReportRetirementEconomics.tsx`. The other four
+accents (`#4A6A4E`, `#806241`, `#5D4F3F`, and `#AB4925` where it sits on white
+or cream) are unchanged.
+**Why**: `#AB4925` on the error tint `#FAE0D6` measures **4.4995**, not the
+4.50 both entries above record — under WCAG's `≥ 4.5` gate, and axe fails it
+`serious` on five report nodes at once (three 12px band labels, two 13px
+opportunity-cost cells). `#8F3D1F` measures 5.85 there and is the app's
+already-locked `--cta-destructive-bg-hover`, so it is the same hue one step
+down rather than a new colour. Lightening `#FAE0D6` was rejected: that fill is
+also `--status-rejected-bg`, `.report-callout--danger` and `.report-row-loss`,
+and moving all of them to buy 0.001 is the larger blast radius.
+**Impact**: `financeReportExtension.test.ts`'s oracle updated in step (same
+reasoning as the entry above — the tone/bg pair is a presentation constant the
+oracle already flags as a deliberate divergence); 140 tests still pass. Print
+values stay LITERAL hexes. The app-side twin of this value is the new
+`--negative-text-on-tint` token in `src/index.css`, which the report
+deliberately does not read.
+**Supersedes**: 2026-07-25 — Report accent type never uses raw sage/terracotta
+(only the negative hex; the rule that raw `#D97551` never carries text stands)

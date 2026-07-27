@@ -155,7 +155,7 @@ Search `docs/04-integrations/`. Key integrations:
 
 **Example:**
 
-> New modules require 3 steps: (1) migration to insert into `modules` + `role_modules`, (2) route in `src/App.tsx` matching the DB path, (3) component with `DashboardHeader` and `useAuth` access check. Icons must be from Lucide only. (Rule #2, ref: MODULE_SYSTEM.md)
+> New modules require 3 steps: (1) migration to insert into `modules` + `role_modules`, (2) route in `src/App.tsx` matching the DB path, wrapped in `<ProtectedRoute modulePath="…">`, (3) a page wrapped in its archetype frame — `ListPageFrame` / `DetailPageFrame` / `AppHeaderShell` — with the `useAuth` access check. No nav wiring is needed: `AppSidebar` renders the rail from `useAuth().modules`. Icons must be from Lucide only. (Rule #2, ref: MODULE_SYSTEM.md)
 >
 > The URL should follow Rule #6 — single concepts use no hyphens (`/payroll`), multi-word descriptions use hyphens (`/payroll-settings`). Check `src/App.tsx` to ensure the path doesn't conflict with existing routes.
 

@@ -84,15 +84,18 @@ Record each as a candidate with: { element_type, label, testid?, href?, inside_f
 
 #### App-shell skip list (MANDATORY — these are tested ONCE in the WF-App-NN series)
 
-App-shell chrome appears on every module via `DashboardHeader` + top bar. Testing it per-module multiplies the suite by 50 for zero extra coverage. **Skip** (case-insensitive label match; `^` means "starts with"):
+App-shell chrome appears on every module via the `AppSidebar` rail (≥ lg) / `AppHeaderMobileBar` (< lg). Testing it per-module multiplies the suite for zero extra coverage. **Skip** (case-insensitive label match; `^` means "starts with"):
 
 | Label match | Source component | Covered by |
 |---|---|---|
-| `^Back to Dashboard$`, `^Back$` | `DashboardHeader` | WF-App-01 |
-| `^Logout$`, `^Sign ?Out$` | `DashboardHeader` | WF-App-02 |
-| `^View as user`, `^Impersonate`, `^Stop Impersonating` | `ImpersonationSelector` | WF-App-03 |
-| `^Previous$`, `^Next$`, numeric page buttons (`^\d+$`), page-size select | `TablePaginationControls` | WF-App-04 |
-| Notification bell (icon-only, `aria-label` contains `notification`) | `NotificationBell` | WF-App-05 |
+| `^Overview$`, `^Back to Dashboard$`, `^Back$`, any rail nav item | `AppSidebar` / `AppHeaderMobileBar` | WF-App-01 |
+| `^Logout$`, `^Sign ?Out$`, account menu entries | `AppSidebarFooter` / `AppHeaderUserMenu` | WF-App-02 |
+| `^View as user`, `^Impersonate`, `^Stop Impersonating` | `ViewAsSelector` / `ImpersonationBanner` | WF-App-03 |
+| `^Previous$`, `^Next$`, numeric page buttons (`^\d+$`), page-size select | `Pagination` (`primitives/ui`) | WF-App-04 |
+| Notification bell (icon-only, `aria-label` contains `notification`) | `NotificationsBell` | WF-App-05 |
+| ⌘K palette trigger + its results | `CommandPalette` (`primitives/overlays`) | WF-App-01 (same navigation surface as the rail) |
+
+> `DashboardHeader`, `AppHeader` and `AppHeaderDesktopBar` were deleted 2026-07-25 — if a selector or spec still names one, it is stale. See `docs/99-refactor/_system/DEPRECATIONS.md`.
 
 **Rule**: if a candidate matches this table, emit a log line like `skipped: app-shell WF-App-01 (Back to Dashboard)` and move on — **do NOT** write a spec, **do NOT** add a row.
 

@@ -26,13 +26,22 @@ interface ResultDetailActionsProps {
   mobile?: boolean;
 }
 
+/**
+ * --fg-dim, not --fg-muted: the desktop hint renders in the DetailPageFrame
+ * hero, which sits on the PAGE cream #F0E6D6. At 10.5px #7D6B5B is 4.12:1
+ * there and fails AA; #5D4F3F clears 6.40:1 — the same call the hero's own
+ * meta line makes one row above it. The mobile copy rides the sticky
+ * `bg-popover/80` bar, whose composite shifts with whatever report block
+ * scrolls behind it (4.71:1 for --fg-muted over the DISC-D hero tint, i.e.
+ * one repaint from failing), so both variants take the one safe token.
+ */
 function ReadOnlyHint({ mobile }: { mobile?: boolean }) {
   return (
     <span
       className={
         mobile
-          ? 'inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 text-muted-foreground'
-          : 'inline-flex items-center gap-1.5 text-muted-foreground'
+          ? 'inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 text-[color:var(--fg-dim)]'
+          : 'inline-flex items-center gap-1.5 text-[color:var(--fg-dim)]'
       }
       style={{ fontFamily: 'var(--font-sans)', fontSize: 10.5, letterSpacing: '0.04em' }}
       title="Only the advisor who saved a result can edit its notes or delete it."

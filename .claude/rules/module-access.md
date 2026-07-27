@@ -43,8 +43,10 @@ const hasAccess = modules.some(m => m.path === MODULE_PATH);
 ### Module Creation (3 Steps)
 
 1. **Migration**: Insert into `modules` + `role_modules` tables
-2. **Route**: Add to `src/App.tsx` (path must match DB)
-3. **Component**: Use `DashboardHeader` with `useAuth` access check
+2. **Route**: Add to `src/App.tsx` (path must match DB), wrapped in `<ProtectedRoute modulePath="…">`
+3. **Component**: Wrap the page in the archetype frame — `ListPageFrame` (ui) · `DetailPageFrame` (detail) · `AppHeaderShell` (shell, for tool/dashboard/settings) — with the `useAuth` access check above. **Never `DashboardHeader`** — that shim was deleted 2026-07-25 along with the top masthead (`AppHeader` / `AppHeaderDesktopBar`); see [DEPRECATIONS.md](../../docs/99-refactor/_system/DEPRECATIONS.md).
+
+A new module needs **no nav wiring**: `AppSidebar` renders one rail item per granted module straight from `useAuth().modules`, and ⌘K `CommandPalette` reads the same list.
 
 **Icons**: Lucide only (https://lucide.dev/icons/)
 

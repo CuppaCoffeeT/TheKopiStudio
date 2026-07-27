@@ -7,7 +7,7 @@
 
 ## 📋 Overview
 
-The **single canonical pattern** for any DASHBOARD page in AppBase (one of 6 page archetypes). A dashboard opens with the app header chrome, a row of KPI tiles, then sections of charts / grouped stats / shortcut cards.
+The **single canonical pattern** for any DASHBOARD page in AppBase (one of 6 page archetypes). Chrome is mounted once by `DashboardLayout` (the `AppSidebar` rail at ≥ lg, `AppHeaderMobileBar` below it) — the page itself opens with its own header block, then a row of KPI tiles, then sections of charts / grouped stats.
 
 **Read this first** if your task is: "build a role dashboard", "add a KPI tile", or "migrate a dashboard to primitives".
 
@@ -17,7 +17,7 @@ Router-style doc — links to real adopters + primitives. Does not duplicate cod
 
 | Layer | Use | Never |
 |-------|-----|-------|
-| Page frame / header | `DashboardHeader` (`@/components/DashboardHeader`) — AppHeader chrome shim · or `AppHeaderShell` (`@/components/primitives/shell`) | hand-rolled `<h1>` + greeting block |
+| Page frame / header | `AppHeaderShell` (`@/components/primitives/shell`) — page-bg backdrop + `ImpersonationBanner` + kicker/breadcrumb → H1 → description | hand-rolled `<h1>` + greeting block · `DashboardHeader` / `AppHeader` (**both deleted 2026-07-25** — see [DEPRECATIONS.md](../../99-refactor/_system/DEPRECATIONS.md)) |
 | Greeting block | `GreetingHeader` (`@/components/primitives/dashboard`) | bespoke welcome text |
 | KPI tile | `KpiTile` (`@/components/primitives/dashboard`) — `prefix/suffix/delta/subtitle/icon/alert/sparkline`, count-up via bundled `NumberTicker` | ad-hoc `<Card>` + big number + hand-rolled delta badge |
 | KPI tile (2a Overview) | `KpiIndexCard` (`@/components/primitives/dashboard`) — uppercase label + brown index numeral + serif value/unit + meta line | a `KpiTile` with the icon/delta slots left empty |
@@ -28,13 +28,12 @@ Router-style doc — links to real adopters + primitives. Does not duplicate cod
 | Charts | `ChartShell` + `AreaChart`/`BarChart`/`HBarChart` (`@/components/primitives/charts`) | raw recharts in the page |
 | Empty / error state | `NoResultsState` · `ErrorState` (`@/components/primitives/shell`) | inline "nothing here" text |
 
-Full inventory: [src/components/primitives/CONTEXT.md](../../src/components/primitives/CONTEXT.md).
+Full inventory: [PRIMITIVES.md](../design-system/PRIMITIVES.md) (verified) · [src/components/primitives/CONTEXT.md](../../../src/components/primitives/CONTEXT.md) (⚠️ last regenerated 2026-05-30, pre-Kopi).
 
 ## Shape
 
 ```tsx
-<DashboardHeader title="…" subtitle="…">            {/* AppHeader chrome */}
-  <GreetingHeader name={user.name} />
+<AppHeaderShell title="…" description="…">          {/* page frame, no masthead */}
   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
     <KpiTile value={pending} label="Pending" delta={…} icon={…} />
     <KpiTile value={open}    label="Open"    sparkline={…} />
@@ -42,27 +41,25 @@ Full inventory: [src/components/primitives/CONTEXT.md](../../src/components/prim
   </div>
   <AttentionHeader title="This week" />
   <ChartShell><BarChart data={…} /></ChartShell>
-</DashboardHeader>
+</AppHeaderShell>
 ```
+
+The 2a Overview at `/dashboard` is the exception: it uses **no frame**, opening with `GreetingHeader` (dateline + serif greeting) followed by a `KpiIndexCard` pair and a hairline feed table.
 
 ## Adopter references
 
 | Adopter | File |
 |---------|------|
 | 2a Overview (`/dashboard`) | `src/features/crm/pages/DashboardHomePage.tsx` — dateline masthead + `KpiIndexCard` pair + hairline feed table |
-| Drafter dashboard | `src/features/drafterdashboard/pages/DrafterDashboard.tsx` |
-| Supervisor home KPIs | `src/features/fieldops/work-entry/components/SupervisorKpiSection.tsx` (+ `SupervisorUI.tsx`) |
-| Client-profiles KPI strip | `src/features/clientprofiles/components/ClientProfilesKpis.tsx` |
-| Company stats strip | `src/features/companies/components/CompanyStatsStrip.tsx` |
-| Competitor KPI strip | `src/features/competitoranalysis/components/CompetitorKpiStrip.tsx` |
+| CRM role dashboard (`/crm`) | `src/features/crm/pages/CrmDashboardPage.tsx` — `AppHeaderShell` + `KpiTile` row + charts |
 
-Start from **DrafterDashboard.tsx** — full header + KPI grid + section example.
+Start from **DashboardHomePage.tsx** for the 2a Overview and **CrmDashboardPage.tsx** for a framed role dashboard. The AppBase-era adopters (drafter · supervisor · client-profiles · companies · competitor-analysis) were never merged into this repo — those paths do not exist.
 
 ## Rules
 
 - KPI numbers load via dedicated count hooks (e.g. `useDashboardCounts`); the page is presentation only.
 - One `KpiTile` per metric; group related tiles in a single Tailwind grid. Don't nest grids.
-- Header chrome (notifications, view-as) comes from `DashboardHeader` / `AppHeaderShell` defaults — don't re-mount data-coupled `@/components/*` slot fillers (W09 grep 6b lesson). Override with `NotificationsBell` + `ViewAsSelector` primitives + their connector hooks (`useNotificationsBell` / `useViewAs`) if needed.
+- Account chrome (notifications, view-as, sign-out) is mounted **once** by `AppSidebarFooter` at ≥ lg and by `AppHeaderMobileBar` below it, both wired through `useDashboardChrome` — a page must never re-mount it (W09 grep 6b lesson). Use the `NotificationsBell` / `ViewAsSelector` primitives directly only if a page genuinely needs a second instance.
 - Charts import from `primitives/charts`; never drop raw recharts/visx into the page.
 - Keep the dashboard component under 200 LOC; extract each section body (KPI strip, chart block) to a child component (see `SupervisorKpiSection`).
 
@@ -76,7 +73,7 @@ Start from **DrafterDashboard.tsx** — full header + KPI grid + section example
 
 - [CANONICAL_DETAIL_PAGE_PATTERN.md](./CANONICAL_DETAIL_PAGE_PATTERN.md) — DETAIL archetype
 - [CANONICAL_SETTINGS_PAGE_PATTERN.md](./CANONICAL_SETTINGS_PAGE_PATTERN.md) — SETTINGS archetype
-- [src/components/primitives/CONTEXT.md](../../src/components/primitives/CONTEXT.md) — full primitive inventory
-- [.claude/rules/universal-components.md](../../.claude/rules/universal-components.md) — Need → Import matrix
-- [.claude/rules/code-hygiene.md](../../.claude/rules/code-hygiene.md) — slot-filler / data-coupling lesson
-- [DOCUMENTATION_INDEX.md](../DOCUMENTATION_INDEX.md)
+- [src/components/primitives/CONTEXT.md](../../../src/components/primitives/CONTEXT.md) — full primitive inventory
+- [.claude/rules/ui-components.md](../../../.claude/rules/ui-components.md) — Need → Import matrix
+- [.claude/rules/code-hygiene.md](../../../.claude/rules/code-hygiene.md) — slot-filler / data-coupling lesson
+- [DOCUMENTATION_INDEX.md](../../DOCUMENTATION_INDEX.md)

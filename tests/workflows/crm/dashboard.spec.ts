@@ -1,5 +1,6 @@
 /**
- * CRM dashboard seatbelt @p0 @mobile — three read-mostly surfaces:
+ * CRM dashboard seatbelt @p0 @mobile — the /crm module dashboard plus the Kopi
+ * 2a /dashboard "Overview" that replaced the module launcher:
  *
  *   (1) ADVISOR, empty book: pre-sweep any 'E2E-' residue clients out of the
  *       advisor's book via the UI (soft-delete children → client — leftovers
@@ -10,8 +11,21 @@
  *       production data — strictly read-only) — the four KPI tiles settle to
  *       finite numbers and neither the loading skeleton nor the error state
  *       remains.
- *   (3) ADVISOR, /dashboard home: the module grid lists the CRM Dashboard
- *       (/crm) and Clients (/clients) tiles; the /crm tile navigates.
+ *   (3) ADVISOR, /dashboard Overview: the true-SGT dateline over the Instrument
+ *       Serif greeting, and the TWO index KPI cards ("Prospect Profiler" and
+ *       "Clients · CRM") — the clients card navigates into /clients.
+ *   (4) ADVISOR, /dashboard Overview: "Latest additions" settles to feed rows
+ *       OR its empty state (the book stays empty until the CRM import lands, so
+ *       BOTH are valid outcomes), and "+ New client" opens the client form.
+ *   (5) ADVISOR: the sidebar rail — the primary navigation since the masthead
+ *       and the launcher were retired — marks the current route via
+ *       aria-current and navigates into a module. Below lg it stands down.
+ *
+ * RETIRED with the 2a redesign (2026-07-25): the /dashboard module-launcher
+ * grid (home-module-grid / home-module-tile-*) and its "Search modules..."
+ * filter. Those two describes were DELETED, not re-pointed — the rail (5) and
+ * the ⌘K palette own module routing now, and no shallow stand-in was written
+ * for them. The ⌘K palette itself still has no spec anywhere under tests/.
  *
  * Auth: per-describe `test.use({ storageState: authFileFor(role) })` — the
  * parallel config's setup project (tests/auth.setup.ts) mints tests/.auth/
@@ -21,8 +35,9 @@
  * are UI soft-deletes of 'E2E-'-prefixed residue inside the e2e ADVISOR's own
  * RLS-scoped book (rows only an earlier failed e2e run could have left), each
  * guarded by an explicit E2E-marker check before deletion. sky/Keane data is
- * untouchable by design (advisor RLS) and never matched. Manager/home tests
- * are navigation + assertion only.
+ * untouchable by design (advisor RLS) and never matched. The manager and
+ * Overview tests are navigation + assertion only — (4) opens the client form
+ * and cancels out of it without ever submitting.
  *
  * Serialisation: the empty-book test reads the WHOLE advisor book (zero-KPI
  * assertions), so it holds the same cross-worker advisor-book mkdir lock as
@@ -34,8 +49,10 @@
  * Selectors: real data-testids from src/features/crm/pages/CrmDashboardPage
  * (crm-dashboard, crm-kpi-*, crm-add-first-client-btn, crm-quick-link-clients,
  * crm-dashboard-loading), ClientsListPage (clients-table via the ClientsPage
- * POM) and src/features/crm/pages/DashboardHomePage.tsx (home-module-grid + home-module-tile-<path> —
- * ADDED with this spec).
+ * POM), DashboardHomePage + its children (home-kpi-row, home-kpi-profiler,
+ * home-kpi-clients, home-latest-additions, home-latest-row-<id>,
+ * home-latest-empty, home-add-client-btn), ClientFormModal
+ * (crm-client-form-modal, crm-client-cancel-btn) and AppSidebar (app-sidebar).
  *
  * Run: npx playwright test tests/workflows/crm/dashboard.spec.ts \
  *        --config=playwright.parallel.config.ts
@@ -309,113 +326,172 @@ test.describe('manager /crm dashboard — scope: all books', () => {
   });
 });
 
-// ── (3) Advisor: /dashboard home module grid lists the CRM tiles ─────────────
+// ── (3) Advisor: /dashboard Overview dateline + the two index KPI cards ──────
 
-test.describe('advisor /dashboard home — module grid', () => {
+test.describe('advisor /dashboard Overview — dateline + KPI row', () => {
   test.use({ storageState: authFileFor('advisor') });
 
-  test('/crm and /clients module tiles render; the /crm tile navigates @p0 @mobile', async ({
+  test('SGT dateline greeting; the two index KPI cards render and navigate @p0 @mobile', async ({
     page,
   }) => {
     await page.goto('/dashboard');
-    await expect(page.getByTestId('home-module-grid')).toBeVisible({ timeout: 30_000 });
 
-    // Module access is role-driven (AuthContext.modules) — the advisor's grant
-    // set must include both CRM routes.
-    await expect(page.getByTestId('home-module-tile-crm')).toBeVisible();
-    await expect(page.getByTestId('home-module-tile-clients')).toBeVisible();
+    await test.step('dateline kicker carries the true-SGT date under the serif greeting', async () => {
+      // The greeting is the page's only h1 (GreetingHeader).
+      const greeting = page.getByRole('heading', {
+        level: 1,
+        name: /^Good (morning|afternoon|evening), /,
+      });
+      await expect(greeting).toBeVisible({ timeout: 30_000 });
 
-    // The tile is a real navigation into the module (read-only — no KPI value
-    // assertions here; the advisor-book lock is not held).
-    await page.getByTestId('home-module-tile-crm').click();
-    await page.waitForURL('**/crm', { timeout: 30_000 });
-    await page.getByTestId('crm-dashboard').waitFor({ state: 'visible', timeout: 30_000 });
+      // The date must be SGT, not the runner's locale/zone. Assert the weekday
+      // and the day/month/year as separate parts so the assertion survives ICU
+      // pattern differences between Node, Chromium and WebKit.
+      const parts = new Intl.DateTimeFormat('en-GB', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        timeZone: 'Asia/Singapore',
+      }).formatToParts(new Date());
+      const part = (type: Intl.DateTimeFormatPartTypes) =>
+        parts.find((p) => p.type === type)?.value ?? '';
+
+      const hero = greeting.locator('..'); // GreetingHeader root: kicker + h1
+      await expect(hero).toContainText(part('weekday'));
+      await expect(hero).toContainText(`${part('day')} ${part('month')} ${part('year')}`);
+      // The kicker closes on one live stat once useDashboardStats resolves.
+      await expect(hero).toContainText(/\d+ follow-ups? upcoming/, { timeout: 30_000 });
+    });
+
+    await test.step('exactly TWO index KPI cards, with the shipped labels', async () => {
+      const kpiRow = page.getByTestId('home-kpi-row');
+      await expect(kpiRow).toBeVisible({ timeout: 30_000 });
+
+      // One card per RECORD module the advisor holds (/profiler-results,
+      // /clients). Each mounts a skeleton first, so poll for the settled pair.
+      const profiler = page.getByTestId('home-kpi-profiler');
+      const clients = page.getByTestId('home-kpi-clients');
+      await expect(profiler).toBeVisible({ timeout: 30_000 });
+      await expect(clients).toBeVisible({ timeout: 30_000 });
+      await expect(profiler).toContainText('Prospect Profiler');
+      await expect(clients).toContainText('Clients · CRM');
+      // The four-figure KPI row belongs to /crm — this page must not grow one.
+      await expect(kpiRow.locator('[data-testid^="home-kpi-"]')).toHaveCount(2);
+
+      // The launcher grid the 2a redesign deleted must not come back.
+      await expect(page.getByTestId('home-module-grid')).toHaveCount(0);
+    });
+
+    await test.step('the clients card is the real navigation into /clients', async () => {
+      await page.getByTestId('home-kpi-clients').click();
+      await page.waitForURL(/\/clients(\?.*)?$/, { timeout: 30_000 });
+      await expect(page.getByTestId('clients-table')).toBeVisible({ timeout: 30_000 });
+    });
   });
 });
 
-// ── (4) Advisor: /dashboard home KPI row + client-progress widget ────────────
+// ── (4) Advisor: /dashboard Overview "Latest additions" feed ─────────────────
 
-test.describe('advisor /dashboard home — KPI row + client progress', () => {
+test.describe('advisor /dashboard Overview — Latest additions', () => {
   test.use({ storageState: authFileFor('advisor') });
 
-  test('KPI row renders all four labels; client-progress shows rows or the empty state @p0 @mobile', async ({
+  test('feed settles to rows OR the empty state; "+ New client" opens the form @p0 @mobile', async ({
     page,
   }) => {
     await page.goto('/dashboard');
-    await expect(page.getByTestId('home-module-grid')).toBeVisible({ timeout: 30_000 });
 
-    await test.step('KPI row (advisor holds /crm) renders the four KpiTile labels', async () => {
-      const kpiRow = page.getByTestId('home-kpi-row');
-      // Row only mounts once useDashboardStats resolves (skeleton replaces it).
-      await expect(kpiRow).toBeVisible({ timeout: 30_000 });
-      for (const label of [
-        'Total clients',
-        'Active policies',
-        'Annual premium',
-        'Upcoming follow-ups',
-      ]) {
-        await expect(kpiRow).toContainText(label);
-      }
+    const feed = page.getByTestId('home-latest-additions');
+    await expect(page.getByRole('heading', { name: 'Latest additions' })).toBeVisible({
+      timeout: 30_000,
     });
+    await expect(feed).toBeVisible();
 
-    await test.step('client-progress widget settles to rows OR the empty state', async () => {
-      const widget = page.getByTestId('home-client-progress');
-      await widget.scrollIntoViewIfNeeded();
-      await expect(widget).toBeVisible({ timeout: 30_000 });
-
-      // Read-only: no book lock held, so the advisor's book may be empty OR
-      // hold rows left mid-run by the clients-advisor journey — both are valid.
-      const rows = widget.locator('[data-testid^="home-client-progress-row-"]');
-      const empty = page.getByTestId('home-client-progress-empty');
+    await test.step('the feed settles — rows or the empty state, never a stuck skeleton', async () => {
+      // Read-only: the book is empty until the CRM import lands, but the
+      // clients-advisor journey may hold rows mid-run. BOTH must pass, and
+      // neither may be asserted as a populated table.
+      const rows = feed.locator('[data-testid^="home-latest-row-"]');
+      const empty = page.getByTestId('home-latest-empty');
       await expect
         .poll(
           async () => {
             if ((await rows.count()) > 0) return 'rows';
             return (await empty.count()) > 0 ? 'empty' : 'pending';
           },
-          { timeout: 30_000, message: 'client-progress widget must settle (rows or empty state)' },
+          { timeout: 30_000, message: 'Latest additions must settle (rows or the empty state)' },
         )
         .not.toBe('pending');
 
       if ((await rows.count()) === 0) {
-        await expect(empty).toContainText('No clients yet');
-        const cta = empty.getByRole('button', { name: 'Go to clients' });
-        await expect(cta).toBeVisible();
-        await cta.click();
-        await page.waitForURL(/\/clients(\?.*)?$/, { timeout: 30_000 });
-        await expect(page.getByTestId('clients-table')).toBeVisible({ timeout: 30_000 });
+        await expect(empty).toContainText('Your book is empty.');
+        // The single quiet action the 2a empty state is allowed to offer.
+        await expect(empty.getByRole('button', { name: 'Go to clients' })).toBeVisible();
+      } else {
+        // Each row's name cell carries the real <Link> (keyboard/AT path).
+        await expect(rows.first().getByRole('link')).toBeVisible();
       }
+    });
+
+    await test.step('"+ New client" opens the client form; cancelling writes nothing', async () => {
+      const addBtn = page.getByTestId('home-add-client-btn');
+      await addBtn.scrollIntoViewIfNeeded();
+      await expect(addBtn).toBeVisible();
+      await addBtn.click();
+
+      const modal = page.getByTestId('crm-client-form-modal');
+      await expect(modal).toBeVisible({ timeout: 30_000 });
+      await expect(modal).toContainText('Add client');
+
+      // This spec creates ZERO rows — never submit.
+      await page.getByTestId('crm-client-cancel-btn').click();
+      await expect(modal).toHaveCount(0);
     });
   });
 });
 
-// ── (5) Advisor: /dashboard home module search filter ────────────────────────
+// ── (5) Advisor: the sidebar rail is the primary navigation ──────────────────
 
-test.describe('advisor /dashboard home — module search', () => {
+test.describe('advisor shell — sidebar rail navigation', () => {
   test.use({ storageState: authFileFor('advisor') });
 
-  test('non-matching query shows the no-results state; clearing restores the grid @p0 @mobile', async ({
+  test('the rail marks the current route and navigates; below lg it stands down @p0 @mobile', async ({
     page,
+    isMobile,
   }) => {
     await page.goto('/dashboard');
-    const grid = page.getByTestId('home-module-grid');
-    await expect(grid).toBeVisible({ timeout: 30_000 });
-    await expect(page.getByTestId('home-module-tile-crm')).toBeVisible();
+    await expect(page.getByTestId('home-kpi-row')).toBeVisible({ timeout: 30_000 });
 
-    const searchInput = page.getByPlaceholder('Search modules...');
-    const noMatchQuery = 'zzz-no-module-matches-this';
+    const rail = page.getByTestId('app-sidebar');
 
-    await test.step('non-matching query filters every tile out → NoResultsState', async () => {
-      await searchInput.fill(noMatchQuery);
-      await expect(grid).toContainText(`No matches for "${noMatchQuery}"`, { timeout: 30_000 });
-      await expect(page.getByTestId('home-module-tile-crm')).toHaveCount(0);
-    });
+    if (isMobile) {
+      // AppSidebar is `hidden lg:flex` — at phone width the rail must not paint
+      // over the content column. Navigation there is the ⌘K palette, reached
+      // from the frames' mobile bar.
+      await expect(rail).toBeHidden();
+      return;
+    }
 
-    await test.step('clearing the query restores the module grid', async () => {
-      await searchInput.fill('');
-      await expect(page.getByTestId('home-module-tile-crm')).toBeVisible({ timeout: 30_000 });
-      await expect(page.getByTestId('home-module-tile-clients')).toBeVisible();
-      await expect(grid).not.toContainText(`No matches for "${noMatchQuery}"`);
-    });
+    await expect(rail).toBeVisible({ timeout: 30_000 });
+
+    // Items come from useAuth().modules, plus the explicit Overview entry —
+    // no role strings (.claude/rules/module-access.md).
+    const overview = rail.getByRole('link', { name: 'Overview', exact: true });
+    const clients = rail.getByRole('link', { name: 'Clients', exact: true });
+    await expect(overview).toBeVisible();
+    await expect(clients).toBeVisible();
+
+    // NavLink stamps aria-current="page" on the matched item ONLY — that is the
+    // active marker the 2px brown left border renders from.
+    await expect(overview).toHaveAttribute('aria-current', 'page');
+    await expect(clients).not.toHaveAttribute('aria-current', 'page');
+
+    await clients.click();
+    await page.waitForURL(/\/clients(\?.*)?$/, { timeout: 30_000 });
+    await expect(page.getByTestId('clients-table')).toBeVisible({ timeout: 30_000 });
+
+    // The marker tracks the route, and Overview's `end` keeps it exact-match.
+    await expect(clients).toHaveAttribute('aria-current', 'page');
+    await expect(overview).not.toHaveAttribute('aria-current', 'page');
   });
 });

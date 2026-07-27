@@ -1,7 +1,7 @@
 # Autonomous Agent
-> Last updated: 2026-03-26
+> Last updated: 2026-07-27
 
-Agent ecosystem documentation — architecture, dashboards, learning pipeline, specialist agents, and gateway watchdog.
+Agent ecosystem documentation — architecture, specialist agents, and the Mac-Mini agent state files.
 
 ## What belongs here
 
@@ -22,15 +22,14 @@ Agent ecosystem documentation — architecture, dashboards, learning pipeline, s
 | File | Covers |
 |------|--------|
 | `AGENT_ARCHITECTURE_OVERVIEW.md` | High-level agent ecosystem architecture |
-| `AGENT_DASHBOARD_SYSTEM.md` | Agent monitoring dashboard |
 | `CREATING_SPECIALIST_AGENTS.md` | Guide for creating new specialist agents |
-| `LEARNING_PIPELINE_REDESIGN.md` | Redesigned learning pipeline architecture |
 | `OPENCLAW_AUTONOMOUS_AGENT_SYSTEM.md` | Core autonomous agent system |
-| `OPENCLAW_GATEWAY_WATCHDOG.md` | Gateway watchdog monitoring |
-| `SELF_IMPROVEMENT_LEARNING_LOOP.md` | Self-improvement and correction learning loop |
+| `mac-mini-agent-state/` | `IDENTITY.md` · `SOUL.md` · `USER.md` — the Mac-Mini runner's persistent state |
+
+`AGENT_DASHBOARD_SYSTEM.md`, `LEARNING_PIPELINE_REDESIGN.md`, `OPENCLAW_GATEWAY_WATCHDOG.md` and `SELF_IMPROVEMENT_LEARNING_LOOP.md` were AppBase-template docs and are **not present in this repo** — do not link them.
 
 ## Before working here
 
-- Agent task definitions live in `.claude/agents/`
-- Learning corrections log to Supabase `agent_corrections` table
-- Dashboard implementation in `src/components/agent-dashboard/`
+- Agent task definitions live in `.claude/agents/` (`docs-monitor` · `health-checker` · `jlcms-advisor`)
+- The Supabase `agent_corrections` table loop is **retired** — lessons now append to per-workspace `lessons.md` / `decisions.md` (`.claude/rules/lessons-logging.md`)
+- There is no in-app agent dashboard (`src/components/agent-dashboard/` does not exist); the nightly E2E self-heal pipeline lives in `scripts/` + `.claude/commands/self-heal-e2e.md`

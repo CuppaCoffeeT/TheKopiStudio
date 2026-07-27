@@ -1,8 +1,40 @@
 # W08 — Design system baseline
 
+> ## ⚠️ Historical (Roboto/Geist + light-dark era, retired 2026-07-25)
+>
+> **This card is a closed record. Do not implement from it.** The visual language it
+> defines was replaced wholesale by **The Kopi Studio, direction 2a** on 2026-07-25.
+> Everything below the banner is preserved **verbatim** as the design-history trail
+> (what was tried, what was reverted, and why) — but none of it describes the app that
+> ships today.
+>
+> **What is live now** — authorities, in this order:
+> - [KOPI_2A_SPEC.md](../../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md) — palette, type scale, states, archetypes
+> - [.claude/rules/light-theme.md](../../../../.claude/rules/light-theme.md) — the enforced rule
+> - [src/index.css](../../../../src/index.css) — the real token names
+>
+> **Specific claims in this card that are now FALSE:**
+>
+> | Claim below | Reality since 2026-07-25 |
+> |---|---|
+> | Dark-mode variants for every colour token; `.dark` overrides in `@theme` | **No `.dark` block exists.** `src/index.css` is a single `:root`. Every `dark:` utility is inert dead code — delete, don't repaint. |
+> | `ThemeProvider` is light · dark · system · persisted | `src/lib/design/ThemeProvider.tsx` **pins `resolved: 'light'`** and guarantees the `dark` class stays OFF `<html>`. The preference/listener/storage key survive but drive nothing. |
+> | `ThemeToggle` widget at `src/lib/design/ThemeToggle.tsx`, placed in `DashboardHeader` | **Both files are deleted.** There is no theme toggle anywhere in `src/`, and no `DashboardHeader.tsx`. |
+> | Fonts locked: Roboto body · Geist Mono tabular · Geist Pixel display | **Instrument Serif** (`--font-pixel` / `--font-pixel-display` / `--font-prose`, headings only, **never below 18px**) + **IBM Plex Sans** (`--font-sans` / `--font-subheader`, everything else). `--font-mono` is now the system `ui-monospace` stack, not Geist Mono. |
+> | `--primary` slate-700 `#334155` · `--destructive` red-700 · `--ring` red-700 | Brown `#8B6A47` CTA + **brown focus ring** (`--ring: 31 32% 41%`); destructive is AA-safe terracotta `#AB4925`. No slate, no navy, no gold. |
+> | `/design-lab/fonts` page at `src/features/design-lab/fonts/FontTestPage.tsx` | **Deleted.** So is `public/fonts/geist-pixel/GeistPixel-Square.woff2`. |
+> | Visual parity enforced by `.claude/rules/design-system.md` | **That rule file does not exist.** It is `.claude/rules/light-theme.md`. |
+> | `<AppHeader>` glass / AppHeader-v2 / `AppHeader.tsx` patches (S1, S-shell-v2, STEP 3) | `AppHeader.tsx` + `AppHeaderDesktopBar.tsx` **deleted** — see [DEPRECATIONS.md](../DEPRECATIONS.md). Desktop chrome is `AppSidebar` + `AppSidebarFooter`; `< lg` is `AppHeaderMobileBar`. |
+> | `<ModuleCard>` shadow (S3 dashboard launcher) | `ModuleCard` · `CategoryHeader` · `ModuleSearch` **deleted 2026-07-25**. The dashboard index uses `KpiIndexCard`. |
+> | `design/session-##-<slug>/`, `design/session-04-detail/`, `design/handoffs/…` paths | The `docs/99-refactor/_system/design/` folder **does not exist**. Handoffs now live at `docs/05-implementation/design-handoffs/<date>-<slug>/`. |
+> | "← WE ARE HERE" at STEP 4; STEP 2 🟡 IN PROGRESS; "Resumes Sun noon" | Stale as of 2026-04-20 — the plan pivoted (see "Plan pivot" below) and the whole card is now closed. |
+>
+> `src/lib/design/tokens.ts` and `docs/01-system-architecture/DESIGN_SYSTEM.md` **do** still
+> exist; `tailwind.config.ts` is still correctly gone (v4 CSS-first). Those claims survive.
+
 **Goal**: Research + define the visual language (tokens, fonts, motion, mobile grid, dark mode) that makes AppBase look like a million dollars instead of AI slop.
-**Tier**: Next · **Status**: 🟡 IN PROGRESS (Phase 1 ✅ · Phase 2 ✅ · Phase 3 ✅ **70/70 primitives designed via targeted pivot** — S1 · S2 · S-shell · S3 · S4a shipped through sessions; Form + DataTable + Charts + AppHeader-v2 shipped via direct prompts on 2026-04-20 eod+2 instead of full sessions). · **Last Updated**: 2026-04-20 SGT eod+2 · **Automation**: 👀 HITL
-**Blocked by**: ~~UI/UX research~~ ✅ · ~~W17 picks~~ ✅ · **Blocks**: W09 adoption of the 70-primitive kit. **Flips 🟢 when**: W09 migrations consume the design kit end-to-end (≥5 page migrations with visual-verify gates green).
+**Tier**: Next · **Status**: 🔴 SUPERSEDED — closed 2026-07-25 by The Kopi Studio 2a redesign. *(Status at close, verbatim: 🟡 IN PROGRESS (Phase 1 ✅ · Phase 2 ✅ · Phase 3 ✅ **70/70 primitives designed via targeted pivot** — S1 · S2 · S-shell · S3 · S4a shipped through sessions; Form + DataTable + Charts + AppHeader-v2 shipped via direct prompts on 2026-04-20 eod+2 instead of full sessions).)* · **Last Updated**: 2026-07-27 SGT — retirement banner added; body preserved verbatim. Card content last changed 2026-04-20 SGT eod+2 · **Automation**: 👀 HITL
+**Blocked by**: ~~UI/UX research~~ ✅ · ~~W17 picks~~ ✅ · **Blocks**: ~~W09 adoption of the 70-primitive kit~~ — moot; the kit was restyled by the 2a redesign. **~~Flips 🟢 when~~**: ~~W09 migrations consume the design kit end-to-end (≥5 page migrations with visual-verify gates green)~~ — never flipped; card closed as SUPERSEDED instead.
 
 ## Why this exists
 

@@ -1,5 +1,5 @@
 # Meta Documentation
-> Last updated: 2026-03-26
+> Last updated: 2026-07-27
 
 Standards, methodologies, and meta-documentation about how the documentation system itself works.
 
@@ -25,5 +25,7 @@ Standards, methodologies, and meta-documentation about how the documentation sys
 
 ## Before working here
 
-- Context map: `docs/CONTEXT_MAP.md`
+- Context map: [`../CONTEXT_MAP.md`](../CONTEXT_MAP.md)
+- Master index: [`../DOCUMENTATION_INDEX.md`](../DOCUMENTATION_INDEX.md)
 - Doc rules: `.claude/rules/documentation.md`
+- `WORKSPACE_AND_AGENT_ARCHITECTURE_STANDARD.md` supersedes `DOCUMENTATION_ORGANIZATION_AND_STANDARDS_PLAN.md` on folder layout — when they disagree, the STANDARD wins

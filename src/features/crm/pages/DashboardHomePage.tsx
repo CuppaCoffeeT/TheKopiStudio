@@ -24,9 +24,15 @@
  * never sit above copy saying nothing is granted. `/crm` is NOT in the set: it
  * grants aggregate figures on its own dashboard, not records here.
  *
- * Testid contract (tests/workflows/crm/dashboard.spec.ts): `home-kpi-row` with
- * `home-kpi-profiler` / `home-kpi-clients` tiles, `home-latest-additions` with
- * `home-latest-row-<id>` rows and `home-latest-empty`, `home-add-client-btn`.
+ * Testid contract (tests/workflows/crm/dashboard.spec.ts, describes 3-5):
+ * `home-kpi-row` holding EXACTLY the tiles for the record modules the viewer
+ * holds — `home-kpi-profiler` / `home-kpi-clients`, never a four-figure row
+ * (that one is /crm's) — `home-latest-additions` resolving to either
+ * `home-latest-row-<id>` rows or `home-latest-empty`, and `home-add-client-btn`
+ * opening `crm-client-form-modal`. The greeting is asserted by role (the page's
+ * only h1) and the rail by `app-sidebar`, so neither needs a testid here.
+ * The retired launcher's ids (`home-module-grid` / `home-module-tile-<path>`)
+ * are gone from the spec too, bar one assertion that they stay absent.
  */
 
 import { useState } from 'react';

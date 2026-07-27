@@ -14,11 +14,10 @@ Router for the AppBase design catalog. Tracks the design-system roll-out state �
 ## 📚 Related
 
 - [DESIGN_CATALOG_PRIMITIVES.md](DESIGN_CATALOG_PRIMITIVES.md) — **per-primitive inventory** (sections A–N) · Design · Impl · Adopted columns
-- [DESIGN_CATALOG_MATRIX.md](DESIGN_CATALOG_MATRIX.md) — **module × primitive matrix** · `●` = consumes group · `✓` = migrated
+- [DESIGN_CATALOG_MATRIX.md](DESIGN_CATALOG_MATRIX.md) — **module × primitive matrix** + per-module component tallies · `●` = consumes group · `✓` = migrated (replaces the removed `research/COMPONENT_MAP.md`; there is no `_system/research/` folder)
 - [src/components/primitives/CONTEXT.md](../../../src/components/primitives/CONTEXT.md) — primitives folder router (by code group)
 - [CLAUDE_DESIGN_GAME_PLAN.md](CLAUDE_DESIGN_GAME_PLAN.md) — session-by-session plan consuming this catalog
 - [LOCKED_PICKS.md](LOCKED_PICKS.md) — W17 visual-language picks
-- [research/COMPONENT_MAP.md](research/COMPONENT_MAP.md) — per-module component tallies
 - [workflows/W07_SHARED_PRIMITIVES.md](workflows/W07_SHARED_PRIMITIVES.md) — implementation home
 - [workflows/W08_DESIGN_SYSTEM.md](workflows/W08_DESIGN_SYSTEM.md) — token foundation + archetype sessions
 - [workflows/W09_MODULE_MIGRATIONS.md](workflows/W09_MODULE_MIGRATIONS.md) — adopter (per-module migration)
@@ -41,8 +40,8 @@ Router for the AppBase design catalog. Tracks the design-system roll-out state �
 | Session | Designed | Built | Adopted | Gate status |
 |---|---|---|---|---|
 | **S1 List/Table** | 🟢 | 🟢 `DataTable` · `StatusBadge` · `Avatar` · `IconButton` | production adopters — see DESIGN_CATALOG_PRIMITIVES.md Adopted column | ✅ LOCKED |
-| **S2 Overlays** | 🟢 | 🟢 9 primitives (Modal · Drawer · Popover · Tooltip · DropdownMenu · ContextMenu · Alert · Toaster · SearchableMultiSelect) + Kbd atom | **Toaster root-mounted in `App.tsx` (all toasts now glass-styled) · AppHeader/ImpersonationSelector consume Popover + DropdownMenu · W09 migrates legacy shadcn callers per page** | 🟢 spec re-verified 2026-04-19 |
-| **S-shell** (App Header + Phase A atoms + states) | 🟢 | 🟢 11 primitives (AppHeader · Breadcrumb · ImpersonationBanner · Button · Chip · FilterBar · **SearchInput** · FloatingCTA · LoadingSkeleton · ErrorState · NoResultsState) + 4 cells (DateCell · DateTimeCell · CurrencyCell · NumberCell) | `/dashboard` + cells available for any DataTable adopter | 🟢 live |
+| **S2 Overlays** | 🟢 | 🟢 9 primitives (Modal · Drawer · Popover · Tooltip · DropdownMenu · ContextMenu · Alert · Toaster · SearchableMultiSelect) + Kbd atom | **Toaster root-mounted in `App.tsx` (all toasts now glass-styled) · `AppSidebarFooter` / `AppHeaderUserMenu` / `ViewAsSelector` consume Popover + DropdownMenu (was `AppHeader`/`ImpersonationSelector`, both retired 2026-07-25) · W09 migrates legacy shadcn callers per page** | 🟢 spec re-verified 2026-04-19 |
+| **S-shell** (App Header + Phase A atoms + states) | 🟢 | 🟢 10 live (Breadcrumb · ImpersonationBanner · Button · Chip · FilterBar · **SearchInput** · FloatingCTA · LoadingSkeleton · ErrorState · NoResultsState) + 4 cells (DateCell · DateTimeCell · CurrencyCell · NumberCell) · ⚠️ **RETIRED 2026-07-25**: ~~AppHeader~~ · ~~AppHeaderDesktopBar~~ · ~~DashboardHeader shim~~ (masthead deleted, Kopi 2a P3 — see [DEPRECATIONS.md](./DEPRECATIONS.md)); replaced by `AppSidebar` + `AppSidebarFooter` + `AppHeaderMobileBar` + `AppHeaderShell` | cells available for any DataTable adopter | 🟢 live (shell rebuilt 2026-07-25) |
 | **S3 Dashboard** (was module launcher) | 🟢 | 🟢 6 live (GreetingHeader · NeedsAttentionPill · AttentionHeader · CountBadge · **KpiTile** · **NumberTicker**) + **KpiIndexCard** (Kopi 2a) · ⚠️ 3 **RETIRED 2026-07-25**: ~~ModuleCard~~ · ~~CategoryHeader~~ · ~~ModuleSearch~~ (files deleted with the launcher grid — see [DEPRECATIONS.md](./DEPRECATIONS.md)) | `/dashboard` — 2a Overview: GreetingHeader masthead + KpiIndexCard row + feed table | 🟢 live (rebuilt 2026-07-25) |
 | **S4a Detail — Heavyweight** (9 primitives) | 🟢 | 🟢 9 primitives — PageShell · TabNav · Timeline · StatusTransitionModal · RelatedRecordsCard · ActivityLogTimeline · SendEmailDialog · LineItemsEditor · DestructiveConfirmDialog | `4/5 full` — CompanyDetail (W09 #2) · PersonDetail (W09 #18 · 2026-04-26) · InvoiceDetail (W09 · 2026-04-27) · **ProjectDetail (W09 #28 · 2026-05-27 · P1–P11 closed)**; QuotationDetail P2 header-lift only (W09 #10, body pending P3) | 🟢 live (4 adopters) |
 | **S4b Detail — Medium** (3 pages) | 🔴 | 🔴 | — | queued after S4a W09 |
@@ -106,7 +105,7 @@ Live adopters as of 2026-04-28. Full per-page primitive consumption + day-of-mig
 **What's locked (✅ signed off)**:
 - Font rule: Roboto body · Geist Mono labels/kbd · Geist Pixel Square h1 ≤ 48px · Geist Pixel Grid ≥ 140px
 - CTA: slate-800 (`--cta-primary-bg`) · 10.7:1 AAA contrast
-- Page composition: `<AppHeader>` → `<ImpersonationBanner>` → max-w content
+- Page composition: **superseded 2026-07-25** — `AppSidebar` rail (mounted by `DashboardLayout`) → page frame → `ImpersonationBanner` → content. Was: `<AppHeader>` → `<ImpersonationBanner>` → max-w content
 - Brand assets: `public/images/` · referenced as `/images/<file>` in JSX
 - Design-reuse: 11 rules in [DESIGN_REUSE_PRINCIPLES.md](DESIGN_REUSE_PRINCIPLES.md)
 - **115 primitives built** (2026-04-28). Per-folder counts in [src/components/primitives/CONTEXT.md](../../../src/components/primitives/CONTEXT.md). Per-primitive Design · Impl · Adopted state in [DESIGN_CATALOG_PRIMITIVES.md](DESIGN_CATALOG_PRIMITIVES.md).
@@ -122,7 +121,9 @@ Live adopters as of 2026-04-28. Full per-page primitive consumption + day-of-mig
 
 ### Discipline
 
-- [`.claude/rules/design-system.md`](../../../.claude/rules/design-system.md) — auto-loads on any edit to `src/components/primitives/**` or `src/pages/**`. Mandates visual verification against the Claude Design spec bundle before commit.
+- [`.claude/rules/light-theme.md`](../../../.claude/rules/light-theme.md) — auto-loads on any `src/**` or `src/index.css` edit. The enforceable surface / palette / type contract for the Kopi Studio light brand. (Replaces the old `design-system.md` rule, which no longer exists.)
+- [`.claude/rules/ui-components.md`](../../../.claude/rules/ui-components.md) — use `primitives/` over raw shadcn; Portal in dialogs.
+- [DEPRECATIONS.md](DEPRECATIONS.md) — check a name still exists before importing it.
 - [DESIGN_REUSE_PRINCIPLES.md](DESIGN_REUSE_PRINCIPLES.md) — 11 hard rules. Reuse first. Slot pattern for legacy. Feedback on every interactive element.
 - [src/components/primitives/CONTEXT.md](../../../src/components/primitives/CONTEXT.md) — primitive index with import paths. First stop for any new work.
 
@@ -140,9 +141,33 @@ Live adopters as of 2026-04-28. Full per-page primitive consumption + day-of-mig
 
 ---
 
-## Page composition pattern (locked 2026-04-19)
+## Page composition pattern — CURRENT (Kopi Studio 2a, 2026-07-25)
 
-**Every page — including /dashboard — follows this top-to-bottom structure**:
+The horizontal masthead is gone. **Chrome is mounted once, by the layout — never by the page**:
+
+```
+DashboardLayout  (src/components/shared/app-shell/DashboardLayout.tsx)
+├── GlobalCommandPalette             ⌘K — module routing
+├── AppSidebar                       fixed 200px rail, >= lg only
+│   ├── Wordmark                     "The Kopi Studio" (Instrument Serif)
+│   ├── nav items                    one per granted module, from useAuth().modules
+│   └── AppSidebarFooter             bell · ViewAs · account · sign-out
+└── content pane (lg:pl-[200px])
+    └── the routed page              ListPageFrame | DetailPageFrame | AppHeaderShell
+        └── ImpersonationBanner      rendered by the frame, only while impersonating
+        └── [breadcrumb | kicker] → H1 → description → hairline
+        └── content sections
+```
+
+Below `lg` the rail is hidden and `AppHeaderMobileBar` carries navigation + account. Breadcrumb is **content**, not chrome — a quiet inline line above the H1, rendered only when a page passes one.
+
+**/dashboard**: no inner page title — the `GreetingHeader` dateline + serif greeting IS the hero, followed by two `KpiIndexCard`s and the hairline "Latest additions" feed.
+
+**view-as-user placement**: `AppSidebarFooter` at ≥ lg, folded into the account dropdown of `AppHeaderMobileBar` below it. Never duplicated on individual pages.
+
+### Historical — page composition as locked 2026-04-19 (masthead era, retired 2026-07-25)
+
+> Kept verbatim as the record of the structure the S-shell session locked. `AppHeader` and `DashboardHeader` no longer exist — see [DEPRECATIONS.md](./DEPRECATIONS.md).
 
 ```
 <AppHeader>                           ← Session Shell primitive (shell/AppHeader.tsx)
@@ -163,9 +188,7 @@ Live adopters as of 2026-04-28. Full per-page primitive consumption + day-of-mig
 </page content container>
 ```
 
-**/dashboard exception**: no inner page title — GreetingHeader IS the hero. Other pages get a simple H1 or skip the hero entirely.
-
-**view-as-user placement**: lives in AppHeader user-menu (super_admin only). NOT duplicated on individual pages. /dashboard intentionally hides it (showViewAs=false) per user decision — impersonation happens via a separate entry point, not from the header.
+**view-as-user placement (then)**: lived in the AppHeader user-menu (super_admin only). `/dashboard` intentionally hid it (`showViewAs=false`) — impersonation happened via a separate entry point, not from the header.
 
 **Font rule (locked)**:
 | Use | Token | Family |

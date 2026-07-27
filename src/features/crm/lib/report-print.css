@@ -23,9 +23,12 @@
  *   - Recesses on a DARK fill are ink (rgb(58 46 36 / x)), never a cream wash:
  *     a translucent cream lifts the local ground and eats the contrast the
  *     inherited cream type depends on. See `.report-stat`.
- *   - Accent TYPE under 18px is AA-darkened: #4A6A4E positive · #AB4925
+ *   - Accent TYPE under 18px is AA-darkened: #4A6A4E positive · #8F3D1F
  *     negative · #806241 brown · #5D4F3F on tinted rows. The raw brand sage
- *     (#5A7A5E) and terracotta (#D97551) are fills/borders only.
+ *     (#5A7A5E) and terracotta (#D97551) are fills/borders only. Negative
+ *     type takes the DEEPER terracotta step (`--negative-text-on-tint`)
+ *     because it only ever lands on the error tint #FAE0D6, where the
+ *     page-tuned #AB4925 measures 4.499:1 and axe fails it.
  *   - Type: Instrument Serif for display >= 18px, IBM Plex Sans below it.
  *     Instrument Serif ships weight 400 only (see index.html), so serif type
  *     here never asks for bold — the browser would synthesise it.

@@ -9,7 +9,7 @@ Routing-only index for the auth domain: Supabase Auth + application-level module
 ## What belongs / what doesn't
 
 **Belongs**: anything tied to login, session, token refresh, logout, registration, approval, AuthContext, ProtectedRoute, auth-related RPCs (`get_user_profile`, `get_user_modules`, `handle_new_user`, `approve_user_and_link_person`).
-**Doesn't**: module catalog ([../MODULE_SYSTEM.md](../MODULE_SYSTEM.md)), people normalization ([../PEOPLE_SYSTEM.md](../PEOPLE_SYSTEM.md)), end-to-end approval SOP ([../../02-security/USER_APPROVAL_WORKFLOW.md](../../02-security/USER_APPROVAL_WORKFLOW.md)).
+**Doesn't**: module catalog ([../MODULE_SYSTEM.md](../MODULE_SYSTEM.md)), the CRM person/client data model ([../CRM_DATA_SPINE.md](../CRM_DATA_SPINE.md) — replaced the retired `PEOPLE_SYSTEM.md`), end-to-end approval SOP ([../../02-security/USER_APPROVAL_WORKFLOW.md](../../02-security/USER_APPROVAL_WORKFLOW.md)).
 
 ## Navigation
 

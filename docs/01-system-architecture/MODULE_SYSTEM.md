@@ -11,7 +11,7 @@ The AppBase Trench Trace Portal uses a comprehensive Role-Based Access Control (
 
 ## 📚 Related Documentation
 - [DATABASE_POLICY.md](./DATABASE_POLICY.md) - Application-level security approach and minimal RLS standards
-- [DATABASE_SECURITY_VULNERABILITY_ANALYSIS_AND_REMEDIATION_PLAN.md](../02-security/DATABASE_SECURITY_VULNERABILITY_ANALYSIS_AND_REMEDIATION_PLAN.md) - Critical security requirements for modules
+- [CRM_DATA_SPINE.md](./CRM_DATA_SPINE.md) - RLS Pattern D + capability model for module-owned tables (replaces the AppBase-template `DATABASE_SECURITY_VULNERABILITY_ANALYSIS_AND_REMEDIATION_PLAN.md`, which is not in this repo)
 - [URL_STANDARDS.md](./URL_STANDARDS.md) - **MANDATORY** Route naming conventions for module paths
 - [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) - UI/UX standards for module headers and components
 - [DOCUMENTATION_INDEX.md](../DOCUMENTATION_INDEX.md) - Complete system documentation index
@@ -539,7 +539,7 @@ If you get a 404 error after creating a module:
 
 ## 🚨 **CRITICAL: Common Routing Errors**
 
-> **Historical note (kept intentionally — debugging history)**: the examples below were written against the legacy `DashboardHeader` wrapper and the now-removed `AdminNavigation` tab component. Both were retired by the W09 primitive migration — new code uses the **frame primitives** (`AppHeaderShell` / `DetailPageFrame` / `ListPageFrame`) and the dashboard module grid for navigation. The **routing lessons themselves remain valid** (e.g. `/admin-dashboard` is not a real route — use `/dashboard`). Read the component names as illustrative of the anti-pattern, not as current imports.
+> **Historical note (kept intentionally — debugging history)**: the examples below were written against the legacy `DashboardHeader` wrapper and the now-removed `AdminNavigation` tab component. Both were retired by the W09 primitive migration, and `DashboardHeader` itself was **deleted 2026-07-25** with the rest of the masthead ([DEPRECATIONS.md](../99-refactor/_system/DEPRECATIONS.md)). New code uses the **frame primitives** (`AppHeaderShell` / `DetailPageFrame` / `ListPageFrame`); navigation is the `AppSidebar` rail plus the ⌘K `CommandPalette` — the module-launcher grid that briefly served that role was deleted in the same change. The **routing lessons themselves remain valid** (e.g. `/admin-dashboard` is not a real route — use `/dashboard`). Read the component names as illustrative of the anti-pattern, not as current imports.
 
 ### **Invalid Route: /admin-dashboard**
 

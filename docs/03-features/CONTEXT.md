@@ -1,5 +1,7 @@
 # Feature Specifications
 
+> Last updated: 2026-07-27
+
 How production features work today. Permanent reference (Layer 3) — updated when features change. Router only.
 
 ## What belongs / doesn't
@@ -8,29 +10,25 @@ Specs of **current behavior** (UI, data model, workflow) by domain. NOT: build p
 
 ## Navigation
 
-Open the subfolder's own `CONTEXT.md` to route into a spec + its code. Code paths are under `src/features/`.
+This app ships **four** feature folders under `src/features/`. Every row below was path-verified 2026-07-27.
 
-| Subfolder(s) | Domain | Code in |
-|--------------|--------|---------|
-| `autonomous-agent/` | Agent ecosystem, runs | `agent-runs/`, `agent-setup/` |
-| `claiming/` `progress-claims/` | Invoice/advance/progress claiming | `claims/`, `progress-claims/` |
-| `dashboards/` `supervisor*/` | Supervisor/drafter/engineer/report views | `drafterdashboard/`, `engineer-dashboard/` |
-| `comms/` `email*/` | Email automation, Gmail triage, AI classify | `email/`, `emailaccount/`, `comms/` |
-| `invoicing/` | Invoices, financial overview, Xero | `invoices/`, `xero-settings/` |
-| `nas-templates/` `nasoperations/` | NAS template + folder ops | `nasfoldertemplates/`, `nasoperations/` |
-| `nce-management/` | NCE submissions | `ncedashboard/` |
-| `ot-calculation/` | OT calc, edit grids, incomplete months | `otcalculator/`, `workerlist/` |
-| `payslip/` | Payslip generator + bulk payroll | `payslip/` |
-| `performance-review/` | Worker composite-score analytics | `performancereview/` |
-| `personnel/` | Staff vs workers, People Management | `people/`, `staffmanagement/`, `workerlist/` |
-| `plan-purchase/` `purchaseorders/` | Plan-purchase tracking + POs | `plan-purchase-dashboard/`, `purchaseorders/` |
-| `materialinventory/` `materialrequests/` | Material stock + requests | `materialinventory/`, `materialrequests/` |
-| `project-management/` `meeting-projects/` | Projects, CDW, file tracking | `projects/`, `meetingprojects/` |
-| `quotation/` | Quotations, PDF templates, spatial maps | `quotations/`, `quotation-settings/`, `pdf-templates/` |
-| `hr-applications/` `hr-pending-sends/` | HR application intake + send queue | `hr-applications/` |
-| `work-entry/` | General works, trial trench, hours | `fieldops/`, `site-forms/` |
+| Doc | Domain | Code in |
+|---|---|---|
+| [profiler/PROFILER_MODULE.md](./profiler/PROFILER_MODULE.md) | Profiler wizard (public) · results list + detail · convert-to-client · Account Settings · Manage Accounts | `src/features/profiler/`, `src/features/account-settings/`, `src/features/manage-accounts/` |
+| [crm/CRM_MODULE.md](./crm/CRM_MODULE.md) | CRM dashboard · clients · policies · interactions · bank history · client + portfolio reports · the `/dashboard` Overview | `src/features/crm/` |
+| [autonomous-agent/](./autonomous-agent/CONTEXT.md) | Agent ecosystem + Mac-Mini agent state | outside `src/` — `.claude/agents/`, `scripts/` |
+
+**AppBase-template leftovers** — kept for reference, not describing this app's shipped surface:
+
+| Doc | Note |
+|---|---|
+| `CLIENT_PROFILES_MODULE.md` | 2026-04-26 template-era client-profiles module — predates the CRM merge; superseded by `crm/CRM_MODULE.md` |
+| `SPATIAL_FEATURES_COORDINATE_SYSTEM.md` | 2025 PostGIS / OneMap notes — no spatial feature ships in this app |
+
+The old JLCode-portal domains (claiming · NAS · OT calculation · payslip · quotations · purchase orders · NCE · material requests · work-entry · …) were **never merged into this repo** and neither their doc folders nor their `src/features/` folders exist. A reference to any of them is template drift — delete it.
 
 ## Before working here
 
 - "How it works today" stays · "how to build/change it" → `docs/05-implementation/`
+- Every authed feature page renders on the light Kopi Studio palette inside the `AppSidebar` rail — read [.claude/rules/light-theme.md](../../.claude/rules/light-theme.md) before describing any UI.
 - Naming + headers: `.claude/rules/documentation.md`

@@ -27,7 +27,7 @@ Construction-operations portal for Your Company Pte Ltd. Production: `your-app.e
 
 | Tier | Lives in | Use when |
 |------|----------|----------|
-| **primitives** (144) | `src/components/primitives/` | First choice. Design-system parts. Authority: [primitives/CONTEXT.md](../../src/components/primitives/CONTEXT.md) · [universal-components.md](../../.claude/rules/universal-components.md) Need→Import matrix |
+| **primitives** (135) | `src/components/primitives/` | First choice. Design-system parts. Authority: [design-system/PRIMITIVES.md](./design-system/PRIMITIVES.md) (verified inventory) · [UNIVERSAL_COMPONENTS.md](../99-refactor/_system/UNIVERSAL_COMPONENTS.md) (use · edit · create rulebook) · [primitives/CONTEXT.md](../../src/components/primitives/CONTEXT.md) (⚠️ pre-Kopi, 2026-05-30) |
 | **ui** | `src/components/ui/` | shadcn base + sanctioned domain wrappers only |
 | **shared** | `src/components/shared/` | Used by ≥2 features — promote here, never mirror |
 | **feature-local** | `src/features/<name>/components/` | Used by exactly one feature |
@@ -60,10 +60,9 @@ Construction-operations portal for Your Company Pte Ltd. Production: `your-app.e
 | URL / route conventions | [URL_STANDARDS.md](./URL_STANDARDS.md) |
 | Mobile / touch-first | [MOBILE_WEB_STANDARDS.md](./MOBILE_WEB_STANDARDS.md) |
 | Design system (router) | [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) |
-| Dark mode | [design-system/DARK_MODE.md](./design-system/DARK_MODE.md) |
+| Theming — the app is **light-pinned**, no dark mode | [design-system/DARK_MODE.md](./design-system/DARK_MODE.md) (legacy filename) |
 | Authentication | [authentication/AUTHENTICATION_SYSTEM.md](./authentication/AUTHENTICATION_SYSTEM.md) |
-| People / contacts data model | [PEOPLE_SYSTEM.md](./PEOPLE_SYSTEM.md) |
-| Workflow engine / state machines | [WORKFLOW_SYSTEM.md](./WORKFLOW_SYSTEM.md) |
+| Clients / contacts data model | [CRM_DATA_SPINE.md](./CRM_DATA_SPINE.md) |
 | Canonical page-archetype patterns (list · detail · form · dashboard · settings + feature-folder) | [canonical-page-patterns/CONTEXT.md](./canonical-page-patterns/CONTEXT.md) |
 
 > The six canonical page-archetype specs live in [canonical-page-patterns/](./canonical-page-patterns/CONTEXT.md). Design tokens/primitives per archetype still route through [design-system/ARCHETYPES.md](./design-system/ARCHETYPES.md).

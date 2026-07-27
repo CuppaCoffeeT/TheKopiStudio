@@ -1,6 +1,6 @@
 # Commands — Slash Workflows
 
-20 user-invoked slash commands. Multi-step workflows that operate across `src/` · `docs/` · `supabase/`. Each is a `.md` file Claude reads on `/<name>` invocation.
+22 slash commands. Multi-step workflows that operate across `src/` · `docs/` · `supabase/`. Each is a `.md` file Claude reads on `/<name>` invocation. Two (`self-heal-e2e`, `git-check-mac-mini`) are driven by the Mac-Mini nightly pipeline rather than typed by hand.
 
 ## Scope
 
@@ -43,6 +43,8 @@
 |---------|---------|
 | `write-workflow-test.md` | Generate a Playwright spec from a natural-language workflow description |
 | `explore-module.md` | Browser-driven workflow autodiscovery for one module → specs |
+| `self-heal-e2e.md` | Head-less fix orchestrator for a failed comprehensive E2E run (invoked by `scripts/ci/comprehensive-run.sh`, not typed) |
+| `git-check-mac-mini.md` | Pick up the Mac-Mini nightly E2E run + finish any escalated self-heal |
 
 ### Module lifecycle
 | Command | Purpose |
@@ -71,7 +73,7 @@
 - **Naming**: `kebab-case.md`. Prefix `write-*` for authoring/generation commands (memory rule — discoverability when typing `/write`).
 - **Registration**: add new commands to the Navigation table above (this file is the canonical command list — CLAUDE.md routes here). If user-facing, also add a row to the routing table in root [CONTEXT.md](../../CONTEXT.md).
 - **Shape**: one job per command. If steps split (review vs author), make two commands.
-- **Hygiene**: `_archive/` holds retired commands — don't restore without checking why they were archived.
+- **Hygiene**: retired commands are removed outright — there is no `_archive/` here. Check `git log -- .claude/commands/` before resurrecting a name.
 
 ## 📚 Related
 

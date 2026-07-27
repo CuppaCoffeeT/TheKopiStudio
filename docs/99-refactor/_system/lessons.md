@@ -1,6 +1,6 @@
 # Refactor Program — Lessons
 
-_Last Updated: 2026-07-25 SGT_
+_Last Updated: 2026-07-27 SGT_
 
 Append-only. Newest at the bottom. Format: [DECISIONS_LESSONS_PATTERN.md](/Volumes/YourVolume/META_FOLDER_STRUCTURE/DECISIONS_LESSONS_PATTERN.md).
 
@@ -52,3 +52,79 @@ always pass `-p tsconfig.app.json`. Lint the touched files too — ESLint parses
 JSX independently and caught what the no-op tsc could not. JSX comments are only
 valid in *children* position; anywhere else use a `//` comment above the
 element or inside its opening tag.
+
+## 2026-07-25 — The LOC ratchet's effective ceiling is 199 lines, not 200
+
+**What happened**: Files trimmed to land exactly on the documented 200-line
+ceiling still tripped `npm run loc:check`, costing a round of re-trimming during
+the Kopi Studio repaint (four files needed cuts, comment inflation only).
+
+**Root cause**: `scripts/loc-ratchet.mjs` declares `const CEILING = 200` (line 24)
+and fails on `x.loc > CEILING` (line 37), but `loc` is measured as
+`readFileSync(f, 'utf8').split('\n').length` (line 36). A file whose last line
+ends in a newline — every well-formed file — splits into one extra empty trailing
+element, so `loc` is **`wc -l` + 1**. A 200-line file measures 201 and fails; the
+largest file the gate accepts has **199** real lines.
+
+**Fix**: Budget to 199, not 200. Verify a single file the way the gate does —
+`node -e "console.log(require('fs').readFileSync('<path>','utf8').split('\n').length)"`
+— rather than trusting `wc -l`, which reads one line low.
+
+**Prevention**: The gate is a **ratchet on the count of offending files**, not a
+per-file hard cap: it fails only when `current > baseline.filesOverCeiling`
+(`.loc-baseline.json`). So a file may legitimately exceed 199 if another one
+dropped below in the same change, and the correct response to a failure is
+usually decomposition, never re-baselining — `npm run loc:baseline` locks a
+*reduction* after the fact and must not be used to absorb a regression. Note
+also that `git ls-files` reports the INDEX: files that are new and unstaged are
+invisible to the gate, so it is only authoritative once changes are staged.
+
+## 2026-07-25 — Grep the rendered colour space, not the colour literal
+
+**Origin**: [docs/05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/lessons.md](../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/lessons.md) — full detail there.
+
+**What happened**: The navy/gold → cream/brown migration was scoped from a hex
+grep that returned **5 files**. The real surface was **103 files / 158 findings**.
+
+**Root cause**: A colour reaches the screen in forms a hex grep never sees —
+`rgb()`/`rgba()` triples; Tailwind 4's **space-separated** arbitrary syntax
+(`bg-[rgb(201_168_76_/_0.14)]`, which no hex *or* `rgb(r, g, b)` grep matches);
+cool-neutral utility families (`zinc`/`slate`/`gray`) that are blue-biased rather
+than neutral; semantic classes whose *token values* carry the retired colour; and
+inline `style={{ fontFamily: … }}` outside the token layer.
+
+**Prevention**: Applies to any repo-wide value migration, not just colour. Resolve
+the values in the token layer first, enumerate every rendering form of each value,
+then grep once per form. Treat a surprisingly small scoping result as evidence the
+grep is wrong, not that the job is small.
+
+## 2026-07-25 — `.claude/rules/*.md` with `paths:` frontmatter is executable policy; audit it FIRST
+
+**Origin**: [docs/05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/lessons.md](../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/lessons.md) — full detail there.
+
+**What happened**: `.claude/rules/dark-mode.md` was scoped `paths: src/**/*.ts(x)`,
+so it auto-loaded into every agent editing a source file and asserted the app was
+permanently navy/gold and always dark — while a migration to a light brand was in
+flight. Left alone it would have instructed each later phase to revert the phase
+before it.
+
+**Root cause**: Scoped rule files are injected context with `CLAUDE.md` force, and
+nothing about opening `src/index.css` prompts an agent to look in `.claude/rules/`.
+Rules that state a **fundamental** (theme polarity, the backend, the auth model)
+are exactly the ones a migration invalidates wholesale.
+
+**Prevention**: Before any migration that changes a fundamental, run
+`grep -l "paths:" .claude/rules/*.md` and read every hit — rewriting the affected
+rule is part of phase 1, not the closing docs pass. Preserve debugging-history
+sections when rewriting; retitle them for the retired era rather than deleting them
+(`dark-mode.md` → [`.claude/rules/light-theme.md`](../../../.claude/rules/light-theme.md)).
+
+## 2026-07-27 — Deleting a primitive leaves *two* kinds of stale doc, and only one is safe to fix
+**What happened**: The Kopi 2a P3/P4 deletions (`AppHeader`, `AppHeaderDesktopBar`, `DashboardHeader` shim, `ModuleCard`, `CategoryHeader`, `ModuleSearch`) were recorded for the launcher trio but not for the masthead, so `DESIGN_CATALOG_PRIMITIVES.md` still carried `<AppHeader>` as `🟢 at src/components/primitives/shell/AppHeader.tsx` with a 72/80 adoption count, and live build instructions (`.claude/rules/module-access.md`, `/create-module`, `/explore-module`, `jlcms-advisor`, the canonical DASHBOARD + DETAIL patterns) still told agents to scaffold `DashboardHeader`.
+**Root cause**: The deletion pass swept *catalog rows* but not *imperative prose*. Catalogs are indexed and easy to grep by component name; commands and rules phrase the same name inside a sentence ("component with `DashboardHeader` and `useAuth` access check"), so a name-only grep finds them but a catalog-shaped sweep does not.
+**Fix**: Split the sweep by document mood. **Indicative** docs (catalogs, session tables, dated program history) get the row struck through with date + reason and kept — they are the record. **Imperative** docs (rules, slash commands, agent definitions, canonical page patterns, SOPs) get the name *replaced* with the live one, because an agent will execute them verbatim. Then add the deletion to `DEPRECATIONS.md` with a verification grep that actually returns zero — scope it to `src/ tests/`, since `docs/` will always match the entry itself.
+
+## 2026-07-27 — `AppHeaderShell` survives a masthead deletion, so `grep AppHeader` over-reports
+**What happened**: Grepping `AppHeader` across docs returned ~180 hits and made the cleanup look intractable; most were `AppHeaderShell` / `AppHeaderMobileBar` / `AppHeaderLogo` / `AppHeaderUserMenu`, all alive.
+**Root cause**: The redesign deleted `AppHeader.tsx` but deliberately kept the `AppHeader` *prefix* on four surviving primitives — `AppHeaderShell` kept its name because every tool page imports it.
+**Fix**: Always grep the deleted names with the survivors excluded, e.g. `grep -rn "AppHeader" docs .claude --include="*.md" | grep -v "AppHeaderShell\|AppHeaderLogo\|AppHeaderMobileBar\|AppHeaderUserMenu"`. `DEPRECATIONS.md` now names the survivors explicitly so the next agent does not re-litigate this.

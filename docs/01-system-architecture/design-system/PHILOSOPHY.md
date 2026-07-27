@@ -38,7 +38,7 @@ Canonical source: [DESIGN_REUSE_PRINCIPLES.md](../../99-refactor/_system/DESIGN_
 5. **No forking** — copy = tech debt
 6. **Check `DESIGN_CATALOG.md` first** — design ≠ impl ≠ adopted
 7. **Font rule** — IBM Plex Sans for body/UI/prose · Instrument Serif for display headings only, never under 18px (see [TYPOGRAPHY.md](./TYPOGRAPHY.md))
-8. **Page composition** — `AppHeader → PageShell/DetailPageFrame` (no one-off chrome)
+8. **Page composition** — no page builds its own chrome. `AppSidebar` (mounted once by `DashboardLayout`) is the desktop chrome; pages wrap in `ListPageFrame` · `DetailPageFrame` · `AppHeaderShell`. The `AppHeader` masthead was deleted 2026-07-25
 9. **Brand assets in `/public/images/`** — no inline SVG duplication
 10. **No speculative machinery** — only build what's in the current design spec
 11. **Feedback on every interactive** — 5 states (default · hover · active · focus-visible · disabled). Hover must visually differ from the cream page bg (brown wash @ 6% or the `#F3EDE3` tint). Focus-visible = brown ring, 2px at 2px offset. Disabled = 40% opacity. Loading states required.
@@ -60,4 +60,6 @@ The Kopi Studio is an advisor-facing tool — client profiling, portfolio review
 - [TYPOGRAPHY.md](./TYPOGRAPHY.md) · [COLORS.md](./COLORS.md) · [TOKENS.md](./TOKENS.md) · [SPACING_MOTION.md](./SPACING_MOTION.md)
 - [DESIGN_REUSE_PRINCIPLES.md](../../99-refactor/_system/DESIGN_REUSE_PRINCIPLES.md) — principles source-of-truth
 - [LOCKED_PICKS.md](../../99-refactor/_system/LOCKED_PICKS.md) — component locks + aesthetic-reversal history
-- [DARK_MODE.md](./DARK_MODE.md) — superseded always-dark contract (historical)
+- [DARK_MODE.md](./DARK_MODE.md) — the light-pinning contract (legacy filename; **there is no dark mode**)
+- [ARCHETYPES.md](./ARCHETYPES.md) · [PRIMITIVES.md](./PRIMITIVES.md) — the shapes and parts these principles govern
+- [DEPRECATIONS.md](../../99-refactor/_system/DEPRECATIONS.md) — components removed in the migration

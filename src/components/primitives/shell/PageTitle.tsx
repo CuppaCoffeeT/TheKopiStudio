@@ -2,7 +2,7 @@
  * PageTitle — the locked page-title primitive (h1 for every archetype frame).
  *
  * Every archetype frame (ListPageFrame · DetailPageFrame/PageShellHero ·
- * DashboardHeader · future FORM/SETTINGS/TOOL frames) MUST render its page
+ * AppHeaderShell · future FORM/SETTINGS/TOOL frames) MUST render its page
  * title through this component. Single source of truth — change the typography
  * here, propagates to every adopter.
  *

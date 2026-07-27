@@ -98,7 +98,7 @@ Instrument Serif never appears below 18px anywhere in the comp — the rule hold
 
 ## Layout language
 
-**Shell.** Sidebar 206px (fixed, `flex:none`) + fluid content pane. The sidebar is the **lighter** surface — `#faf6ee` card cream against the `#f0e6d6` page — separated by `border-right: 1px solid #d9ccc0`. It is not a dark rail. Sidebar padding `22px 0`, item gap 2px. Content pane padding `34px 40px`, sitting on the page colour with no card wrapper.
+**Shell.** Sidebar 206px (fixed, `flex:none`) + fluid content pane. ⚠️ **Comp draws 206px; shipped is 200px** — `AppSidebar.tsx` `SIDEBAR_WIDTH_CLASS` / `SIDEBAR_OFFSET_CLASS`, and every other doc records 200px. Knowing deviation, see [decisions.md](./decisions.md) → "The rail ships 200px, not the comp's 206px". The sidebar is the **lighter** surface — `#faf6ee` card cream against the `#f0e6d6` page — separated by `border-right: 1px solid #d9ccc0`. It is not a dark rail. Sidebar padding `22px 0`, item gap 2px. Content pane padding `34px 40px`, sitting on the page colour with no card wrapper.
 
 **Sidebar items.** Padding `9px 22px`, 13px, `border-left: 2px solid transparent` on every item so nothing shifts when the active marker appears.
 
@@ -162,9 +162,9 @@ Radius 99px, padding `3px 10px`, 600 11.5px. Tint fill + darkened text of the sa
 |---|---|---|---|
 | Complete / positive | `#d9e8e0` | `#4a6a54` | 4.76 ✅ |
 | In progress (`Step 4 / 7`) | `#f0e2cf` | `#7d5f3d` | 4.61 ✅ |
-| Error (`Missing email`) | `#fae0d6` | `#ab4925` | 4.50 ✅ |
+| Error (`Missing email`) | `#fae0d6` | `#8f3d1f` | 5.85 ✅ |
 
-The first two are the comp's own values and pass as-is — **do not** substitute the page-tuned text variants, which score *worse* on these tints (`#526f56` on `#d9e8e0` = 4.40, `#806241` on `#f0e2cf` = 4.41). The error pill is the one correction: the comp's `#b04f2c` on `#fae0d6` measures 4.17 and fails, so it takes `--negative-text` `#ab4925`.
+The first two are the comp's own values and pass as-is — **do not** substitute the page-tuned text variants, which score *worse* on these tints (`#526f56` on `#d9e8e0` = 4.40, `#806241` on `#f0e2cf` = 4.41). The error pill is the one correction: the comp's `#b04f2c` on `#fae0d6` measures 4.17 and fails. `--negative-text` `#ab4925` was the original correction, booked here as "4.50" — it actually measures **4.499** and axe fails it, so the error pill takes the deeper `--negative-text-on-tint` `#8f3d1f` (corrected 2026-07-27).
 
 Status shown as **plain text** rather than a pill (the list's Report column) uses 600 12px — `--sage-text` for "Generated", `#7d6b5b` for "Pending".
 

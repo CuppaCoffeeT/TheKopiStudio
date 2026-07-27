@@ -38,7 +38,7 @@ Slug is the workspace name (kebab-case). Example: `/scope-first quotation-ux-ret
 ## Workspace layout
 
 ```
-docs/99-refactor/_system/design/<topic-slug>/
+docs/05-implementation/active/<topic-slug>/
 ├── README.md                       # workspace index + stage table
 └── _planning/
     ├── 0_INTAKE/
@@ -62,7 +62,7 @@ docs/99-refactor/_system/design/<topic-slug>/
         └── CONTEXT.md              # ready-for-code marker · lists plan · baseline capture
 ```
 
-Place under `docs/99-refactor/_system/design/` by default. User may redirect to another parent (e.g. `docs/05-implementation/active/`) at invocation.
+Place under `docs/05-implementation/active/` by default — the live "working plans in flight" tree (`docs/05-implementation/CONTEXT.md`). User may redirect to another parent at invocation. **Not** `docs/99-refactor/_system/design/`: that tree was deleted from the repo (see `docs/99-refactor/_system/UNIVERSAL_COMPONENTS.md` — "these folders are no longer in the repo"); do not recreate it.
 
 ## Protocol
 
@@ -124,4 +124,4 @@ Push to main. Capture: DB migrations via Supabase MCP · Python-side deltas flag
 - [.claude/rules/documentation.md](../rules/documentation.md) — file header standard
 - [.claude/rules/code-hygiene.md](../rules/code-hygiene.md) — 4-checks-when-touching-a-file
 - [docs/99-meta/TOKEN_BUDGET.md](../../docs/99-meta/TOKEN_BUDGET.md) — per-file ceilings
-- [docs/99-refactor/_system/design/pages/quotationdetail/p3/rethink/](../../docs/99-refactor/_system/design/pages/quotationdetail/p3/rethink/) — first real consumer of this skill
+- `docs/99-refactor/_system/design/pages/quotationdetail/p3/rethink/` — first real consumer of this skill (⛔ **no longer in the repo**; unlinked on 2026-07-27 because the whole `_system/design/` tree was deleted. Kept as the record of where the pattern was proven.)

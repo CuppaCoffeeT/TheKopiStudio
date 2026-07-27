@@ -65,4 +65,6 @@ import { SearchableMultiSelect, type SMSOption } from '@/components/primitives/o
 - [docs/01-system-architecture/SEARCHABLE_SELECT_COMPONENT.md](../../docs/01-system-architecture/SEARCHABLE_SELECT_COMPONENT.md) — combobox primitive (canonical)
 - Source: `src/components/primitives/form/DatePicker.tsx`
 - Source: `src/components/primitives/overlays/SearchableMultiSelect.tsx`
-- Related: [universal-components.md](./universal-components.md) — Need → Import matrix
+- Related: [docs/99-refactor/_system/UNIVERSAL_COMPONENTS.md](../../docs/99-refactor/_system/UNIVERSAL_COMPONENTS.md) — Need → Import matrix (there is no `.claude/rules/universal-components.md`; this rule file *is* the rule)
+- Related: [light-theme.md](./light-theme.md) — the palette / surface / type contract every primitive must honour
+- Related: [docs/99-refactor/_system/DEPRECATIONS.md](../../docs/99-refactor/_system/DEPRECATIONS.md) — check a primitive still exists before importing it

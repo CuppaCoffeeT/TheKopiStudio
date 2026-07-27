@@ -12,9 +12,12 @@ User describes what they want changed — either free-text (`/design-prompt chan
 
 Before writing the prompt, read:
 
+- [docs/05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md](../../docs/05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md) — **the live brand: The Kopi Studio, direction 2a "Kopi House", light-pinned cream/brown. Read this first.**
+- [.claude/rules/light-theme.md](../rules/light-theme.md) — the enforceable surface/type contract
 - [docs/99-refactor/_system/LOCKED_PICKS.md](../../docs/99-refactor/_system/LOCKED_PICKS.md) — locked visual decisions
 - [docs/99-refactor/_system/UNIVERSAL_COMPONENTS.md](../../docs/99-refactor/_system/UNIVERSAL_COMPONENTS.md) — primitive inventory
 - [src/components/primitives/CONTEXT.md](../../src/components/primitives/CONTEXT.md) — current state
+- [docs/99-refactor/_system/DEPRECATIONS.md](../../docs/99-refactor/_system/DEPRECATIONS.md) — **check before naming a primitive in the reuse inventory; deleted names must never be enumerated**
 - Any specific primitive the user named — `Grep` for it
 
 ### 2. Emit the prompt
@@ -29,7 +32,7 @@ Output a single fenced block the user copy-pastes. Structure:
 This is a COMPOSITION task, not a redesign. The AppBase Design System already publishes 82+ primitives across 8 groups. Use them by name; never invent a second copy.
 
 **Primitives in scope for this feature:**
-- shell: [enumerate — e.g. AppHeader, Card, Button, IconButton, Chip, SearchInput, FloatingCTA, LoadingSkeleton, NoResultsState, ErrorState, DateTimeCell, …]
+- shell: [enumerate — e.g. AppSidebar, AppSidebarFooter, AppHeaderShell, AppHeaderMobileBar, Wordmark, Card, Button, IconButton, Chip, SearchInput, FloatingCTA, LoadingSkeleton, NoResultsState, ErrorState, DateTimeCell, …]
 - overlays: [enumerate — e.g. Modal, Drawer (vaul bottom-sheet · v2 lock), Popover, Tooltip, DropdownMenu, Alert, …]
 - form: [enumerate — e.g. Input, Textarea, Select, Checkbox, Switch, Field, Label, DatePicker, …]
 - ui: [enumerate — e.g. DataTable, DataRow, MobileListCard, Pagination, StatusTabs, …]
@@ -37,7 +40,8 @@ This is a COMPOSITION task, not a redesign. The AppBase Design System already pu
 
 **Hard bans (failure mode observed 2026-04-23):**
 - Do NOT rebuild `Drawer` — the v2-locked vaul bottom-sheet is canonical. Mobile = reuse `Drawer`, desktop = reuse `Modal`. Never both, never new.
-- Do NOT rebuild `Modal`, `Card`, `Badge`, `Button`, `Input`, `Select`, `Textarea`, `AppHeader` — all published and locked.
+- Do NOT rebuild `Modal`, `Card`, `Badge`, `Button`, `Input`, `Select`, `Textarea`, `AppSidebar` — all published and locked.
+- Do NOT reintroduce a horizontal top masthead, a module-launcher grid, or the primitives that built them (`AppHeader`, `AppHeaderDesktopBar`, `ModuleCard`, `CategoryHeader`, `ModuleSearch`) — all deleted 2026-07-25, see DEPRECATIONS.md. Desktop chrome is the 200px `AppSidebar` rail; module jump is ⌘K `CommandPalette`.
 - Any `.<feature>-*` CSS class in the preview is page-scoped styling for the spec sheet ONLY — it must compose to an existing primitive at promote time. Don't export such classes as new primitives.
 
 ## Change request
@@ -47,8 +51,10 @@ This is a COMPOSITION task, not a redesign. The AppBase Design System already pu
 - Tokens stay as published (unless the change IS a token change — call it out)
 - Locked picks: [paste the 2–3 LOCKED_PICKS lines relevant to this change]
 - Keep the component API stable — this is a visual/token edit, not a structural rewrite
-- **Dark mode is mandatory.** Every new rule in the `<style>` block must have a `.dark` counterpart. Every token used must resolve in both `:root` and `.dark` (the repo already defines both). Raw rgbas for glass / backdrops must use the `--surface-translucent-bg` token family, which has a dark pair. `grep -c "dark"` on the finished preview HTML must be > 0.
-- **All 5 states required on every interactive element** — default / hover / active / focus-visible / disabled — in both light and dark.
+- **The app is LIGHT-PINNED — do NOT produce dark-mode rules.** There is one `:root` token block and no `.dark` counterpart; `ThemeProvider` resolves `'light'` permanently. A `.dark` rule in the preview is dead code that will be stripped at promote time. No `prefers-color-scheme`, no theme toggle.
+- **Palette is Kopi Studio 2a** — page `#F0E6D6` · card `#FAF6EE` (raised LIGHTER than page) · raised/modal `#FFFFFF` · border `#D9CCC0` · text `#3A2E24` · muted `#7D6B5B` · brown `#8B6A47` (CTA/focus/active-nav) · sage `#5A7A5E` (positive) · terracotta `#D97551` (negative). Under 18px use the AA variants `#806241` / `#526F56` / `#AB4925`. No navy, no gold, no cool greys.
+- **Type**: Instrument Serif for headings/numerals, **never below 18px**; IBM Plex Sans for everything else.
+- **All 5 states required on every interactive element** — default / hover / active / focus-visible / disabled.
 - [Any other constraint from UNIVERSAL_COMPONENTS.md this change touches]
 
 ## Deliverable
@@ -62,7 +68,9 @@ Do NOT add a new `.jsx` under `project/ui_kits/appbase/src/` unless a genuinely 
 - Do NOT invent new tokens for glass / accent colors — use the published `--surface-translucent-*` / `--accent-*` families.
 ```
 
-### 2b. Dark-mode-only variant (scoped token pass)
+### 2b. Historical — dark-mode-only variant (zinc dark era, retired 2026-07-25)
+
+> ⛔ **DO NOT EMIT THIS TEMPLATE.** The app is light-pinned on the Kopi Studio cream/brown palette; a preview with zero `.dark` rules is now *correct*, not a gap. Kept verbatim below as the record of what the dark era asked for — and as the reason the `grep -c "dark"` heuristic must never be re-armed.
 
 When a preview exists but has no dark mode (`grep -c "dark" project/preview/component-<slug>.html` = 0), emit this tighter template instead of the full one:
 
@@ -92,7 +100,7 @@ Just print the block and stop. The user drives the rest:
 1. Paste into Claude Design
 2. Iterate there visually
 3. Export the bundle → get handoff URL
-4. Run `/design-import <url>` here (STAGE mode) — lands in `docs/99-refactor/_system/design/<session>/export/<date>/`
+4. Run `/design-import <url>` here (STAGE mode) — lands in `docs/05-implementation/design-handoffs/<YYYY-MM-DD>-<short-hash>/` (the `99-refactor/_system/design/` tree it used to write to no longer exists)
 5. When happy, run `/design-import --promote <staged-file>` per file to apply into `src/`
 
 **Why staging, not direct to src/**: lets you iterate visually and rollback per-primitive. Especially important for shared primitives that fan out to multiple pages.

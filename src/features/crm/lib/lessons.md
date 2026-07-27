@@ -1,6 +1,6 @@
 # Lessons — src/features/crm
 
-Last Updated: 2026-07-25
+Last Updated: 2026-07-27
 
 ## 2026-07-14 — getCurrentSingaporeTime() is browser-local; SGT display strings need an explicit timeZone
 
@@ -25,3 +25,13 @@ Last Updated: 2026-07-25
 **Root cause**: The note recorded the trap but assigned no work, so the redesign batch rebuilt the surface *around* `PortfolioReportPage`'s timestamp without touching the timestamp.
 
 **Fix**: All four are done. `PortfolioReportPage.generatedTimestamp()` and `ReportDisclaimer` use `formatDisplayDateTimeLong(new Date())`; `ReportHero`'s as-of date uses `formatDisplayDateLong(new Date())`; `currentRefYear()` uses the new `getSingaporeYear()` in `timezoneUtils`. `getCurrentSingaporeTime()` keeps its remaining callers — they want an *instant* (comparison refDates, "now" arguments), which it returns correctly — and its docblock now says so explicitly. **Supersedes** the audit note in the 2026-07-14 entry; the lesson itself still stands.
+
+## 2026-07-27 — ClientDetailActions's read-only hint had the profiler's page-cream contrast bug
+
+**Origin**: src/features/profiler/lib/lessons.md (2026-07-27)
+
+**What happened**: `ClientDetailActions`'s `ReadOnlyHint` mirrors the profiler's `ResultDetailActions` copy line for line, including `text-muted-foreground`. That token is `#7D6B5B` — 4.72:1 on card cream but **4.12:1 on the page cream `#F0E6D6`** the `DetailPageFrame` hero actually paints, and the hint renders at 10.5px. The profiler copy was caught by `load-a11y.spec.ts`; this one has no a11y spec covering a foreign-owned client, so it was silently failing AA.
+
+**Root cause**: the component was copied from the profiler along with its bug. Neither copy inherited the `--fg-dim` call that `PageShellHero`'s own meta line makes on the same ground for the same reason.
+
+**Fix**: both variants take `var(--fg-dim)` (6.40:1). Generally: `text-muted-foreground` is a CARD-cream token — anything rendered into a `DetailPageFrame`/`ListPageFrame` hero sits on the page cream and needs `--fg-dim` under 18px. When mirroring a component across features, re-measure its colours against the new parent's ground rather than trusting the source.

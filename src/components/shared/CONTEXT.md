@@ -14,27 +14,27 @@
 
 ## Inventory
 
+**One domain today** — verified against the filesystem 2026-07-27
+(`find src/components/shared -name '*.tsx'`):
+
 | Sub-domain / file | Holds | Used by (verified) |
 |-------------------|-------|---------|
-| `agent/` | workflow run UI (rail panel, confirm modal, input forms) + hooks + wire types | agent-runs, agent-setup, hr-applications |
-| `cdw-spatial/` | CDW part cards + spatial-feature editor + modals + hooks | projects, quotations |
-| `email/` | `EmailRecipientPicker` + recipient queries/actions + sub-modals | invoices, quotations |
-| `nas/` | NAS folder picker/card/row + `LinkedNASPathPill` | projects, quotations |
-| `project-create/` | `NewProjectIdentificationFields` · `ProjectClientContactsFields` | projects, quotations (accept-quote flow) |
-| `project-form-import/` | project intake/import form fields + parsing helpers (shared create/import surface) | projects, quotations (accept-quote/import flow) |
-| `plan-purchase/` | plan-purchase request UI (cards/table/rows + line-item editor + modals) | plan-purchase page, projects detail |
-| `worker-ot/` | `WorkerOTTable` + `workerOTTableShared` (cell/column factories) | promoted shared OT-table layer (fieldops OT surfaces) |
-| `trial-trench/` | `TrialTrenchExpandedPanel` + cells (`ProjectCell`/`PeopleCell`/`UpdatedCell`/…) + mode config + `trialTrenchTableShared` factories | jltt, fieldops review queues, projects detail; cells reused by worker-ot + general-works |
-| `general-works/` | `GeneralWorksTable` · `GeneralWorksDetailSheet` · `GeneralWorksStatusTimeline` · `GeneralWorksFileManager` (+ `file-manager/`) · wizard `form/*` · `generalWorksTableShared`+`generalWorksTableColumns` factories · GW record types | fieldops (generalworks page/review/coordinator-review/work-entry submissions), drafterdashboard, projects detail |
-| `completed-work/` | `CompletedWorkTab` · `CompletedWorkActionsProvider` · `CompletedWorkMobileActions` + claiming line-items/modals subtree | projects detail, payment-management claims detail |
-| `DrawingListTable.tsx` · `DrawingFilesInlinePanel.tsx` | drawing list + inline files | projects, fieldops |
-| `NASStatusPill.tsx` · `SyncStatusIndicator.tsx` | NAS/sync status widgets | fieldops |
-| `LinkReplacementFileDialog.tsx` · `MultiSelectDropdown.tsx` | small cross-feature widgets | projects + others |
+| `app-shell/` | `ProtectedRoute` · `DashboardLayout` · `GlobalCommandPalette` · `ErrorBoundary` | `src/App.tsx` (routing shell); `DashboardLayout` mounts `GlobalCommandPalette` |
 
-Subdomains expose a barrel `index.ts`; import from `@/components/shared/<domain>`. Loose `.tsx` files are pre-barrel widgets — import by path until barrelised.
+There are no loose `.tsx` files at the root of `shared/` and no barrel `index.ts` —
+import by explicit path, e.g. `@/components/shared/app-shell/ProtectedRoute`.
+
+> **Historical (multi-domain era, retired 2026-07-27)** — this table previously listed 15
+> further sub-domains (`agent/` · `cdw-spatial/` · `email/` · `nas/` · `project-create/` ·
+> `project-form-import/` · `plan-purchase/` · `worker-ot/` · `trial-trench/` ·
+> `general-works/` · `completed-work/`) plus loose widgets (`DrawingListTable.tsx` ·
+> `DrawingFilesInlinePanel.tsx` · `NASStatusPill.tsx` · `SyncStatusIndicator.tsx` ·
+> `LinkReplacementFileDialog.tsx` · `MultiSelectDropdown.tsx`). None of those paths exist
+> in this repo — they left with the features they served when the app was merged down to
+> `account-settings` · `crm` · `manage-accounts` · `profiler`. Do not cite them as live.
 
 ## 📚 Related
 
 - [primitives/CONTEXT.md](../primitives/CONTEXT.md) — Tier 1
-- [universal-components-protocols.md](../../../.claude/rules/universal-components-protocols.md) — Tier 2 `ui/`
-- [CANONICAL_FEATURE_FOLDER.md](../../../docs/01-system-architecture/CANONICAL_FEATURE_FOLDER.md) — Tier 4 + promotion lane
+- [.claude/rules/ui-components.md](../../../.claude/rules/ui-components.md) — Tier 2 `ui/`
+- [CANONICAL_FEATURE_FOLDER.md](../../../docs/01-system-architecture/canonical-page-patterns/CANONICAL_FEATURE_FOLDER.md) — Tier 4 + promotion lane

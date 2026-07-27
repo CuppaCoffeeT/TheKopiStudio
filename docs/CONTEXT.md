@@ -1,6 +1,10 @@
 # Documentation
 
-~1,067 Markdown docs in 8 numbered categories — the project's knowledge base. Router only.
+> Last updated: 2026-07-27
+
+~166 Markdown docs in 8 numbered categories — the project's knowledge base. Router only.
+
+Many Layer-3 docs here are inherited AppBase-template reference material describing systems this app never shipped. Each category `CONTEXT.md` marks its own template-era rows; when one disagrees with the code, **the code wins** — fix the doc.
 
 ## What belongs / doesn't
 
@@ -28,7 +32,9 @@ Docs hold the knowledge; implementations live elsewhere:
 | Doc topic | Implementation in |
 |-----------|-------------------|
 | Architecture, design patterns | `src/features/<name>/`, `src/components/primitives/`, `src/utils/` |
-| Feature behavior | `src/features/<name>/` (51 modules) · `src/pages/` (thin shells) |
+| Feature behavior | `src/features/` — 4 feature folders (`crm/` · `profiler/` · `account-settings/` · `manage-accounts/`) · `src/pages/` (3 unauthed shells: `Login` · `NotFound` · `RouteError`) |
+| Shell + navigation | `src/components/primitives/shell/AppSidebar.tsx` (the 200px rail — the primary nav) · `AppHeaderMobileBar.tsx` (< lg) · `src/components/shared/app-shell/DashboardLayout.tsx` |
+| Colour, type, surfaces | `src/index.css` (single `:root`, light-pinned) — spec at `docs/05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md` |
 | Schema, RLS, migrations | `supabase/migrations/` |
 | Code patterns, conventions | `.claude/rules/` |
 
@@ -37,8 +43,12 @@ Docs hold the knowledge; implementations live elsewhere:
 - Naming: `SCREAMING_SNAKE_CASE.md` · Header: Created, Last Updated, Status, Priority
 - Register new docs in `DOCUMENTATION_INDEX.md` + add bidirectional links
 - Standards: `.claude/rules/documentation.md`
+- **Deleted names**: check [99-refactor/_system/DEPRECATIONS.md](./99-refactor/_system/DEPRECATIONS.md) before citing any component or hook — the 2026-07-25 redesign deleted the top masthead and the module-launcher primitives.
 
 ## Related
 
 - [DOCUMENTATION_INDEX.md](./DOCUMENTATION_INDEX.md) — full index
+- [CONTEXT_MAP.md](./CONTEXT_MAP.md) — CONTEXT.md coverage map
+- [ONBOARDING.md](./ONBOARDING.md) — new-contributor entry point
 - [99-meta/TOKEN_BUDGET.md](./99-meta/TOKEN_BUDGET.md) — file-size budgets
+- [99-refactor/_system/DEPRECATIONS.md](./99-refactor/_system/DEPRECATIONS.md) — what was deleted, and what replaced it

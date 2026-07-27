@@ -16,9 +16,8 @@ Canonical record of every visual-language pick the user has accepted via `/desig
 ## 📚 Related Documentation
 
 - [W17_COMPONENT_LIBRARY.md](workflows/W17_COMPONENT_LIBRARY.md) — workflow card
-- [research/COMPONENT_INVENTORY.md](research/COMPONENT_INVENTORY.md) — current usage per slot
-- [research/COMPONENT_CANDIDATES.md](research/COMPONENT_CANDIDATES.md) — candidates evaluated per slot
-- [/design-lab](http://localhost:8081/design-lab) — the lab where picks were made (super_admin only)
+- [DESIGN_CATALOG_PRIMITIVES.md](DESIGN_CATALOG_PRIMITIVES.md) — per-primitive Design · Impl · Adopted state (replaces the removed `research/COMPONENT_INVENTORY.md` + `research/COMPONENT_CANDIDATES.md`; there is no `_system/research/` folder)
+- `/design-lab` — the route the picks were made in. **Not in `src/App.tsx` any more**; the lab is gone, the picks below are the surviving record.
 - [W07_SHARED_PRIMITIVES.md](workflows/W07_SHARED_PRIMITIVES.md) — consumes these picks
 - [W08_DESIGN_SYSTEM.md](workflows/W08_DESIGN_SYSTEM.md) — tokens style these picks
 
@@ -43,9 +42,9 @@ Canonical record of every visual-language pick the user has accepted via `/desig
 |---|---|---|---|---|---|
 | **Card** | `shadcnblocks-clean` — soft border, subtle hover lift, tighter typography | [shadcnblocks.com](https://www.shadcnblocks.com/components) | 2026-04-19 | Wrap as `<Card>` primitive replacing current `src/components/ui/card.tsx` consumers (250+ files). Variants: `default`, `interactive` (hover lift on). | Tokens: `--card-radius` (current 1rem), `--card-border` (zinc-200/80), `--card-shadow-rest` (1px 2px 4%), `--card-shadow-hover` (4px 16px 6%), `--card-padding` (1.25rem). |
 | **DataTable** | `TanStack + Motion row enter/exit` — shadcn markup + headless engine + `AnimatePresence` on filter | [@tanstack/react-table](https://tanstack.com/table/latest) + [motion.dev](https://motion.dev/docs/react-animate-presence) | 2026-04-19 | Build `<DataTable columns rows>` primitive over shadcn `<Table>` + TanStack `useReactTable`. Bake-in `AnimatePresence` on rows (180ms ease). Replaces 88 hand-rolled list views — top W07 leverage move. | Tokens: `--row-hover-bg` (zinc-50 / dark zinc-900/50), `--row-enter-duration` (180ms), `--sort-icon-opacity-rest` (0.4). |
-| **KPITile** | `Tremor + NumberTicker` — Tremor card shape + Magic UI count-up animation | [@tremor/react](https://www.tremor.so) + Magic UI NumberTicker (sourced inline at [src/features/design-lab/components/NumberTicker.tsx](../../../src/features/design-lab/components/NumberTicker.tsx)) | 2026-04-19 | Build `<KpiTile label value delta icon trend>` primitive. NumberTicker bundled. Sparkline slot accepts Tremor `<SparkAreaChart>` for v2 charts work. | Tokens: `--kpi-radius` (1rem), `--delta-positive-bg/fg` (green-50/700), `--delta-negative-bg/fg` (red-50/700), `--ticker-spring-stiffness` (100), `--ticker-spring-damping` (60). |
+| **KPITile** | `Tremor + NumberTicker` — Tremor card shape + Magic UI count-up animation | [@tremor/react](https://www.tremor.so) + Magic UI NumberTicker (shipped as [src/components/primitives/dashboard/NumberTicker.tsx](../../../src/components/primitives/dashboard/NumberTicker.tsx); the `src/features/design-lab/` prototype it was sourced from no longer exists) | 2026-04-19 | Build `<KpiTile label value delta icon trend>` primitive. NumberTicker bundled. Sparkline slot accepts Tremor `<SparkAreaChart>` for v2 charts work. | Tokens: `--kpi-radius` (1rem), `--delta-positive-bg/fg` (green-50/700), `--delta-negative-bg/fg` (red-50/700), `--ticker-spring-stiffness` (100), `--ticker-spring-damping` (60). |
 
-**v1 mockup proven against**: Quotation List ([src/features/design-lab/mockups/QuotationListMockup.tsx](../../../src/features/design-lab/mockups/QuotationListMockup.tsx)) — Desktop + Mobile-375px + Light + Dark.
+**v1 mockup proven against**: Quotation List (`src/features/design-lab/mockups/QuotationListMockup.tsx` — ⛔ the design-lab feature was removed; mockup no longer in the repo) — Desktop + Mobile-375px, in the then-current light/dark pair.
 
 ---
 
@@ -58,7 +57,7 @@ Canonical record of every visual-language pick the user has accepted via `/desig
 | **Timeline** | `Scroll-beam (Aceternity-style)` — connecting beam fills as you scroll · signature crazy-motion moment | motion `useScroll` (Aceternity-style, no paid dep needed — built inline) | 2026-04-19 | Build `<Timeline events>` primitive. Beam style is the default. Bespoke flex-stack variant available via `motion='off'` prop for in-table inline use. Replaces 4 duplicate `*StatusTimeline.tsx`. | Tokens: `--timeline-rail-color` (zinc-200/800), `--timeline-beam` (red-700 → transparent gradient), `--timeline-dot-size` (28px), `--timeline-step-gap` (20px). |
 | **Charts** | `Tremor + Motion entrance` — Tremor's soft-fill area/bar charts with Motion-driven path-draw on first paint · signature dashboard moment | [@tremor/react](https://www.tremor.so) + motion | 2026-04-19 | Build `<Chart kind data series>` primitive over recharts (Tremor's underlying lib). Default `isAnimationActive=true` for dashboard-mounted charts, `false` for in-tooltip mini charts. | Tokens: `--chart-pipeline` (red-700 #b91c1c), `--chart-accepted` (green-600 #16a34a), `--chart-grid-dasharray` (2 4), `--chart-anim-duration` (800ms), `--chart-anim-stagger` (200ms). |
 
-**v2 mockup proven against**: SupervisorWorkEntry mobile + EOS Dashboard ([src/features/design-lab/mockups/](../../../src/features/design-lab/mockups/)) — Desktop + Mobile-375px + Light + Dark.
+**v2 mockup proven against**: SupervisorWorkEntry mobile + EOS Dashboard (`src/features/design-lab/mockups/` — ⛔ removed with the design-lab feature) — Desktop + Mobile-375px, in the then-current light/dark pair.
 
 **Known v2 caveat**: vaul drawer + shadcn Sheet both portal to `document.body`, so when opened inside the 375px mockup frame they render at full lab width. The drawer's **style** (handle, animation, content) is judgeable but the width context isn't realistic. Fixable in W07 by passing the canvas `ref` as the portal `container`.
 
@@ -86,7 +85,7 @@ These three patterns affect every mockup and are NOT slot-bound — they're page
 | **Subtle page-background gradient** | `bg-gradient-to-br from-white via-blue-50/30 to-rose-50/20` (light) · `from-zinc-950 via-zinc-900/80 to-zinc-950` (dark) | Gives translucent surfaces something to blur over. Barely visible — doesn't fight content. |
 | **Optional translucent Card variant** (4th Card candidate added but Card slot stays on `shadcnblocks-clean`) | `backdrop-blur-sm bg-white/70 border-white/60` · flat thin · NO shadow halo · NO warp | Available for premium/marketing surfaces (login splash, hero cards). Dense data surfaces (tables, forms) stay opaque shadcnblocks-clean. |
 
-**W07 follow-up**: build `<AppHeader>` primitive replacing `DashboardHeader` (mandated currently on ~80 pages). Add `<Card variant='translucent'>` as opt-in. Don't migrate dense-data pages to translucent — only marketing-y / hero / dashboard surfaces.
+**W07 follow-up** *(⛔ superseded 2026-07-25 — both `<AppHeader>` and `DashboardHeader` were deleted with the top masthead; the sticky glass header pattern above is retired with them. Desktop chrome is now the `AppSidebar` rail. See [DEPRECATIONS.md](DEPRECATIONS.md))*: build `<AppHeader>` primitive replacing `DashboardHeader` (mandated currently on ~80 pages). Add `<Card variant='translucent'>` as opt-in. Don't migrate dense-data pages to translucent — only marketing-y / hero / dashboard surfaces.
 **W08 follow-up**: tokens — `--surface-translucent-bg` (rgba 255/255/255/0.7), `--surface-translucent-blur` (4px), `--surface-translucent-border` (rgba 255/255/255/0.6), `--page-gradient-light` (from-white via-blue-50/30 to-rose-50/20), `--page-gradient-dark` (zinc deep). Glass header uses same translucent token family.
 
 ### v3.3 — Mobile data-table pattern (responsive layout)
@@ -137,7 +136,7 @@ These slots either need a /design-lab session OR the recommendation is "shadcn b
 
 Form root · Tabs · Dialog · AlertDialog · Popover · Tooltip · DropdownMenu · ContextMenu · Sonner toast · Alert · Skeleton · Input · Textarea · Checkbox · Radio · Switch · Select · SearchableSelect (in-repo, mandated) · Calendar · Combobox · ScrollArea · AspectRatio · Separator · Avatar · Badge · Progress · breadcrumb (adopt) · DashboardHeader (in-repo) · GlobalCommandPalette (in-repo) · navigation-menu (skip)
 
-These commit to shadcn at X6 ✅ time — no lab session needed. Recorded in [research/COMPONENT_CANDIDATES.md](research/COMPONENT_CANDIDATES.md).
+These commit to shadcn at X6 ✅ time — no lab session needed. Recorded in the (since-removed) `research/COMPONENT_CANDIDATES.md`; the surviving record is [DESIGN_CATALOG_PRIMITIVES.md](DESIGN_CATALOG_PRIMITIVES.md).
 
 ---
 

@@ -5,7 +5,7 @@ paths:
 
 # Rule: Documentation Standards (MANDATORY)
 
-**Last Updated**: 2026-05-31 SGT
+**Last Updated**: 2026-07-27 SGT
 
 ## Summary
 
@@ -15,19 +15,24 @@ All documentation files must follow strict placement, naming, and formatting rul
 
 ### Directory Structure
 
+Verified against the filesystem 2026-07-27. If a folder is not listed here, it does not exist — do not invent one.
+
 ```
 docs/
-├── 01-system-architecture/  # Core system design (PEOPLE_SYSTEM.md, MODULE_SYSTEM.md, etc.)
-│   └── canonical-page-patterns/  # The 6 CANONICAL_*_PATTERN.md docs (LIST_TABLE, DETAIL, FORM, DASHBOARD, SETTINGS, FEATURE_FOLDER)
-├── 02-security/             # Security policies (AUTH_*, DUPLICATE_USER_*, etc.)
-├── 03-features/             # Feature specs (work-entry/, jltt/, ot-calculation/, etc.)
-├── 04-integrations/         # External integrations (RESEND_EMAIL_*, SYNOLOGY_*, etc.)
-├── 05-implementation/       # Implementation plans (PEOPLE_NORMALIZATION_*, etc.)
-├── 06-operations/           # Operations & maintenance (migrations/, business/)
+├── 01-system-architecture/  # Core system design (MODULE_SYSTEM.md, CRM_DATA_SPINE.md, DATABASE_POLICY.md, …)
+│   ├── authentication/           # Auth workspace
+│   ├── canonical-page-patterns/  # The 6 CANONICAL_*_PATTERN.md docs (LIST_TABLE, DETAIL, FORM, DASHBOARD, SETTINGS, FEATURE_FOLDER)
+│   ├── design-system/            # PHILOSOPHY · TYPOGRAPHY · COLORS · TOKENS · PRIMITIVES · ARCHETYPES · …
+│   ├── query-patterns/           # Sub-guides of SUPABASE_QUERY_STANDARDS.md
+│   └── react-query-cache/        # Cache-key + invalidation standard
+├── 02-security/             # Security policies (AUTH_USER_ID_NORMALIZATION, USER_APPROVAL_WORKFLOW, …)
+├── 03-features/             # Feature specs — profiler/ and crm/ (+ autonomous-agent/)
+├── 04-integrations/         # External integrations (VERCEL_*, EDGE_FUNCTION_*, MCP_DB_ACCESS, TOAST_SYSTEM)
+├── 05-implementation/       # Implementation plans — active/ · completed/ · design-handoffs/
+├── 06-operations/           # Operations & maintenance (migrations/, SOPs, E2E runbooks)
 ├── 99-meta/                 # Meta documentation (standards, token budget, architecture)
-├── 99-refactor/             # Refactor-program docs (_system/ W## cards, design catalog)
-├── migrations/              # Doc migration trackers
-├── CONTEXT.md / CONTEXT_MAP.md
+├── 99-refactor/             # Refactor-program docs (_system/ W## cards, design catalogs, DEPRECATIONS.md)
+├── CONTEXT.md / CONTEXT_MAP.md / ONBOARDING.md
 └── DOCUMENTATION_INDEX.md   # Master index (root-level)
 ```
 
@@ -62,6 +67,8 @@ docs/
 3. ✅ Use required header format with all fields
 4. ✅ Update [DOCUMENTATION_INDEX.md](../../docs/DOCUMENTATION_INDEX.md) with new entry
 5. ✅ Link related documentation bidirectionally
+6. ✅ **Verify every path, component, hook and token name you cite actually exists** — `ls` the path, `grep` the symbol, and check [DEPRECATIONS.md](../../docs/99-refactor/_system/DEPRECATIONS.md) that it was not deleted. A doc pointing at a deleted file is the failure this rule exists to prevent.
+7. ✅ When retiring content, **retitle it `Historical (<era>, retired <date>)` and keep the text verbatim** — never delete "Errors Encountered" / "What NOT To Try Again" / debugging-history sections.
 
 ### Templates
 

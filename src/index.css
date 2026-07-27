@@ -221,6 +221,15 @@
      Ratios: 4.92 on brown@15%-over-page / 5.58 on brown@15%-over-card. */
   --brown-text-on-wash: #6d5233;
 
+  /* The same one-step-darker treatment for terracotta on the ERROR TINT
+     (#FAE0D6 = --red-soft). That tint is the deepest of the three status
+     washes, and --negative-text lands on it at 4.499:1 — a hair UNDER 4.5,
+     which axe reports as a serious color-contrast failure (the pairing was
+     booked as "4.50" from a rounded figure). Same value as the destructive
+     CTA hover step, kept as its own name so retuning that button can't
+     silently break text. Ratio: 5.85 on the error tint. */
+  --negative-text-on-tint: #8f3d1f;
+
   /* =====================================================================
    * Brand fills + 2a derived neutrals — hex aliases for the values that have
    * no shadcn slot, so components never hardcode them. Names not already
@@ -418,12 +427,13 @@
      2a collapses status to three meanings — sage positive · brown in-progress ·
      terracotta error — with muted neutrals for the inert states. Tint fill +
      darkened same-hue text, never a saturated fill. The pill text colours are
-     the comp's own (they beat the page-tuned variants on these tints); only the
-     error pill takes --negative-text. */
+     the comp's own (they beat the page-tuned variants on these tints); the
+     error pill takes --negative-text-on-tint, because the page-tuned
+     --negative-text only reaches 4.499:1 on the terracotta tint. */
   --status-draft-bg: rgb(139 106 71 / 0.06);      --status-draft-fg: #5d4f3f;    --status-draft-border: #d9ccc0;              --status-draft-dot: #a58868;
   --status-sent-bg: #f0e2cf;                      --status-sent-fg: #7d5f3d;     --status-sent-border: rgb(139 106 71 / 0.28); --status-sent-dot: #8b6a47;
   --status-accepted-bg: #d9e8e0;                  --status-accepted-fg: #4a6a54; --status-accepted-border: rgb(90 122 94 / 0.28); --status-accepted-dot: #5a7a5e;
-  --status-rejected-bg: #fae0d6;                  --status-rejected-fg: #ab4925; --status-rejected-border: rgb(217 117 81 / 0.28); --status-rejected-dot: #d97551;
+  --status-rejected-bg: #fae0d6;                  --status-rejected-fg: #8f3d1f; --status-rejected-border: rgb(217 117 81 / 0.28); --status-rejected-dot: #d97551;
   --status-expired-bg: rgb(125 107 91 / 0.14);    --status-expired-fg: #5d4f3f;  --status-expired-border: #d9ccc0;            --status-expired-dot: #7d6b5b;
   --status-revised-bg: rgb(139 106 71 / 0.14);    --status-revised-fg: #7d5f3d;  --status-revised-border: rgb(139 106 71 / 0.28); --status-revised-dot: #a58868;
 

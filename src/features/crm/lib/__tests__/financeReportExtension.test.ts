@@ -57,7 +57,7 @@ const BALANCE_YEAR_GRID = BALANCES.flatMap((balance) => YEARS.map((years) => ({ 
 function legacyBand(value: number, benchmarks: BandThresholds) {
   if (value >= benchmarks.good) return { tone: '#4a6a4e', bg: '#d9e8e0', label: 'Good' };
   if (value >= benchmarks.review) return { tone: '#7d5f3d', bg: '#f0e2cf', label: 'Review' };
-  return { tone: '#ab4925', bg: '#fae0d6', label: 'Action needed' };
+  return { tone: '#8f3d1f', bg: '#fae0d6', label: 'Action needed' };
 }
 
 // ClientReportModal.jsx:138-142 (verbatim oracle — the inline adequacy check):
@@ -147,7 +147,7 @@ describe('premiumCardStatus — HealthSnapshot.jsx:16-21 (SPECIAL underinsured l
       isAdequate && insurancePremiumsPct <= 10
         ? { tone: '#4a6a4e', bg: '#d9e8e0', label: 'Good' }
         : !isAdequate
-          ? { tone: '#ab4925', bg: '#fae0d6', label: 'Underinsured' }
+          ? { tone: '#8f3d1f', bg: '#fae0d6', label: 'Underinsured' }
           : { tone: '#7d5f3d', bg: '#f0e2cf', label: 'Review cost' };
     expect(premiumCardStatus(summary, insurancePremiumsPct)).toEqual(expected);
   });

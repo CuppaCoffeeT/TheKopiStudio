@@ -16,9 +16,9 @@
  * `dossier/` vocabulary — DossierPanel · DossierStatGrid · DossierRampBar ·
  * DossierKeyValueList · DossierLoadingPanel — rather than ad-hoc cards.
  *
- * Pages pass FLAT props — no nested slot-rendering required. Same auth/theme
- * plumbing as the legacy `DashboardHeader` shim, so all 71+ pages inherit
- * chrome fixes without per-page edits.
+ * Pages pass FLAT props — no nested slot-rendering required. All chrome
+ * plumbing lives here, so every detail page inherits chrome fixes without
+ * per-page edits.
  *
  * Canonical usage (what every detail page looks like):
  *
@@ -41,8 +41,10 @@
  * API, ONLY this file updates. Zero page edits. That's the point — the masthead
  * retirement itself cost no page a single line.
  *
- * Spec: docs/99-refactor/_system/design/handoffs/2026-04-20-MUmgnpT1/project/preview/component-pageshell.html
- * Related: src/components/DashboardHeader.tsx (the list-page counterpart shim).
+ * Spec: docs/05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md
+ *   (the original 2026-04-20-MUmgnpT1 PageShell handoff is no longer in the repo).
+ * Related: the list-page counterpart is `primitives/ui/ListPageFrame.tsx`. The old
+ *   `src/components/DashboardHeader.tsx` shim was deleted with the masthead.
  */
 
 import type { ReactNode } from 'react';

@@ -32,7 +32,7 @@
 - **Always-loaded**: `code-hygiene.md` + `lessons-logging.md` have no `paths:` — apply everywhere.
 - **Scoped**: every other rule has `paths:` frontmatter (e.g. `paths: ['src/**/*.ts*']`) so it auto-loads only on matching edits.
 - **Structure**: Summary → Detailed Patterns → Anti-patterns / Known Patterns (when applicable) → References. Known-pattern notes are manually curated when a recurring mistake is observed; when the era they describe is retired, retitle the block `## Historical (<era>, retired <date>)` and keep the text verbatim — never delete debugging history.
-- **Length**: target ≤80 lines (rule docs are guides, but stay tight). Split by sub-topic if longer.
+- **Length**: target ≤80 lines (rule docs are guides, but stay tight). Split by sub-topic if longer. **One standing exemption: `light-theme.md`** — splitting the surface ladder away from the AA text variants is the half-context that caused the failures recorded in its own Historical block, and the overflow is preserved debugging history. Documented in the rule's own header; don't re-flag it.
 
 ## 📚 Related
 

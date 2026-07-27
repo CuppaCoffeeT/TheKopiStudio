@@ -24,7 +24,7 @@ Router-style doc — links to real adopters + primitives. Does not duplicate cod
 | Toggle row | `Switch` (`@/components/primitives/form`) | native checkbox |
 | Card surface | `Card` (`@/components/primitives/shell`) | `@/components/ui/card` |
 
-`AppHeaderShell` is the shared frame for SETTINGS **and** TOOL archetypes. Full inventory: [src/components/primitives/CONTEXT.md](../../src/components/primitives/CONTEXT.md).
+`AppHeaderShell` is the shared frame for SETTINGS **and** TOOL archetypes. Full inventory: [PRIMITIVES.md](../design-system/PRIMITIVES.md).
 
 ## Shape
 
@@ -71,6 +71,6 @@ Both use `AppHeaderShell`. **SETTINGS** = tabbed persisted configuration (tabs +
 
 - [CANONICAL_DASHBOARD_PAGE_PATTERN.md](./CANONICAL_DASHBOARD_PAGE_PATTERN.md) — DASHBOARD archetype
 - [CANONICAL_LIST_TABLE_PATTERN.md](./CANONICAL_LIST_TABLE_PATTERN.md) — LIST archetype (DataTable used in tab panels)
-- [src/components/primitives/CONTEXT.md](../../src/components/primitives/CONTEXT.md) — full primitive inventory
-- [.claude/rules/universal-components-protocols.md](../../.claude/rules/universal-components-protocols.md) — sanctioned ref-data modal wrappers
-- [DOCUMENTATION_INDEX.md](../DOCUMENTATION_INDEX.md)
+- [src/components/primitives/CONTEXT.md](../../../src/components/primitives/CONTEXT.md) — full primitive inventory
+- [.claude/rules/ui-components.md](../../../.claude/rules/ui-components.md) — sanctioned ref-data modal wrappers
+- [DOCUMENTATION_INDEX.md](../../DOCUMENTATION_INDEX.md)

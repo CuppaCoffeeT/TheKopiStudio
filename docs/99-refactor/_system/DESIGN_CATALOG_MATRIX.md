@@ -46,7 +46,7 @@ Per-module consumption of primitive groups. Columns = primitive groups. `●` = 
 | /dailyattendance | features/attendance/ | TOOL (list-table chrome) | ✓ DataTable · AppHeader · Pagination · SearchInput | ✓ Badge · Button · SelectMenu · Checkbox · Input · DatePicker · Field | ✓ Toast | ✓ Empty · NoResults · Loading | — | ✓ SearchInput | 🟢 MIGRATED (W09 · 2026-04-28; DataTable adoption 2026-05-25) |
 | /coordinatorattendance | features/attendance/ | TOOL (list-table chrome) | ✓ DataTable · AppHeader · Pagination · SearchInput | ✓ Badge · Button · SelectMenu · Checkbox · Input · DatePicker · Field | ✓ Toast | ✓ Empty · NoResults · Loading | — | ✓ SearchInput | 🟢 MIGRATED (W09 · 2026-05-25) |
 | /hr-applications | 1 hr/ | List/Table | ● DataTable · AppHeader | ● StatusBadge · Avatar · Chip | ● Toast · Modal · Drawer | ● Empty · Loading | — | ● FloatingCTA | 🔴 |
-| /hr-pending-sends | DECOMMISSIONED | List/Table | — | — | — | — | — | — | 🚫 [DECOMMISSIONED 2026-04-29](../../05-implementation/active/HR_PENDING_SENDS_MODULE_DECOMMISSION.md) — producer (HR Lifecycle Agent) removed; module soft-deleted (`is_active=false`), RPC dropped. |
+| /hr-pending-sends | DECOMMISSIONED | List/Table | — | — | — | — | — | — | 🚫 DECOMMISSIONED 2026-04-29 (its `HR_PENDING_SENDS_MODULE_DECOMMISSION.md` plan is not in this repo) — producer (HR Lifecycle Agent) removed; module soft-deleted (`is_active=false`), RPC dropped. |
 | /payment-management | 3 | List/Table | ● DataTable · AppHeader | ● StatusBadge · Chip | ● Toast · Modal · Popover | ● Empty · Loading | — | — | 🔴 |
 | /commspending | — | List/Table | ● DataTable · AppHeader | ● Chip | ● Toast · Modal | ● Empty | — | — | 🔴 |
 | /admin/projects | — | List/Table | ● DataTable · AppHeader | ● StatusBadge · Chip | ● Toast · Modal | ● Empty | — | — | 🔴 |
@@ -101,7 +101,7 @@ Per-module consumption of primitive groups. Columns = primitive groups. `●` = 
 | /login | Auth | Splash + form. 1 FormShell + Button + Input + Toast. Absorbed into S6 Form. |
 | /auth/verify, /auth/verified, /auth/reset-password | Auth | Same as above. |
 | /coordinatorreview, /supervisorreview | Review hybrid | List + Detail absorbed. Both W09-migrated (2026-05-09 coord · 2026-05-23 supervisor). |
-| ~~/managementreview~~ | ~~Review hybrid~~ | **🔴 DECOMMISSIONED 2026-05-13** — module removed (commit `39e35ed4`), `modules.is_active=false`, RPC dropped. See [MANAGEMENT_REVIEW_MODULE_DECOMMISSION.md](../../05-implementation/active/MANAGEMENT_REVIEW_MODULE_DECOMMISSION.md). |
+| ~~/managementreview~~ | ~~Review hybrid~~ | **🔴 DECOMMISSIONED 2026-05-13** — module removed (commit `39e35ed4`), `modules.is_active=false`, RPC dropped. (Its `MANAGEMENT_REVIEW_MODULE_DECOMMISSION.md` plan is not in this repo.) |
 | /emailinbox | Inbox | Unique — email-client layout. Maybe S9 polish, or deferred. |
 | /design-lab, /design-lab/fonts, /design-lab/preview/quotations | Internal | Skip — design tooling. |
 | /refactor-dashboard | Internal | Design tab extension = B3 (this session). |

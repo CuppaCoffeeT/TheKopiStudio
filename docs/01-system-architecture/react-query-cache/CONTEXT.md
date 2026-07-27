@@ -8,7 +8,7 @@ Mandatory standard for React Query cache management: centralized query key facto
 
 | File | Purpose |
 |------|---------|
-| [FACTORY.md](./FACTORY.md) | Architecture principles + `queryKeys` factory pattern (`src/utils/queryKeys.ts`) |
+| [FACTORY.md](./FACTORY.md) | Architecture principles + `queryKeys` factory pattern (`src/utils/queryKeys/`) |
 | [INVALIDATION.md](./INVALIDATION.md) | When/what to invalidate · cross-module bubble rule · `invalidateEntity` / `invalidateDashboards` helpers |
 | [INVALIDATION_CONFIG.md](./INVALIDATION_CONFIG.md) | Global QueryClient defaults + per-query `staleTime` tuning |
 | [USAGE.md](./USAGE.md) | Query/mutation/component patterns + best practices |
@@ -22,8 +22,8 @@ Mandatory standard for React Query cache management: centralized query key facto
 
 ## Before working here
 
-- **New code**: use `queryKeys.<entity>.<type>(...)` from [src/utils/queryKeys.ts](../../../src/utils/queryKeys.ts). Hardcoded literals are a lint `error`.
-- **Mutations**: live in `src/hooks/use<Entity>.ts` (or feature hooks folder) — **never** inline in `src/components/**`. Lint `error`.
+- **New code**: use `queryKeys.<entity>.<type>(...)` from [src/utils/queryKeys/](../../../src/utils/queryKeys/) (a folder with an `index.ts` barrel, not a single file). Hardcoded literals are a lint `error`.
+- **Mutations**: live in a feature hooks folder (`src/features/<name>/hooks/`) or `src/hooks/` — **never** inline in `src/components/**`. Lint `error`.
 - **Invalidation fan-out**: every `onSuccess` invalidates scoped + global + dashboards. Prefer `invalidateEntity.<name>(qc)` + `invalidateDashboards(qc)` over ad-hoc keys.
 - **Cross-module bubble**: adding an entity from a parent view (e.g. client contact from Project Detail) MUST invalidate the global entity root, not just the parent-scoped key. Otherwise the entity's own list serves stale cache.
 

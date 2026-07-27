@@ -19,13 +19,19 @@ interface ClientDetailActionsProps {
   mobile?: boolean;
 }
 
+/**
+ * --fg-dim, not --fg-muted — same call (and same reason) as the profiler's
+ * ResultDetailActions hint this mirrors: the desktop copy renders in the
+ * DetailPageFrame hero on the PAGE cream #F0E6D6, where #7D6B5B is 4.12:1 at
+ * 10.5px and fails AA. #5D4F3F clears 6.40:1.
+ */
 function ReadOnlyHint({ mobile }: { mobile?: boolean }) {
   return (
     <span
       className={
         mobile
-          ? 'inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 text-muted-foreground'
-          : 'inline-flex items-center gap-1.5 text-muted-foreground'
+          ? 'inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 text-[color:var(--fg-dim)]'
+          : 'inline-flex items-center gap-1.5 text-[color:var(--fg-dim)]'
       }
       style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, letterSpacing: '0.04em' }}
       title="Only the advisor who owns a client can edit or delete the record."

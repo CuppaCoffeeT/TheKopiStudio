@@ -69,15 +69,15 @@ These seven were merged from formerly-separate feature folders. Sub-folders shar
 ## Rules
 
 - Cross-feature imports go through `index.ts` only — never deep-import another feature's `components/` or `lib/` (dependency-cruiser `no-cross-feature-imports`).
-- A surface used by **2+ features** is promoted to `src/components/shared/<domain>/`, not duplicated. See [src/components/shared/CONTEXT.md](../../src/components/shared/CONTEXT.md).
+- A surface used by **2+ features** is promoted to `src/components/shared/<domain>/`, not duplicated. See [src/components/shared/CONTEXT.md](../../../src/components/shared/CONTEXT.md).
 - A generic, design-spec'd, everywhere-reusable component goes to `src/components/primitives/`, not `shared/`.
-- New feature scaffolding follows [MODULE_CREATION_SOP.md](../06-operations/MODULE_CREATION_SOP.md) step by step.
+- New feature scaffolding follows [MODULE_CREATION_SOP.md](../../06-operations/MODULE_CREATION_SOP.md) step by step.
 
 ## 📚 Related Documentation
 
-- [MODULE_CREATION_SOP.md](../06-operations/MODULE_CREATION_SOP.md) — how to scaffold a new feature folder
+- [MODULE_CREATION_SOP.md](../../06-operations/MODULE_CREATION_SOP.md) — how to scaffold a new feature folder
 - [CANONICAL_LIST_TABLE_PATTERN.md](./CANONICAL_LIST_TABLE_PATTERN.md) · [CANONICAL_DETAIL_PAGE_PATTERN.md](./CANONICAL_DETAIL_PAGE_PATTERN.md) · [CANONICAL_FORM_PAGE_PATTERN.md](./CANONICAL_FORM_PAGE_PATTERN.md) · [CANONICAL_DASHBOARD_PAGE_PATTERN.md](./CANONICAL_DASHBOARD_PAGE_PATTERN.md) · [CANONICAL_SETTINGS_PAGE_PATTERN.md](./CANONICAL_SETTINGS_PAGE_PATTERN.md) — the archetypes a `pages/` component can be
-- [src/components/shared/CONTEXT.md](../../src/components/shared/CONTEXT.md) — the ≥2-feature promotion lane
-- [src/components/primitives/CONTEXT.md](../../src/components/primitives/CONTEXT.md) — primitive inventory
-- [.claude/rules/react-query.md](../../.claude/rules/react-query.md) — `queryKeys` + invalidation pattern
-- [DOCUMENTATION_INDEX.md](../DOCUMENTATION_INDEX.md)
+- [src/components/shared/CONTEXT.md](../../../src/components/shared/CONTEXT.md) — the ≥2-feature promotion lane
+- [src/components/primitives/CONTEXT.md](../../../src/components/primitives/CONTEXT.md) — primitive inventory
+- [.claude/rules/react-query.md](../../../.claude/rules/react-query.md) — `queryKeys` + invalidation pattern
+- [DOCUMENTATION_INDEX.md](../../DOCUMENTATION_INDEX.md)

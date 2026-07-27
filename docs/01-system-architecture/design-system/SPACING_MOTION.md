@@ -3,11 +3,11 @@
 **Created**: 2026-04-19 SGT
 **Last Updated**: 2026-07-25 SGT
 **Status**: 🟢 Production
-**Priority**: 🟢 Medium
+**Priority**: 🟡 High
 
-👉 Parent: [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md) · Palette authority: [KOPI_2A_SPEC.md](../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md)
+👉 Parent: [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md) · Layout authority: [KOPI_2A_SPEC.md](../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md)
 
-Spacing, radius and motion survived the 2026-07-25 Kopi migration nearly intact; **shadow** and the **hover rule** were re-cut for the cream ground and are current as written below.
+Spacing and motion survived the 2026-07-25 Kopi migration intact. **Shadow** and the **hover rule** were re-cut for the cream ground. **Radius** is the section to read carefully — the shipped values differ from the comp in two documented places.
 
 ## Spacing scale
 
@@ -26,16 +26,24 @@ Tailwind v4 default — no custom additions. Locked primitives settle at these c
 
 ## Radius
 
-Re-cut 2026-07-25 to the 2a rhythm: **8px small · 12px large · 99px pills**.
+`--radius` is **0.75rem (12px)** — the 2a "large" step. `@theme` derives `--radius-lg: var(--radius)`, `--radius-md: calc(var(--radius) - 2px)`, `--radius-sm: calc(var(--radius) - 4px)`, so **Tailwind's `rounded-lg` resolves to 12px in this app, not its stock 8px.** `rounded-xl` (12px) and `rounded-2xl` (16px) are Tailwind defaults and are *not* re-pointed.
 
-| Element | Value | Token |
+**As shipped** (measured from the primitives, not from the spec):
+
+| Element | Shipped | How |
 |---|---|---|
-| Card · DataTable · KpiTile | 0.75rem (12px) | `--card-radius`, `--kpi-radius`, `--radius` |
-| Drawer | 1rem (16px, top corners) | `--drawer-radius` |
-| Modal | 1.25rem (20px) | (Radix default) |
-| Button · Badge · Input | 0.5rem (8px) | Tailwind `rounded-lg` |
-| Filter pill · Chip | 9999px full | Tailwind `rounded-full` |
-| Viz bar / loading bar | 5px / 2px | (per-component, KOPI_2A_SPEC) |
+| `Card` (and every `DossierPanel`) | **16px** | `rounded-2xl` |
+| `KpiIndexCard` · `KpiTile` | **12px** | inline `var(--card-radius)` / `var(--kpi-radius)` |
+| `Modal` | **12px** | `rounded-xl` |
+| `Drawer` | **16px**, top corners | `rounded-t-2xl` (`--drawer-radius` is also 1rem) |
+| `Button` · `Input` | **12px** | `rounded-lg` → `var(--radius)` |
+| `Chip` · `Badge` · `StatusBadge` · filter pills | full | `rounded-full` |
+| Viz bar / loading bar | 5px / 2px | per-component, per KOPI_2A_SPEC |
+
+**Two knowing deviations from KOPI_2A_SPEC** — do not "fix" them without reading the rationale:
+
+1. **`Card` is 16px, the comp says 12px.** `Card` is the app-wide locked card surface; a second card shape 4px tighter inside the detail archetype would put two card radii in one view (a KPI tile and a dossier panel can co-occur). One radius beat comp fidelity at this magnitude. If `--card-radius` is ever wired into `Card`, dossier panels follow automatically. ([decisions.md](../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/decisions.md), 2026-07-25)
+2. **Buttons and inputs are 12px, the comp says 8px** — they inherit `--radius` through `rounded-lg`.
 
 ## Shadow
 
@@ -78,12 +86,30 @@ Retuned 2026-07-25 for the Kopi cream canvas. **2a cards rest FLAT** — the lif
 
 Hover bg **must** visually differ from `--page-bg` (cream `#F0E6D6`). Common failure: hover fill equal to the page/card resting bg = invisible. Use the brown wash `var(--row-hover)` (brown @ 6% — deliberately translucent so it reads on BOTH the page and the lighter card), `bg-secondary` (tint `#F3EDE3`), or a shadow lift.
 
+## Rhythm (2a)
+
+| Where | Value |
+|---|---|
+| Content pane padding | `34px 40px` |
+| Sidebar rail | 200px fixed; padding `22px 0`; item gap 2px; item padding `9px 22px` |
+| Card padding | `20px 22px` (KPI tiles) · `22px` (detail panels) |
+| Section spacing | 22–26px |
+| Masthead close | `padding-bottom: 22px` + hairline, `margin-bottom: 26px` |
+| KPI grid | `1fr 1fr`, gap 18px |
+| Detail body grid | `1.4fr 1fr`, gap 22px |
+| Button padding | `10px 20px` · input padding `10px 14px` |
+| Table cells | TH `12px 8px 8px 0` · TD `11px 8px 11px 0` (dashboard); TH `14px 8px 10px 0` · TD `12px 8px 12px 0` (list) |
+
+**Touch floor**: 44×44px minimum on coarse pointers — primitives lift the comp's 36px rows with `pointer-coarse:min-h-11`. See [.claude/rules/mobile-web.md](../../../.claude/rules/mobile-web.md).
+
 ## Preview references
 
-- [`spacing-scale.html`](../../99-refactor/_system/design/) · [`spacing-radii.html`](../../99-refactor/_system/design/) · [`spacing-shadows.html`](../../99-refactor/_system/design/) · [`spacing-motion.html`](../../99-refactor/_system/design/)
+The AppBase-era `spacing-*.html` previews lived in `docs/99-refactor/_system/design/`, **which is no longer in the repo**. Verify against the 2a comp instead: [`Kopi Studio Directions.dc.html`](../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/) (option 2a) plus [KOPI_2A_SPEC.md](../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md).
 
 ## 📚 Related
 
 - [TOKENS.md](./TOKENS.md) — all values in one table
-- [src/index.css](../../../src/index.css:263-268) — runtime motion vars
+- [KOPI_2A_SPEC.md](../../05-implementation/design-handoffs/2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md) — "Layout language" + "Rhythm"
+- [ARCHETYPES.md](./ARCHETYPES.md) — where each spacing rule lands
+- [src/index.css](../../../src/index.css) — runtime motion vars (`--motion-*`, in the `:root` block)
 - [src/lib/design/tokens.ts](../../../src/lib/design/tokens.ts) — TS mirror (`motionTokens`, `cardTokens`, etc.)

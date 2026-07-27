@@ -61,14 +61,16 @@ export const HEALTH_BANDS = {
  * and the legacy trio fails axe WCAG 2 AA contrast there (amber-500 was
  * ~2.1:1). Kopi Studio pairings — sage #4A6A4E 4.78:1 on the reports green
  * box #D9E8E0, brown #7D5F3D 4.61:1 on the in-progress tint #F0E2CF,
- * terracotta #AB4925 4.50:1 on the error tint #FAE0D6. The raw brand sage
+ * terracotta #8F3D1F 5.85:1 on the error tint #FAE0D6 — the deeper
+ * `--negative-text-on-tint` step, NOT `--negative-text` (#AB4925), which
+ * measures 4.499:1 there and fails axe on the 12px band label. The raw brand sage
  * (#5A7A5E) and terracotta (#D97551) are never used here because the tone is
  * live TEXT below 18px. Band LOGIC and labels stay oracle-locked verbatim.
  */
 export function bandFor(value: number, benchmarks: BandThresholds): BandStatus {
   if (value >= benchmarks.good) return { tone: '#4a6a4e', bg: '#d9e8e0', label: 'Good' };
   if (value >= benchmarks.review) return { tone: '#7d5f3d', bg: '#f0e2cf', label: 'Review' };
-  return { tone: '#ab4925', bg: '#fae0d6', label: 'Action needed' };
+  return { tone: '#8f3d1f', bg: '#fae0d6', label: 'Action needed' };
 }
 
 /**
@@ -86,6 +88,6 @@ export function premiumCardStatus(
   if (adequate && insurancePremiumsPct <= 10) {
     return { tone: '#4a6a4e', bg: '#d9e8e0', label: 'Good' };
   }
-  if (!adequate) return { tone: '#ab4925', bg: '#fae0d6', label: 'Underinsured' };
+  if (!adequate) return { tone: '#8f3d1f', bg: '#fae0d6', label: 'Underinsured' };
   return { tone: '#7d5f3d', bg: '#f0e2cf', label: 'Review cost' };
 }

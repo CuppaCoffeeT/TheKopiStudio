@@ -12,10 +12,10 @@ Every list page in AppBase (Quotations, JLTT, Supervisor Review, General Works, 
 This doc tells a new agent: **what to import**, **what to copy from a reference adopter**, and **what they may safely customize** when building or migrating a list page.
 
 ## 📚 Related Documentation
-- [src/components/primitives/CONTEXT.md](../../src/components/primitives/CONTEXT.md) — full primitive inventory
-- [docs/99-refactor/_system/UNIVERSAL_COMPONENTS.md](../99-refactor/_system/UNIVERSAL_COMPONENTS.md) — Need → Import matrix
-- [.claude/rules/universal-components.md](../../.claude/rules/universal-components.md) — auto-loaded Need → Import row
-- [DOCUMENTATION_INDEX.md](../DOCUMENTATION_INDEX.md)
+- [src/components/primitives/CONTEXT.md](../../../src/components/primitives/CONTEXT.md) — full primitive inventory
+- [docs/99-refactor/_system/UNIVERSAL_COMPONENTS.md](../../99-refactor/_system/UNIVERSAL_COMPONENTS.md) — Need → Import matrix
+- [.claude/rules/ui-components.md](../../../.claude/rules/ui-components.md) — auto-loaded Need → Import row
+- [DOCUMENTATION_INDEX.md](../../DOCUMENTATION_INDEX.md)
 
 ## Primitive layer (`src/components/primitives/ui/`)
 
@@ -353,4 +353,4 @@ All three render `[Pencil icon] [Trash icon]` icon-only on draft rows, `72px` co
 3. Swap the table component in the page for `<DataTable>` (with `renderExpanded` if inline expand is required) or `<ListPageFrame>` (if the page also wants canonical chrome).
 4. Move `<Pagination>` into `DataTable.pagination` (it auto-renders below the body, visible at all viewports).
 5. Run `npx tsc --noEmit -p tsconfig.app.json` — `tsconfig.json` alone is empty (`files: []`) and won't catch errors.
-6. Visual-verify per [.claude/rules/design-system.md](../../.claude/rules/design-system.md) before committing.
+6. Visual-verify per [.claude/rules/light-theme.md](../../../.claude/rules/light-theme.md) before committing.

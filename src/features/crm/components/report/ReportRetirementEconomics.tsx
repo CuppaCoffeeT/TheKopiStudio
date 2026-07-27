@@ -73,10 +73,12 @@ export function ReportRetirementEconomics({
                 <td className="num">{money(bankAt65)}</td>
                 <td className="num">{money(totalRetirementSum)}</td>
               </tr>
-              {/* Kopi sage #4A6A4E / terracotta #AB4925 — 13px cells need
+              {/* Kopi sage #4A6A4E / terracotta #8F3D1F — 13px cells need
                   4.5:1 on the in-progress warning-callout (#F0E2CF, 4.76) and
-                  the error loss-row (#FAE0D6, 4.50). The raw brand sage and
-                  terracotta both miss AA at this size. */}
+                  the error loss-row (#FAE0D6, 5.85). The raw brand sage and
+                  terracotta both miss AA at this size, and so does the
+                  page-tuned #AB4925 on the loss row (4.499 — axe fails it):
+                  that row takes the deeper `--negative-text-on-tint` step. */}
               <tr>
                 <td>If invested (6% returns)</td>
                 <td className="num" style={{ color: '#4a6a4e', fontWeight: 500 }}>
@@ -88,10 +90,10 @@ export function ReportRetirementEconomics({
               </tr>
               <tr className="report-row-loss" data-testid="report-retirement-opportunity-cost">
                 <td>Opportunity cost</td>
-                <td className="num" style={{ color: '#ab4925', fontWeight: 500 }}>
+                <td className="num" style={{ color: '#8f3d1f', fontWeight: 500 }}>
                   {money(bankOpportunityCost)}
                 </td>
-                <td className="num" style={{ color: '#ab4925', fontWeight: 500 }}>
+                <td className="num" style={{ color: '#8f3d1f', fontWeight: 500 }}>
                   {money(totalOpportunityCost)}
                 </td>
               </tr>

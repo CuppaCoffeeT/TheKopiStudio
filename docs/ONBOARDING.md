@@ -87,7 +87,7 @@ Full enforcement patterns: [`.claude/rules/`](../.claude/rules/) (auto-load by `
 | Rule | One-liner | Source |
 |---|---|---|
 | **File size** | Every file targets **≤200 LOC**; no new >1000-LOC god-files. Ratchet: `npm run loc:check` | `scripts/loc-ratchet.mjs` |
-| **Primitives-only** | Import `@/components/primitives/**` (+ sanctioned `ui/`); no raw shadcn, no raw `<button>/<input>/<select>/<textarea>/<label>/<h1>` | `.claude/rules/universal-components.md` |
+| **Primitives-only** | Import `@/components/primitives/**` (+ sanctioned `ui/`); no raw shadcn, no raw `<button>/<input>/<select>/<textarea>/<label>/<h1>` | `.claude/rules/ui-components.md` |
 | **Module RBAC** | Gate pages with `useAuth().modules.some(m => m.path === '/route')` — **never** hardcoded role strings | `.claude/rules/module-access.md` |
 | **RLS** | Minimal authenticated policy on every table + capability-gated writes (`has_capability()`); pin `search_path` on SECURITY DEFINER | `.claude/rules/rls-policy.md` |
 | **FK** | Always `public.users(id)` / `public.people(id)` — **never** `auth.users(id)` (only `public.users` references auth) | PEOPLE_SYSTEM |

@@ -75,8 +75,8 @@ Start from **NewProjectDialog.tsx** — the canonical `Modal` + primitive-field 
 ## 📚 Related Documentation
 
 - [CANONICAL_DETAIL_PAGE_PATTERN.md](./CANONICAL_DETAIL_PAGE_PATTERN.md) — DETAIL archetype
-- [SEARCHABLE_SELECT_COMPONENT.md](./SEARCHABLE_SELECT_COMPONENT.md) — combobox primitive
-- [src/components/primitives/CONTEXT.md](../../src/components/primitives/CONTEXT.md) — full primitive inventory
-- [.claude/rules/universal-components-protocols.md](../../.claude/rules/universal-components-protocols.md) — sanctioned `ui/**` form wrappers
-- [.claude/rules/mobile-web.md](../../.claude/rules/mobile-web.md) — modal-vs-drawer container rule
-- [DOCUMENTATION_INDEX.md](../DOCUMENTATION_INDEX.md)
+- [SEARCHABLE_SELECT_COMPONENT.md](../SEARCHABLE_SELECT_COMPONENT.md) — combobox primitive
+- [src/components/primitives/CONTEXT.md](../../../src/components/primitives/CONTEXT.md) — full primitive inventory
+- [.claude/rules/ui-components.md](../../../.claude/rules/ui-components.md) — sanctioned `ui/**` form wrappers
+- [.claude/rules/mobile-web.md](../../../.claude/rules/mobile-web.md) — modal-vs-drawer container rule
+- [DOCUMENTATION_INDEX.md](../../DOCUMENTATION_INDEX.md)

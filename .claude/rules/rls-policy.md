@@ -7,7 +7,7 @@ paths:
 
 ## Summary
 
-Two sanctioned patterns: (1) **minimal RLS** — `USING (true)` for non-sensitive tables, security at app/module layer; (2) **capability-based RLS** — `USING ((SELECT public.<capability>()))` for operational tables where defense-in-depth is wanted. W14/W15 (2026-04-18) locked capability-based as the canonical strategy for hot operational tables; minimal RLS remains the default for everything else. **Every function call in a policy must be wrapped in `(SELECT …)`** — bare `USING (fn())` evaluates the function per-row and is a known RAM/CPU hotspot (see [supabase/migrations/lessons.md](../../supabase/migrations/lessons.md) 2026-05-25).
+Two sanctioned patterns: (1) **minimal RLS** — `USING (true)` for non-sensitive tables, security at app/module layer; (2) **capability-based RLS** — `USING ((SELECT public.<capability>()))` for operational tables where defense-in-depth is wanted. W14/W15 (2026-04-18) locked capability-based as the canonical strategy for hot operational tables; minimal RLS remains the default for everything else. **Every function call in a policy must be wrapped in `(SELECT …)`** — bare `USING (fn())` evaluates the function per-row and is a known RAM/CPU hotspot (see [supabase/lessons.md](../../supabase/lessons.md) + [supabase/migrations/decisions.md](../../supabase/migrations/decisions.md)).
 
 ## Detailed Patterns
 
@@ -94,5 +94,5 @@ CREATE POLICY "<slow-policy>"
 
 - [docs/01-system-architecture/DATABASE_POLICY.md](../../docs/01-system-architecture/DATABASE_POLICY.md)
 - [supabase/migrations/decisions.md](../../supabase/migrations/decisions.md) — 2026-04-18 capability-RLS lock-in
-- [supabase/migrations/lessons.md](../../supabase/migrations/lessons.md) — 2026-05-25 initplan wrap lesson
+- [supabase/lessons.md](../../supabase/lessons.md) — migration lessons (incl. the `(SELECT …)` initplan wrap)
 - Related: [module-access.md](./module-access.md) — Application-level access control that complements RLS

@@ -1,7 +1,7 @@
 # Deprecations Log
 
 **Created**: 2026-05-25 SGT
-**Last Updated**: 2026-07-25 SGT
+**Last Updated**: 2026-07-27 SGT
 **Status**: 🟢 Production
 **Priority**: 🔴 Critical
 
@@ -20,6 +20,32 @@ Single source of truth for routes, components, hooks, and services that have bee
 ---
 
 ## Active deprecations
+
+### 2026-07-25 — Top masthead + its desktop bar (Kopi Studio 2a redesign, P3)
+
+Direction 2a puts **all** desktop chrome in a 200px sidebar rail, so the horizontal top masthead had nothing left to carry. Identity moved to the rail's wordmark, account/bell/view-as/sign-out to `AppSidebarFooter`, and breadcrumb became page *content* (quiet inline text above the H1) rather than chrome. Deleted:
+
+| Type | Name | Replaced by |
+|---|---|---|
+| Primitive | `src/components/primitives/shell/AppHeader.tsx` | `AppSidebar` (>= lg, the whole chrome) + `AppHeaderMobileBar` (< lg) — both at `src/components/primitives/shell/` |
+| Primitive | `src/components/primitives/shell/AppHeaderDesktopBar.tsx` | `AppSidebar` + `AppSidebarFooter` (account/bell/ViewAs/sign-out) |
+| Shim | `src/components/DashboardHeader.tsx` | `ListPageFrame` (`primitives/ui`) · `DetailPageFrame` (`primitives/detail`) · `AppHeaderShell` (`primitives/shell`) — pick the archetype frame, per [.claude/rules/module-access.md](../../../.claude/rules/module-access.md) |
+
+**Survivors with `AppHeader` in the name — these are NOT deprecated**: `AppHeaderShell.tsx` (page-shell wrapper: page-bg backdrop + `ImpersonationBanner` + content frame + `PageTitle`/`PageDescription`; kept its name because every tool page imports it), `AppHeaderMobileBar.tsx` (the < lg bar), `AppHeaderLogo.tsx`, `AppHeaderUserMenu.tsx`. Grep for the exact file names above, not the `AppHeader` prefix.
+
+**Also renamed in the same change**: `src/hooks/useDashboardChrome.tsx` → **`src/hooks/useDashboardChrome.ts`**. It now returns connector prop *bags* instead of pre-rendered JSX slots (each home places its own overlays), so it no longer needs the `.tsx` extension. Consumers: `AppSidebarFooter`, `AppHeaderMobileBar`, `ImpersonationBanner`. Theme props are gone — `ThemeProvider` pins light (`.claude/rules/light-theme.md`).
+
+**Driver**: [KOPI_STUDIO_REDESIGN_PRD.md](../../05-implementation/active/KOPI_STUDIO_REDESIGN_PRD.md) P3.
+
+**Verification** — all three should return zero hits in `src/` + `tests/`:
+
+```bash
+grep -rn "shell/AppHeader'\|shell/AppHeader\"\|AppHeaderDesktopBar" src/ tests/ --include="*.tsx" --include="*.ts"
+grep -rn "useDashboardChrome.tsx" src/ tests/
+grep -rn "from '.*DashboardHeader'" src/ tests/ --include="*.tsx" --include="*.ts"   # imports only; prose mentions of the retired shim are fine
+```
+
+Surviving `.tsx` mentions in `docs/99-refactor/_system/` (`SYSTEM_STATE.md`, `RECENT_CHANGES.md`, `W07_SHARED_PRIMITIVES.md`, `PRIMITIVES_MANIFEST.json`) are **dated 2026-04-20 program history** and describe the file as it was then — left verbatim on purpose.
 
 ### 2026-07-25 — Module-launcher primitives (Kopi Studio 2a redesign, P4)
 
