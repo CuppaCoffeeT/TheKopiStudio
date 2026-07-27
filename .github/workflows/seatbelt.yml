@@ -11,9 +11,10 @@ concurrency:
   group: seatbelt-${{ github.ref }}
   cancel-in-progress: true
 
-# Needed so the ledger auto-sync job (final step) can push back.
+# Read-only: nothing here pushes back. `contents: write` was here for the
+# sync-ledger job, removed 2026-07-27 (see below) — least privilege now.
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   typecheck-lint:
@@ -126,40 +127,25 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
-  sync-ledger:
-    name: Sync Last CI green to WORKFLOW_LEDGER.md
-    runs-on: ubuntu-latest
-    needs: [typecheck-lint, e2e-p0]
-    if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
-      - name: Patch Last CI green line
-        run: |
-          TODAY=$(TZ=Asia/Singapore date +%Y-%m-%d)
-          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          LINE="**Last CI green**: ${TODAY} SGT · run [${{ github.run_id }}](${RUN_URL}) · @p0 suite on chromium-desktop + mobile-safari (WF-0001 always; WF-0012/WF-0019 auto-skipped on CI; WF-9000 capped at SMOKE_MAX_ROUTES=5)."
-          FILE=docs/99-refactor/_system/ledgers/WORKFLOW_LEDGER.md
-          # Replace the Last CI green line in-place (GNU sed syntax; ubuntu runners ship GNU sed).
-          python3 - <<PY
-          import pathlib, re
-          f = pathlib.Path("$FILE")
-          text = f.read_text()
-          new_line = """$LINE"""
-          text = re.sub(r"^\*\*Last CI green\*\*:.*$", new_line, text, count=1, flags=re.MULTILINE)
-          f.write_text(text)
-          PY
-      - name: Commit + push if changed
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/99-refactor/_system/ledgers/WORKFLOW_LEDGER.md
-          if git diff --cached --quiet; then
-            echo "Ledger already current — no commit."
-          else
-            git commit -m "chore(ledger): sync Last CI green [skip ci]"
-            # Retry once on push race — another agent may have pushed first.
-            git push || (git pull --rebase && git push)
-          fi
+# REMOVED 2026-07-27 — the `sync-ledger` job.
+#
+# It stamped a "Last CI green" line into
+# docs/99-refactor/_system/ledgers/WORKFLOW_LEDGER.md, then committed and pushed
+# back to main. That file has NEVER existed in this repo — `git log --all` on the
+# path returns nothing, and docs/99-refactor/_system/ has no ledgers/ directory.
+# The job is AppBase scaffolding that came along with the workflow.
+#
+# It went unnoticed because it is gated `if: success()`, so it only ever runs
+# when BOTH earlier jobs pass — and until run 30258158536 the suite had never
+# been fully green on this repo. The first genuinely green run was therefore
+# reported as a FAILURE, purely because this job crashed with
+# FileNotFoundError on a path that was never there. A run that turns red
+# *because the tests passed* trains everyone to ignore the badge, which is the
+# same failure the @pushgate removal was about (tests/lessons.md 2026-07-24).
+#
+# Its hardcoded status line was stale independently: it advertised
+# "WF-9000 capped at SMOKE_MAX_ROUTES=5", but SMOKE_MAX_ROUTES was already dead
+# and was dropped from this workflow's env earlier the same day.
+#
+# To restore: create the ledger file first, confirm the path resolves in CI, and
+# re-add `permissions: contents: write` (dropped above to least privilege).
