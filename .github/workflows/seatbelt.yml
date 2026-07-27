@@ -59,26 +59,35 @@ jobs:
       - name: Run @p0 seatbelt (${{ matrix.project }})
         env:
           CI: 'true'
-          # SMOKE_MAX_ROUTES caps WF-9000's route loop so ubuntu-latest doesn't
-          # hit ERR_INSUFFICIENT_RESOURCES / ENOSPC. 20 routes OOM'd. 10 routes
-          # still ENOSPC'd at /report-dashboard (CI run 24625646962, 2026-04-19).
-          # Dropped to 5: Dashboard + Login + /quotations + /projectlist + /admin —
-          # the essentials every module depends on. Local runs keep all 50.
-          SMOKE_MAX_ROUTES: '5'
-          # Dev server (npm run dev) needs VITE_* names
+          # There is no .env in CI — it is gitignored. Every value below comes
+          # from a GitHub repo secret (Settings → Secrets and variables →
+          # Actions). Secrets do NOT follow a repo rename/transfer, so they must
+          # be re-added on each repo. An unset secret expands to an EMPTY STRING,
+          # not an error, which is why a missing one surfaces as tests/global-setup.ts
+          # throwing "missing dev-server env" rather than as a workflow failure.
+          #
+          # Required, or the run cannot start:
+          #   VITE_SUPABASE_URL · VITE_SUPABASE_PUBLISHABLE_KEY  (global-setup contract)
+          #   SUPABASE_KEY                                       (service role; supabaseChecks
+          #                                                       throws at import)
+          #   TEST_{ADVISOR,MANAGER,SUPER_ADMIN}_PASSWORD        (auth.setup signs in per role)
+
+          # Dev server (npm run dev) needs the VITE_* names
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
           VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
-          # Test runners (tests/runners/supabaseChecks.ts) need these
+
+          # tests/runners/supabaseChecks.ts — SUPABASE_URL falls back to
+          # VITE_SUPABASE_URL; SUPABASE_KEY (service role) has no fallback.
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-          # Test fixtures (tests/fixtures/testUsers.ts) need these
-          AIGENT_USER_ID: ${{ secrets.AIGENT_USER_ID }}
-          AIGENT_EMAIL: ${{ secrets.AIGENT_EMAIL }}
-          AIGENT_PASSWORD: ${{ secrets.AIGENT_PASSWORD }}
-        # Full local @p0 is WF-0001 · WF-0012 · WF-0019 · WF-9000. WF-0012 and
-        # WF-0019 auto-skip on CI via assertNasMountAvailable() (no SMB mount
-        # on ubuntu-latest). WF-9000 respects SMOKE_MAX_ROUTES above.
+
+          # tests/fixtures/testUsers.ts — the three pre-provisioned e2e accounts.
+          # Emails and user-ids have committed defaults, so only the passwords
+          # are strictly required; set the others to override per environment.
+          TEST_ADVISOR_PASSWORD: ${{ secrets.TEST_ADVISOR_PASSWORD }}
+          TEST_MANAGER_PASSWORD: ${{ secrets.TEST_MANAGER_PASSWORD }}
+          TEST_SUPER_ADMIN_PASSWORD: ${{ secrets.TEST_SUPER_ADMIN_PASSWORD }}
         run: npx playwright test --grep @p0 --project=${{ matrix.project }}
       - name: Upload Playwright report on failure
         if: failure()
