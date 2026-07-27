@@ -86,3 +86,4 @@ tmp/
 /*.png
 .env
 backups/
+.vercel
