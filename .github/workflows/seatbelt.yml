@@ -45,6 +45,19 @@ jobs:
     needs: typecheck-lint
     strategy:
       fail-fast: false
+      # SERIALISED ON PURPOSE — do not raise. Both matrix legs drive the SAME
+      # live Supabase project with the SAME three e2e accounts. The advisor-book
+      # mutex (tests/fixtures/advisorBookLock.ts) is a `mkdir` on os.tmpdir(),
+      # which is atomic per HOST — and each matrix leg is a different runner, so
+      # the lock cannot see its peer. Run them together and dashboard.spec
+      # (asserts the advisor book is EMPTY) races portfolio-convert.spec
+      # (asserts baseline+1) on one shared book: seen 2026-07-27 as
+      # "Expected 3, Received 2" plus a residue sweep timing out mid-delete.
+      # tests/lessons.md 2026-06-01 (fixtureLock cross-host) prescribes exactly
+      # this remedy — an operational non-overlap window — until a DB-backed
+      # cross-host lock exists. Costs ~4min of wall-clock; the 20min per-job
+      # timeout is unaffected because it is per job, not per matrix.
+      max-parallel: 1
       matrix:
         project: [chromium-desktop, mobile-safari]
     steps:
@@ -88,15 +101,21 @@ jobs:
           TEST_ADVISOR_PASSWORD: ${{ secrets.TEST_ADVISOR_PASSWORD }}
           TEST_MANAGER_PASSWORD: ${{ secrets.TEST_MANAGER_PASSWORD }}
           TEST_SUPER_ADMIN_PASSWORD: ${{ secrets.TEST_SUPER_ADMIN_PASSWORD }}
-        # --config is REQUIRED. The default playwright.config.ts defines the two
-        # browser projects but no `setup` project, so nothing mints the per-role
-        # sessions in tests/.auth/. Only playwright.parallel.config.ts declares
-        # setup (testMatch auth.setup.ts) + dependencies: ['setup'] + storageState.
-        # Without it every spec doing test.use({ storageState: authFileFor(...) })
-        # dies with ENOENT tests/.auth/advisor.json — 32 failures, 4 passes.
+        # NO --config: this uses the base playwright.config.ts, which is tuned
+        # for CI (workers 2, retries 2, trace/video off, 90s timeout) and now
+        # declares the `setup` project that mints tests/.auth/<role>.json.
+        # `--grep @p0` does NOT filter setup out — Playwright exempts dependency
+        # projects from grep — so all 3 sessions are minted, then 45 @p0 specs
+        # run. Verified with `--list`: 48 tests in 15 files.
+        #
+        # Do NOT point this at playwright.parallel.config.ts. That config is
+        # LOCAL-ONLY by its own header, and it overrides workers to 10 and
+        # retries to 1 — 10 Chromium instances on a 2-vCPU runner, which is what
+        # timed out ClientsPage.waitForDetail on 2026-07-27. It selects the same
+        # 45 specs either way (its testIgnore '**/auth/**' matches nothing —
+        # tests/workflows/auth/ does not exist), so there is no coverage to gain.
         run: >-
           npx playwright test
-          --config=playwright.parallel.config.ts
           --grep @p0
           --project=${{ matrix.project }}
       - name: Upload Playwright report on failure
