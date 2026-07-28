@@ -87,8 +87,6 @@ export type {
 } from './lib/followUps';
 
 export {
-  clientFromRow,
-  clientToRow,
   policyFromRow,
   policyToRow,
   projectionsFromRows,
@@ -98,6 +96,10 @@ export {
   bankFromRow,
   bankToRow,
 } from './lib/mapping';
+export {
+  clientFromRow,
+  clientToRow,
+} from './lib/clientMapping';
 export type {
   CashValueProjection,
   CrmClient,

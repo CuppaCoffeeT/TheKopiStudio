@@ -15,30 +15,11 @@ import { useEffect, useState } from 'react';
 import { Field, Textarea } from '@/components/primitives/form';
 import { Modal, ModalGhostAction, ModalPrimaryAction } from '@/components/primitives/overlays/Modal';
 import { useCreateClient, useUpdateClient } from '../../hooks/useClientMutations';
+import { EMPTY_CLIENT, RISK_PROFILES, toInput } from './client/clientFormModel';
 import type { CrmClient, CrmClientInput } from '../../types';
 import { ClientFinancialSection, ClientRelationshipSection } from './client/ClientFormSections';
+import { ClientPlanningSection } from './client/ClientPlanningSection';
 import { DateField, SelectField, TextField } from './shared';
-
-const RISK_PROFILES = ['Conservative', 'Moderate', 'Aggressive'] as const;
-
-const EMPTY_CLIENT: CrmClientInput = {
-  name: '',
-  email: '',
-  phone: '',
-  dateOfBirth: '',
-  occupation: '',
-  annualIncome: '',
-  riskProfile: 'Moderate',
-  notes: '',
-  createdDate: '',
-  lastReviewDate: '',
-  nextReviewDate: '',
-  reviewFrequency: 'Annual',
-  totalBankBalance: '',
-  cpfOA: '',
-  cpfSA: '',
-  cpfMA: '',
-};
 
 type ClientErrors = Partial<Record<'name' | 'email' | 'phone', string>>;
 
@@ -47,11 +28,6 @@ interface ClientFormModalProps {
   onOpenChange: (next: boolean) => void;
   /** Present → edit mode; absent → add mode. */
   client?: CrmClient;
-}
-
-function toInput(client: CrmClient): CrmClientInput {
-  const { id: _id, ...input } = client;
-  return input;
 }
 
 export function ClientFormModal({ open, onOpenChange, client }: ClientFormModalProps) {
@@ -189,6 +165,7 @@ export function ClientFormModal({ open, onOpenChange, client }: ClientFormModalP
       </Field>
       <ClientRelationshipSection isEdit={isEdit} value={form} set={set} />
       <ClientFinancialSection isEdit={isEdit} value={form} set={set} />
+      <ClientPlanningSection value={form} set={set} />
     </Modal>
   );
 }

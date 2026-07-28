@@ -445,3 +445,36 @@ no role strings (.claude/rules/module-access.md). The comp's manager-only
 Reports destination is NOT built: it needs a cross-advisor roster surface that
 does not exist yet, and `/crm-reports` (a book-wide financial summary) is a
 different artifact, currently granted to advisors too.
+
+## 2026-07-28 — CPF projection with future contributions is a NEW function, not a change
+
+**Decision**: `lib/cpfContributions.ts` adds `projectCPFTo55WithFutureContributions`
+alongside the golden `projectCPFTo55`, rather than extending it. The report calls
+the new one unconditionally.
+**Why**: `finance.ts` is golden-locked — `__tests__/finance.test.ts` replays 115
+vectors FLOAT-EXACT and its per-year operation order is load-bearing. The two
+functions also answer different questions ("what do today's balances grow to?"
+vs "...and what if they keep earning?"). Critically, with NO income steps the
+two agree to floating-point exactness — asserted across 8 shapes in
+`__tests__/cpfContributions.test.ts` — which is what makes calling the new one
+unconditionally safe: a customer with nothing filled in projects exactly as
+before, so this cannot silently move numbers across the whole book.
+**Impact**: closes a real modelling gap. Previously a 35-year-old and a
+54-year-old with identical balances projected identically, because the twenty
+years of contributions the younger one will actually make did not exist in the
+model. `saBoostFromOverflow` is DERIVED by re-running the projection with an
+infinite Medisave cap rather than reusing `totalOverflow` — the spill compounds
+after it lands, so the two differ.
+
+## 2026-07-28 — Three fixed income steps, not a child table
+
+**Decision**: expected future income is nine flat columns on `clients`
+(`future_income_step{1,2,3}` + start/end ages), not a `client_income_steps`
+child table.
+**Why**: it is what the reference CRM models and what advisors actually fill in
+— earning years → wind-down → semi-retirement. A child table would be the
+"correct" shape and would buy nothing: no query asks across customers, and the
+whole set is read and written with the client row.
+**Impact**: `lib/incomeSteps.ts` owns the adapter from those columns to a list,
+so the flat storage is invisible above it. Revisit only if a fourth step is
+ever asked for.

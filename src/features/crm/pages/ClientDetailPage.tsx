@@ -30,7 +30,7 @@ import { NoResultsState } from '@/components/primitives/shell/NoResultsState';
 import { useAuth } from '@/contexts/AuthContext';
 import { getCurrentSingaporeTime } from '@/utils/timezoneUtils';
 import { resolveClientFollowUp } from '../lib/followUps';
-import { clientFromRow } from '../lib/mapping';
+import { clientFromRow } from '../lib/clientMapping';
 import { useClientDetail } from '../hooks/useClientDetail';
 import { useDetailJourney } from '../hooks/useDetailJourney';
 import { useSoftDeleteClient } from '../hooks/useClientMutations';

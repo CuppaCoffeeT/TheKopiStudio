@@ -1,5 +1,9 @@
 /**
- * CRM row↔model mapping — port of the legacy useClients.js conversion layer
+ * CRM row↔model mapping for policies, interactions, bank records and cash-value
+ * projections. CLIENT mapping lives in `clientMapping.ts` (split at the W23 LOC
+ * ceiling when the twelve planning fields landed).
+ *
+ * Port of the legacy useClients.js conversion layer
  * (git c09c549) against the new 5-table spine. Pure functions; the api/
  * services stamp identity/audit columns (user_id, client_id/policy_id,
  * created_by, updated_by, is_deleted) — never this module.
@@ -16,11 +20,8 @@
 import type {
   BankBalanceRow,
   CashValueProjection,
-  ClientRow,
   CrmBankRecord,
   CrmBankRecordInput,
-  CrmClient,
-  CrmClientInput,
   CrmInteraction,
   CrmInteractionInput,
   CrmPolicy,
@@ -29,55 +30,7 @@ import type {
   PolicyRow,
   ProjectedCashValueRow,
 } from '../types';
-
-/** Legacy `toNum` — '' / null / undefined → null, else Number(). */
-const toNum = (v: string | number | null | undefined): number | null =>
-  v === '' || v == null ? null : Number(v);
-
-/** Render a nullable numeric column as a form string ('' when unset). */
-const numStr = (v: number | null | undefined, fallback = ''): string =>
-  v != null ? String(v) : fallback;
-
-export function clientFromRow(row: ClientRow): CrmClient {
-  return {
-    id: row.id,
-    name: row.name ?? '',
-    email: row.email ?? '',
-    phone: row.phone ?? '',
-    dateOfBirth: row.date_of_birth ?? '',
-    occupation: row.occupation ?? '',
-    annualIncome: numStr(row.annual_income),
-    riskProfile: row.risk_profile ?? 'Moderate',
-    notes: row.notes ?? '',
-    createdDate: row.created_date ?? '',
-    lastReviewDate: row.last_review_date ?? '',
-    nextReviewDate: row.next_review_date ?? '',
-    reviewFrequency: row.review_frequency ?? 'Annual',
-    totalBankBalance: numStr(row.total_bank_balance, '0'),
-    cpfOA: numStr(row.cpf_oa),
-    cpfSA: numStr(row.cpf_sa),
-    cpfMA: numStr(row.cpf_ma),
-  };
-}
-
-export function clientToRow(data: CrmClientInput) {
-  return {
-    name: data.name,
-    email: data.email || null,
-    phone: data.phone || null,
-    date_of_birth: data.dateOfBirth || null,
-    occupation: data.occupation || null,
-    annual_income: toNum(data.annualIncome),
-    risk_profile: data.riskProfile || 'Moderate',
-    notes: data.notes || null,
-    created_date: data.createdDate || null,
-    next_review_date: data.nextReviewDate || null,
-    review_frequency: data.reviewFrequency || 'Annual',
-    cpf_oa: toNum(data.cpfOA),
-    cpf_sa: toNum(data.cpfSA),
-    cpf_ma: toNum(data.cpfMA),
-  };
-}
+import { numStr, toNum } from './mappingCoercion';
 
 /** Projection rows → model points, sorted by age (corrected behavior 4). */
 export function projectionsFromRows(rows: readonly ProjectedCashValueRow[]): CashValueProjection[] {

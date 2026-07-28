@@ -76,6 +76,24 @@ export interface CrmClient {
   cpfOA: string;
   cpfSA: string;
   cpfMA: string;
+  // ── Planning fields (2026-07-28, from the reference CRM) ──────────────────
+  // Holdings outside CPF and outside policies, plus the advisor's call on
+  // whether that pot is genuinely earmarked for retirement.
+  personalInvestmentValue: string;
+  /** Expected annual return as a PERCENT ('6' = 6%), matching the CRM input. */
+  personalInvestmentGrowthRate: string;
+  includePersonalInvestmentInRetirement: boolean;
+  // Three life stages of expected earnings. These are what let the CPF
+  // projection keep paying in — see lib/cpfContributions.ts. Ages inclusive.
+  futureIncomeStep1: string;
+  futureIncomeStartAge1: string;
+  futureIncomeEndAge1: string;
+  futureIncomeStep2: string;
+  futureIncomeStartAge2: string;
+  futureIncomeEndAge2: string;
+  futureIncomeStep3: string;
+  futureIncomeStartAge3: string;
+  futureIncomeEndAge3: string;
 }
 
 /** Client form payload (ADD reads `totalBankBalance` to seed the initial bank-history row). */

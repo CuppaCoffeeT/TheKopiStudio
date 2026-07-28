@@ -44,6 +44,20 @@ const input: CrmClientInput = {
   cpfOA: '',
   cpfSA: '',
   cpfMA: '',
+  // Planning fields (2026-07-28) — blank/default, so this fixture keeps
+  // asserting the pre-existing write contract unchanged.
+  personalInvestmentValue: '',
+  personalInvestmentGrowthRate: '',
+  includePersonalInvestmentInRetirement: true,
+  futureIncomeStep1: '',
+  futureIncomeStartAge1: '',
+  futureIncomeEndAge1: '',
+  futureIncomeStep2: '',
+  futureIncomeStartAge2: '',
+  futureIncomeEndAge2: '',
+  futureIncomeStep3: '',
+  futureIncomeStartAge3: '',
+  futureIncomeEndAge3: '',
 };
 
 let from: FromQueue;

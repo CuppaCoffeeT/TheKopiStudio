@@ -12,7 +12,9 @@
  * Math.round'ed. Print-first light-locked per the report-print.css contract.
  */
 
-import { BHS_2026, projectCPFTo55, toFloat } from '../../lib/finance';
+import { projectCPFTo55WithFutureContributions } from '../../lib/cpfContributions';
+import { incomeStepsFromClient } from '../../lib/incomeSteps';
+import { BHS_2026, toFloat } from '../../lib/finance';
 import { cpfCurrentTotal } from '../../lib/financeReport';
 import type { CrmClient } from '../../types';
 import { ReportCpfRaPanel } from './ReportCpfRaPanel';
@@ -36,7 +38,20 @@ export function ReportCpfProjection({ client, currentAge, refYear }: ReportCpfPr
 
   // CPFProjection.jsx:8 — years-to-55 clamp (year count, not money math).
   const yearsTo55 = Math.max(0, 55 - currentAge);
-  const projection = projectCPFTo55({ cpfOA, cpfSA, cpfMA, yearsTo55 });
+
+  // Contributions-aware since 2026-07-28. With no income steps on the record
+  // this is FLOAT-EXACTLY the legacy `projectCPFTo55` (asserted in
+  // lib/__tests__/cpfContributions.test.ts), so an un-filled customer's report
+  // is unchanged; a customer WITH steps finally has their future
+  // contributions counted instead of only their current balances growing.
+  const incomeSteps = incomeStepsFromClient(client);
+  const projection = projectCPFTo55WithFutureContributions({
+    cpfOA,
+    cpfSA,
+    cpfMA,
+    currentAge,
+    incomeSteps,
+  });
 
   const cards = [
     {
@@ -92,7 +107,19 @@ export function ReportCpfProjection({ client, currentAge, refYear }: ReportCpfPr
       <p className="text-[12px] text-[color:var(--fg-dim)]">
         Projection based on current CPF interest rates (OA: 2.5%, SA: 4%, MA: 4%) with Medisave
         cap overflow to SA.
+        {incomeSteps.length > 0
+          ? ' Future CPF contributions are included, from the expected income recorded on the customer.'
+          : ' Existing balances only — no future income is recorded, so no further contributions are assumed.'}
       </p>
+
+      {projection.totalFutureContributions > 0 && (
+        <div className="report-callout" data-testid="report-cpf-contributions">
+          <strong>Future contributions included.</strong> Approximately{' '}
+          {money(projection.totalFutureContributions)} of CPF contributions over the next{' '}
+          {yearsTo55} {yearsTo55 === 1 ? 'year' : 'years'}, on income capped at the $
+          {(8_000).toLocaleString()} monthly Ordinary Wage ceiling.
+        </div>
+      )}
 
       {projection.totalOverflow > 0 && (
         <div className="report-callout report-callout--warning" data-testid="report-cpf-overflow">

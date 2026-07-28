@@ -26,7 +26,7 @@ import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
 import { NoResultsState } from '@/components/primitives/shell/NoResultsState';
 import { ageFromDOB, currentRefYear, summariseClient, toFloat } from '../lib/finance';
 import { assessRetirementReadiness, heroTotals } from '../lib/financeReport';
-import { clientFromRow } from '../lib/mapping';
+import { clientFromRow } from '../lib/clientMapping';
 import { useClientDetail } from '../hooks/useClientDetail';
 import { ReportCashValue } from '../components/report/ReportCashValue';
 import { ReportClientProfile } from '../components/report/ReportClientProfile';

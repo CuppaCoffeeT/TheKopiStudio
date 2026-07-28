@@ -8,8 +8,9 @@
 import { describe, expect, it } from 'vitest';
 
 import type { BankBalanceRow, ClientRow, InteractionRow, PolicyRow, ProjectedCashValueRow } from '../../types';
+import { clientFromRow, clientToRow } from '../clientMapping';
 import {
-  bankFromRow, bankToRow, clientFromRow, clientToRow, interactionFromRow, interactionToRow,
+  bankFromRow, bankToRow, interactionFromRow, interactionToRow,
   policyFromRow, policyToRow, projectionsFromRows, projectionsToRows,
 } from '../mapping';
 
@@ -24,7 +25,15 @@ const CLIENT_ROW = {
   risk_profile: 'Aggressive', notes: 'VIP', created_date: '2024-01-15',
   last_review_date: '2026-05-01', next_review_date: '2026-12-01',
   review_frequency: 'Quarterly', total_bank_balance: 42000, cpf_oa: 30000,
-  cpf_sa: 20000, cpf_ma: 15000, ...AUDIT,
+  cpf_sa: 20000, cpf_ma: 15000,
+  // Planning fields (2026-07-28) — real values, so the round-trip below
+  // exercises them rather than only proving nulls survive.
+  personal_investment_value: 50000, personal_investment_growth_rate: 6,
+  include_personal_investment_in_retirement: true,
+  future_income_step1: 120000, future_income_start_age1: 39, future_income_end_age1: 50,
+  future_income_step2: 80000, future_income_start_age2: 51, future_income_end_age2: 60,
+  future_income_step3: null, future_income_start_age3: null, future_income_end_age3: null,
+  ...AUDIT,
 } as ClientRow;
 
 describe('client mapping', () => {
@@ -46,7 +55,28 @@ describe('client mapping', () => {
       risk_profile: 'Aggressive', notes: 'VIP', created_date: '2024-01-15',
       next_review_date: '2026-12-01', review_frequency: 'Quarterly',
       cpf_oa: 30000, cpf_sa: 20000, cpf_ma: 15000,
+      personal_investment_value: 50000, personal_investment_growth_rate: 6,
+      include_personal_investment_in_retirement: true,
+      future_income_step1: 120000, future_income_start_age1: 39, future_income_end_age1: 50,
+      future_income_step2: 80000, future_income_start_age2: 51, future_income_end_age2: 60,
+      future_income_step3: null, future_income_start_age3: null, future_income_end_age3: null,
     });
+  });
+
+  it('reads the retirement-inclusion flag as TRUE for a row predating the column', () => {
+    // The column is NOT NULL DEFAULT true, but a partial select (or a row from
+    // before the migration) yields undefined — which must not read as "exclude".
+    const legacy = clientFromRow({
+      ...CLIENT_ROW,
+      include_personal_investment_in_retirement: undefined,
+    } as unknown as ClientRow);
+    expect(legacy.includePersonalInvestmentInRetirement).toBe(true);
+
+    const excluded = clientFromRow({
+      ...CLIENT_ROW,
+      include_personal_investment_in_retirement: false,
+    } as ClientRow);
+    expect(excluded.includePersonalInvestmentInRetirement).toBe(false);
   });
 
   it('NEVER writes total_bank_balance or last_review_date (recompute owns them)', () => {

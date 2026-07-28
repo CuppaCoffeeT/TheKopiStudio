@@ -37,7 +37,7 @@ import { getCurrentSingaporeTime } from '@/utils/timezoneUtils';
 import { sanitizeSearchTerm } from '../api/clientsService';
 import { useClientsList } from '../hooks/useClientsList';
 import { useCustomerSignals } from '../hooks/useCustomerSignals';
-import { clientFromRow } from '../lib/mapping';
+import { clientFromRow } from '../lib/clientMapping';
 import { JourneyChecklist } from '../components/JourneyChecklist';
 import {
   buildCustomerRow,

@@ -15,7 +15,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentSingaporeTime, getLocalDateString } from '@/utils/timezoneUtils';
-import { clientToRow } from '../lib/mapping';
+import { clientToRow } from '../lib/clientMapping';
 import type { ClientRow, ClientRowUpdate, CrmClientInput } from '../types';
 import { recomputeClientBalance } from './bankService';
 

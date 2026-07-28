@@ -96,13 +96,25 @@ export type Database = {
           created_date: string | null
           date_of_birth: string | null
           email: string | null
+          future_income_end_age1: number | null
+          future_income_end_age2: number | null
+          future_income_end_age3: number | null
+          future_income_start_age1: number | null
+          future_income_start_age2: number | null
+          future_income_start_age3: number | null
+          future_income_step1: number | null
+          future_income_step2: number | null
+          future_income_step3: number | null
           id: string
+          include_personal_investment_in_retirement: boolean
           is_deleted: boolean
           last_review_date: string | null
           name: string
           next_review_date: string | null
           notes: string | null
           occupation: string | null
+          personal_investment_growth_rate: number | null
+          personal_investment_value: number | null
           phone: string | null
           review_frequency: string | null
           risk_profile: string | null
@@ -121,13 +133,25 @@ export type Database = {
           created_date?: string | null
           date_of_birth?: string | null
           email?: string | null
+          future_income_end_age1?: number | null
+          future_income_end_age2?: number | null
+          future_income_end_age3?: number | null
+          future_income_start_age1?: number | null
+          future_income_start_age2?: number | null
+          future_income_start_age3?: number | null
+          future_income_step1?: number | null
+          future_income_step2?: number | null
+          future_income_step3?: number | null
           id?: string
+          include_personal_investment_in_retirement?: boolean
           is_deleted?: boolean
           last_review_date?: string | null
           name: string
           next_review_date?: string | null
           notes?: string | null
           occupation?: string | null
+          personal_investment_growth_rate?: number | null
+          personal_investment_value?: number | null
           phone?: string | null
           review_frequency?: string | null
           risk_profile?: string | null
@@ -146,13 +170,25 @@ export type Database = {
           created_date?: string | null
           date_of_birth?: string | null
           email?: string | null
+          future_income_end_age1?: number | null
+          future_income_end_age2?: number | null
+          future_income_end_age3?: number | null
+          future_income_start_age1?: number | null
+          future_income_start_age2?: number | null
+          future_income_start_age3?: number | null
+          future_income_step1?: number | null
+          future_income_step2?: number | null
+          future_income_step3?: number | null
           id?: string
+          include_personal_investment_in_retirement?: boolean
           is_deleted?: boolean
           last_review_date?: string | null
           name?: string
           next_review_date?: string | null
           notes?: string | null
           occupation?: string | null
+          personal_investment_growth_rate?: number | null
+          personal_investment_value?: number | null
           phone?: string | null
           review_frequency?: string | null
           risk_profile?: string | null
@@ -252,6 +288,71 @@ export type Database = {
           },
           {
             foreignKeyName: "interactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legacy_plans: {
+        Row: {
+          client_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          plan: Json
+          schema_version: number
+          updated_at: string
+          updated_by: string | null
+          user_id: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          plan?: Json
+          schema_version?: number
+          updated_at?: string
+          updated_by?: string | null
+          user_id: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          plan?: Json
+          schema_version?: number
+          updated_at?: string
+          updated_by?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legacy_plans_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: true
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legacy_plans_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legacy_plans_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legacy_plans_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"

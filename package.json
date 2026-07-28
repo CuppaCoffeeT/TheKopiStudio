@@ -10,7 +10,7 @@
     "lint": "eslint . --max-warnings=15",
     "preview": "vite preview",
     "db:schema": "supabase db dump --schema public -f supabase/remote_public_schema.sql",
-    "db:types": "supabase gen types typescript --schema public --linked > supabase/remote_types.ts",
+    "db:types": "supabase gen types typescript --schema public --project-id mymzcbalyqqgdmzsfmam > src/integrations/supabase/types.ts",
     "db:data": "sh -c 'test -n \"$DB_URL_RO\" && supabase db dump --db-url \"$DB_URL_RO\" --data-only --schema public -f supabase/remote_public_data.sql || (echo \"DB_URL_RO is not set. Skipping data dump.\" && exit 0)'",
     "db:refresh": "bash scripts/refresh_supabase_snapshots.sh",
     "test": "vitest",

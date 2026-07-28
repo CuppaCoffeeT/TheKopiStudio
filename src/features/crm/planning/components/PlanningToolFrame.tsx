@@ -24,7 +24,7 @@ import { ErrorState } from '@/components/primitives/shell/ErrorState';
 import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
 import { NoResultsState } from '@/components/primitives/shell/NoResultsState';
 import { useClientDetail } from '../../hooks/useClientDetail';
-import { clientFromRow } from '../../lib/mapping';
+import { clientFromRow } from '../../lib/clientMapping';
 import type { CrmClient } from '../../types';
 
 interface PlanningToolFrameProps {

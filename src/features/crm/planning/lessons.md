@@ -30,3 +30,18 @@ is a separate, wider decision. Flagged to the user 2026-07-28.
 pre-fill is an INTEGRATION BOUNDARY. Validate there. "The source field is
 already validated" is not the same claim as "every value now in the column is
 sane" — the column has history, and pickers change.
+
+## 2026-07-28 — `npm run db:types` wrote to a file nothing imported
+
+**What happened**: the script generated types into `supabase/remote_types.ts`,
+but the app imports `src/integrations/supabase/types.ts`. Regenerating after a
+migration would appear to succeed and change nothing.
+
+**Root cause**: the two paths drifted at some point; nothing failed loudly
+because the generated file is valid TypeScript that simply has no importers.
+
+**Fix**: `db:types` now writes to `src/integrations/supabase/types.ts` and uses
+`--project-id` rather than `--linked` (which needs a local `supabase link`).
+
+**Lesson**: a codegen script that writes to an unimported path fails silently
+forever. When touching one, grep for an importer of its output.

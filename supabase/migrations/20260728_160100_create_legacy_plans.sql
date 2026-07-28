@@ -54,6 +54,15 @@ CREATE TABLE IF NOT EXISTS public.legacy_plans (
 CREATE INDEX IF NOT EXISTS idx_legacy_plans_client_id ON public.legacy_plans(client_id);
 CREATE INDEX IF NOT EXISTS idx_legacy_plans_user_id ON public.legacy_plans(user_id);
 
+-- `updated_at` is maintained by the same trigger function every other CRM table
+-- uses (public.update_updated_at_column, via update_clients_updated_at on
+-- public.clients). Without it the column would keep its INSERT value forever
+-- and "when was this plan last revised?" would silently be wrong.
+DROP TRIGGER IF EXISTS update_legacy_plans_updated_at ON public.legacy_plans;
+CREATE TRIGGER update_legacy_plans_updated_at
+  BEFORE UPDATE ON public.legacy_plans
+  FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+
 ALTER TABLE public.legacy_plans ENABLE ROW LEVEL SECURITY;
 
 -- Pattern D, identical to public.clients: owner OR view_all_clients reads,
