@@ -1,8 +1,10 @@
-# Planning — Feature Memory
+# Planning — CRM Sub-Workspace Memory
 
 Three customer-scoped advisory tools ported from the advisor's own HTML prototypes: **Tax calculator** (04), **SRS planner** (05), **Legacy Map** (06). Routes are sub-routes of a customer — `/clients/:id/tax-calculator` · `/srs` · `/legacy-planner` — sharing modulePath `/clients` (the `/clients/:id/report` precedent), so they need **no module rows**.
 
-Launched from `crm/components/detail/CustomerToolLauncher`, never from the nav rail: under the customer-centred IA a tool always acts on a specific customer.
+Launched from `../components/detail/CustomerToolLauncher`, never from the nav rail: under the customer-centred IA a tool always acts on a specific customer.
+
+**Lives INSIDE `features/crm/` on purpose.** These are customer surfaces: they read the customer record, share its modulePath, and are sub-routes of it. `.dependency-cruiser` enforces that feature workspaces are islands, and a sibling `features/planning/` importing `crm`'s types, mapping and `useClientDetail` was exactly the violation that rule exists to catch. The dependency direction is the boundary — see `decisions.md`.
 
 ## Map
 
@@ -29,5 +31,5 @@ Launched from `crm/components/detail/CustomerToolLauncher`, never from the nav r
 
 ## 📚 Related
 
-- `src/features/crm/CONTEXT.md` — the customer record these tools hang off
-- `src/features/crm/lib/customerToolCards.ts` — chain (01–03) vs planning (04–06)
+- [../CONTEXT.md](../CONTEXT.md) — the customer record these tools hang off
+- `../lib/customerToolCards.ts` — chain (01–03) vs planning (04–06)

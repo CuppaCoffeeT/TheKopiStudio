@@ -32,9 +32,9 @@ const PortfolioReportPage = lazy(() => import("@/features/crm/pages/PortfolioRep
 // Planning tools — customer-scoped sub-routes of /clients/:id (customer-centred
 // IA: a tool always acts on a specific customer, so it is reached from their
 // record, never from the nav rail).
-const TaxCalculatorPage = lazy(() => import("@/features/planning/pages/TaxCalculatorPage"));
-const SrsPlannerPage = lazy(() => import("@/features/planning/pages/SrsPlannerPage"));
-const LegacyPlannerPage = lazy(() => import("@/features/planning/pages/LegacyPlannerPage"));
+const TaxCalculatorPage = lazy(() => import("@/features/crm/planning/pages/TaxCalculatorPage"));
+const SrsPlannerPage = lazy(() => import("@/features/crm/planning/pages/SrsPlannerPage"));
+const LegacyPlannerPage = lazy(() => import("@/features/crm/planning/pages/LegacyPlannerPage"));
 
 /** Same fallback DashboardLayout uses — for lazy routes outside its Suspense. */
 const suspenseFallback = (

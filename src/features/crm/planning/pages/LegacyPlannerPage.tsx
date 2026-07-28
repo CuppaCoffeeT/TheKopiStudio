@@ -21,8 +21,8 @@
  */
 
 import { useMemo } from 'react';
-import { currentRefYear } from '@/features/crm/lib/finance';
-import type { CrmClient } from '@/features/crm/types';
+import { currentRefYear } from '../../lib/finance';
+import type { CrmClient } from '../../types';
 import { PlanningToolFrame } from '../components/PlanningToolFrame';
 import { LegacyAssetsPanel } from '../components/legacy/LegacyAssetsPanel';
 import { LegacyComparisonPanel } from '../components/legacy/LegacyComparisonPanel';

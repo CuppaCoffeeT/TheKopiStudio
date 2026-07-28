@@ -18,7 +18,7 @@
  * separate shared-primitive concern and is left alone deliberately.
  */
 
-import { ageFromDOB } from '@/features/crm/lib/finance';
+import { ageFromDOB } from '../../lib/finance';
 
 /** The age used when the record holds nothing usable — matches `ageFromDOB`. */
 export const DEFAULT_SEED_AGE = 40;

@@ -17,8 +17,8 @@
 import { useMemo, useState } from 'react';
 import { Field, Input } from '@/components/primitives/form';
 import { Badge } from '@/components/primitives/shell/Badge';
-import { currentRefYear } from '@/features/crm/lib/finance';
-import type { CrmClient } from '@/features/crm/types';
+import { currentRefYear } from '../../lib/finance';
+import type { CrmClient } from '../../types';
 import { PlanningToolFrame } from '../components/PlanningToolFrame';
 import { SrsContributionsPanel } from '../components/srs/SrsContributionsPanel';
 import { SrsSchedulePanel } from '../components/srs/SrsSchedulePanel';

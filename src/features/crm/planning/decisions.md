@@ -2,17 +2,26 @@
 
 **Last Updated**: 2026-07-28 SGT
 
-## 2026-07-28 — One `planning` feature, not three
+## 2026-07-28 — One `planning` folder, INSIDE crm, not three sibling features
 
-**Decision**: the tax calculator, SRS planner and Legacy Map live in ONE
-`src/features/planning/` folder rather than three feature folders.
+**Decision**: the tax calculator, SRS planner and Legacy Map live in ONE folder,
+`src/features/crm/planning/`, rather than three feature folders — and inside
+`crm` rather than beside it.
 **Why**: they share a real dependency, not just a theme — `lib/singaporeTax` is
 consumed by both the tax tool and the SRS drawdown pricing, and all three share
 `PlanningToolFrame` and the atoms. Three folders would have meant a fourth
 shared folder between them.
+**Why inside crm**: they read `CrmClient`, `clientFromRow` and
+`useClientDetail`. A sibling `features/planning/` importing those tripped
+`.dependency-cruiser`'s `no-cross-feature-imports` — ten violations, and the
+rule was right: feature workspaces are islands, and the dependency direction IS
+the boundary. Hoisting the customer record into `src/lib` to "share" it would
+have been the wrong fix; the tools are customer surfaces, so they belong with
+the customer.
 **Impact**: if any tool grows its own domain (persistence, its own tables, a
-report of its own), splitting it out later is a folder move — nothing here
-crosses tool boundaries except the tax ladder, which would become shared lib.
+report of its own), splitting it out later is a folder move PLUS hoisting
+whatever it still needs from crm. Nothing here crosses tool boundaries except
+the tax ladder, which would become shared lib.
 
 ## 2026-07-28 — Customer-scoped sub-routes, no module rows
 

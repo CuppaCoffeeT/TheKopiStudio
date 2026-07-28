@@ -12,6 +12,7 @@ Insurance CRM (SHIPPED): customers/policies/interactions/bank + dashboards + rep
 - Keys: crmClients (incl. `signals(ids)`) / crmDashboard (incl. `customerQueue()`) only
 - `lib/` — finance.ts (exact port) · financeReport barrel + Bands/Economics/Portfolio/Sections (oracle-locked math) · followUps · **customerJourney (3-step chain + queue rule; pure, tz-injected)** · mapping · report-print.css · decisions.md
 - `components/` — report/ (format-only) · detail/ (incl. CustomerToolLauncher) · modals/ (incl. AddCustomerChoiceModal fork) · FollowUpBadge · JourneyChecklist · QueueStatStrip · StartProfilerBand · CustomerQueueSection
+- `planning/` — **sub-workspace**: the three customer-scoped advisory tools (tax · SRS · Legacy Map) at `/clients/:id/<tool>`. Own CONTEXT.md + decisions/lessons. Inside crm because they read the customer record — see its decisions.md.
 
 ## Constraints
 

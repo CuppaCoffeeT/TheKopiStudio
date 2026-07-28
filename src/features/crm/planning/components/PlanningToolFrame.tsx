@@ -23,9 +23,9 @@ import { Button } from '@/components/primitives/shell/Button';
 import { ErrorState } from '@/components/primitives/shell/ErrorState';
 import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
 import { NoResultsState } from '@/components/primitives/shell/NoResultsState';
-import { useClientDetail } from '@/features/crm/hooks/useClientDetail';
-import { clientFromRow } from '@/features/crm/lib/mapping';
-import type { CrmClient } from '@/features/crm/types';
+import { useClientDetail } from '../../hooks/useClientDetail';
+import { clientFromRow } from '../../lib/mapping';
+import type { CrmClient } from '../../types';
 
 interface PlanningToolFrameProps {
   /** Serif page title, e.g. "Tax calculator". */

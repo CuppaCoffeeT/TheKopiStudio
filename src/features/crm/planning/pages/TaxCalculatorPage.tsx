@@ -16,8 +16,8 @@
 
 import { useMemo, useState } from 'react';
 import { Field, Input, Switch } from '@/components/primitives/form';
-import { currentRefYear } from '@/features/crm/lib/finance';
-import type { CrmClient } from '@/features/crm/types';
+import { currentRefYear } from '../../lib/finance';
+import type { CrmClient } from '../../types';
 import { PlanningToolFrame } from '../components/PlanningToolFrame';
 import {
   SummaryRow,
