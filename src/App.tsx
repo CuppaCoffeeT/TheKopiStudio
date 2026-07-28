@@ -29,6 +29,12 @@ const ClientsListPage = lazy(() => import("@/features/crm/pages/ClientsListPage"
 const ClientDetailPage = lazy(() => import("@/features/crm/pages/ClientDetailPage"));
 const ClientReportPage = lazy(() => import("@/features/crm/pages/ClientReportPage"));
 const PortfolioReportPage = lazy(() => import("@/features/crm/pages/PortfolioReportPage"));
+// Planning tools — customer-scoped sub-routes of /clients/:id (customer-centred
+// IA: a tool always acts on a specific customer, so it is reached from their
+// record, never from the nav rail).
+const TaxCalculatorPage = lazy(() => import("@/features/planning/pages/TaxCalculatorPage"));
+const SrsPlannerPage = lazy(() => import("@/features/planning/pages/SrsPlannerPage"));
+const LegacyPlannerPage = lazy(() => import("@/features/planning/pages/LegacyPlannerPage"));
 
 /** Same fallback DashboardLayout uses — for lazy routes outside its Suspense. */
 const suspenseFallback = (
@@ -132,6 +138,33 @@ function App() {
           element: (
             <ProtectedRoute modulePath="/clients">
               <ClientReportPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          // The three planning tools follow the same sub-route precedent: each
+          // acts on ONE customer, so it shares the customer book's modulePath
+          // and needs no module row of its own.
+          path: "/clients/:id/tax-calculator",
+          element: (
+            <ProtectedRoute modulePath="/clients">
+              <TaxCalculatorPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/clients/:id/srs",
+          element: (
+            <ProtectedRoute modulePath="/clients">
+              <SrsPlannerPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/clients/:id/legacy-planner",
+          element: (
+            <ProtectedRoute modulePath="/clients">
+              <LegacyPlannerPage />
             </ProtectedRoute>
           ),
         },

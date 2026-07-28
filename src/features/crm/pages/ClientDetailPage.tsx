@@ -3,7 +3,7 @@
  * /clients/:id — shares modulePath '/clients' with the list).
  *
  * This is the home of the customer-centred IA (Kopi Studio Directions turn 3a):
- * the three tools are launched from here, off `CustomerToolLauncher`, because
+ * the six tools are launched from here, off `CustomerToolLauncher`, because
  * a tool always acts on a specific customer. Before that launcher existed the
  * chain was invisible from the record, and `/clients/:id/report` had no entry
  * point anywhere in the app.
@@ -29,10 +29,10 @@ import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
 import { NoResultsState } from '@/components/primitives/shell/NoResultsState';
 import { useAuth } from '@/contexts/AuthContext';
 import { getCurrentSingaporeTime } from '@/utils/timezoneUtils';
-import { deriveJourney } from '../lib/customerJourney';
 import { resolveClientFollowUp } from '../lib/followUps';
 import { clientFromRow } from '../lib/mapping';
 import { useClientDetail } from '../hooks/useClientDetail';
+import { useDetailJourney } from '../hooks/useDetailJourney';
 import { useSoftDeleteClient } from '../hooks/useClientMutations';
 import { BankHistoryTab } from '../components/detail/BankHistoryTab';
 import { ClientDetailActions } from '../components/detail/ClientDetailActions';
@@ -45,12 +45,10 @@ import { ClientFormModal } from '../components/modals/ClientFormModal';
 
 type DetailTab = 'overview' | 'policies' | 'interactions' | 'bank';
 
-const PROFILER_PATH = '/profiler';
-
 export default function ClientDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user, modules } = useAuth();
+  const { user } = useAuth();
   const { client, policies, interactions, bankHistory, linkedResults } = useClientDetail(id);
   const removeClient = useSoftDeleteClient(id ?? '');
   const [tab, setTab] = useState<DetailTab>('overview');
@@ -69,24 +67,7 @@ export default function ClientDetailPage() {
     ? resolveClientFollowUp(interactions.data ?? [], model.nextReviewDate, refDate)
     : null;
 
-  // The launcher's three states come from the SAME ruleset the Overview queue
-  // and the Customers list checklist read, so this page can never disagree with
-  // the row that opened it. `linkedResults` is RLS-pruned: a profile owned by
-  // another advisor reads as un-profiled, deliberately indistinguishable from
-  // never-profiled (REPORTS_LINK_PRD neutral-empty-state rule).
-  const newestLinkedResult = linkedResults.data?.[0] ?? null;
-  const journey = model
-    ? deriveJourney({
-        hasProfile: Boolean(newestLinkedResult),
-        email: model.email,
-        phone: model.phone,
-        dateOfBirth: model.dateOfBirth,
-        occupation: model.occupation,
-        annualIncome: model.annualIncome === '' ? null : Number(model.annualIncome),
-        nextReviewDate: model.nextReviewDate,
-      })
-    : null;
-  const canProfile = modules.some((mod) => mod.path === PROFILER_PATH);
+  const { journey, newestLinkedResult, canProfile } = useDetailJourney(model, linkedResults.data);
 
   const tabs: TabNavItem[] = [
     { value: 'overview', label: 'Overview', testId: 'clients-detail-tab-overview' },
@@ -167,10 +148,13 @@ export default function ClientDetailPage() {
             linkedResultId={newestLinkedResult?.id ?? null}
             isOwn={isOwn}
             canProfile={canProfile}
-            onStartProfiler={() => navigate(PROFILER_PATH)}
+            onStartProfiler={() => navigate('/profiler')}
             onOpenProfile={(resultId) => navigate(`/profiler-results/${resultId}`)}
             onEditInformation={() => setEditOpen(true)}
             onOpenReport={() => navigate(`/clients/${id}/report`)}
+            onOpenTax={() => navigate(`/clients/${id}/tax-calculator`)}
+            onOpenSrs={() => navigate(`/clients/${id}/srs`)}
+            onOpenLegacy={() => navigate(`/clients/${id}/legacy-planner`)}
           />
           <OverviewTab client={model} linkedResults={linkedResults} />
         </>
