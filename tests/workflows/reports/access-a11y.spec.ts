@@ -220,7 +220,7 @@ test.beforeAll(async ({ browser }, testInfo) => {
       // and a seed bank balance (retirement-projection guard + the
       // 'Initial client onboarding' row for the bank-history table).
       await crm.gotoList();
-      await crm.addClientButton.click();
+      await crm.openAddClientForm();
       await expect(crm.clientModal).toBeVisible();
       await crm.fillClientForm({
         name: clientName,

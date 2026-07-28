@@ -54,6 +54,12 @@ const crmClientsKeys = {
   interactions: (id: string) => [...crmClientsBase.detail(id), 'interactions'] as const,
   bankHistory: (id: string) => [...crmClientsBase.detail(id), 'bank-history'] as const,
   linkedResults: (id: string) => [...crmClientsBase.detail(id), 'linked-results'] as const,
+  /**
+   * Journey signals (profiled? last contact?) for ONE page of the Customers
+   * list. Keyed by the page's ids so paging is a cache miss, not a refetch of
+   * the whole book — and so a client mutation invalidating `.all` clears it.
+   */
+  signals: (ids: readonly string[]) => [...crmClientsBase.all, 'signals', ids.join(',')] as const,
 };
 
 const crmDashboardBase = createQueryKeys('crmDashboard');
@@ -62,6 +68,8 @@ const crmDashboardKeys = {
   stats: () => [...crmDashboardBase.all, 'stats'] as const,
   /** Newest saved profiler results feeding the /dashboard "Latest additions" table. */
   recentResults: (limit: number) => [...crmDashboardBase.all, 'recent-results', limit] as const,
+  /** The customer-centred Overview action queue (who is waiting on you). */
+  customerQueue: () => [...crmDashboardBase.all, 'customer-queue'] as const,
 };
 
 const crmPortfolioBase = createQueryKeys('crmPortfolio');

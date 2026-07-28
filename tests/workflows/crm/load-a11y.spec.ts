@@ -207,7 +207,7 @@ test.describe('advisor CRM surfaces', () => {
       // No seed balance → createClient writes NO bank-history side-row, so
       // soft-deleting the client below is the COMPLETE cleanup.
       await crm.gotoList();
-      await crm.addClientButton.click();
+      await crm.openAddClientForm();
       await expect(crm.clientModal).toBeVisible();
       await crm.fillClientForm({
         name: clientName,
@@ -252,7 +252,7 @@ test.describe('advisor CRM surfaces', () => {
   test('ClientFormModal open (add mode) + axe wcag2aa clean @p0 @mobile', async ({ page }) => {
     const crm = new ClientsPage(page);
     await crm.gotoList();
-    await crm.addClientButton.click();
+    await crm.openAddClientForm();
     await expect(crm.clientModal).toBeVisible();
     // The form is fully rendered (first field mounted) before the scan.
     await expect(page.getByTestId('crm-client-name-input')).toBeVisible();

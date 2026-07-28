@@ -103,7 +103,7 @@ test.beforeAll(async ({ browser }, testInfo) => {
     await withAdvisorPage(browser, testInfo, async (page) => {
       const crm = new ClientsPage(page);
       await crm.gotoList();
-      await crm.addClientButton.click();
+      await crm.openAddClientForm();
       await expect(crm.clientModal).toBeVisible();
       await crm.fillClientForm({
         name: clientName,

@@ -387,3 +387,61 @@ values stay LITERAL hexes. The app-side twin of this value is the new
 deliberately does not read.
 **Supersedes**: 2026-07-25 — Report accent type never uses raw sage/terracotta
 (only the negative hex; the rule that raw `#D97551` never carries text stands)
+
+## 2026-07-28 — Customer-centred IA: one journey ruleset, three surfaces
+
+**Decision**: the app's information architecture moves from tool-as-navigation
+to customer-as-subject (Claude Design handoff "Kopi Studio Directions", turns
+3a/4a). The rail leads with **Overview + Customers**; `/dashboard` becomes an
+ACTION QUEUE rather than a record inventory; the Prospect Profiler, the
+customer information form and the client report are launched from the customer
+record via `components/detail/CustomerToolLauncher`. One pure module —
+`lib/customerJourney` — owns the three-step chain and the queue rule, and the
+Overview queue, the Customers list checklist and the detail launcher ALL read
+it. No surface re-derives "gone quiet" or step state locally.
+**Why**: three surfaces answering "where is this customer up to?" with three
+private rule sets is how a list row starts contradicting the page it opens. The
+chain also had a hole worth closing: `/clients/:id/report` had NO entry point
+anywhere in the app — the client report was reachable only by typing the URL.
+**Impact**: `deriveJourney` / `deriveAttention` are pure with an injected
+`refDate` (28 unit tests, green under SGT/UTC/US-Eastern). Day counts collapse
+BOTH sides to the Singapore calendar date before subtracting, so "13 days until
+the review" does not truncate to 12 depending on the hour the page is opened.
+Four modules lost their only adopter with the old Overview and were deleted
+rather than left orphaned (`useLatestAdditions`, `LatestAdditionsTable`,
+`OverviewKpiRow`, `lib/latestAdditions`); the `KpiIndexCard` primitive survives.
+
+## 2026-07-28 — Honest signals over comp fidelity in the journey chain
+
+**Decision**: three places where the comp draws something the schema cannot
+back, the app renders the weaker true claim instead. (1) The profiler step is
+BINARY — the comp's "step 4 of 7 · resume" affordance is not rendered, because
+`public.results` saves one row on completion and persists no partial run.
+(2) The report step's `done` means *ready to generate*, not *issued* — there is
+no issued flag; `locked` is the comp's real rule ("needs steps 01 and 02") and
+renders NO action rather than a clickable lock. (3) The Customers list's "Last
+contact" column reads "Never contacted" when no interaction exists, even though
+the quiet CLOCK legitimately falls back to the added date.
+**Why**: a queue is only worth having if every line on it is true. A resume
+button that cannot resume, a report marked issued that was never sent, and a
+"Today" under "Last contact" for someone never contacted each cost more trust
+than the missing polish buys.
+**Impact**: `JourneyStepState` has no partial state for `profiler`; the launcher
+renders a reason line where a locked action would be. If partial-run persistence
+is ever added to `results`, (1) is the entry to revisit — not the UI.
+
+## 2026-07-28 — The rail demotes the tools instead of deleting them
+
+**Decision**: the comp shows only Overview + Customers (+ a manager
+destination). `AppSidebar` keeps every OTHER granted module reachable under a
+hairline + muted "More" heading rather than dropping it from navigation.
+**Why**: saved profiler results can exist with no customer attached — the public
+`/profiler` wizard creates exactly that — so removing `/profiler-results` from
+the rail would strand real records behind a URL. Demotion expresses the comp's
+hierarchy claim without losing anything.
+**Impact**: the two primary items are pulled from the SAME `useAuth().modules`
+list, so a viewer who does not hold `/clients` simply does not see Customers —
+no role strings (.claude/rules/module-access.md). The comp's manager-only
+Reports destination is NOT built: it needs a cross-advisor roster surface that
+does not exist yet, and `/crm-reports` (a book-wide financial summary) is a
+different artifact, currently granted to advisors too.

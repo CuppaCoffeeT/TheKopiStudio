@@ -161,7 +161,9 @@ DashboardLayout  (src/components/shared/app-shell/DashboardLayout.tsx)
 
 Below `lg` the rail is hidden and `AppHeaderMobileBar` carries navigation + account. Breadcrumb is **content**, not chrome — a quiet inline line above the H1, rendered only when a page passes one.
 
-**/dashboard**: no inner page title — the `GreetingHeader` dateline + serif greeting IS the hero, followed by two `KpiIndexCard`s and the hairline "Latest additions" feed.
+**/dashboard**: no inner page title — the `GreetingHeader` dateline + serif greeting IS the hero. Since the customer-centred IA (2026-07-28) it is followed by the `StartProfilerBand` launcher, the four-up `QueueStatStrip`, and three `CustomerQueueSection` bands (gone quiet · unfinished · reviews due). The rail leads with **Overview + Customers**; every other granted module sits under a hairline "More" heading, because tools are launched from a customer record (`CustomerToolLauncher`), not from navigation.
+
+> Superseded: before 2026-07-28 the hero was followed by two `KpiIndexCard`s and a hairline "Latest additions" feed. That feed's four modules were deleted with it; the `KpiIndexCard` primitive remains available.
 
 **view-as-user placement**: `AppSidebarFooter` at ≥ lg, folded into the account dropdown of `AppHeaderMobileBar` below it. Never duplicated on individual pages.
 

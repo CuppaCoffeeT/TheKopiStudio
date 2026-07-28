@@ -190,6 +190,24 @@ export class ClientsPage {
     return this.page.locator('[data-testid="clients-add-client-btn"]:visible').first();
   }
 
+  /**
+   * Open the ADD-client form.
+   *
+   * Since the customer-centred IA landed (2026-07-28) the list's primary action
+   * opens a FORK first — "start with the Prospect Profiler" or "create an empty
+   * profile" — because under that IA a customer is normally created BY profiling
+   * them. Every journey that just wants the plain form goes through here so the
+   * extra click lives in exactly one place.
+   */
+  async openAddClientForm(): Promise<void> {
+    await this.addClientButton.click();
+    await this.page
+      .getByTestId('crm-add-customer-choice-modal')
+      .waitFor({ state: 'visible', timeout: 30_000 });
+    await this.page.getByTestId('crm-add-customer-choice-empty').click();
+    await this.clientModal.waitFor({ state: 'visible', timeout: 30_000 });
+  }
+
   /** Desktop table rows OR mobile cards — whichever rendering is visible. */
   visibleRows(): Locator {
     return this.page.locator(

@@ -317,7 +317,7 @@ test.describe('client report — seeded numbers match the lib math', () => {
     try {
       await test.step('seed client (DOB/income/CPF/bank) via ClientsPage POM', async () => {
         await crm.gotoList();
-        await crm.addClientButton.click();
+        await crm.openAddClientForm();
         await expect(crm.clientModal).toBeVisible();
         await crm.fillClientForm({
           name: clientName,

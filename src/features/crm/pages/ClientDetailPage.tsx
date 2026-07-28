@@ -1,6 +1,12 @@
 /**
- * ClientDetailPage — one client's record (DETAIL archetype, route
+ * ClientDetailPage — one customer's record (DETAIL archetype, route
  * /clients/:id — shares modulePath '/clients' with the list).
+ *
+ * This is the home of the customer-centred IA (Kopi Studio Directions turn 3a):
+ * the three tools are launched from here, off `CustomerToolLauncher`, because
+ * a tool always acts on a specific customer. Before that launcher existed the
+ * chain was invisible from the record, and `/clients/:id/report` had no entry
+ * point anywhere in the app.
  *
  * DetailPageFrame + TabNav over four tabs (Overview · Policies ·
  * Interactions · Bank history); `useClientDetail` fetches the client row and
@@ -14,7 +20,7 @@
  */
 
 import { useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { DestructiveConfirmDialog } from '@/components/primitives/detail/DestructiveConfirmDialog';
 import { DetailPageFrame } from '@/components/primitives/detail/DetailPageFrame';
 import type { TabNavItem } from '@/components/primitives/detail/TabNav';
@@ -23,12 +29,14 @@ import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
 import { NoResultsState } from '@/components/primitives/shell/NoResultsState';
 import { useAuth } from '@/contexts/AuthContext';
 import { getCurrentSingaporeTime } from '@/utils/timezoneUtils';
+import { deriveJourney } from '../lib/customerJourney';
 import { resolveClientFollowUp } from '../lib/followUps';
 import { clientFromRow } from '../lib/mapping';
 import { useClientDetail } from '../hooks/useClientDetail';
 import { useSoftDeleteClient } from '../hooks/useClientMutations';
 import { BankHistoryTab } from '../components/detail/BankHistoryTab';
 import { ClientDetailActions } from '../components/detail/ClientDetailActions';
+import { CustomerToolLauncher } from '../components/detail/CustomerToolLauncher';
 import { InteractionsTab } from '../components/detail/InteractionsTab';
 import { OverviewTab } from '../components/detail/OverviewTab';
 import { PoliciesTab } from '../components/detail/PoliciesTab';
@@ -37,9 +45,12 @@ import { ClientFormModal } from '../components/modals/ClientFormModal';
 
 type DetailTab = 'overview' | 'policies' | 'interactions' | 'bank';
 
+const PROFILER_PATH = '/profiler';
+
 export default function ClientDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, modules } = useAuth();
   const { client, policies, interactions, bankHistory, linkedResults } = useClientDetail(id);
   const removeClient = useSoftDeleteClient(id ?? '');
   const [tab, setTab] = useState<DetailTab>('overview');
@@ -57,6 +68,25 @@ export default function ClientDetailPage() {
   const followUp = model
     ? resolveClientFollowUp(interactions.data ?? [], model.nextReviewDate, refDate)
     : null;
+
+  // The launcher's three states come from the SAME ruleset the Overview queue
+  // and the Customers list checklist read, so this page can never disagree with
+  // the row that opened it. `linkedResults` is RLS-pruned: a profile owned by
+  // another advisor reads as un-profiled, deliberately indistinguishable from
+  // never-profiled (REPORTS_LINK_PRD neutral-empty-state rule).
+  const newestLinkedResult = linkedResults.data?.[0] ?? null;
+  const journey = model
+    ? deriveJourney({
+        hasProfile: Boolean(newestLinkedResult),
+        email: model.email,
+        phone: model.phone,
+        dateOfBirth: model.dateOfBirth,
+        occupation: model.occupation,
+        annualIncome: model.annualIncome === '' ? null : Number(model.annualIncome),
+        nextReviewDate: model.nextReviewDate,
+      })
+    : null;
+  const canProfile = modules.some((mod) => mod.path === PROFILER_PATH);
 
   const tabs: TabNavItem[] = [
     { value: 'overview', label: 'Overview', testId: 'clients-detail-tab-overview' },
@@ -77,11 +107,11 @@ export default function ClientDetailPage() {
   return (
     <DetailPageFrame
       breadcrumb={[
-        { label: 'Workspace', href: '/dashboard' },
-        { label: 'Clients', href: '/clients' },
-        { label: model?.name ?? 'Client' },
+        { label: 'Overview', href: '/dashboard' },
+        { label: 'Customers', href: '/clients' },
+        { label: model?.name ?? 'Customer' },
       ]}
-      title={model?.name ?? 'Client record'}
+      title={model?.name ?? 'Customer record'}
       recordId={id ? id.slice(0, 8) : undefined}
       meta={
         model
@@ -130,8 +160,21 @@ export default function ClientDetailPage() {
         </div>
       )}
 
-      {model && id && tab === 'overview' && (
-        <OverviewTab client={model} linkedResults={linkedResults} />
+      {model && id && journey && tab === 'overview' && (
+        <>
+          <CustomerToolLauncher
+            journey={journey}
+            linkedResultId={newestLinkedResult?.id ?? null}
+            clientId={id}
+            isOwn={isOwn}
+            canProfile={canProfile}
+            onStartProfiler={() => navigate(PROFILER_PATH)}
+            onOpenProfile={(resultId) => navigate(`/profiler-results/${resultId}`)}
+            onEditInformation={() => setEditOpen(true)}
+            onOpenReport={() => navigate(`/clients/${id}/report`)}
+          />
+          <OverviewTab client={model} linkedResults={linkedResults} />
+        </>
       )}
       {model && id && tab === 'policies' && (
         <PoliciesTab clientId={id} readOnly={!isOwn} policies={policies} />

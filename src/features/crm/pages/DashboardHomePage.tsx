@@ -1,38 +1,37 @@
 /**
- * /dashboard — the Kopi 2a "Overview" (KOPI_STUDIO_REDESIGN_PRD P4).
+ * /dashboard — the customer-centred Overview (Kopi Studio Directions turns
+ * 3a/4a, "Overview as home, tools live inside the customer").
  *
- * Top to bottom, per the 2a comp's dashboard mockup: the dateline masthead
- * (uppercase kicker carrying one live stat, over the Instrument Serif greeting,
- * closed by a hairline) → the index-numeral KPI cards → the "Latest additions"
- * serif section head with the brown `+ New client` CTA → the hairline feed
- * table, no card wrapper.
+ * The page answers ONE question: who is waiting on you? Top to bottom —
+ * the dateline masthead carrying the count, the Start-a-Profiler launcher band,
+ * the four queue figures, then the queue itself in three mutually-exclusive
+ * bands (gone quiet → unfinished work → reviews due), closed by the queue rule.
  *
- * The module-launcher grid is GONE (user decision, 2026-07-25): the sidebar
- * rail and the ⌘K palette both route by module, so a third launcher was pure
- * duplication. `ModuleCard` / `ModuleSearch` / `CategoryHeader` went with it.
+ * WHAT THIS REPLACED (2026-07-28): a "Latest additions" feed over two index KPI
+ * cards. That page was a *record inventory* — newest-first rows with no notion
+ * of whether anything needed doing — which is exactly the tool-shaped IA the
+ * customer-centred direction retires. Its four modules had NO other adopter
+ * (`/crm` builds its own four-figure row from `KpiTile`), so they were deleted
+ * rather than left orphaned: `useLatestAdditions`, `LatestAdditionsTable`,
+ * `OverviewKpiRow`, `lib/latestAdditions`. The `KpiIndexCard` PRIMITIVE they
+ * used survives in `primitives/dashboard` for the next adopter.
  *
- * Everything on the page is live, RLS-scoped data — the book is empty until
- * the CRM import lands, so each surface has a real empty state instead of
- * sample rows, never a placeholder zero. Each KPI figure carries its own
- * query's loading skeleton and quiet retry line (`OverviewKpiRow`).
+ * Every figure and row is live, RLS-scoped data derived by ONE ruleset
+ * (`lib/customerJourney`) shared with the Customers list and the customer
+ * detail launcher — so the queue can never claim a customer is unfinished while
+ * their record shows the chain complete.
  *
- * ONE derived set of held record modules drives the whole page, owned by
- * `useLatestAdditions`: `hasClients` / `hasResults` / `hasSource`, over
- * `/clients` + `/profiler-results` — the only modules that own rows this page
- * lists. The KPI cards, the stats query, the dateline's stat clause, the feed
- * and the nothing-granted line all read that one set, so a populated card can
- * never sit above copy saying nothing is granted. `/crm` is NOT in the set: it
- * grants aggregate figures on its own dashboard, not records here.
+ * Module gating: the queue reads `public.clients`, so it is parked entirely for
+ * a viewer without `/clients` (an empty queue would read as "all caught up").
+ * The launcher band is gated separately on `/profiler` — never advertise a
+ * route the guard would then refuse.
  *
- * Testid contract (tests/workflows/crm/dashboard.spec.ts, describes 3-5):
- * `home-kpi-row` holding EXACTLY the tiles for the record modules the viewer
- * holds — `home-kpi-profiler` / `home-kpi-clients`, never a four-figure row
- * (that one is /crm's) — `home-latest-additions` resolving to either
- * `home-latest-row-<id>` rows or `home-latest-empty`, and `home-add-client-btn`
- * opening `crm-client-form-modal`. The greeting is asserted by role (the page's
- * only h1) and the rail by `app-sidebar`, so neither needs a testid here.
- * The retired launcher's ids (`home-module-grid` / `home-module-tile-<path>`)
- * are gone from the spec too, bar one assertion that they stay absent.
+ * Testid contract (tests/workflows/crm/dashboard.spec.ts): the greeting is the
+ * page's only h1; `home-start-profiler-band` + `home-start-profiler-btn`;
+ * `home-queue-stats`; the three queue sections `home-queue-quiet` /
+ * `home-queue-unfinished` / `home-queue-reviews`, each resolving to
+ * `<section>-row-<id>` rows or `<section>-empty`; and `home-add-customer-btn`
+ * opening `crm-add-customer-choice-modal`.
  */
 
 import { useState } from 'react';
@@ -40,18 +39,20 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/primitives/shell';
 import { GreetingHeader } from '@/components/primitives/dashboard';
+import { ErrorState } from '@/components/primitives/shell/ErrorState';
+import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
 import { getSingaporeGreeting } from '@/utils/dashboardHelpers';
-import { formatCurrency } from '@/utils/currencyHelper';
-import { LatestAdditionsTable } from '../components/LatestAdditionsTable';
-import { OverviewKpiRow, type OverviewKpiCard } from '../components/OverviewKpiRow';
+import { CustomerQueueSection, type QueueRowAction } from '../components/CustomerQueueSection';
+import { QueueStatStrip } from '../components/QueueStatStrip';
+import { StartProfilerBand } from '../components/StartProfilerBand';
+import { AddCustomerChoiceModal } from '../components/modals/AddCustomerChoiceModal';
 import { ClientFormModal } from '../components/modals/ClientFormModal';
-import { useDashboardStats } from '../hooks/useDashboardStats';
-import { useLatestAdditions } from '../hooks/useLatestAdditions';
+import { useCustomerQueue } from '../hooks/useCustomerQueue';
+import { QUIET_DAYS, REVIEW_WINDOW_DAYS } from '../lib/customerJourney';
+import type { QueueCustomer } from '../api/customerQueueService';
 
-/** The comp shows a short "top of the book" feed, not a paginated list. */
-const FEED_ROWS = 6;
-
-const EM_DASH = '—';
+const CLIENTS_PATH = '/clients';
+const PROFILER_PATH = '/profiler';
 
 function plural(count: number, one: string, many: string): string {
   return count === 1 ? one : many;
@@ -59,58 +60,42 @@ function plural(count: number, one: string, many: string): string {
 
 export default function DashboardHomePage() {
   const navigate = useNavigate();
-  const { user, profile } = useAuth();
-  const [addOpen, setAddOpen] = useState(false);
+  const { user, profile, modules } = useAuth();
   const { timeOfDay, dateText } = getSingaporeGreeting();
 
-  // The single derived set of held record modules — see the file docblock.
-  const feed = useLatestAdditions(FEED_ROWS);
-  const statsQuery = useDashboardStats(feed.hasClients);
-  const stats = statsQuery.data;
+  const hasClients = modules.some((mod) => mod.path === CLIENTS_PATH);
+  const canProfile = modules.some((mod) => mod.path === PROFILER_PATH);
 
-  // Cards are collected in render order; OverviewKpiRow numbers them.
-  const cards: OverviewKpiCard[] = [];
+  const [choiceOpen, setChoiceOpen] = useState(false);
+  const [addOpen, setAddOpen] = useState(false);
 
-  if (feed.hasResults) {
-    const count = feed.resultCount;
-    cards.push({
-      tile: {
-        label: 'Prospect Profiler',
-        value: count === null ? EM_DASH : count.toLocaleString('en-SG'),
-        unit: count === null ? undefined : plural(count, 'profile saved', 'profiles saved'),
-        meta: feed.newestResult
-          ? `Newest: ${feed.newestResult.name} · ${feed.newestResult.addedLabel}`
-          : count === 0
-            ? 'No profiles saved yet — run one from the profiler wizard.'
-            : undefined,
-        onClick: () => navigate('/profiler-results'),
-        testId: 'home-kpi-profiler',
-      },
-      isLoading: feed.resultsStatus.isLoading,
-      isError: feed.resultsStatus.isError,
-      onRetry: feed.resultsStatus.refetch,
-    });
-  }
+  const queueQuery = useCustomerQueue(hasClients);
+  const queue = queueQuery.data;
 
-  if (feed.hasClients) {
-    cards.push({
-      tile: {
-        label: 'Clients · CRM',
-        value: stats ? stats.totalClients.toLocaleString('en-SG') : EM_DASH,
-        unit: stats ? plural(stats.totalClients, 'client', 'clients') : undefined,
-        meta: !stats
-          ? undefined
-          : stats.totalClients === 0
-            ? 'No clients yet — add your first to open the book.'
-            : `${stats.activePolicies} ${plural(stats.activePolicies, 'active policy', 'active policies')} · ${formatCurrency(stats.totalAnnualPremium)} annual premium`,
-        onClick: () => navigate('/clients'),
-        testId: 'home-kpi-clients',
-      },
-      isLoading: statsQuery.isLoading,
-      isError: statsQuery.isError,
-      onRetry: () => void statsQuery.refetch(),
-    });
-  }
+  /**
+   * The single action each queue row offers: whatever the customer's chain says
+   * comes next, falling back to opening the record. Resolved here rather than
+   * inside the section component so the routing decision stays on the page that
+   * owns the router.
+   */
+  const resolveAction = (customer: QueueCustomer): QueueRowAction => {
+    const open = { label: 'Open', onClick: () => navigate(`/clients/${customer.id}`) };
+    if (customer.journey.nextStep === 'profiler' && canProfile) {
+      return { label: 'Start profiler', onClick: () => navigate(PROFILER_PATH) };
+    }
+    if (customer.journey.nextStep === 'info') {
+      return { label: 'Complete info', onClick: () => navigate(`/clients/${customer.id}`) };
+    }
+    return open;
+  };
+
+  const handleChoice = (choice: 'profiler' | 'empty') => {
+    setChoiceOpen(false);
+    if (choice === 'profiler') navigate(PROFILER_PATH);
+    else setAddOpen(true);
+  };
+
+  const waiting = queue?.totalWaiting ?? 0;
 
   return (
     <div className="min-h-dvh bg-background px-4 py-6 sm:px-10 sm:py-[34px]">
@@ -121,64 +106,123 @@ export default function DashboardHomePage() {
           dateText={dateText}
           timeOfDay={timeOfDay}
           contextStat={
-            stats
-              ? `${stats.upcomingFollowUps} ${plural(stats.upcomingFollowUps, 'follow-up', 'follow-ups')} upcoming`
+            queue
+              ? waiting === 0
+                ? 'nobody is waiting on you'
+                : `${waiting} ${plural(waiting, 'customer', 'customers')} ${plural(waiting, 'is', 'are')} waiting on you`
               : undefined
           }
         />
 
-        <OverviewKpiRow cards={cards} />
+        {canProfile && <StartProfilerBand onStart={() => navigate(PROFILER_PATH)} />}
 
-        {feed.hasSource ? (
-          <section aria-labelledby="home-latest-heading">
-            <div className="flex items-baseline justify-between gap-4 border-b border-border pb-2.5">
-              <h2
-                id="home-latest-heading"
-                className="text-[22px] leading-tight text-foreground"
-                style={{ fontFamily: 'var(--font-pixel)' }}
+        {!hasClients ? (
+          <p className="text-[13px] leading-[1.6] text-[color:var(--fg-dim)]">
+            The customer book is not granted to your account yet, so there is no queue to show. An
+            administrator can grant it from Manage accounts.
+          </p>
+        ) : queueQuery.isLoading ? (
+          <div data-testid="home-queue-loading">
+            <LoadingSkeleton variant="table-rows" rowCount={6} />
+          </div>
+        ) : queueQuery.isError ? (
+          <ErrorState
+            variant="compact"
+            subhead="The queue didn't load."
+            body="Your customer book could not be read. Check your connection and try again."
+            onRetry={() => void queueQuery.refetch()}
+          />
+        ) : queue ? (
+          <>
+            <QueueStatStrip
+              stats={[
+                {
+                  value: queue.quiet.length,
+                  label: 'gone quiet',
+                  hint: `${QUIET_DAYS} days+`,
+                  testId: 'home-stat-quiet',
+                },
+                {
+                  value: queue.unfinished.length,
+                  label: 'unfinished',
+                  hint: 'chain incomplete',
+                  testId: 'home-stat-unfinished',
+                },
+                {
+                  value: queue.reviewsDue.length,
+                  label: 'reviews due',
+                  hint: `next ${REVIEW_WINDOW_DAYS} days`,
+                  testId: 'home-stat-reviews',
+                },
+                {
+                  value: queue.addedThisMonth,
+                  label: 'added',
+                  hint: 'this month',
+                  testId: 'home-stat-added',
+                },
+              ]}
+            />
+
+            <div className="mt-[26px] flex items-center justify-end">
+              <Button
+                className="pointer-coarse:min-h-11"
+                onClick={() => setChoiceOpen(true)}
+                data-testid="home-add-customer-btn"
               >
-                Latest additions
-              </h2>
-              {feed.hasClients && (
-                <Button
-                  className="flex-none pointer-coarse:min-h-11"
-                  onClick={() => setAddOpen(true)}
-                  data-testid="home-add-client-btn"
-                >
-                  + New client
-                </Button>
-              )}
+                + New customer
+              </Button>
             </div>
 
-            <LatestAdditionsTable
-              testId="home-latest-additions"
-              rows={feed.rows}
-              isLoading={feed.isLoading}
-              isError={feed.isError}
-              onRetry={feed.refetch}
-              onOpen={(row) => navigate(row.href)}
-              emptyAction={
-                feed.hasClients ? (
-                  <Button
-                    variant="outline"
-                    className="pointer-coarse:min-h-11"
-                    onClick={() => navigate('/clients')}
-                  >
-                    Go to clients
-                  </Button>
-                ) : undefined
-              }
+            <CustomerQueueSection
+              testId="home-queue-quiet"
+              title={`No contact in ${QUIET_DAYS} days`}
+              caption="Follow up"
+              customers={queue.quiet}
+              leading="days"
+              resolveAction={resolveAction}
+              emptyText="Nobody has gone quiet — every customer has been contacted recently."
             />
-          </section>
-        ) : (
-          <p className="text-[13px] leading-[1.6] text-[color:var(--fg-dim)]">
-            No record modules are granted to your account yet, so there is nothing to list here. An
-            administrator can grant them from Manage accounts.
-          </p>
-        )}
+
+            <CustomerQueueSection
+              testId="home-queue-unfinished"
+              title="Unfinished work"
+              caption="Pick up where you left off"
+              customers={queue.unfinished}
+              leading="index"
+              resolveAction={resolveAction}
+              emptyText="Every customer's profiler, information and report are complete."
+            />
+
+            <CustomerQueueSection
+              testId="home-queue-reviews"
+              title="Reviews coming up"
+              caption={`Next ${REVIEW_WINDOW_DAYS} days`}
+              customers={queue.reviewsDue}
+              leading="index"
+              resolveAction={resolveAction}
+              emptyText={`No reviews fall inside the next ${REVIEW_WINDOW_DAYS} days.`}
+            />
+
+            {/* --fg-dim: this line sits on the PAGE cream, where --fg-muted
+                #7D6B5B is 4.12:1 and fails AA (.claude/rules/light-theme.md). */}
+            <p className="mt-[26px] text-[12px] leading-[1.6] text-[color:var(--fg-dim)]">
+              Queue rule — a customer surfaces here when there has been no contact logged for{' '}
+              {QUIET_DAYS} days, a tool in the chain is left incomplete, or a review date falls
+              inside the next {REVIEW_WINDOW_DAYS} days. Everything else stays out of the way.
+            </p>
+          </>
+        ) : null}
       </div>
 
-      {feed.hasClients && <ClientFormModal open={addOpen} onOpenChange={setAddOpen} />}
+      {hasClients && (
+        <AddCustomerChoiceModal
+          open={choiceOpen}
+          onOpenChange={setChoiceOpen}
+          canProfile={canProfile}
+          onChoose={handleChoice}
+        />
+      )}
+      {hasClients && <ClientFormModal open={addOpen} onOpenChange={setAddOpen} />}
     </div>
   );
 }

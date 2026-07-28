@@ -281,7 +281,7 @@ test.describe('portfolio report — advisor seeded book (/crm-reports)', () => {
 
     await test.step("seed client 'E2E-Pf-…' + $100 Monthly Life Insurance policy via the POM", async () => {
       await crm.gotoList();
-      await crm.addClientButton.click();
+      await crm.openAddClientForm();
       await expect(crm.clientModal).toBeVisible();
       // No seed balance → createClient writes NO bank-history side-row, so the
       // cleanup below is exactly one policy + one client.

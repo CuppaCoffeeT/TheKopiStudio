@@ -1,18 +1,34 @@
 /**
  * AppSidebar — the 2a "Kopi House" primary navigation rail.
  *
- * 200px fixed rail carrying the wordmark, one nav item per granted module, and
- * — since the top masthead was retired (2026-07-25) — the account footer.
- * Mounted once by `shared/app-shell/DashboardLayout`. It is the ONLY chrome on
- * desktop: identity, navigation and account all live here, which is what leaves
- * the content column as clean as the 2a comps draw it.
+ * 200px fixed rail carrying the wordmark, the nav, and — since the top masthead
+ * was retired (2026-07-25) — the account footer. Mounted once by
+ * `shared/app-shell/DashboardLayout`. It is the ONLY chrome on desktop:
+ * identity, navigation and account all live here, which is what leaves the
+ * content column as clean as the 2a comps draw it.
+ *
+ * CUSTOMER-CENTRED IA (2026-07-28, Kopi Studio Directions turn 3a): the rail
+ * leads with exactly two destinations — **Overview** and **Customers**. The
+ * comp's argument is that the tools are not places: the profiler, the customer
+ * information form and the client report are things you do TO a customer, and
+ * they are launched from the customer record (`CustomerToolLauncher`), not from
+ * navigation. Promoting them to peers of the book is what made the old rail
+ * read as a toolbox rather than a workflow.
+ *
+ * DELIBERATE DEVIATION from the comp: the comp shows only those two items (plus
+ * a manager destination). This rail keeps every OTHER granted module reachable
+ * under a hairline + muted "More" heading rather than dropping it. Saved
+ * profiler results can exist with no customer attached — the public `/profiler`
+ * wizard creates exactly that — so deleting `/profiler-results` from the rail
+ * would strand real records behind a URL. Demoting expresses the comp's
+ * hierarchy claim without losing anything.
  *
  * Nav source of truth: `useAuth().modules` run through `groupModulesByCategory`
  * — the same pair `GlobalCommandPalette` uses — so the rail and ⌘K can never
  * disagree about which modules a user holds. No role strings anywhere
- * (.claude/rules/module-access.md). `/dashboard` is filtered out of the module
- * list because it is rendered explicitly as the "Overview" item, exactly as
- * `DashboardHomePage` filters it out of the launcher grid.
+ * (.claude/rules/module-access.md): the two primary items are rendered from the
+ * SAME granted-module list, just pulled to the front, so a viewer who does not
+ * hold `/clients` simply does not see Customers.
  *
  * Surface: the rail is one step LIGHTER than the page (`--sidebar-background`
  * == card cream `#FAF6EE`), per the 2a comp and KOPI_2A_SPEC → "Layout
@@ -50,6 +66,14 @@ export const SIDEBAR_OFFSET_CLASS = 'lg:pl-[200px]';
 /** Always reachable (the `/dashboard` route carries no `modulePath` guard). */
 const HOME_PATH = '/dashboard';
 const HOME_LABEL = 'Overview';
+
+/**
+ * The customer book. Rendered as the second primary item under its comp name
+ * ("Customers") rather than whatever `modules.name` currently says, so the rail,
+ * the list page title and the breadcrumb all read the same word.
+ */
+const CUSTOMERS_PATH = '/clients';
+const CUSTOMERS_LABEL = 'Customers';
 
 /** Visible brown focus ring, inset by design — an outer ring collides with the
  *  rail's right hairline (KOPI_2A_SPEC → "Sidebar items"). */
@@ -136,11 +160,22 @@ function useUngrantedModuleCount(grantedPaths: Set<string>, enabled: boolean): n
 export function AppSidebar() {
   const { user, loading, modules } = useAuth();
 
-  const navModules = useMemo(
+  /** Does the viewer hold the customer book? Drives the second primary item. */
+  const hasCustomers = useMemo(
+    () => modules.some((mod) => mod.path === CUSTOMERS_PATH),
+    [modules],
+  );
+
+  /**
+   * Everything granted that is NOT one of the two primary destinations —
+   * demoted under the "More" divider. `/dashboard` is excluded because it is
+   * rendered explicitly above, exactly as it always was.
+   */
+  const secondaryModules = useMemo(
     () =>
       groupModulesByCategory(modules as DashboardModule[])
         .flatMap((category) => category.modules)
-        .filter((mod) => mod.path !== HOME_PATH),
+        .filter((mod) => mod.path !== HOME_PATH && mod.path !== CUSTOMERS_PATH),
     [modules],
   );
 
@@ -178,7 +213,17 @@ export function AppSidebar() {
         className="flex min-h-0 flex-col gap-0.5 overflow-y-auto overscroll-contain"
       >
         <SidebarItem to={HOME_PATH} label={HOME_LABEL} end />
-        {navModules.map((mod) => (
+        {hasCustomers && <SidebarItem to={CUSTOMERS_PATH} label={CUSTOMERS_LABEL} />}
+
+        {secondaryModules.length > 0 && (
+          <p
+            className="mx-[22px] mb-1 mt-[18px] border-t border-sidebar-border pt-3.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+            data-testid="app-sidebar-more-heading"
+          >
+            More
+          </p>
+        )}
+        {secondaryModules.map((mod) => (
           <SidebarItem key={mod.path} to={mod.path} label={mod.name} />
         ))}
 

@@ -286,7 +286,7 @@ test.describe('clients — advisor full CRM journey', () => {
 
     await test.step('create client with seed balance 5000 + income 60000', async () => {
       await crm.gotoList();
-      await crm.addClientButton.click();
+      await crm.openAddClientForm();
       await expect(crm.clientModal).toBeVisible();
       await crm.fillClientForm({
         name: clientName,

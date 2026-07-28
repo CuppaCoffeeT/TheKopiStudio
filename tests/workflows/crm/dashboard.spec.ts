@@ -12,20 +12,30 @@
  *       finite numbers and neither the loading skeleton nor the error state
  *       remains.
  *   (3) ADVISOR, /dashboard Overview: the true-SGT dateline over the Instrument
- *       Serif greeting, and the TWO index KPI cards ("Prospect Profiler" and
- *       "Clients · CRM") — the clients card navigates into /clients.
- *   (4) ADVISOR, /dashboard Overview: "Latest additions" settles to feed rows
- *       OR its empty state (the book stays empty until the CRM import lands, so
- *       BOTH are valid outcomes), and "+ New client" opens the client form.
+ *       Serif greeting, the Start-a-Profiler launcher band, and the four queue
+ *       figures — the band navigates into the profiler wizard.
+ *   (4) ADVISOR, /dashboard Overview: each of the three queue bands settles to
+ *       rows OR its empty state (the book stays empty until the CRM import
+ *       lands, so BOTH are valid outcomes), and "+ New customer" opens the fork
+ *       modal whose empty-profile branch reaches the client form.
  *   (5) ADVISOR: the sidebar rail — the primary navigation since the masthead
- *       and the launcher were retired — marks the current route via
- *       aria-current and navigates into a module. Below lg it stands down.
+ *       and the launcher were retired — leads with Overview + Customers, marks
+ *       the current route via aria-current, and navigates. Below lg it stands
+ *       down.
  *
  * RETIRED with the 2a redesign (2026-07-25): the /dashboard module-launcher
  * grid (home-module-grid / home-module-tile-*) and its "Search modules..."
  * filter. Those two describes were DELETED, not re-pointed — the rail (5) and
  * the ⌘K palette own module routing now, and no shallow stand-in was written
  * for them. The ⌘K palette itself still has no spec anywhere under tests/.
+ *
+ * RETIRED with the customer-centred IA (2026-07-28): the /dashboard "Latest
+ * additions" feed and its two index KPI cards (home-kpi-row / home-kpi-profiler
+ * / home-kpi-clients / home-latest-*). /dashboard is now an ACTION QUEUE, not a
+ * record inventory, so (3) and (4) were re-pointed at the queue rather than
+ * deleted. The /crm module dashboard in (1) and (2) is untouched — it keeps its
+ * own four-figure KPI row, which is why (3) still asserts that /dashboard does
+ * not grow one.
  *
  * Auth: per-describe `test.use({ storageState: authFileFor(role) })` — the
  * parallel config's setup project (tests/auth.setup.ts) mints tests/.auth/
@@ -49,10 +59,13 @@
  * Selectors: real data-testids from src/features/crm/pages/CrmDashboardPage
  * (crm-dashboard, crm-kpi-*, crm-add-first-client-btn, crm-quick-link-clients,
  * crm-dashboard-loading), ClientsListPage (clients-table via the ClientsPage
- * POM), DashboardHomePage + its children (home-kpi-row, home-kpi-profiler,
- * home-kpi-clients, home-latest-additions, home-latest-row-<id>,
- * home-latest-empty, home-add-client-btn), ClientFormModal
- * (crm-client-form-modal, crm-client-cancel-btn) and AppSidebar (app-sidebar).
+ * POM), DashboardHomePage + its children (home-start-profiler-band,
+ * home-start-profiler-btn, home-queue-stats, home-stat-*, home-queue-quiet,
+ * home-queue-unfinished, home-queue-reviews, <band>-row-<id>, <band>-empty,
+ * home-add-customer-btn), AddCustomerChoiceModal
+ * (crm-add-customer-choice-modal, crm-add-customer-choice-empty),
+ * ClientFormModal (crm-client-form-modal, crm-client-cancel-btn) and
+ * AppSidebar (app-sidebar, app-sidebar-more-heading).
  *
  * Run: npx playwright test tests/workflows/crm/dashboard.spec.ts \
  *        --config=playwright.parallel.config.ts
@@ -245,7 +258,7 @@ test.describe('advisor /crm dashboard — empty book', () => {
     releaseBookLock();
   });
 
-  test('zero KPIs + "Go to clients" CTA → /clients empty state "Add your first client" @p0 @mobile', async ({
+  test('zero KPIs + "Go to clients" CTA → /clients empty state "Add your first customer" @p0 @mobile', async ({
     page,
   }) => {
     // Residue sweep is unbounded UI work (normally a no-op) — give it headroom.
@@ -274,14 +287,14 @@ test.describe('advisor /crm dashboard — empty book', () => {
       await expect(page.getByTestId('crm-quick-link-clients')).toHaveCount(0);
     });
 
-    await test.step('CTA navigates to /clients showing the "Add your first client" empty state', async () => {
+    await test.step('CTA navigates to /clients showing the "Add your first customer" empty state', async () => {
       await page.getByTestId('crm-add-first-client-btn').click();
       await page.waitForURL(/\/clients(\?.*)?$/, { timeout: 30_000 });
       const table = page.getByTestId('clients-table');
       await table.waitFor({ state: 'visible', timeout: 30_000 });
       // Empty variant (no search term) — emptyText + emptySubtext render once
       // the list query resolves to zero rows.
-      await expect(table).toContainText('Add your first client', { timeout: 30_000 });
+      await expect(table).toContainText('Add your first customer', { timeout: 30_000 });
       await expect(table).toContainText('Your book is empty');
     });
   });
@@ -326,12 +339,12 @@ test.describe('manager /crm dashboard — scope: all books', () => {
   });
 });
 
-// ── (3) Advisor: /dashboard Overview dateline + the two index KPI cards ──────
+// ── (3) Advisor: /dashboard Overview dateline + launcher band + queue figures ─
 
-test.describe('advisor /dashboard Overview — dateline + KPI row', () => {
+test.describe('advisor /dashboard Overview — dateline + launcher + queue figures', () => {
   test.use({ storageState: authFileFor('advisor') });
 
-  test('SGT dateline greeting; the two index KPI cards render and navigate @p0 @mobile', async ({
+  test('SGT dateline greeting; the profiler launcher band navigates; four queue figures @p0 @mobile', async ({
     page,
   }) => {
     await page.goto('/dashboard');
@@ -360,84 +373,113 @@ test.describe('advisor /dashboard Overview — dateline + KPI row', () => {
       const hero = greeting.locator('..'); // GreetingHeader root: kicker + h1
       await expect(hero).toContainText(part('weekday'));
       await expect(hero).toContainText(`${part('day')} ${part('month')} ${part('year')}`);
-      // The kicker closes on one live stat once useDashboardStats resolves.
-      await expect(hero).toContainText(/\d+ follow-ups? upcoming/, { timeout: 30_000 });
+      // The kicker closes on the queue's headline once it resolves. Both
+      // branches are valid on a shared book — an advisor with an empty (or a
+      // fully-tended) book legitimately has nobody waiting.
+      await expect(hero).toContainText(
+        /(\d+ customers? (is|are) waiting on you|nobody is waiting on you)/,
+        { timeout: 30_000 },
+      );
     });
 
-    await test.step('exactly TWO index KPI cards, with the shipped labels', async () => {
-      const kpiRow = page.getByTestId('home-kpi-row');
-      await expect(kpiRow).toBeVisible({ timeout: 30_000 });
+    await test.step('the launcher band offers the profiler without going through the list', async () => {
+      const band = page.getByTestId('home-start-profiler-band');
+      await expect(band).toBeVisible({ timeout: 30_000 });
+      await expect(band).toContainText('Start a Prospect Profiler');
 
-      // One card per RECORD module the advisor holds (/profiler-results,
-      // /clients). Each mounts a skeleton first, so poll for the settled pair.
-      const profiler = page.getByTestId('home-kpi-profiler');
-      const clients = page.getByTestId('home-kpi-clients');
-      await expect(profiler).toBeVisible({ timeout: 30_000 });
-      await expect(clients).toBeVisible({ timeout: 30_000 });
-      await expect(profiler).toContainText('Prospect Profiler');
-      await expect(clients).toContainText('Clients · CRM');
-      // The four-figure KPI row belongs to /crm — this page must not grow one.
-      await expect(kpiRow.locator('[data-testid^="home-kpi-"]')).toHaveCount(2);
-
-      // The launcher grid the 2a redesign deleted must not come back.
+      // The two retired launchers must not come back: the 2a module grid, and
+      // the index KPI cards the customer-centred IA replaced with the queue.
       await expect(page.getByTestId('home-module-grid')).toHaveCount(0);
+      await expect(page.getByTestId('home-kpi-row')).toHaveCount(0);
     });
 
-    await test.step('the clients card is the real navigation into /clients', async () => {
-      await page.getByTestId('home-kpi-clients').click();
-      await page.waitForURL(/\/clients(\?.*)?$/, { timeout: 30_000 });
-      await expect(page.getByTestId('clients-table')).toBeVisible({ timeout: 30_000 });
+    await test.step('the four queue figures settle to real non-negative numbers', async () => {
+      const stats = page.getByTestId('home-queue-stats');
+      await expect(stats).toBeVisible({ timeout: 30_000 });
+
+      for (const testId of [
+        'home-stat-quiet',
+        'home-stat-unfinished',
+        'home-stat-reviews',
+        'home-stat-added',
+      ] as const) {
+        const tile = page.getByTestId(testId);
+        await expect(tile).toBeVisible({ timeout: 30_000 });
+        // No value assumptions on a shared live book — only that each figure is
+        // a real, settled, non-negative number rather than a dash or a skeleton.
+        const text = await tile.innerText();
+        const match = text.match(/[\d,]+/);
+        expect(match, `queue figure "${testId}" must render a number`).not.toBeNull();
+        expect(Number(match![0].replace(/,/g, ''))).toBeGreaterThanOrEqual(0);
+      }
+    });
+
+    await test.step('the launcher band is the real navigation into the profiler', async () => {
+      await page.getByTestId('home-start-profiler-btn').click();
+      await page.waitForURL(/\/profiler(\?.*)?$/, { timeout: 30_000 });
     });
   });
 });
 
-// ── (4) Advisor: /dashboard Overview "Latest additions" feed ─────────────────
+// ── (4) Advisor: /dashboard Overview action queue ────────────────────────────
 
-test.describe('advisor /dashboard Overview — Latest additions', () => {
+test.describe('advisor /dashboard Overview — the action queue', () => {
   test.use({ storageState: authFileFor('advisor') });
 
-  test('feed settles to rows OR the empty state; "+ New client" opens the form @p0 @mobile', async ({
+  test('each band settles to rows OR its empty state; "+ New customer" forks to the form @p0 @mobile', async ({
     page,
   }) => {
     await page.goto('/dashboard');
 
-    const feed = page.getByTestId('home-latest-additions');
-    await expect(page.getByRole('heading', { name: 'Latest additions' })).toBeVisible({
-      timeout: 30_000,
-    });
-    await expect(feed).toBeVisible();
+    // The three bands are MUTUALLY EXCLUSIVE by construction (deriveAttention
+    // assigns one reason per customer), so a customer can appear in at most one.
+    const BANDS = ['home-queue-quiet', 'home-queue-unfinished', 'home-queue-reviews'] as const;
 
-    await test.step('the feed settles — rows or the empty state, never a stuck skeleton', async () => {
-      // Read-only: the book is empty until the CRM import lands, but the
-      // clients-advisor journey may hold rows mid-run. BOTH must pass, and
-      // neither may be asserted as a populated table.
-      const rows = feed.locator('[data-testid^="home-latest-row-"]');
-      const empty = page.getByTestId('home-latest-empty');
-      await expect
-        .poll(
-          async () => {
-            if ((await rows.count()) > 0) return 'rows';
-            return (await empty.count()) > 0 ? 'empty' : 'pending';
-          },
-          { timeout: 30_000, message: 'Latest additions must settle (rows or the empty state)' },
-        )
-        .not.toBe('pending');
+    await test.step('every band settles — rows or its empty state, never a stuck skeleton', async () => {
+      for (const band of BANDS) {
+        const section = page.getByTestId(band);
+        await expect(section).toBeVisible({ timeout: 30_000 });
 
-      if ((await rows.count()) === 0) {
-        await expect(empty).toContainText('Your book is empty.');
-        // The single quiet action the 2a empty state is allowed to offer.
-        await expect(empty.getByRole('button', { name: 'Go to clients' })).toBeVisible();
-      } else {
-        // Each row's name cell carries the real <Link> (keyboard/AT path).
-        await expect(rows.first().getByRole('link')).toBeVisible();
+        // Read-only: the book is empty until the CRM import lands, but the
+        // clients-advisor journey may hold rows mid-run. BOTH are valid.
+        const rows = section.locator(`[data-testid^="${band}-row-"]`);
+        const empty = page.getByTestId(`${band}-empty`);
+        await expect
+          .poll(
+            async () => {
+              if ((await rows.count()) > 0) return 'rows';
+              return (await empty.count()) > 0 ? 'empty' : 'pending';
+            },
+            { timeout: 30_000, message: `${band} must settle (rows or the empty state)` },
+          )
+          .not.toBe('pending');
+
+        if ((await rows.count()) > 0) {
+          // Each row's name carries the real <Link> into the customer record
+          // (keyboard/AT path), plus exactly one trailing action button.
+          const first = rows.first();
+          await expect(first.getByRole('link')).toBeVisible();
+          await expect(first.getByRole('button')).toHaveCount(1);
+        }
       }
     });
 
-    await test.step('"+ New client" opens the client form; cancelling writes nothing', async () => {
-      const addBtn = page.getByTestId('home-add-client-btn');
+    await test.step('the queue rule is stated on the page', async () => {
+      await expect(page.getByText(/Queue rule —/)).toBeVisible();
+    });
+
+    await test.step('"+ New customer" forks; the empty-profile branch opens the form', async () => {
+      const addBtn = page.getByTestId('home-add-customer-btn');
       await addBtn.scrollIntoViewIfNeeded();
       await expect(addBtn).toBeVisible();
       await addBtn.click();
+
+      // Under the customer-centred IA the primary path is "profile them" — the
+      // plain form is the SECOND branch, so the fork comes first.
+      const fork = page.getByTestId('crm-add-customer-choice-modal');
+      await expect(fork).toBeVisible({ timeout: 30_000 });
+      await expect(fork).toContainText('Start with the Prospect Profiler');
+      await page.getByTestId('crm-add-customer-choice-empty').click();
 
       const modal = page.getByTestId('crm-client-form-modal');
       await expect(modal).toBeVisible({ timeout: 30_000 });
@@ -455,12 +497,12 @@ test.describe('advisor /dashboard Overview — Latest additions', () => {
 test.describe('advisor shell — sidebar rail navigation', () => {
   test.use({ storageState: authFileFor('advisor') });
 
-  test('the rail marks the current route and navigates; below lg it stands down @p0 @mobile', async ({
+  test('the rail leads with Overview + Customers, marks the route, navigates; below lg it stands down @p0 @mobile', async ({
     page,
     isMobile,
   }) => {
     await page.goto('/dashboard');
-    await expect(page.getByTestId('home-kpi-row')).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByTestId('home-queue-stats')).toBeVisible({ timeout: 30_000 });
 
     const rail = page.getByTestId('app-sidebar');
 
@@ -474,12 +516,24 @@ test.describe('advisor shell — sidebar rail navigation', () => {
 
     await expect(rail).toBeVisible({ timeout: 30_000 });
 
-    // Items come from useAuth().modules, plus the explicit Overview entry —
-    // no role strings (.claude/rules/module-access.md).
+    // Items come from useAuth().modules — no role strings
+    // (.claude/rules/module-access.md). The customer-centred IA pulls exactly
+    // two of them to the front: Overview and Customers.
     const overview = rail.getByRole('link', { name: 'Overview', exact: true });
-    const clients = rail.getByRole('link', { name: 'Clients', exact: true });
+    const clients = rail.getByRole('link', { name: 'Customers', exact: true });
     await expect(overview).toBeVisible();
     await expect(clients).toBeVisible();
+
+    // Everything else the advisor holds is DEMOTED under the "More" hairline —
+    // reachable, but visibly not a peer of the book. The tools in particular
+    // must no longer sit alongside it.
+    const more = rail.getByTestId('app-sidebar-more-heading');
+    await expect(more).toBeVisible();
+    // Scope to the nav landmark, NOT the whole rail — the wordmark above it is
+    // also a link and would shift every index by one.
+    const navLinks = rail.getByRole('navigation', { name: 'Primary' }).getByRole('link');
+    const labels = await navLinks.allInnerTexts();
+    expect(labels.slice(0, 2)).toEqual(['Overview', 'Customers']);
 
     // NavLink stamps aria-current="page" on the matched item ONLY — that is the
     // active marker the 2px brown left border renders from.
