@@ -9,115 +9,89 @@
  * who gets what, then read the comparison. The comparison is the deliverable —
  * everything above it is data entry.
  *
- * This page is composition only: `useLegacyPlan` owns the state and its
- * referential integrity, `lib/legacy` + `lib/legacyIsa` own the maths, and the
- * three panels own the markup.
+ * This page is composition only: `useLegacyPlan` owns the editing state and its
+ * referential integrity, `useStoredLegacyPlan` / `useSaveLegacyPlan` own
+ * persistence, `lib/legacy` + `lib/legacyIsa` own the maths, and the three
+ * panels own the markup.
  *
- * PERSISTENCE: none yet. The plan lives in page state for the length of the
- * conversation, and the page says so. Storing it needs a `legacy_plans` table;
- * wiring a Save button before that exists would be a button that loses data.
- * When the table lands this page grows a save mutation and nothing else
- * changes — the plan is already a plain serialisable object.
+ * MOUNT ORDER MATTERS: the editor is not rendered until the stored plan has
+ * settled, and it seeds from a `useState` initialiser. There is deliberately no
+ * re-seed effect — `ClientFormModal` shipped exactly that bug, where an
+ * `[open, client]` effect re-fired on a background refetch and silently
+ * clobbered in-flight edits. Waiting costs one skeleton and removes the whole
+ * class of problem.
+ *
+ * A customer with no saved plan seeds from their record instead (bank balance +
+ * CPF as starting assets), so the first visit is never a blank page.
  */
 
-import { useMemo } from 'react';
-import { currentRefYear } from '../../lib/finance';
+import { ErrorState } from '@/components/primitives/shell/ErrorState';
+import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
 import type { CrmClient } from '../../types';
 import { PlanningToolFrame } from '../components/PlanningToolFrame';
-import { LegacyAssetsPanel } from '../components/legacy/LegacyAssetsPanel';
-import { LegacyComparisonPanel } from '../components/legacy/LegacyComparisonPanel';
-import { LegacyFamilyPanel } from '../components/legacy/LegacyFamilyPanel';
-import { ToolNote, ToolStatGrid } from '../components/PlanningAtoms';
-import { seedAge, seedAmount } from '../lib/customerSeed';
-import { money } from '../lib/format';
-import { estateTotals, plannedDistribution, projectEstate, SPOUSE_ID } from '../lib/legacy';
-import { calculateIsaDistribution, planningGap } from '../lib/legacyIsa';
-import { useLegacyPlan } from '../lib/useLegacyPlan';
+import { LegacyPlannerEditor } from '../components/legacy/LegacyPlannerEditor';
+import { useStoredLegacyPlan } from '../hooks/useLegacyPlanStore';
+import { seedAmount } from '../lib/customerSeed';
+import { seedPlan } from '../lib/useLegacyPlan';
 
-/** The age the estate projection reports at — a full life-expectancy horizon. */
-const PROJECTION_AGE = 85;
+/**
+ * Loads the saved plan, then mounts the editor once.
+ *
+ * The `key` remounts the editor when the customer changes, so a stale plan can
+ * never survive a navigation between two customers' maps.
+ */
+function LegacyPlannerLoader({
+  customer,
+  customerId,
+  isOwn,
+}: {
+  customer: CrmClient;
+  customerId: string;
+  isOwn: boolean;
+}) {
+  const stored = useStoredLegacyPlan(customerId);
 
-function LegacyPlanner({ customer }: { customer: CrmClient }) {
-  const currentAge = seedAge(customer.dateOfBirth, currentRefYear());
+  if (stored.isLoading) {
+    return (
+      <div data-testid="legacy-plan-loading">
+        <LoadingSkeleton variant="table-rows" rowCount={5} />
+      </div>
+    );
+  }
 
-  const legacy = useLegacyPlan({
-    bankBalance: seedAmount(customer.totalBankBalance),
-    cpfTotal:
-      seedAmount(customer.cpfOA) + seedAmount(customer.cpfSA) + seedAmount(customer.cpfMA),
-  });
-  const { plan } = legacy;
+  if (stored.isError) {
+    // Deliberately NOT falling back to a seeded plan: editing from a blank map
+    // and saving would overwrite whatever is stored. Refusing to open is the
+    // safe failure.
+    return (
+      <ErrorState
+        variant="compact"
+        subhead="The saved legacy map didn't load."
+        body="Opening it now could overwrite what is stored, so the map stays closed. Check your connection and try again."
+        onRetry={() => void stored.refetch()}
+      />
+    );
+  }
 
-  const totals = useMemo(() => estateTotals(plan), [plan]);
-  const isa = useMemo(() => calculateIsaDistribution(plan), [plan]);
-  const planned = useMemo(() => plannedDistribution(plan), [plan]);
-  const gap = useMemo(() => planningGap(plan), [plan]);
-
-  const nameFor = (personId: string) =>
-    personId === SPOUSE_ID
-      ? plan.spouseName || 'Spouse'
-      : (plan.people.find((p) => p.id === personId)?.name ?? 'Unnamed');
+  // No stored plan → seed from the customer's record, so the first visit opens
+  // with their bank balance and CPF already listed rather than a blank page.
+  const initialPlan =
+    stored.data?.plan ??
+    seedPlan({
+      bankBalance: seedAmount(customer.totalBankBalance),
+      cpfTotal:
+        seedAmount(customer.cpfOA) + seedAmount(customer.cpfSA) + seedAmount(customer.cpfMA),
+    });
 
   return (
-    <div className="flex flex-col gap-[22px]">
-      <ToolStatGrid
-        testId="legacy-stats"
-        stats={[
-          { label: 'Total estate', value: money(totals.totalEstate), testId: 'legacy-stat-total' },
-          {
-            label: 'Passes by nomination',
-            value: money(totals.nominatedTotal),
-            hint: 'outside the will',
-            testId: 'legacy-stat-nominated',
-          },
-          {
-            label: 'Unallocated',
-            value: money(totals.unallocatedTotal),
-            hint: totals.unallocatedTotal > 0 ? 'the law decides this' : 'fully directed',
-            tone: totals.unallocatedTotal > 0 ? 'negative' : 'positive',
-            testId: 'legacy-stat-unallocated',
-          },
-          {
-            label: `Estate at ${PROJECTION_AGE}`,
-            value: money(projectEstate(plan, currentAge, PROJECTION_AGE)),
-            hint: `from age ${currentAge}`,
-            testId: 'legacy-stat-projected',
-          },
-        ]}
-      />
-
-      <div className="grid grid-cols-1 items-start gap-[22px] lg:grid-cols-2">
-        <LegacyFamilyPanel
-          plan={plan}
-          onSpouseName={legacy.setSpouseName}
-          onAddPerson={legacy.addPerson}
-          onUpdatePerson={legacy.updatePerson}
-          onRemovePerson={legacy.removePerson}
-        />
-        <LegacyAssetsPanel
-          plan={plan}
-          beneficiaries={legacy.beneficiaries}
-          onAddAsset={legacy.addAsset}
-          onUpdateAsset={legacy.updateAsset}
-          onRemoveAsset={legacy.removeAsset}
-          onAssign={legacy.assignWholeAsset}
-          currentAssignee={legacy.currentAssignee}
-        />
-      </div>
-
-      <LegacyComparisonPanel
-        totals={totals}
-        isa={isa}
-        planned={planned}
-        gap={gap}
-        nameFor={nameFor}
-      />
-
-      <ToolNote testId="legacy-not-saved">
-        This map is not saved yet — it lives for the length of this conversation. Nominated assets
-        (CPF, insurance) pass outside the estate and survive intestacy; everything else is governed
-        by the will, or by the Act. Not legal advice.
-      </ToolNote>
-    </div>
+    <LegacyPlannerEditor
+      key={customerId}
+      customer={customer}
+      customerId={customerId}
+      isOwn={isOwn}
+      initialPlan={initialPlan}
+      savedAt={stored.data?.updatedAt ?? null}
+    />
   );
 }
 
@@ -129,7 +103,9 @@ export default function LegacyPlannerPage() {
       description="Who actually inherits — and what the law would do instead."
       testId="legacy-planner"
     >
-      {(customer) => <LegacyPlanner customer={customer} />}
+      {(customer, customerId, isOwn) => (
+        <LegacyPlannerLoader customer={customer} customerId={customerId} isOwn={isOwn} />
+      )}
     </PlanningToolFrame>
   );
 }

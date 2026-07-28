@@ -12,10 +12,20 @@
  * beneficiary who is no longer in the plan.
  *
  * Ids are issued from a module counter rather than `crypto.randomUUID()` so
- * the ids stay short and readable in test failures; nothing persists them yet.
+ * the ids stay short and readable in test failures. They ARE persisted (the
+ * plan is stored whole), so they only need to be unique within one plan —
+ * which a monotonic counter guarantees for a single editing session, and a
+ * reload re-reads whatever was saved.
+ *
+ * SEEDING: the caller passes the initial plan and must not change it
+ * afterwards. There is deliberately NO re-seed effect — `ClientFormModal`
+ * shipped exactly that bug (an `[open, client]` effect that re-fired on a
+ * background refetch and silently clobbered in-flight edits; see
+ * `ClientDetailPage`'s note). The page therefore waits for the stored plan to
+ * settle before mounting the editor at all.
  */
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import {
   assetTypeFor,
   RELATIONSHIPS,
@@ -45,8 +55,19 @@ export function seedPlan({ bankBalance, cpfTotal }: LegacyPlanSeed): LegacyPlan 
   return { spouseName: '', people: [], assets, nominations: [], allocations: [] };
 }
 
-export function useLegacyPlan(seed: LegacyPlanSeed) {
-  const [plan, setPlan] = useState<LegacyPlan>(() => seedPlan(seed));
+export function useLegacyPlan(initialPlan: LegacyPlan) {
+  const [plan, setPlan] = useState<LegacyPlan>(initialPlan);
+
+  // The last plan known to match storage. Compared structurally rather than by
+  // reference: every mutation below builds a new object, so identity would
+  // report "dirty" for a change-and-change-back.
+  const savedSnapshot = useRef(JSON.stringify(initialPlan));
+  const isDirty = JSON.stringify(plan) !== savedSnapshot.current;
+
+  /** Call after a successful save so the plan reads clean again. */
+  const markSaved = useCallback((saved: LegacyPlan) => {
+    savedSnapshot.current = JSON.stringify(saved);
+  }, []);
 
   const setSpouseName = useCallback((spouseName: string) => {
     setPlan((prev) => ({ ...prev, spouseName }));
@@ -156,6 +177,8 @@ export function useLegacyPlan(seed: LegacyPlanSeed) {
 
   return {
     plan,
+    isDirty,
+    markSaved,
     beneficiaries,
     setSpouseName,
     addPerson,

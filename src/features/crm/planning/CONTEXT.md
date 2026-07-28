@@ -17,6 +17,9 @@ Launched from `../components/detail/CustomerToolLauncher`, never from the nav ra
 - `lib/legacyIsa.ts` — Intestate Succession Act 1967 s.7 ladder
 - `lib/useLegacyPlan.ts` — Legacy Map state + referential integrity on delete
 - `lib/customerSeed.ts` — the CRM→tool boundary guard (`seedAge` / `seedAmount`)
+- `lib/legacyPlanSchema.ts` — total parser for the stored JSONB + `SCHEMA_VERSION`
+- `lib/useLegacyPlan.ts` — editing state, referential integrity, dirty tracking
+- `api/legacyPlansService.ts` + `hooks/useLegacyPlanStore.ts` — load / upsert
 - `lib/format.ts` — whole-dollar money + percent (pure; kept out of the component file)
 - `components/PlanningToolFrame.tsx` — loads the customer, breadcrumb, loading/error/not-found
 - `components/PlanningAtoms.tsx` — `ToolPanel` · `ToolStatGrid` · `SummaryRow` · `ToolSelect` · `ToolNote`
@@ -27,7 +30,10 @@ Launched from `../components/detail/CustomerToolLauncher`, never from the nav ra
 - **Faithful port, not "improved" maths.** Where the reference rounds or caps, so do we. A corrected figure that disagrees with the advisor's own spreadsheet is worse than a faithfully ported one. Record any deviation here.
 - **Seed at the boundary, never in shared math.** `ageFromDOB` is golden-locked by the CRM report oracle; nonsense inputs are clamped in `customerSeed.ts`. See `lessons.md` — a future DOB shipped a −60 age into the tax calculator.
 - **`ToolSelect`, never the native `Select`** — `no-restricted-imports` bans it app-wide.
-- **Nothing is persisted yet.** All three tools are conversation aids and say so on the page. Legacy Map storage is written (`supabase/migrations/20260728_160100_create_legacy_plans.sql`) but NOT applied.
+- **Tax + SRS are NOT persisted** — conversation aids, and they say so on the page. The **Legacy Map IS** (`public.legacy_plans`, one JSONB doc per customer).
+- **Legacy Map: no re-seed effect, ever.** The editor mounts only after the stored plan settles and seeds from a `useState` initialiser. `ClientFormModal` shipped the opposite (an `[open, client]` effect that re-fired on a background refetch and clobbered in-flight edits) — see `ClientDetailPage`'s note.
+- **Saving is gated on customer ownership.** `legacy_plans_insert` only checks `auth.uid() = user_id`, so a manager saving against another advisor's customer would create a row the owning advisor could never read. The page hides Save when `isOwn` is false.
+- **`parseLegacyPlan` is total.** Stored JSONB is untyped and can be old; nothing it returns may throw, and a partly-readable doc yields its readable part.
 
 ## 📚 Related
 

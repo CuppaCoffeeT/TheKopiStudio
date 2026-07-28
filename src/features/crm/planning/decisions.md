@@ -61,3 +61,37 @@ they have always quoted costs more trust than it buys.
 **Impact**: none of the three ports deviates from its reference so far. The one
 deliberate ADDITION is input clamping at the seeding boundary (see lessons.md),
 which changes no formula.
+
+## 2026-07-28 — The Legacy Map editor mounts only after storage settles
+
+**Decision**: `LegacyPlannerPage` splits into a loader and an editor. The loader
+waits for `useStoredLegacyPlan` to settle and then mounts the editor with a
+`key={customerId}`; the editor seeds from a `useState` initialiser and has NO
+re-seed effect.
+**Why**: the obvious shape — mount the editor immediately and sync the fetched
+plan in with a `useEffect` — is precisely the bug `ClientFormModal` shipped,
+where an `[open, client]` effect re-fired on a background refetch and silently
+clobbered in-flight edits (caught by the clients-advisor E2E rename step). A
+legacy map represents an hour of conversation; losing it to a refetch is worse
+than one skeleton.
+**Impact**: costs a loading state on open. The `key` also guarantees a stale
+plan cannot survive navigation between two customers' maps.
+
+## 2026-07-28 — A failed plan load refuses to open the editor
+
+**Decision**: when `useStoredLegacyPlan` errors, the page shows an error with a
+retry — it does NOT fall back to a freshly seeded plan.
+**Why**: a seeded plan looks like a legitimately empty map. Editing and saving
+from it would overwrite whatever is actually stored with a blank one. Refusing
+to open is the safe failure; the data is still there.
+
+## 2026-07-28 — Saving is gated on the CUSTOMER's owner, not on RLS alone
+
+**Decision**: the Save button renders only when the signed-in user owns the
+customer (`isOwn`, threaded down from `PlanningToolFrame`).
+**Why**: `legacy_plans_insert` checks `auth.uid() = user_id`, which a manager
+satisfies trivially — they would create a plan row owned by THEMSELVES against
+another advisor's customer, and `legacy_plans_select` would then hide it from
+the advisor who owns the customer. RLS is doing its job; the constraint we
+actually want ("only the customer's advisor plans for them") is one the schema
+does not express, so the UI expresses it.

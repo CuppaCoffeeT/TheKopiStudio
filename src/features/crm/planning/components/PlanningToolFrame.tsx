@@ -23,6 +23,7 @@ import { Button } from '@/components/primitives/shell/Button';
 import { ErrorState } from '@/components/primitives/shell/ErrorState';
 import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
 import { NoResultsState } from '@/components/primitives/shell/NoResultsState';
+import { useAuth } from '@/contexts/AuthContext';
 import { useClientDetail } from '../../hooks/useClientDetail';
 import { clientFromRow } from '../../lib/clientMapping';
 import type { CrmClient } from '../../types';
@@ -35,8 +36,13 @@ interface PlanningToolFrameProps {
   /** Index numeral shown beside the title — the tool's step in the chain. */
   index: string;
   testId: string;
-  /** Rendered only once the customer has resolved. */
-  children: (customer: CrmClient, customerId: string) => ReactNode;
+  /**
+   * Rendered only once the customer has resolved. `isOwn` is false when a
+   * manager is reading another advisor's customer — the Legacy Map uses it to
+   * hide Save, because `legacy_plans` RLS would happily let a manager create a
+   * row the owning advisor could never read.
+   */
+  children: (customer: CrmClient, customerId: string, isOwn: boolean) => ReactNode;
 }
 
 export function PlanningToolFrame({
@@ -48,10 +54,12 @@ export function PlanningToolFrame({
 }: PlanningToolFrameProps) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { client } = useClientDetail(id);
 
   const row = client.data ?? null;
   const model = row ? clientFromRow(row) : null;
+  const isOwn = Boolean(row && user && row.user_id === user.id);
 
   return (
     <div className="min-h-dvh bg-background px-4 py-6 sm:px-10 sm:py-[34px]">
@@ -130,7 +138,7 @@ export function PlanningToolFrame({
           </div>
         )}
 
-        {model && id && <div data-testid={testId}>{children(model, id)}</div>}
+        {model && id && <div data-testid={testId}>{children(model, id, isOwn)}</div>}
       </div>
     </div>
   );

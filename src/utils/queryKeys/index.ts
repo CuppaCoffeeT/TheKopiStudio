@@ -54,6 +54,8 @@ const crmClientsKeys = {
   interactions: (id: string) => [...crmClientsBase.detail(id), 'interactions'] as const,
   bankHistory: (id: string) => [...crmClientsBase.detail(id), 'bank-history'] as const,
   linkedResults: (id: string) => [...crmClientsBase.detail(id), 'linked-results'] as const,
+  /** The customer's saved Legacy Map — nests under detail(id) like the others. */
+  legacyPlan: (id: string) => [...crmClientsBase.detail(id), 'legacy-plan'] as const,
   /**
    * Journey signals (profiled? last contact?) for ONE page of the Customers
    * list. Keyed by the page's ids so paging is a cache miss, not a refetch of
