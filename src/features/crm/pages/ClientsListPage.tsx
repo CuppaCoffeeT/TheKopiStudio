@@ -28,24 +28,25 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ListPageFrame } from '@/components/primitives/ui/ListPageFrame';
 import type { TableHeaderColumn } from '@/components/primitives/ui/TableHeader';
-import type { DataTableRow, DataTableVariant } from '@/components/primitives/ui/DataTable';
+import type { DataTableVariant } from '@/components/primitives/ui/DataTable';
 import { MobileListCard } from '@/components/primitives/ui/MobileListCard';
-import { Badge } from '@/components/primitives/shell/Badge';
-import { DateCell } from '@/components/primitives/shell/cells/DateCell';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useURLPagination } from '@/hooks/useURLPagination';
 import { getCurrentSingaporeTime } from '@/utils/timezoneUtils';
 import { sanitizeSearchTerm } from '../api/clientsService';
-import type { CustomerSignals } from '../api/customerQueueService';
 import { useClientsList } from '../hooks/useClientsList';
 import { useCustomerSignals } from '../hooks/useCustomerSignals';
 import { clientFromRow } from '../lib/mapping';
-import { deriveAttention, deriveJourney, type CustomerJourney } from '../lib/customerJourney';
 import { JourneyChecklist } from '../components/JourneyChecklist';
+import {
+  buildCustomerRow,
+  contactCell,
+  riskLabel,
+  toRowState,
+} from '../components/customerRowModel';
 import { AddCustomerChoiceModal } from '../components/modals/AddCustomerChoiceModal';
 import { ClientFormModal } from '../components/modals/ClientFormModal';
-import type { CrmClient } from '../types';
 
 const ROWS_PER_PAGE = 25;
 const PROFILER_PATH = '/profiler';
@@ -57,118 +58,6 @@ const COLUMNS: TableHeaderColumn[] = [
   { key: 'progress', label: 'Profiler · Info · Report', width: 168 },
   { key: 'contact', label: 'Last contact', width: 140 },
 ];
-
-/** A customer row's derived state — journey + how long they have been quiet. */
-interface RowState {
-  journey: CustomerJourney;
-  quietDays: number | null;
-  isQuiet: boolean;
-  /** False when no interaction was ever logged — the column must not claim one. */
-  hasContact: boolean;
-}
-
-/** Model numerics are form strings ('' = unset); the journey rules want numbers. */
-function toRowState(
-  client: CrmClient,
-  signals: CustomerSignals | undefined,
-  refDate: Date,
-): RowState {
-  const journey = deriveJourney({
-    hasProfile: signals?.hasProfile ?? false,
-    email: client.email,
-    phone: client.phone,
-    dateOfBirth: client.dateOfBirth,
-    occupation: client.occupation,
-    annualIncome: client.annualIncome === '' ? null : Number(client.annualIncome),
-    nextReviewDate: client.nextReviewDate,
-  });
-  const attention = deriveAttention(
-    {
-      lastContactDate: signals?.lastContactDate ?? null,
-      addedDate: client.createdDate || null,
-      nextReviewDate: client.nextReviewDate || null,
-      journey,
-    },
-    refDate,
-  );
-  return {
-    journey,
-    quietDays: attention.quietDays,
-    isQuiet: attention.isQuiet,
-    hasContact: Boolean(signals?.lastContactDate),
-  };
-}
-
-/**
- * "7 days ago" / "Today" / "Never contacted".
- *
- * The quiet CLOCK falls back to the added date (a customer added three weeks
- * ago with no reply has certainly gone quiet), but this LABEL must not — saying
- * "Today" under a "Last contact" heading for someone who has never been
- * contacted is simply false. The two readings are separated on purpose.
- */
-function contactLabel(state: RowState): string {
-  if (!state.hasContact) return 'Never contacted';
-  const days = state.quietDays;
-  if (days === null) return 'Never contacted';
-  if (days <= 0) return 'Today';
-  if (days === 1) return 'Yesterday';
-  return `${days} days ago`;
-}
-
-function buildRow(client: CrmClient, state: RowState, onOpen: () => void): DataTableRow {
-  return {
-    id: client.id,
-    testId: `clients-row-${client.id}`,
-    onClick: onOpen,
-    cells: [
-      {
-        key: 'name',
-        grow: 2,
-        content: (
-          <span className="flex min-w-0 flex-col">
-            <span className="truncate font-medium">{client.name}</span>
-            {/* --fg-dim, not --fg-muted: the 2a list row is `surface="bare"` and
-                sits on the PAGE cream, where #7D6B5B is 4.12:1 and fails AA.
-                `DataRowCells` makes this step for its own `muted` cells; content
-                passed INTO a cell has to make it itself. */}
-            <span className="truncate text-[11.5px] text-[color:var(--fg-dim)]">
-              {client.email || client.phone || 'No contact on file'}
-            </span>
-          </span>
-        ),
-      },
-      {
-        key: 'risk',
-        width: 124,
-        content: (
-          <Badge variant="outline" data-testid={`clients-risk-chip-${client.id}`}>
-            {state.journey.steps.profiler === 'done' ? client.riskProfile : 'Not profiled'}
-          </Badge>
-        ),
-      },
-      { key: 'added', width: 104, content: <DateCell value={client.createdDate || null} /> },
-      {
-        key: 'progress',
-        width: 168,
-        content: (
-          <JourneyChecklist journey={state.journey} testId={`clients-progress-${client.id}`} />
-        ),
-      },
-      {
-        key: 'contact',
-        width: 140,
-        content: state.isQuiet ? (
-          <Badge tone="danger" data-testid={`clients-quiet-${client.id}`}>
-            {contactLabel(state)}
-          </Badge>
-        ) : (
-          <span className="text-[color:var(--fg-dim)]">{contactLabel(state)}</span>
-        ),
-      },
-    ],
-  };
-}
 
 export default function ClientsListPage() {
   const navigate = useNavigate();
@@ -219,7 +108,7 @@ export default function ClientsListPage() {
 
   const rows = useMemo(
     () =>
-      clients.map((c) => buildRow(c, rowStates.get(c.id)!, () => navigate(`/clients/${c.id}`))),
+      clients.map((c) => buildCustomerRow(c, rowStates.get(c.id)!, () => navigate(`/clients/${c.id}`))),
     [clients, rowStates, navigate],
   );
 
@@ -236,21 +125,11 @@ export default function ClientsListPage() {
             subtitle={c.email || c.occupation || '—'}
             meta={
               <>
-                <span>
-                  {state.journey.steps.profiler === 'done' ? c.riskProfile : 'Not profiled'}
-                </span>
+                <span>{riskLabel(c, state)}</span>
                 <JourneyChecklist journey={state.journey} />
               </>
             }
-            right={
-              state.isQuiet ? (
-                <Badge tone="danger">{contactLabel(state)}</Badge>
-              ) : (
-                <span className="text-[11.5px] text-muted-foreground">
-                  {contactLabel(state)}
-                </span>
-              )
-            }
+            right={contactCell(c, state)}
           />
         );
       }),

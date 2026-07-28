@@ -23,11 +23,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { getCurrentSingaporeTime, getLocalDateString } from '@/utils/timezoneUtils';
 import {
   deriveAttention,
-  deriveJourney,
   describeAttention,
   type CustomerAttention,
-  type CustomerJourney,
-} from '../lib/customerJourney';
+} from '../lib/customerAttention';
+import { deriveJourney, type CustomerJourney } from '../lib/customerJourney';
 
 /** Bounded far beyond any single advisor's book (.claude/rules/query-compliance.md). */
 const QUEUE_LIMIT = 5000;
@@ -174,49 +173,4 @@ export async function getCustomerQueue(): Promise<CustomerQueue> {
     totalCustomers: customersResult.data?.length ?? 0,
     addedThisMonth,
   };
-}
-
-/** The two per-customer signals the Customers list needs that `clients` can't answer. */
-export interface CustomerSignals {
-  hasProfile: boolean;
-  lastContactDate: string | null;
-}
-
-/**
- * Signals for the customers on ONE page of the list — never the whole book.
- * The list is server-side paginated at 25 rows, so this stays a two-select
- * lookup keyed by the ids already on screen rather than a second full scan.
- *
- * An empty `ids` resolves without touching the network: React Query still
- * mounts the hook on the loading/empty renders of the list.
- */
-export async function getCustomerSignals(ids: string[]): Promise<Record<string, CustomerSignals>> {
-  if (ids.length === 0) return {};
-
-  const [resultsResult, interactionsResult] = await Promise.all([
-    supabase.from('results').select('client_id').in('client_id', ids).limit(QUEUE_LIMIT),
-    supabase
-      .from('interactions')
-      .select('client_id, date')
-      .eq('is_deleted', false)
-      .in('client_id', ids)
-      .order('date', { ascending: false })
-      .limit(QUEUE_LIMIT),
-  ]);
-  if (resultsResult.error) throw resultsResult.error;
-  if (interactionsResult.error) throw interactionsResult.error;
-
-  const signals: Record<string, CustomerSignals> = {};
-  for (const id of ids) signals[id] = { hasProfile: false, lastContactDate: null };
-
-  for (const row of resultsResult.data ?? []) {
-    if (row.client_id && signals[row.client_id]) signals[row.client_id].hasProfile = true;
-  }
-  // Newest-first, so the first hit per customer is the latest contact.
-  for (const row of interactionsResult.data ?? []) {
-    const entry = row.client_id ? signals[row.client_id] : undefined;
-    if (entry && entry.lastContactDate === null) entry.lastContactDate = row.date;
-  }
-
-  return signals;
 }

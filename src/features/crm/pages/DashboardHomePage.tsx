@@ -17,7 +17,7 @@
  * used survives in `primitives/dashboard` for the next adopter.
  *
  * Every figure and row is live, RLS-scoped data derived by ONE ruleset
- * (`lib/customerJourney`) shared with the Customers list and the customer
+ * (`lib/customerJourney` + `lib/customerAttention`) shared with the Customers list and the customer
  * detail launcher — so the queue can never claim a customer is unfinished while
  * their record shows the chain complete.
  *
@@ -42,13 +42,12 @@ import { GreetingHeader } from '@/components/primitives/dashboard';
 import { ErrorState } from '@/components/primitives/shell/ErrorState';
 import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
 import { getSingaporeGreeting } from '@/utils/dashboardHelpers';
-import { CustomerQueueSection, type QueueRowAction } from '../components/CustomerQueueSection';
-import { QueueStatStrip } from '../components/QueueStatStrip';
+import { CustomerQueueBoard } from '../components/CustomerQueueBoard';
+import type { QueueRowAction } from '../components/CustomerQueueSection';
 import { StartProfilerBand } from '../components/StartProfilerBand';
 import { AddCustomerChoiceModal } from '../components/modals/AddCustomerChoiceModal';
 import { ClientFormModal } from '../components/modals/ClientFormModal';
 import { useCustomerQueue } from '../hooks/useCustomerQueue';
-import { QUIET_DAYS, REVIEW_WINDOW_DAYS } from '../lib/customerJourney';
 import type { QueueCustomer } from '../api/customerQueueService';
 
 const CLIENTS_PATH = '/clients';
@@ -134,82 +133,11 @@ export default function DashboardHomePage() {
           />
         ) : queue ? (
           <>
-            <QueueStatStrip
-              stats={[
-                {
-                  value: queue.quiet.length,
-                  label: 'gone quiet',
-                  hint: `${QUIET_DAYS} days+`,
-                  testId: 'home-stat-quiet',
-                },
-                {
-                  value: queue.unfinished.length,
-                  label: 'unfinished',
-                  hint: 'chain incomplete',
-                  testId: 'home-stat-unfinished',
-                },
-                {
-                  value: queue.reviewsDue.length,
-                  label: 'reviews due',
-                  hint: `next ${REVIEW_WINDOW_DAYS} days`,
-                  testId: 'home-stat-reviews',
-                },
-                {
-                  value: queue.addedThisMonth,
-                  label: 'added',
-                  hint: 'this month',
-                  testId: 'home-stat-added',
-                },
-              ]}
-            />
-
-            <div className="mt-[26px] flex items-center justify-end">
-              <Button
-                className="pointer-coarse:min-h-11"
-                onClick={() => setChoiceOpen(true)}
-                data-testid="home-add-customer-btn"
-              >
-                + New customer
-              </Button>
-            </div>
-
-            <CustomerQueueSection
-              testId="home-queue-quiet"
-              title={`No contact in ${QUIET_DAYS} days`}
-              caption="Follow up"
-              customers={queue.quiet}
-              leading="days"
+            <CustomerQueueBoard
+              queue={queue}
               resolveAction={resolveAction}
-              emptyText="Nobody has gone quiet — every customer has been contacted recently."
+              onAddCustomer={() => setChoiceOpen(true)}
             />
-
-            <CustomerQueueSection
-              testId="home-queue-unfinished"
-              title="Unfinished work"
-              caption="Pick up where you left off"
-              customers={queue.unfinished}
-              leading="index"
-              resolveAction={resolveAction}
-              emptyText="Every customer's profiler, information and report are complete."
-            />
-
-            <CustomerQueueSection
-              testId="home-queue-reviews"
-              title="Reviews coming up"
-              caption={`Next ${REVIEW_WINDOW_DAYS} days`}
-              customers={queue.reviewsDue}
-              leading="index"
-              resolveAction={resolveAction}
-              emptyText={`No reviews fall inside the next ${REVIEW_WINDOW_DAYS} days.`}
-            />
-
-            {/* --fg-dim: this line sits on the PAGE cream, where --fg-muted
-                #7D6B5B is 4.12:1 and fails AA (.claude/rules/light-theme.md). */}
-            <p className="mt-[26px] text-[12px] leading-[1.6] text-[color:var(--fg-dim)]">
-              Queue rule — a customer surfaces here when there has been no contact logged for{' '}
-              {QUIET_DAYS} days, a tool in the chain is left incomplete, or a review date falls
-              inside the next {REVIEW_WINDOW_DAYS} days. Everything else stays out of the way.
-            </p>
           </>
         ) : null}
       </div>

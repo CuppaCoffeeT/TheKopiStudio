@@ -165,7 +165,6 @@ export default function ClientDetailPage() {
           <CustomerToolLauncher
             journey={journey}
             linkedResultId={newestLinkedResult?.id ?? null}
-            clientId={id}
             isOwn={isOwn}
             canProfile={canProfile}
             onStartProfiler={() => navigate(PROFILER_PATH)}

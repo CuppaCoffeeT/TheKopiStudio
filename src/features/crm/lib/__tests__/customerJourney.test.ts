@@ -10,14 +10,16 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  countInfoChecks,
   deriveAttention,
-  deriveJourney,
   describeAttention,
-  missingInfoChecks,
-  INFO_CHECK_COUNT,
   QUIET_DAYS,
   REVIEW_WINDOW_DAYS,
+} from '../customerAttention';
+import {
+  countInfoChecks,
+  deriveJourney,
+  missingInfoChecks,
+  INFO_CHECK_COUNT,
   type JourneyInput,
 } from '../customerJourney';
 

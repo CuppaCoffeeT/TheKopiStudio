@@ -13,7 +13,7 @@
 
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { queryKeys } from '@/utils/queryKeys';
-import { getCustomerSignals } from '../api/customerQueueService';
+import { getCustomerSignals } from '../api/customerSignalsService';
 
 export function useCustomerSignals(ids: string[]) {
   return useQuery({
