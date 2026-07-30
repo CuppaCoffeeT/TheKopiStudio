@@ -2,7 +2,7 @@
 
 Workspace: `supabase/` (migrations, RLS, triggers, edge functions)
 
-Last Updated: 2026-05-04
+Last Updated: 2026-07-29
 
 ---
 
@@ -17,3 +17,15 @@ Last Updated: 2026-05-04
 **How to apply**: Whenever auditing RLS, grep `pg_policies` for `current_setting('request.jwt.claim` — every hit is a latent silent-deny waiting to bite a non-admin role. The canonical role check in this project is `has_capability(<slug>)` driven by `public.rls_capabilities` (managed at `/admin?tab=rls`); helper wrappers are `is_admin()`, `is_finance_role()`, `can_manage_projects()`, `can_manage_quotations()`, `is_field_or_above()`, `is_approved_user()`. Any new RLS write policy should call those + wrap in `(SELECT ...)` for performance.
 
 **Also**: Supabase UPDATE returning `error: null` does NOT prove a row changed — RLS-USING-fail is the exception. Code that relies on the write succeeding should `.select()` and assert `data.length > 0`, or use a SECURITY DEFINER RPC that raises explicitly.
+
+---
+
+## 2026-07-29 — Hard DELETE on prod with no backup: this project has NO restore path
+
+**What happened**: Cleared E2E test residue with `DELETE FROM public.clients WHERE name ILIKE 'E2E%'` — 328 rows plus 766 cascaded child rows (policies/interactions/bank_balance_history/legacy_plans), then 9 `results` rows. Scope was verified first (`name NOT ILIKE 'E2E%'` counted 0) and the delete was pattern-scoped, not a truncate. When asked afterwards to revert it, there was no way to do so.
+
+**Root cause**: The org (`CuppaCoffeeT's Org`) is on the Supabase **free plan**. Supabase automatically backs up only Pro/Team/Enterprise projects; free-tier projects get **no daily backups and no PITR**, and backups aren't even downloadable. A committed DELETE with no dump and no open transaction is final. No local `.sql` dump existed either.
+
+**Fix**: None available — the rows are gone. Evidence they were all test residue survives the loss: every name matched the machine pattern `E2E-<Suite>-<browser>-r<n>-<epoch-ms>`, and all three child tables fell to exactly 0, which could only happen if no non-E2E parent existed (the WHERE clause would have spared a real customer and left their children behind).
+
+**How to apply**: On this project, treat every destructive statement as irreversible. BEFORE any DELETE/UPDATE touching more than a handful of prod rows, dump the target set first — `SELECT` the rows and write the JSON to a file via the MCP result, or `supabase db dump` — then delete. Confirming *scope* is not the same as having a *safety net*; both are required. Root cause of the residue itself: the Playwright suite writes to the live production database (residue dating to 2026-06-12), so CI should be pointed at a separate project/branch — that also removes the shared-`e2e-advisor`-role race that reddened CI the same day.
