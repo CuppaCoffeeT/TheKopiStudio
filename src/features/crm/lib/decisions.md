@@ -478,3 +478,22 @@ whole set is read and written with the client row.
 **Impact**: `lib/incomeSteps.ts` owns the adapter from those columns to a list,
 so the flat storage is invisible above it. Revisit only if a fourth step is
 ever asked for.
+
+## 2026-07-30 — Advisor (owner) column on /clients is capability-gated + resolved per page
+
+**Decision**: the Customers list shows an **Advisor** column only when the
+viewer holds `view_all_clients` (`useAuth().hasCapability`, not a role string),
+and the owner names are resolved by `useCustomerOwners` — a page-scoped lookup
+over the distinct owner ids on screen — NOT by joining `users` into the list
+query.
+**Why**: for a solo advisor every row is their own, so the column is pure noise;
+only manager/super_admin need "whose customer is this". Gating on the capability
+(not `role === …`) obeys module-access.md. Resolving owners in a sibling lookup
+keeps the golden `listClients` `select('*')` — which the RLS-scope E2E specs
+assert against — completely untouched, exactly as `useCustomerSignals` already
+does for profiled/last-contact. Column and cell are both driven by one
+`showAdvisor` flag (`customerColumns` / `buildCustomerRow`) so they can never
+fall out of step; `customerRowModel.test.ts` pins that invariant.
+**Impact**: the viewer's own rows read "You". Adding the column cost no change to
+the list query or its RLS. If an advisor should ever edit a foreign customer,
+that is a separate RLS decision — this is read-only visibility only.

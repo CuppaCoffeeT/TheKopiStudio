@@ -11,6 +11,12 @@
  * 350 ms debounce, URL-synced page/search); RLS scopes rows (advisor → own,
  * manager/super_admin → all). Rows map through `clientFromRow`.
  *
+ * Because a manager/super_admin sees the whole book, the table grows an
+ * **Advisor** column so they can tell whose customer each row is — gated on the
+ * `view_all_clients` capability, so a solo advisor (every row is theirs) never
+ * sees it. Owner names resolve through `useCustomerOwners`, a page-scoped id
+ * lookup that mirrors `useCustomerSignals`; the golden list query is untouched.
+ *
  * The checklist and the "gone quiet" marker come from `useCustomerSignals`,
  * which looks up ONLY the ids on the current page — the list fetch itself
  * still carries no interactions by design (see lib/decisions.md, P4). Both
@@ -27,7 +33,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ListPageFrame } from '@/components/primitives/ui/ListPageFrame';
-import type { TableHeaderColumn } from '@/components/primitives/ui/TableHeader';
 import type { DataTableVariant } from '@/components/primitives/ui/DataTable';
 import { MobileListCard } from '@/components/primitives/ui/MobileListCard';
 import { useAuth } from '@/contexts/AuthContext';
@@ -37,6 +42,7 @@ import { getCurrentSingaporeTime } from '@/utils/timezoneUtils';
 import { sanitizeSearchTerm } from '../api/clientsService';
 import { useClientsList } from '../hooks/useClientsList';
 import { useCustomerSignals } from '../hooks/useCustomerSignals';
+import { useAdvisorColumn } from '../hooks/useAdvisorColumn';
 import { clientFromRow } from '../lib/clientMapping';
 import { JourneyChecklist } from '../components/JourneyChecklist';
 import {
@@ -50,14 +56,6 @@ import { ClientFormModal } from '../components/modals/ClientFormModal';
 
 const ROWS_PER_PAGE = 25;
 const PROFILER_PATH = '/profiler';
-
-const COLUMNS: TableHeaderColumn[] = [
-  { key: 'name', label: 'Customer', grow: 2 },
-  { key: 'risk', label: 'Risk profile', width: 124 },
-  { key: 'added', label: 'Added', width: 104 },
-  { key: 'progress', label: 'Profiler · Info · Report', width: 168 },
-  { key: 'contact', label: 'Last contact', width: 140 },
-];
 
 export default function ClientsListPage() {
   const navigate = useNavigate();
@@ -88,6 +86,9 @@ export default function ClientsListPage() {
   const pageIds = useMemo(() => clients.map((c) => c.id), [clients]);
   const { data: signals } = useCustomerSignals(pageIds);
 
+  // Advisor column (whether to show it, the column set, per-client owner name).
+  const { showAdvisor, columns, advisorNames } = useAdvisorColumn(data?.rows);
+
   const rowStates = useMemo(
     () => new Map(clients.map((c) => [c.id, toRowState(c, signals?.[c.id], refDate)])),
     [clients, signals, refDate],
@@ -108,8 +109,15 @@ export default function ClientsListPage() {
 
   const rows = useMemo(
     () =>
-      clients.map((c) => buildCustomerRow(c, rowStates.get(c.id)!, () => navigate(`/clients/${c.id}`))),
-    [clients, rowStates, navigate],
+      clients.map((c) =>
+        buildCustomerRow(
+          c,
+          rowStates.get(c.id)!,
+          () => navigate(`/clients/${c.id}`),
+          showAdvisor ? { name: advisorNames.get(c.id) ?? null } : undefined,
+        ),
+      ),
+    [clients, rowStates, navigate, showAdvisor, advisorNames],
   );
 
   const mobileBody = useMemo(
@@ -125,6 +133,7 @@ export default function ClientsListPage() {
             subtitle={c.email || c.occupation || '—'}
             meta={
               <>
+                {showAdvisor && <span>{advisorNames.get(c.id) ?? '—'}</span>}
                 <span>{riskLabel(c, state)}</span>
                 <JourneyChecklist journey={state.journey} />
               </>
@@ -133,7 +142,7 @@ export default function ClientsListPage() {
           />
         );
       }),
-    [clients, rowStates, navigate],
+    [clients, rowStates, navigate, showAdvisor, advisorNames],
   );
 
   const handleClearSearch = () => {
@@ -158,7 +167,7 @@ export default function ClientsListPage() {
         onSearchChange={setSearchInput}
         searchPlaceholder="Search name or email…"
         onClearFilters={params.search ? handleClearSearch : undefined}
-        columns={COLUMNS}
+        columns={columns}
         rows={rows}
         variant={variant}
         emptyText="Add your first customer"

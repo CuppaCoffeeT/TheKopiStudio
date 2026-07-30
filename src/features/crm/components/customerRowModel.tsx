@@ -15,11 +15,34 @@ import type { ReactNode } from 'react';
 import { Badge } from '@/components/primitives/shell/Badge';
 import { DateCell } from '@/components/primitives/shell/cells/DateCell';
 import type { DataTableRow } from '@/components/primitives/ui/DataTable';
+import type { TableHeaderColumn } from '@/components/primitives/ui/TableHeader';
 import type { CustomerSignals } from '../api/customerSignalsService';
 import { deriveAttention } from '../lib/customerAttention';
 import { deriveJourney, type CustomerJourney } from '../lib/customerJourney';
 import type { CrmClient } from '../types';
 import { JourneyChecklist } from './JourneyChecklist';
+
+const BASE_COLUMNS: TableHeaderColumn[] = [
+  { key: 'name', label: 'Customer', grow: 2 },
+  { key: 'risk', label: 'Risk profile', width: 124 },
+  { key: 'added', label: 'Added', width: 104 },
+  { key: 'progress', label: 'Profiler · Info · Report', width: 168 },
+  { key: 'contact', label: 'Last contact', width: 140 },
+];
+
+/**
+ * Columns for the Customers table. The Advisor (owner) column is inserted right
+ * after the customer's name — "whose customer is this" reads best beside who
+ * they are — but ONLY for viewers who can see other advisors' books
+ * (`view_all_clients`). For a solo advisor every row would just repeat their own
+ * name, so it is hidden. The cell order in `buildCustomerRow` is driven by the
+ * same flag, so columns and cells can never fall out of step.
+ */
+export function customerColumns(showAdvisor: boolean): TableHeaderColumn[] {
+  if (!showAdvisor) return BASE_COLUMNS;
+  const [name, ...rest] = BASE_COLUMNS;
+  return [name, { key: 'advisor', label: 'Advisor', width: 148 }, ...rest];
+}
 
 /** A customer row's derived state — journey + how long they have been quiet. */
 export interface RowState {
@@ -104,49 +127,71 @@ export function contactCell(client: CrmClient, state: RowState): ReactNode {
   return <span className="text-[color:var(--fg-dim)]">{contactLabel(state)}</span>;
 }
 
+/**
+ * The owning advisor's name. "You" for the viewer's own customers (a manager
+ * owns some of the book they can see), the name/email otherwise, a dash when it
+ * could not be resolved. Same bare-row `--fg-dim` reason as `contactCell`.
+ */
+export function advisorCell(name: string | null): ReactNode {
+  return <span className="truncate text-[color:var(--fg-dim)]">{name || '—'}</span>;
+}
+
+/**
+ * `advisor` present ⇒ the Advisor column is showing, so a cell is inserted after
+ * the name to match `customerColumns(true)`. Absent ⇒ neither column nor cell.
+ */
 export function buildCustomerRow(
   client: CrmClient,
   state: RowState,
   onOpen: () => void,
+  advisor?: { name: string | null },
 ): DataTableRow {
-  return {
-    id: client.id,
-    testId: `clients-row-${client.id}`,
-    onClick: onOpen,
-    cells: [
-      {
-        key: 'name',
-        grow: 2,
-        content: (
-          <span className="flex min-w-0 flex-col">
-            <span className="truncate font-medium">{client.name}</span>
-            {/* --fg-dim for the same bare-row reason as ContactCell above:
-                `DataRowCells` makes this step for its own `muted` cells, but
-                content passed INTO a cell has to make it itself. */}
-            <span className="truncate text-[11.5px] text-[color:var(--fg-dim)]">
-              {client.email || client.phone || 'No contact on file'}
-            </span>
+  const cells: DataTableRow['cells'] = [
+    {
+      key: 'name',
+      grow: 2,
+      content: (
+        <span className="flex min-w-0 flex-col">
+          <span className="truncate font-medium">{client.name}</span>
+          {/* --fg-dim for the same bare-row reason as ContactCell above:
+              `DataRowCells` makes this step for its own `muted` cells, but
+              content passed INTO a cell has to make it itself. */}
+          <span className="truncate text-[11.5px] text-[color:var(--fg-dim)]">
+            {client.email || client.phone || 'No contact on file'}
           </span>
-        ),
-      },
-      {
-        key: 'risk',
-        width: 124,
-        content: (
-          <Badge variant="outline" data-testid={`clients-risk-chip-${client.id}`}>
-            {riskLabel(client, state)}
-          </Badge>
-        ),
-      },
-      { key: 'added', width: 104, content: <DateCell value={client.createdDate || null} /> },
-      {
-        key: 'progress',
-        width: 168,
-        content: (
-          <JourneyChecklist journey={state.journey} testId={`clients-progress-${client.id}`} />
-        ),
-      },
-      { key: 'contact', width: 140, content: contactCell(client, state) },
-    ],
-  };
+        </span>
+      ),
+    },
+  ];
+
+  if (advisor) {
+    cells.push({
+      key: 'advisor',
+      width: 148,
+      content: <span data-testid={`clients-advisor-${client.id}`}>{advisorCell(advisor.name)}</span>,
+    });
+  }
+
+  cells.push(
+    {
+      key: 'risk',
+      width: 124,
+      content: (
+        <Badge variant="outline" data-testid={`clients-risk-chip-${client.id}`}>
+          {riskLabel(client, state)}
+        </Badge>
+      ),
+    },
+    { key: 'added', width: 104, content: <DateCell value={client.createdDate || null} /> },
+    {
+      key: 'progress',
+      width: 168,
+      content: (
+        <JourneyChecklist journey={state.journey} testId={`clients-progress-${client.id}`} />
+      ),
+    },
+    { key: 'contact', width: 140, content: contactCell(client, state) },
+  );
+
+  return { id: client.id, testId: `clients-row-${client.id}`, onClick: onOpen, cells };
 }

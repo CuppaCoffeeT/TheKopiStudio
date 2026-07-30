@@ -62,6 +62,12 @@ const crmClientsKeys = {
    * the whole book — and so a client mutation invalidating `.all` clears it.
    */
   signals: (ids: readonly string[]) => [...crmClientsBase.all, 'signals', ids.join(',')] as const,
+  /**
+   * Owning-advisor names for ONE page of the Customers list — keyed by the
+   * distinct owner ids on screen, same page-scoped shape as `signals`. Only
+   * fetched for viewers who can see other advisors' customers.
+   */
+  owners: (ids: readonly string[]) => [...crmClientsBase.all, 'owners', ids.join(',')] as const,
 };
 
 const crmDashboardBase = createQueryKeys('crmDashboard');
