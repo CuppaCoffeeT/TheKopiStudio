@@ -1,7 +1,7 @@
 # Typography
 
 **Created**: 2026-04-19 SGT
-**Last Updated**: 2026-07-25 SGT
+**Last Updated**: 2026-08-05 SGT
 **Status**: 🟢 Production
 **Priority**: 🔴 Critical
 
@@ -50,8 +50,8 @@ Consequences:
 
 | Role | Spec |
 |---|---|
-| Detail page title | Instrument Serif 38px · lh 1.1 |
-| Greeting (masthead) | Instrument Serif 36px · lh 1.1 |
+| Detail page title | Instrument Serif 38px · lh 1.1 · tracking `-0.018em` |
+| Greeting (masthead) | Instrument Serif **fluid `clamp(38px, 2.2vw + 22px, 50px)`** · lh 1.05 · tracking `-0.02em` — supersedes the comp's fixed 36px (2026-08-05 hero step; see the 2a handoff decisions.md) |
 | KPI numeral | Instrument Serif 32px (unit is IBM Plex Sans 13px `--fg-muted`) |
 | List page title | Instrument Serif 30px (inline count IBM Plex Sans 14px `--fg-muted`) |
 | Stat numeral (detail) | Instrument Serif 24px |
@@ -85,16 +85,20 @@ Consequences:
 
 ## Heading scale (`@layer base`)
 
+The ladder steps ×1.25 off the 16px body (16 → 20 → 25, then 31 → 39 → 49 at the hero end); the 2a role stops (30 list / 38 detail) sit on the same curve. Retuned 2026-08-05 — weight 600 above the 400 body for real subheading contrast, tight leading + negative tracking at display sizes, `text-wrap: balance` on all headings, `text-wrap: pretty` on `p`.
+
 | Element | Size | Font | Notes |
 |---|---|---|---|
-| h1 | 2.75rem (44px), lh 1.1, 400, tracking `-0.01em` | Instrument Serif (`--font-pixel`) | The only heading level the serif claims globally — 44px clears the floor |
-| h2 | 1.5rem, lh 1.2, 500, tracking `-0.005em` | IBM Plex Sans | Section heads |
-| h3 | 1.25rem, lh 1.25, 500 | IBM Plex Sans | Card titles |
-| h4 | 1.125rem, lh 1.3, 500 | IBM Plex Sans | Inline breaks |
-| h5 | 1rem, lh 1.4, 500 | IBM Plex Sans | Inline breaks |
-| h6 | 0.875rem, lh 1.5, 500, uppercase, tracking `.04em` | IBM Plex Sans | Micro-labels |
+| h1 | fluid `clamp(2.4375rem, 1.2vw + 2rem, 3.0625rem)` (39→49px), lh 1.06, 400, tracking `-0.02em` | Instrument Serif (`--font-pixel`) | The only heading level the serif claims globally — the 39px clamp floor clears the 18px serif floor |
+| h2 | 1.5625rem (25px), lh 1.25, 600, tracking `-0.012em` | IBM Plex Sans | Section heads |
+| h3 | 1.25rem, lh 1.3, 600, tracking `-0.01em` | IBM Plex Sans | Card titles |
+| h4 | 1.125rem, lh 1.4, 600, tracking `-0.005em` | IBM Plex Sans | Inline breaks |
+| h5 | 1rem, lh 1.5, 500 | IBM Plex Sans | Inline breaks |
+| h6 | 0.71875rem (11.5px), lh 1.5, 600, uppercase, tracking `.12em` | IBM Plex Sans | The kicker voice as an element default |
 
-**h2–h6 are sans by design**: h5 (16px) and h6 (14px) land under the floor, so a blanket serif rule would break it. Serif section heads are opted into per component at their spec'd 22px. The detail H1 takes its 38px step **at the archetype**, not in `PageTitle`.
+**h2–h6 are sans by design**: h5 (16px) and h6 (11.5px) land under the floor, so a blanket serif rule would break it. Serif section heads are opted into per component at their spec'd 22px. The detail H1 takes its 38px step **at the archetype**, not in `PageTitle`.
+
+**Utility optics (2026-08-05)**: every Tailwind `text-*` step carries tuned leading/tracking in `@theme` — sizes stay Tailwind's, but `text-xs`/`text-sm` read at 1.5/1.55 leading with a hair of positive tracking, and `text-xl`+ tighten progressively (`-0.01em` → `-0.02em`, lh 1.35 → 1.05). Long-form copy caps its measure with `max-w-measure` (65ch token). `font-synthesis-weight: none` is set on `body` so a stray bold on Instrument Serif renders honest 400 instead of a faux bold.
 
 Body default: `line-height: 1.6`, `font-family: var(--font-sans)`. Prose containers (`.prose`, `[data-font="prose"]`) are explicitly forced to sans — body prose is 13.5px, below the floor, so the serif is reserved for headings inside them.
 

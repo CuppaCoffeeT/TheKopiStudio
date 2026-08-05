@@ -86,7 +86,7 @@ export function PlanningToolFrame({
 
         <div className="mb-[26px] flex items-end justify-between gap-4 border-b border-border pb-4">
           <div className="min-w-0">
-            <h1 className="m-0 text-[32px] leading-[1.1] text-foreground" style={{ fontFamily: 'var(--font-pixel)' }}>
+            <h1 className="m-0 text-[38px] leading-[1.1] tracking-[-0.018em] text-foreground" style={{ fontFamily: 'var(--font-pixel)' }}>
               <span
                 className="mr-2 text-[20px] text-[color:var(--brand-brown)]"
                 aria-hidden="true"

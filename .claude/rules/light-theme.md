@@ -70,6 +70,7 @@ Raw hexes stay correct for fills, borders, icons, chart marks and display type �
 - `var(--font-pixel)` (+ `--font-pixel-display` / `--font-prose`) = **Instrument Serif** — headings, KPI/table numerals, empty-state + loading lines, wordmark. **HARD FLOOR: never below 18px.**
 - `var(--font-sans)` (+ `--font-subheader`) = **IBM Plex Sans** — all body, UI, forms, labels, buttons, nav, table body.
 - Anything under 18px is IBM Plex Sans, no exceptions.
+- **Optics (2026-08-05 retune)**: `text-*` utilities carry tuned leading/tracking in `@theme` (body steps looser, display steps tighter + negative tracking); headings ladder ×1.25 with weight 600 for h2–h4; heroes are fluid clamps; long-form copy caps at `max-w-measure` (65ch). Details: [TYPOGRAPHY.md](../../docs/01-system-architecture/design-system/TYPOGRAPHY.md).
 
 ### Token chain (`src/index.css`)
 

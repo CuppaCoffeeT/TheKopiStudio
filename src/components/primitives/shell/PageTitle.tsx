@@ -7,8 +7,9 @@
  * here, propagates to every adopter.
  *
  * Locked (2a Kopi House, 2026-07-25):
- *  - Size: 28px ink (`--fg` via text-foreground) — well above the 18px
- *    Instrument Serif floor.
+ *  - Size: 30px ink (`--fg` via text-foreground) — the 2a list-title stop,
+ *    well above the 18px Instrument Serif floor. (28px → 30px, 2026-08-05
+ *    type retune.)
  *  - Family: `--font-pixel` (mapped to Instrument Serif).
  *  - Weight: 400 (Instrument Serif ships roman + italic only).
  *  - Optional inline `count` renders 15px `--fg-dim` beside the title, in
@@ -36,7 +37,7 @@ export function PageTitle({ children, className, count, style }: PageTitleProps)
   return (
     <h1
       className={cn(
-        'm-0 text-[28px] text-foreground leading-tight tracking-tight',
+        'm-0 text-[30px] text-foreground leading-[1.15] tracking-[-0.015em]',
         className,
       )}
       style={{ fontFamily: 'var(--font-pixel)', fontWeight: 400, ...style }}

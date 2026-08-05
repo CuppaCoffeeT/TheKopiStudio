@@ -112,6 +112,36 @@
      off it and a future display cut can be swapped here alone. */
   --font-pixel-display: 'Instrument Serif', Georgia, "Times New Roman", serif;
   --font-prose: 'Instrument Serif', Georgia, "Times New Roman", serif;
+
+  /* ---------------------------------------------------------------------
+   * Type optics retune (2026-08-05). Utility SIZES stay Tailwind's — the
+   * per-step leading/tracking is ours: reading-comfortable leading at the
+   * small steps, display-tight leading + negative tracking at the large
+   * ones. Cascades through every `text-*` utility with no component churn.
+   * The heading ladder in @layer base and the hero primitives step ×1.25
+   * off the 16px body (16 → 20 → 25 → 31 → 39 → 49); the 2a spec's own
+   * role stops (30 list title · 38 detail title) sit on the same curve.
+   * ------------------------------------------------------------------- */
+  --text-xs--line-height: 1.5;
+  --text-xs--letter-spacing: 0.01em;
+  --text-sm--line-height: 1.55;
+  --text-sm--letter-spacing: 0.004em;
+  --text-base--line-height: 1.6;
+  --text-lg--line-height: 1.5;
+  --text-lg--letter-spacing: -0.005em;
+  --text-xl--line-height: 1.35;
+  --text-xl--letter-spacing: -0.01em;
+  --text-2xl--line-height: 1.25;
+  --text-2xl--letter-spacing: -0.012em;
+  --text-3xl--line-height: 1.15;
+  --text-3xl--letter-spacing: -0.015em;
+  --text-4xl--line-height: 1.1;
+  --text-4xl--letter-spacing: -0.018em;
+  --text-5xl--line-height: 1.05;
+  --text-5xl--letter-spacing: -0.02em;
+
+  /* Comfortable reading measure for long-form copy → `max-w-measure`. */
+  --max-width-measure: 65ch;
 }
 
 /* ---------------------------------------------------------------------------
@@ -490,6 +520,11 @@
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
     line-height: 1.6;                 /* brand-card body rhythm */
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* Instrument Serif ships 400 only — never let the browser fake a bold
+       from it. IBM Plex Sans loads every weight it is asked for. */
+    font-synthesis-weight: none;
   }
 
   /* Tabular numerals / code / Kbd keep the mono stack. Components add the
@@ -499,14 +534,16 @@
     font-family: var(--font-mono);
   }
 
-  /* h1 is the only heading level the serif claims globally: 44px is far above
-     the 18px Instrument Serif floor, so the family is safe to set here. */
+  /* h1 is the only heading level the serif claims globally: the clamp floor
+     (39px) is far above the 18px Instrument Serif floor, so the family is
+     safe to set here. Fluid 39 → 49px across laptop widths. */
   h1 {
-    font-size: 2.75rem;
-    line-height: 1.1;
+    font-size: clamp(2.4375rem, 1.2vw + 2rem, 3.0625rem);
+    line-height: 1.06;
     font-weight: 400;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     font-family: var(--font-pixel);
+    text-wrap: balance;
   }
   /* Prose containers — long-form readable text (MarkdownBlock, design doc
      pages, CONTEXT.md renders). Body prose is 13.5px/1.6 in 2a, which is
@@ -522,13 +559,18 @@
 
   /* h2–h6 are IBM Plex Sans: h5/h6 land under 18px, so a blanket serif here
      would break the floor. Serif section heads are opted into per component
-     at their spec'd 22px. */
-  h2, h3, h4, h5, h6 { font-family: var(--font-subheader); }
-  h2 { font-size: 1.5rem;   line-height: 1.2;  font-weight: 500; letter-spacing: -0.005em; }
-  h3 { font-size: 1.25rem;  line-height: 1.25; font-weight: 500; }
-  h4 { font-size: 1.125rem; line-height: 1.3;  font-weight: 500; }
-  h5 { font-size: 1rem;     line-height: 1.4;  font-weight: 500; }
-  h6 { font-size: 0.875rem; line-height: 1.5;  font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
+     at their spec'd 22px. Ladder steps ×1.25 off the 16px body (25 → 20 →
+     18 → 16); weight 600 above the 400 body so hierarchy reads even without
+     the serif; h6 is the 2a kicker voice (600 · caps · wide tracking). */
+  h2, h3, h4, h5, h6 { font-family: var(--font-subheader); text-wrap: balance; }
+  h2 { font-size: 1.5625rem;  line-height: 1.25; font-weight: 600; letter-spacing: -0.012em; }
+  h3 { font-size: 1.25rem;    line-height: 1.3;  font-weight: 600; letter-spacing: -0.01em; }
+  h4 { font-size: 1.125rem;   line-height: 1.4;  font-weight: 600; letter-spacing: -0.005em; }
+  h5 { font-size: 1rem;       line-height: 1.5;  font-weight: 500; }
+  h6 { font-size: 0.71875rem; line-height: 1.5;  font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; }
+
+  /* Rag control: headlines balance (set above), body copy avoids orphans. */
+  p { text-wrap: pretty; }
 
   /* Links carry --brand-red (legacy NAME, now the AA-safe brand brown) because
      link text is body-sized. The focus ring is the RAW brand brown at 2px /

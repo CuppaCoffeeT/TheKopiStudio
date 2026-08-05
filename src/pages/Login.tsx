@@ -60,7 +60,10 @@ export default function Login() {
           >
             Advisor suite
           </p>
-          <h1 className="mt-2 text-[34px] leading-[1.1] text-foreground">
+          <h1
+            className="mt-2 leading-[1.05] tracking-[-0.02em] text-foreground"
+            style={{ fontSize: 'clamp(38px, 3.5vw + 24px, 44px)' }}
+          >
             <Wordmark />
           </h1>
         </header>

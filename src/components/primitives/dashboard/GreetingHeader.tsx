@@ -18,9 +18,11 @@ interface GreetingHeaderProps {
  *
  * Kopi Studio 2a dateline greeting (2026-07-25 visual direction):
  * uppercase 600 11px tracking-.14em dateline (weekday · date · one context
- * stat) over an Instrument Serif 36px ink greeting, hairline (--border-soft)
+ * stat) over an Instrument Serif ink greeting, hairline (--border-soft)
  * under the block. Spec: docs/05-implementation/design-handoffs/
- * 2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md
+ * 2026-07-25-kopi-studio-2a/KOPI_2A_SPEC.md — the comp's fixed 36px greeting
+ * was superseded 2026-08-05 by the fluid 38–50px hero step (see that
+ * handoff's decisions.md).
  *
  * Pure presentation: no view-as, no logout. Those controls live in the sidebar
  * rail's account footer (and in AppHeaderMobileBar's account menu below lg), so
@@ -50,8 +52,12 @@ export function GreetingHeader({
         {datelineParts.join(' · ')}
       </div>
       <h1
-        className="mt-2 text-[36px] leading-[1.1]"
-        style={{ fontFamily: 'var(--font-pixel)', color: 'var(--fg)' }}
+        className="mt-2 leading-[1.05] tracking-[-0.02em]"
+        style={{
+          fontFamily: 'var(--font-pixel)',
+          fontSize: 'clamp(38px, 2.2vw + 22px, 50px)',
+          color: 'var(--fg)',
+        }}
       >
         Good {timeOfDay}, {name}.
       </h1>
