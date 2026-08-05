@@ -263,3 +263,8 @@ Two rulings, both recorded in full at
    why no small type is ever coloured with them. Extends entry 4 of the
    2026-07-25 decision above; this is the fourth time the repoint has been
    declined.
+
+## 2026-08-05 — Wizard hero + rhythm matched to the app-wide spacing/type retune
+**Decision**: The intake masthead takes the app's fluid hero step — `PageTitle` at `clamp(36px, 3vw + 22px, 44px)` / lh 1.05 / tracking −0.02em (same clamp family as the login wordmark) — replacing the fixed `text-[30px] sm:text-[34px]`; the wizard main goes `py-6 sm:py-10` (+ `pb-12` out of flow), the intake stack `gap-5 → gap-6`, header `pb-5 → pb-6`, description `mt-1.5 → mt-3`. The 42rem reading column, sticky top bar / progress strip and `pb-28` in-flow clearance are deliberate wizard ergonomics and stay.
+**Why**: The 2026-08-05 app-wide retune (see the 2a handoff decisions.md) moved every other surface to the ×1.25 hero ladder and 40/48px page rhythm; the wizard was the last screen on the old 34px/20px values and read as a different product.
+**Impact**: `ProfilerWizardPage.tsx`, `IntakeForm.tsx`. Results list/detail pages needed nothing — they ride `ListPageFrame`/`DetailPageFrame` and inherited the retune.

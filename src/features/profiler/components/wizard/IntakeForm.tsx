@@ -30,16 +30,23 @@ export function IntakeForm({ intake, onChange, onStart }: IntakeFormProps) {
   const set = (patch: Partial<IntakeInfo>) => onChange({ ...intake, ...patch });
 
   return (
-    <div className="flex flex-col gap-5" data-testid="wizard-intake-screen">
+    <div className="flex flex-col gap-6" data-testid="wizard-intake-screen">
       {/* 2a masthead block: kicker over the serif display line, closed by one
           hairline. Left-aligned and illustration-free by direction — "no
           illustration, no icon" (KOPI_2A_SPEC → States), which is what retired
           the 42px 🎯 that used to sit above the kicker. It was the app's only
-          saturated off-palette mark; the serif line carries the screen now. */}
-      <header className="border-b border-border pb-5 pt-2">
+          saturated off-palette mark; the serif line carries the screen now.
+          Hero step matches the app's fluid rhythm (2026-08-05 retune) —
+          same clamp family as the login wordmark. */}
+      <header className="border-b border-border pb-6 pt-2">
         <Eyebrow className="text-[color:var(--brown-text)]">Prospect Profiling</Eyebrow>
-        <PageTitle className="text-[30px] sm:text-[34px]">Read Any Prospect</PageTitle>
-        <PageDescription className="mt-1.5">
+        <PageTitle
+          className="leading-[1.05] tracking-[-0.02em]"
+          style={{ fontSize: 'clamp(36px, 3vw + 22px, 44px)' }}
+        >
+          Read Any Prospect
+        </PageTitle>
+        <PageDescription className="mt-3">
           8 questions + body language = instant DISC &amp; MBTI profile
         </PageDescription>
       </header>

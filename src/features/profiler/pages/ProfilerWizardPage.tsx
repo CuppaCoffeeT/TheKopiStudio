@@ -63,7 +63,7 @@ export default function ProfilerWizardPage() {
         )}
       </div>
 
-      <main className={`mx-auto w-full max-w-[42rem] px-4 py-5 ${inFlow ? 'pb-28' : 'pb-10'}`}>
+      <main className={`mx-auto w-full max-w-[42rem] px-4 py-6 sm:py-10 ${inFlow ? 'pb-28' : 'pb-12'}`}>
         {screen === 0 && (
           <IntakeForm intake={wizard.intake} onChange={wizard.setIntake} onStart={wizard.start} />
         )}
