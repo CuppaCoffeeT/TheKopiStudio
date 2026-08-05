@@ -1,0 +1,2176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legacy Map · Visual Estate Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --ink: #2c1810;
+  --paper: #faf6ee;
+  --paper-2: #f3ecdc;
+  --sage: #5a7a5e;
+  --sage-dark: #3d5440;
+  --sage-soft: #c8d6c1;
+  --gold: #b8924f;
+  --gold-soft: #e8d9b3;
+  --rose: #b8645a;
+  --rose-soft: #e8c8c2;
+  --sky: #6b8cae;
+  --sky-soft: #c8d8e6;
+  --plum: #8a6a8a;
+  --mute: #8a7d68;
+  --line: #d6cab0;
+}
+
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(184,146,79,0.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(90,122,94,0.04) 0%, transparent 50%);
+}
+
+.app { position: relative; z-index: 2; max-width: 1400px; margin: 0 auto; padding: 32px 24px 80px; }
+
+header { text-align: center; padding: 8px 0 28px; border-bottom: 1px solid var(--line); margin-bottom: 32px; }
+.eyebrow { font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--gold); font-weight: 600; margin-bottom: 8px; }
+h1 { font-family: 'Fraunces', serif; font-weight: 400; font-size: 44px; letter-spacing: -0.01em; color: var(--ink); line-height: 1.05; margin-bottom: 6px; }
+h1 em { font-style: italic; color: var(--sage-dark); }
+.tagline { font-size: 13px; color: var(--mute); max-width: 520px; margin: 6px auto 0; }
+
+.tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--paper-2); padding: 4px; border-radius: 12px; border: 1px solid var(--line); flex-wrap: wrap; }
+.tab { flex: 1; min-width: 110px; padding: 10px 14px; background: transparent; border: none; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: var(--mute); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.tab:hover { color: var(--ink); }
+.tab.active { background: var(--ink); color: var(--paper); box-shadow: 0 2px 8px rgba(44,24,16,0.15); }
+.tab .step { font-family: 'Fraunces', serif; font-size: 11px; font-style: italic; opacity: 0.7; }
+.panel { display: none; }
+.panel.active { display: block; animation: fade 0.3s ease; }
+@keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+.section { background: white; border: 1px solid var(--line); border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(44,24,16,0.04); }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px dashed var(--line); flex-wrap: wrap; }
+.section-title { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 400; color: var(--sage-dark); letter-spacing: -0.01em; }
+.section-sub { font-size: 12px; color: var(--mute); font-style: italic; }
+
+/* ── ALIGNED COUPLE GRID ── */
+.couple-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 8px;
+}
+.person-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px;
+}
+.person-card.client { border-left: 4px solid var(--sage); }
+.person-card.spouse { border-left: 4px solid var(--gold); }
+.person-card-title {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--mute);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.person-card.client .person-card-title { color: var(--sage-dark); }
+.person-card.spouse .person-card-title { color: var(--gold); }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.couple-fields { display: grid; grid-template-columns: 1fr 80px; gap: 10px; }
+
+/* ── PEOPLE GENS ── */
+.gen-group { margin-bottom: 20px; }
+.gen-label { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.gen-pill { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 700; padding: 4px 10px; border-radius: 100px; color: white; }
+.gen-pill.elders { background: var(--plum); }
+.gen-pill.self { background: var(--sage); }
+.gen-pill.kids { background: var(--gold); }
+.gen-pill.grand { background: var(--sky); }
+.gen-pill.others { background: var(--mute); }
+.gen-name { font-family: 'Fraunces', serif; font-size: 18px; color: var(--ink); }
+.gen-hint { font-size: 12px; color: var(--mute); margin-left: auto; font-style: italic; }
+
+.person-row { display: grid; grid-template-columns: 1fr 80px 130px 40px; gap: 10px; margin-bottom: 8px; align-items: center; }
+.person-row input, .person-row select { padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); font-family: 'Inter', sans-serif; font-size: 13px; color: var(--ink); outline: none; transition: all 0.15s; }
+.person-row input:focus, .person-row select:focus { border-color: var(--sage); background: white; box-shadow: 0 0 0 3px rgba(90,122,94,0.08); }
+.person-row input::placeholder { color: var(--mute); opacity: 0.6; }
+.del-btn { background: transparent; border: 1px solid var(--line); border-radius: 8px; width: 36px; height: 36px; cursor: pointer; color: var(--mute); font-size: 16px; transition: all 0.15s; }
+.del-btn:hover { background: var(--rose-soft); color: var(--rose); border-color: var(--rose); }
+
+.add-btn { background: transparent; border: 1px dashed var(--line); color: var(--mute); padding: 10px 14px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; width: 100%; margin-top: 4px; }
+.add-btn:hover { border-color: var(--sage); color: var(--sage-dark); background: rgba(90,122,94,0.04); border-style: solid; }
+
+/* ── ASSETS ── */
+.asset-row { display: grid; grid-template-columns: 36px 1fr 130px 110px 75px 110px 40px; gap: 8px; margin-bottom: 10px; align-items: center; }
+.asset-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: var(--paper-2); }
+.asset-row .growth-input {
+  position: relative;
+}
+.asset-row .growth-input input {
+  padding-right: 22px;
+  text-align: right;
+}
+.asset-row .growth-input::after {
+  content: "%";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  color: var(--mute);
+  pointer-events: none;
+}
+.asset-row input, .asset-row select { padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); font-family: 'Inter', sans-serif; font-size: 13px; color: var(--ink); outline: none; }
+.asset-row input:focus, .asset-row select:focus { border-color: var(--gold); background: white; box-shadow: 0 0 0 3px rgba(184,146,79,0.1); }
+
+/* Asset header row */
+.asset-header {
+  display: grid;
+  grid-template-columns: 36px 1fr 130px 110px 75px 110px 40px;
+  gap: 8px;
+  padding: 0 4px 8px;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--mute);
+  border-bottom: 1px dashed var(--line);
+  margin-bottom: 10px;
+}
+.asset-header > div { padding: 0 8px; }
+.asset-header > div:nth-child(4),
+.asset-header > div:nth-child(5) { text-align: right; }
+@media (max-width: 720px) {
+  .asset-header { display: none; }
+}
+
+/* Nomination shelf — compact dropdown version */
+.nominee-add-row {
+  display: grid;
+  grid-template-columns: 1fr 90px 90px 36px;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 0;
+  border-top: 1px dashed var(--line);
+  margin-top: 6px;
+}
+.nominee-add-row select,
+.nominee-add-row input[type="number"] {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: white;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  outline: none;
+}
+.nominee-add-row select { cursor: pointer; }
+.nominee-add-row select:focus,
+.nominee-add-row input:focus { border-color: var(--gold); }
+.nominee-add-row .add-pill {
+  background: var(--gold);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  height: 36px;
+  font-size: 18px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.15s;
+}
+.nominee-add-row .add-pill:hover { background: var(--sage-dark); }
+.nominee-add-row .add-pill:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.nominee-chip {
+  display: grid;
+  grid-template-columns: 1fr 90px 90px 36px;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 0;
+}
+.nominee-chip-name {
+  font-size: 13px;
+  color: var(--ink);
+  padding: 0 4px;
+}
+.nominee-chip-name strong { font-weight: 600; }
+.nominee-chip-name .rel { color: var(--mute); font-size: 11px; }
+.nominee-chip input[type="number"] {
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: white;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  text-align: right;
+  outline: none;
+}
+.nominee-chip input[type="number"]:focus { border-color: var(--gold); }
+.nominee-chip-amount {
+  font-family: 'Fraunces', serif;
+  font-size: 12px;
+  color: var(--gold);
+  font-weight: 600;
+  text-align: right;
+  padding-right: 4px;
+}
+.nominee-chip .del-mini {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--mute);
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 0 auto;
+  transition: all 0.15s;
+}
+.nominee-chip .del-mini:hover { background: var(--rose-soft); color: var(--rose); border-color: var(--rose); }
+
+@media (max-width: 720px) {
+  .nominee-add-row, .nominee-chip { grid-template-columns: 1fr 70px 80px 32px; gap: 6px; }
+}
+
+/* Nomination shelf container */
+.nomination-shelf {
+  display: none;
+  margin: -2px 0 14px 46px;
+  padding: 14px 16px;
+  background: linear-gradient(180deg, rgba(184,146,79,0.06), rgba(184,146,79,0.02));
+  border: 1px dashed var(--gold);
+  border-radius: 0 0 12px 12px;
+  border-top: none;
+}
+.nomination-shelf.show { display: block; }
+.nom-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.nom-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nom-info {
+  font-size: 11px;
+  color: var(--mute);
+  font-style: italic;
+  flex: 1;
+  min-width: 200px;
+}
+.nom-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  user-select: none;
+}
+.nom-tick {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--gold);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+  transition: all 0.15s;
+}
+.nom-toggle.active .nom-tick { background: var(--gold); }
+.nom-rows { margin-top: 4px; }
+.nom-row {
+  display: grid;
+  grid-template-columns: 18px 1fr 80px;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 0;
+}
+.nom-row input[type="number"] {
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: white;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  text-align: right;
+  outline: none;
+}
+.nom-row input[type="number"]:focus { border-color: var(--gold); }
+.nom-row input[type="number"]:disabled { opacity: 0.4; }
+.nom-cb {
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--line);
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: white;
+  transition: all 0.15s;
+}
+.nom-cb.checked { background: var(--gold); border-color: var(--gold); }
+.nom-name { font-size: 13px; color: var(--ink); }
+.nom-name .rel { color: var(--mute); font-size: 11px; }
+.nom-warn {
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.nom-warn.ok { color: var(--sage-dark); }
+.nom-warn.err { color: var(--rose); }
+
+/* Growth controls */
+.growth-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.growth-bar label {
+  font-size: 12px;
+  color: var(--ink);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.growth-bar input[type="number"] {
+  width: 70px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: white;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  text-align: right;
+  outline: none;
+}
+.growth-bar input[type="number"]:focus { border-color: var(--gold); }
+
+/* ── ALLOCATIONS ── */
+.allocation-card { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin-bottom: 14px; }
+.alloc-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+.alloc-title { display: flex; align-items: center; gap: 10px; font-family: 'Fraunces', serif; font-size: 17px; color: var(--ink); }
+.alloc-amount { font-family: 'Fraunces', serif; font-size: 15px; color: var(--gold); font-weight: 600; }
+.alloc-mode { display: flex; gap: 4px; background: white; border: 1px solid var(--line); border-radius: 8px; padding: 3px; flex-wrap: wrap; }
+.mode-btn { background: transparent; border: none; padding: 6px 12px; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; color: var(--mute); cursor: pointer; transition: all 0.15s; }
+.mode-btn.active { background: var(--sage); color: white; }
+.beneficiary-row { display: grid; grid-template-columns: 1fr 90px 100px; gap: 10px; margin-bottom: 6px; align-items: center; padding: 8px 10px; background: white; border-radius: 8px; border: 1px solid transparent; }
+.beneficiary-row.included { border-color: var(--sage-soft); background: rgba(200,214,193,0.2); }
+.benef-name { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.benef-checkbox { width: 18px; height: 18px; border: 1.5px solid var(--line); border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; background: white; transition: all 0.15s; flex-shrink: 0; font-size: 12px; font-weight: 700; color: white; }
+.benef-checkbox.checked { background: var(--sage); border-color: var(--sage); }
+.benef-pct { padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 13px; text-align: right; background: var(--paper); outline: none; }
+.benef-pct:focus { border-color: var(--gold); background: white; }
+.benef-pct:disabled { opacity: 0.4; }
+.benef-amount { font-family: 'Fraunces', serif; font-size: 13px; color: var(--mute); text-align: right; font-weight: 500; }
+.benef-amount.included { color: var(--sage-dark); }
+
+.alloc-warning { padding: 8px 12px; border-radius: 8px; font-size: 12px; margin-top: 8px; display: none; }
+.alloc-warning.show { display: block; }
+.alloc-warning.error { background: var(--rose-soft); color: var(--rose); }
+.alloc-warning.ok { background: var(--sage-soft); color: var(--sage-dark); }
+
+/* Lock indicator for nominated assets */
+.alloc-locked-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(184,146,79,0.1);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+.alloc-locked-banner strong { color: var(--gold); }
+
+/* ── CANVAS ── */
+.canvas-wrap { background: white; border: 1px solid var(--line); border-radius: 16px; padding: 20px; overflow-x: auto; position: relative; }
+.canvas-toolbar { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.canvas-btn { padding: 8px 14px; background: var(--paper-2); border: 1px solid var(--line); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: var(--ink); cursor: pointer; transition: all 0.15s; }
+.canvas-btn:hover { background: var(--gold-soft); border-color: var(--gold); }
+.canvas-btn.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.canvas-btn.primary:hover { background: var(--sage-dark); border-color: var(--sage-dark); }
+#legacy-canvas { width: 100%; min-height: 600px; background: radial-gradient(circle at 1px 1px, rgba(184,146,79,0.15) 1px, transparent 0); background-size: 20px 20px; border-radius: 8px; }
+
+/* ── REPORT ── */
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.summary-card { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.summary-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mute); font-weight: 600; margin-bottom: 6px; }
+.summary-value { font-family: 'Fraunces', serif; font-size: 22px; color: var(--sage-dark); font-weight: 600; letter-spacing: -0.01em; }
+
+.benef-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.benef-card { background: white; border: 1px solid var(--line); border-radius: 14px; padding: 18px; position: relative; overflow: hidden; }
+.benef-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--gen-color, var(--sage)); }
+.benef-card.elders { --gen-color: var(--plum); }
+.benef-card.self { --gen-color: var(--sage); }
+.benef-card.kids { --gen-color: var(--gold); }
+.benef-card.grand { --gen-color: var(--sky); }
+.benef-card.others { --gen-color: var(--mute); }
+.benef-card-name { font-family: 'Fraunces', serif; font-size: 19px; color: var(--ink); margin-bottom: 2px; }
+.benef-card-rel { font-size: 11px; color: var(--mute); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 12px; }
+.benef-card-total { font-family: 'Fraunces', serif; font-size: 28px; color: var(--gold); font-weight: 600; margin-bottom: 12px; letter-spacing: -0.02em; }
+.benef-card-list { border-top: 1px dashed var(--line); padding-top: 10px; }
+.benef-card-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 12px; gap: 8px; }
+.benef-card-item .name { color: var(--ink); display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+.benef-card-item .amt { font-family: 'Fraunces', serif; font-weight: 600; color: var(--sage-dark); white-space: nowrap; }
+.benef-card-item .nom-tag { font-size: 9px; background: var(--gold); color: white; padding: 1px 6px; border-radius: 100px; letter-spacing: 0.1em; font-weight: 700; text-transform: uppercase; }
+
+/* Comparison table */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 13px;
+}
+.compare-table th {
+  background: var(--paper-2);
+  padding: 12px;
+  text-align: left;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--mute);
+  border-bottom: 2px solid var(--line);
+}
+.compare-table th.with { color: var(--sage-dark); }
+.compare-table th.without { color: var(--rose); }
+.compare-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.compare-table td.label {
+  font-weight: 600;
+  color: var(--ink);
+  font-family: 'Fraunces', serif;
+  font-size: 14px;
+}
+.compare-table td.with-cell { background: rgba(200,214,193,0.15); color: var(--sage-dark); }
+.compare-table td.without-cell { background: rgba(232,200,194,0.15); color: var(--rose); }
+.compare-amt { font-family: 'Fraunces', serif; font-weight: 600; }
+
+/* Growth table */
+.growth-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 13px;
+}
+.growth-table th {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 12px;
+  text-align: right;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.growth-table th:first-child { text-align: left; border-radius: 8px 0 0 0; }
+.growth-table th:last-child { border-radius: 0 8px 0 0; }
+.growth-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  text-align: right;
+}
+.growth-table td:first-child {
+  text-align: left;
+  font-weight: 600;
+  color: var(--ink);
+}
+.growth-table tr.total td {
+  background: var(--paper-2);
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  color: var(--sage-dark);
+  font-size: 15px;
+  border-top: 2px solid var(--ink);
+}
+.growth-table .age-col {
+  font-family: 'Fraunces', serif;
+  color: var(--gold);
+  font-weight: 600;
+}
+
+/* Will/Trust handover panel */
+.handover-card {
+  background: white;
+  border: 2px solid var(--ink);
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 24px;
+}
+.handover-title {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.handover-sub {
+  font-size: 12px;
+  color: var(--mute);
+  font-style: italic;
+  margin-bottom: 16px;
+}
+.handover-step {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed var(--line);
+}
+.handover-step:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+.step-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  font-weight: 600;
+  font-style: italic;
+}
+.step-content h4 {
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  color: var(--ink);
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+.step-content p {
+  font-size: 13px;
+  color: var(--mute);
+  line-height: 1.6;
+}
+.step-content p strong { color: var(--ink); }
+
+.disclaimer-box {
+  background: var(--rose-soft);
+  border-left: 4px solid var(--rose);
+  padding: 14px 18px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ink);
+  margin-top: 20px;
+}
+.disclaimer-box strong { color: var(--rose); display: block; margin-bottom: 4px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.form-field label { display: block; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mute); font-weight: 600; margin-bottom: 6px; }
+.form-field input { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); font-family: 'Inter', sans-serif; font-size: 13px; color: var(--ink); outline: none; }
+.form-field input:focus { border-color: var(--sage); background: white; }
+
+.empty { text-align: center; padding: 40px 20px; color: var(--mute); font-style: italic; font-size: 13px; }
+
+/* ISA explainer */
+.isa-rules {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+.isa-rule {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 12px;
+}
+.isa-rule.applies {
+  border-color: var(--sage);
+  background: rgba(200,214,193,0.15);
+  box-shadow: 0 2px 8px rgba(90,122,94,0.1);
+}
+.isa-rule .rule-num {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 11px;
+  color: var(--gold);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.isa-rule .rule-cond {
+  font-weight: 600;
+  color: var(--ink);
+  margin: 4px 0 6px;
+  font-size: 12px;
+}
+.isa-rule .rule-dist {
+  color: var(--mute);
+  line-height: 1.5;
+  font-size: 11px;
+}
+.isa-rule.applies .rule-dist { color: var(--sage-dark); }
+.isa-rule .applies-tag {
+  display: inline-block;
+  font-size: 9px;
+  background: var(--sage);
+  color: white;
+  padding: 1px 8px;
+  border-radius: 100px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+
+@media print {
+  body { background: white; }
+  .tabs, .canvas-toolbar, .add-btn, .del-btn { display: none !important; }
+  .panel { display: block !important; page-break-after: always; }
+  .section { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+  @page { size: A4; margin: 12mm; }
+}
+
+@media (max-width: 720px) {
+  h1 { font-size: 30px; }
+  .couple-grid { grid-template-columns: 1fr; gap: 12px; }
+  .person-row { grid-template-columns: 1fr 70px 100px 36px; gap: 6px; }
+  .asset-row { grid-template-columns: 32px 1fr 100px; gap: 6px; row-gap: 6px; }
+  .asset-row select, .asset-row input[data-field="value"], .asset-row .growth-input, .asset-row > div:last-child { grid-column: span 1; }
+  .asset-row > *:nth-child(n+4) { grid-column: span 1; }
+  .beneficiary-row { grid-template-columns: 1fr 70px 80px; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <div class="eyebrow">Singapore · Estate &amp; Legacy Planning</div>
+    <h1>The Legacy <em>Map</em></h1>
+    <p class="tagline">A visual estate plan — one page where your family, assets, and intentions all flow together.</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="family"><span class="step">i.</span> Family</button>
+    <button class="tab" data-tab="assets"><span class="step">ii.</span> Assets</button>
+    <button class="tab" data-tab="allocate"><span class="step">iii.</span> Allocate</button>
+    <button class="tab" data-tab="map"><span class="step">iv.</span> The Map</button>
+    <button class="tab" data-tab="report"><span class="step">v.</span> Report</button>
+  </div>
+
+  <!-- ============ FAMILY ============ -->
+  <div class="panel active" id="panel-family">
+    <div class="section">
+      <div class="section-head">
+        <div>
+          <div class="section-title">The couple</div>
+          <div class="section-sub">Whose legacy is being planned, and their spouse if any.</div>
+        </div>
+      </div>
+      <div class="couple-grid">
+        <div class="person-card client">
+          <div class="person-card-title"><span class="dot"></span> Client</div>
+          <div class="couple-fields">
+            <div class="form-field">
+              <label>Full name</label>
+              <input type="text" id="client-name" placeholder="e.g. Wei Ming Tan" value="Wei Ming Tan">
+            </div>
+            <div class="form-field">
+              <label>Age</label>
+              <input type="number" id="client-age" value="53">
+            </div>
+          </div>
+        </div>
+        <div class="person-card spouse">
+          <div class="person-card-title"><span class="dot"></span> Spouse <span style="font-weight: 400; opacity: 0.6;">(optional)</span></div>
+          <div class="couple-fields">
+            <div class="form-field">
+              <label>Full name</label>
+              <input type="text" id="spouse-name" placeholder="e.g. Mei Lin" value="Mei Lin">
+            </div>
+            <div class="form-field">
+              <label>Age</label>
+              <input type="number" id="spouse-age" value="51">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Family members</div>
+          <div class="section-sub">Add everyone who might be a beneficiary, across generations.</div>
+        </div>
+      </div>
+
+      <div class="gen-group">
+        <div class="gen-label">
+          <span class="gen-pill elders">Elders</span>
+          <span class="gen-name">Parents &amp; grandparents</span>
+          <span class="gen-hint">For dependent care or filial allocation</span>
+        </div>
+        <div id="list-elders"></div>
+        <button class="add-btn" data-gen="elders">+ Add elder</button>
+      </div>
+
+      <div class="gen-group">
+        <div class="gen-label">
+          <span class="gen-pill kids">Children</span>
+          <span class="gen-name">Sons &amp; daughters</span>
+          <span class="gen-hint">Default beneficiaries for most estates</span>
+        </div>
+        <div id="list-kids"></div>
+        <button class="add-btn" data-gen="kids">+ Add child</button>
+      </div>
+
+      <div class="gen-group">
+        <div class="gen-label">
+          <span class="gen-pill grand">Grandchildren</span>
+          <span class="gen-name">Grandsons &amp; granddaughters</span>
+          <span class="gen-hint">For trust funds or per-stirpes</span>
+        </div>
+        <div id="list-grand"></div>
+        <button class="add-btn" data-gen="grand">+ Add grandchild</button>
+      </div>
+
+      <div class="gen-group">
+        <div class="gen-label">
+          <span class="gen-pill others">Others</span>
+          <span class="gen-name">Siblings, charities, friends</span>
+          <span class="gen-hint">Anyone else you wish to include</span>
+        </div>
+        <div id="list-others"></div>
+        <button class="add-btn" data-gen="others">+ Add beneficiary</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ASSETS ============ -->
+  <div class="panel" id="panel-assets">
+    <div class="section">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Assets, insurance &amp; CPF</div>
+          <div class="section-sub">Tick "Has nomination" for CPF and Insurance — these bypass the will entirely.</div>
+        </div>
+      </div>
+
+      <div class="growth-bar">
+        <span style="font-size: 12px; font-weight: 600;">💡 Per-asset growth rates</span>
+        <span style="font-size: 11px; color: var(--mute); font-style: italic; flex: 1; min-width: 200px;">Each asset compounds at its own rate. Set 0% for term insurance, ~4% for CPF, market rates for investments.</span>
+      </div>
+
+      <div id="asset-list"></div>
+      <button class="add-btn" id="add-asset">+ Add asset</button>
+
+      <div class="summary-grid" style="margin-top: 20px;">
+        <div class="summary-card">
+          <div class="summary-label">Total estate value</div>
+          <div class="summary-value" id="total-estate">$0</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Goes via nomination</div>
+          <div class="summary-value" id="total-nominated" style="color: var(--gold);">$0</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Distributable estate</div>
+          <div class="summary-value" id="total-distrib">$0</div>
+          <div style="font-size: 10px; color: var(--mute); margin-top: 4px;">Goes via Will / ISA</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ALLOCATE ============ -->
+  <div class="panel" id="panel-allocate">
+    <div class="section">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Allocate each asset</div>
+          <div class="section-sub">Only assets <em>not</em> nominated appear here. Nominated CPF/insurance bypass the will entirely.</div>
+        </div>
+      </div>
+      <div id="alloc-list"></div>
+    </div>
+  </div>
+
+  <!-- ============ MAP ============ -->
+  <div class="panel" id="panel-map">
+    <div class="section">
+      <div class="section-head">
+        <div>
+          <div class="section-title">The legacy map</div>
+          <div class="section-sub">Visual flow from your assets to the people you love. Gold lines = nominations. Sage = will/allocation.</div>
+        </div>
+      </div>
+      <div class="canvas-toolbar">
+        <button class="canvas-btn primary" onclick="renderCanvas()">↻ Refresh map</button>
+        <button class="canvas-btn" onclick="downloadSVG()">⬇ Download SVG</button>
+      </div>
+      <div class="canvas-wrap">
+        <svg id="legacy-canvas" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ REPORT ============ -->
+  <div class="panel" id="panel-report">
+    <div id="report-content"></div>
+  </div>
+
+</div>
+
+<script>
+// ───────── STATE ─────────
+const state = {
+  client: { name: 'Wei Ming Tan', age: 53 },
+  spouse: { name: 'Mei Lin', age: 51 },
+  people: { elders: [], kids: [], grand: [], others: [] },
+  assets: [],
+  allocations: {},   // { assetId: { mode, shares: {pid: pct} } }
+  nominations: {},   // { assetId: { enabled: bool, shares: {pid: pct} } }
+  growthRate: 4
+};
+
+let pidCounter = 0, aidCounter = 0;
+const newPid = () => `p${++pidCounter}`;
+const newAid = () => `a${++aidCounter}`;
+
+const ASSET_TYPES = [
+  { id: 'cash', label: 'Cash / Bank', icon: '💰', nominatable: false },
+  { id: 'cpf', label: 'CPF', icon: '🏦', nominatable: true, nominationLabel: 'CPF Nomination', forced: true },
+  { id: 'property', label: 'Property', icon: '🏠', nominatable: false },
+  { id: 'investment', label: 'Investments', icon: '📈', nominatable: false },
+  { id: 'insurance', label: 'Life Insurance', icon: '🛡️', nominatable: true, nominationLabel: 'Insurance Nomination' },
+  { id: 'srs', label: 'SRS', icon: '🌱', nominatable: false },
+  { id: 'business', label: 'Business', icon: '🏢', nominatable: false },
+  { id: 'other', label: 'Other', icon: '✦', nominatable: false }
+];
+
+const RELATIONSHIPS = {
+  elders: ['Father', 'Mother', 'Father-in-law', 'Mother-in-law', 'Grandparent'],
+  kids: ['Son', 'Daughter'],
+  grand: ['Grandson', 'Granddaughter'],
+  others: ['Brother', 'Sister', 'Charity', 'Friend', 'Trustee', 'Other']
+};
+
+const GEN_LABEL = { elders: 'Elders', kids: 'Children', grand: 'Grandchildren', others: 'Others' };
+
+// ISA (Intestate Succession Act 1967, s.7) Rules
+const ISA_RULES = [
+  { num: 'Rule 1', cond: 'Spouse only (no children, no parents)', dist: '100% to spouse', test: ctx => ctx.hasSpouse && !ctx.hasKids && !ctx.hasParents },
+  { num: 'Rule 2', cond: 'Spouse + children', dist: '50% spouse, 50% split equally among children', test: ctx => ctx.hasSpouse && ctx.hasKids },
+  { num: 'Rule 3', cond: 'Children only (no spouse)', dist: '100% split equally among children. Deceased child\'s share → grandchildren (per stirpes)', test: ctx => !ctx.hasSpouse && ctx.hasKids },
+  { num: 'Rule 4', cond: 'Spouse + parent(s) (no children)', dist: '50% spouse, 50% split equally among parents', test: ctx => ctx.hasSpouse && !ctx.hasKids && ctx.hasParents },
+  { num: 'Rule 5', cond: 'Parent(s) only (no spouse, no children)', dist: '100% split equally among parents', test: ctx => !ctx.hasSpouse && !ctx.hasKids && ctx.hasParents },
+  { num: 'Rule 6', cond: 'Siblings only', dist: '100% split equally among siblings (per stirpes for deceased siblings)', test: () => false },
+  { num: 'Rule 7', cond: 'Grandparents only', dist: '100% split equally among grandparents', test: () => false },
+  { num: 'Rule 8', cond: 'Aunts &amp; uncles only', dist: '100% split equally', test: () => false },
+  { num: 'Rule 9', cond: 'No qualifying relatives', dist: '100% to the Government (bona vacantia)', test: () => false }
+];
+
+// ───────── INIT ─────────
+function init() {
+  state.people.elders = [
+    { id: newPid(), gen: 'elders', name: 'Tan Ah Kong', rel: 'Father', age: 81 },
+    { id: newPid(), gen: 'elders', name: 'Tan Ah Mah', rel: 'Mother', age: 78 }
+  ];
+  state.people.kids = [
+    { id: newPid(), gen: 'kids', name: 'Tan Jia Wei', rel: 'Son', age: 23 },
+    { id: newPid(), gen: 'kids', name: 'Tan Hui Ling', rel: 'Daughter', age: 20 }
+  ];
+
+  state.assets = [
+    { id: newAid(), type: 'property', name: 'HDB Yishun', value: 650000, growth: 2.5 },
+    { id: newAid(), type: 'cash', name: 'DBS Savings', value: 180000, growth: 1.5 },
+    { id: newAid(), type: 'investment', name: 'Stocks portfolio', value: 220000, growth: 6 },
+    { id: newAid(), type: 'insurance', name: 'NTUC Term Life', value: 1000000, growth: 0 },
+    { id: newAid(), type: 'cpf', name: 'CPF balances', value: 280000, growth: 4 }
+  ];
+
+  state.assets.forEach(a => {
+    state.allocations[a.id] = { mode: 'spouse-first', shares: {} };
+    state.nominations[a.id] = { enabled: false, shares: {} };
+  });
+
+  bindHeaderInputs();
+  bindTabs();
+  bindAddButtons();
+  renderAll();
+}
+
+function bindHeaderInputs() {
+  document.getElementById('client-name').addEventListener('input', e => { state.client.name = e.target.value; });
+  document.getElementById('client-age').addEventListener('input', e => { state.client.age = +e.target.value; });
+  document.getElementById('spouse-name').addEventListener('input', e => { state.spouse.name = e.target.value; });
+  document.getElementById('spouse-age').addEventListener('input', e => { state.spouse.age = +e.target.value; });
+}
+
+function bindTabs() {
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      t.classList.add('active');
+      const tabName = t.dataset.tab;
+      document.getElementById('panel-' + tabName).classList.add('active');
+      if (tabName === 'allocate') renderAllocations();
+      if (tabName === 'map') renderCanvas();
+      if (tabName === 'report') renderReport();
+      if (tabName === 'assets') renderAssets();
+    });
+  });
+}
+
+function bindAddButtons() {
+  document.querySelectorAll('.add-btn[data-gen]').forEach(b => {
+    b.addEventListener('click', () => addPerson(b.dataset.gen));
+  });
+  document.getElementById('add-asset').addEventListener('click', () => addAsset());
+}
+
+// ───────── PEOPLE ─────────
+function addPerson(gen) {
+  state.people[gen].push({ id: newPid(), gen, name: '', rel: RELATIONSHIPS[gen][0] || '', age: '' });
+  renderPeople(gen);
+}
+
+function deletePerson(gen, id) {
+  state.people[gen] = state.people[gen].filter(p => p.id !== id);
+  Object.values(state.allocations).forEach(a => { delete a.shares[id]; });
+  Object.values(state.nominations).forEach(n => { delete n.shares[id]; });
+  renderPeople(gen);
+}
+
+function renderPeople(gen) {
+  const list = document.getElementById('list-' + gen);
+  list.innerHTML = '';
+  if (state.people[gen].length === 0) {
+    list.innerHTML = `<div class="empty">No ${GEN_LABEL[gen].toLowerCase()} added yet.</div>`;
+    return;
+  }
+  state.people[gen].forEach(p => {
+    const row = document.createElement('div');
+    row.className = 'person-row';
+    const relOptions = RELATIONSHIPS[gen].map(r => `<option value="${r}" ${p.rel === r ? 'selected' : ''}>${r}</option>`).join('');
+    row.innerHTML = `
+      <input type="text" placeholder="Name" value="${escapeHtml(p.name)}" data-field="name">
+      <input type="number" placeholder="Age" value="${p.age}" data-field="age">
+      <select data-field="rel">${relOptions}</select>
+      <button class="del-btn" title="Remove">×</button>
+    `;
+    row.querySelector('[data-field="name"]').addEventListener('input', e => { p.name = e.target.value; });
+    row.querySelector('[data-field="age"]').addEventListener('input', e => { p.age = e.target.value; });
+    row.querySelector('[data-field="rel"]').addEventListener('change', e => { p.rel = e.target.value; });
+    row.querySelector('.del-btn').addEventListener('click', () => deletePerson(gen, p.id));
+    list.appendChild(row);
+  });
+}
+
+function renderAllPeople() {
+  ['elders', 'kids', 'grand', 'others'].forEach(renderPeople);
+}
+
+// ───────── ASSETS ─────────
+function addAsset() {
+  const id = newAid();
+  state.assets.push({ id, type: 'cash', name: '', value: 0, growth: 3 });
+  state.allocations[id] = { mode: 'spouse-first', shares: {} };
+  state.nominations[id] = { enabled: false, shares: {} };
+  renderAssets();
+}
+
+function deleteAsset(id) {
+  state.assets = state.assets.filter(a => a.id !== id);
+  delete state.allocations[id];
+  delete state.nominations[id];
+  renderAssets();
+}
+
+function renderAssets() {
+  const list = document.getElementById('asset-list');
+  list.innerHTML = '';
+  if (state.assets.length === 0) {
+    list.innerHTML = '<div class="empty">No assets added yet.</div>';
+    return;
+  }
+
+  // Header row
+  const currentAge = +state.client.age || 53;
+  const yearsTo65 = Math.max(0, 65 - currentAge);
+  const header = document.createElement('div');
+  header.className = 'asset-header';
+  header.innerHTML = `
+    <div></div>
+    <div>Asset</div>
+    <div>Type</div>
+    <div>Today's value</div>
+    <div>Growth</div>
+    <div>Nomination</div>
+    <div></div>
+  `;
+  list.appendChild(header);
+
+  state.assets.forEach(a => {
+    const wrap = document.createElement('div');
+    const typeObj = ASSET_TYPES.find(t => t.id === a.type) || ASSET_TYPES[0];
+    const row = document.createElement('div');
+    row.className = 'asset-row';
+    const typeOptions = ASSET_TYPES.map(t => `<option value="${t.id}" ${a.type === t.id ? 'selected' : ''}>${t.icon} ${t.label}</option>`).join('');
+    const nom = state.nominations[a.id];
+    const isNominatable = typeObj.nominatable;
+    const isForced = typeObj.forced;
+    const nomState = isForced ? true : nom.enabled;
+
+    const nomBtnHTML = isNominatable
+      ? `<button class="nom-toggle ${nomState ? 'active' : ''}" data-toggle-nom title="${isForced ? 'CPF: nomination always required' : 'Toggle insurance nomination'}">
+           <span class="nom-tick">${nomState ? '✓' : ''}</span>
+           <span>${isForced ? 'CPF nominees' : 'Has nomination'}</span>
+         </button>`
+      : `<span style="font-size: 11px; color: var(--mute); font-style: italic;">via Will/ISA</span>`;
+
+    row.innerHTML = `
+      <div class="asset-icon">${typeObj.icon}</div>
+      <input type="text" placeholder="Asset description (e.g. HDB Yishun)" value="${escapeHtml(a.name)}" data-field="name">
+      <select data-field="type">${typeOptions}</select>
+      <input type="number" placeholder="Value (S$)" value="${a.value}" data-field="value">
+      <div class="growth-input"><input type="number" value="${a.growth ?? 3}" step="0.5" min="0" max="20" data-field="growth"></div>
+      <div>${nomBtnHTML}</div>
+      <button class="del-btn" title="Remove">×</button>
+    `;
+    row.querySelector('[data-field="name"]').addEventListener('input', e => { a.name = e.target.value; updateTotals(); });
+    row.querySelector('[data-field="type"]').addEventListener('change', e => {
+      a.type = e.target.value;
+      const newType = ASSET_TYPES.find(t => t.id === a.type);
+      if (!newType.nominatable) state.nominations[a.id].enabled = false;
+      if (newType.forced) state.nominations[a.id].enabled = true;
+      renderAssets();
+    });
+    row.querySelector('[data-field="value"]').addEventListener('input', e => { a.value = +e.target.value || 0; updateTotals(); updateNomShelf(a.id); });
+    row.querySelector('[data-field="growth"]').addEventListener('input', e => { a.growth = +e.target.value || 0; });
+    row.querySelector('.del-btn').addEventListener('click', () => deleteAsset(a.id));
+
+    const nomToggle = row.querySelector('[data-toggle-nom]');
+    if (nomToggle && !isForced) {
+      nomToggle.addEventListener('click', () => {
+        nom.enabled = !nom.enabled;
+        renderAssets();
+      });
+    }
+
+    wrap.appendChild(row);
+
+    // Nomination shelf
+    if (isNominatable && nomState) {
+      const shelf = buildNominationShelf(a, typeObj);
+      wrap.appendChild(shelf);
+    }
+
+    list.appendChild(wrap);
+  });
+  updateTotals();
+}
+
+function buildNominationShelf(asset, typeObj) {
+  const shelf = document.createElement('div');
+  shelf.className = 'nomination-shelf show';
+  shelf.dataset.assetId = asset.id;
+  const nom = state.nominations[asset.id];
+  const people = getAllPeople();
+
+  let infoText = '';
+  if (typeObj.id === 'cpf') {
+    infoText = 'CPF nominations bypass your will entirely. Funds go directly to nominees.';
+  } else if (typeObj.id === 'insurance') {
+    infoText = 'Revocable nomination: nominee receives proceeds directly. Trust nomination: irrevocable, max protection.';
+  }
+
+  // Available = people not yet nominated for this asset
+  const nominatedIds = Object.keys(nom.shares);
+  const available = people.filter(p => !nominatedIds.includes(p.id));
+
+  const dropdownOptions = available.length === 0
+    ? `<option value="">— All beneficiaries added —</option>`
+    : `<option value="">Select beneficiary to add...</option>` +
+      available.map(p => `<option value="${p.id}">${escapeHtml(p.name)} · ${p.rel}</option>`).join('');
+
+  // Existing nominee chips
+  let chipsHTML = '';
+  nominatedIds.forEach(pid => {
+    const person = people.find(p => p.id === pid);
+    if (!person) return;
+    const pct = nom.shares[pid] || 0;
+    const amount = (asset.value * pct) / 100;
+    chipsHTML += `
+      <div class="nominee-chip" data-pid="${pid}">
+        <div class="nominee-chip-name"><strong>${escapeHtml(person.name)}</strong> <span class="rel">· ${person.rel}</span></div>
+        <input type="number" min="0" max="100" step="0.1" value="${pct.toFixed(1)}" data-pct>
+        <div class="nominee-chip-amount">${formatMoney(amount)}</div>
+        <button class="del-mini" title="Remove">×</button>
+      </div>
+    `;
+  });
+
+  // Total + warning
+  const total = Object.values(nom.shares).reduce((s, v) => s + (+v || 0), 0);
+  let warnHTML = '';
+  if (nominatedIds.length > 0) {
+    if (Math.abs(total - 100) < 0.05) {
+      warnHTML = `<div class="nom-warn ok">✓ Nomination totals 100%</div>`;
+    } else {
+      warnHTML = `<div class="nom-warn err">⚠ Total = ${total.toFixed(1)}% — must equal 100% to be valid</div>`;
+    }
+  }
+
+  const equalSplitBtn = nominatedIds.length > 1
+    ? `<button class="add-btn" style="width: auto; padding: 6px 12px; margin: 0; font-size: 11px;" data-equal-split>↔ Equal split</button>`
+    : '';
+
+  shelf.innerHTML = `
+    <div class="nom-head">
+      <div class="nom-title">⚖️ ${typeObj.nominationLabel}</div>
+      <div class="nom-info">${infoText}</div>
+      ${equalSplitBtn}
+    </div>
+    <div class="nominees-list">${chipsHTML}</div>
+    ${people.length > 0 ? `
+      <div class="nominee-add-row">
+        <select data-add-select>${dropdownOptions}</select>
+        <input type="number" placeholder="%" min="0" max="100" step="0.1" value="" data-add-pct>
+        <div></div>
+        <button class="add-pill" data-add-btn ${available.length === 0 ? 'disabled' : ''}>+</button>
+      </div>
+    ` : `<div style="font-size: 12px; color: var(--mute); font-style: italic; padding: 8px 0;">Add beneficiaries in the Family tab to nominate them.</div>`}
+    ${warnHTML}
+  `;
+
+  // Bind: chip percent input + delete
+  shelf.querySelectorAll('.nominee-chip').forEach(chip => {
+    const pid = chip.dataset.pid;
+    const pctInput = chip.querySelector('[data-pct]');
+    pctInput.addEventListener('input', e => {
+      nom.shares[pid] = +e.target.value || 0;
+      const amount = (asset.value * (nom.shares[pid] || 0)) / 100;
+      chip.querySelector('.nominee-chip-amount').textContent = formatMoney(amount);
+      updateNomShelf(asset.id);
+    });
+    chip.querySelector('.del-mini').addEventListener('click', () => {
+      delete nom.shares[pid];
+      renderAssets();
+    });
+  });
+
+  // Bind: add new nominee
+  const addSelect = shelf.querySelector('[data-add-select]');
+  const addPct = shelf.querySelector('[data-add-pct]');
+  const addBtn = shelf.querySelector('[data-add-btn]');
+  if (addBtn) {
+    addBtn.addEventListener('click', () => {
+      const pid = addSelect.value;
+      if (!pid) return;
+      const pct = +addPct.value || 0;
+      nom.shares[pid] = pct;
+      renderAssets();
+    });
+  }
+
+  // Bind: equal split
+  const equalBtn = shelf.querySelector('[data-equal-split]');
+  if (equalBtn) {
+    equalBtn.addEventListener('click', () => {
+      const ids = Object.keys(nom.shares);
+      if (ids.length === 0) return;
+      const eq = 100 / ids.length;
+      ids.forEach(pid => { nom.shares[pid] = eq; });
+      renderAssets();
+    });
+  }
+
+  return shelf;
+}
+
+function updateNomShelf(assetId) {
+  // Live-update warning text & total without full re-render
+  const shelves = document.querySelectorAll(`.nomination-shelf[data-asset-id="${assetId}"]`);
+  shelves.forEach(shelf => {
+    const nom = state.nominations[assetId];
+    const total = Object.values(nom.shares).reduce((s, v) => s + (+v || 0), 0);
+    let warn = shelf.querySelector('.nom-warn');
+    if (!warn) {
+      warn = document.createElement('div');
+      shelf.appendChild(warn);
+    }
+    if (Object.keys(nom.shares).length > 0) {
+      if (Math.abs(total - 100) < 0.05) {
+        warn.className = 'nom-warn ok';
+        warn.textContent = '✓ Nomination totals 100%';
+      } else {
+        warn.className = 'nom-warn err';
+        warn.textContent = `⚠ Total = ${total.toFixed(1)}% — must equal 100%`;
+      }
+    }
+  });
+}
+
+function isAssetNominated(assetId) {
+  const a = state.assets.find(x => x.id === assetId);
+  if (!a) return false;
+  const typeObj = ASSET_TYPES.find(t => t.id === a.type);
+  if (!typeObj || !typeObj.nominatable) return false;
+  const nom = state.nominations[assetId];
+  if (!nom) return false;
+  if (typeObj.forced) {
+    // CPF: counts as nominated only if shares add to 100
+    const total = Object.values(nom.shares).reduce((s, v) => s + (+v || 0), 0);
+    return Math.abs(total - 100) < 0.05;
+  }
+  if (!nom.enabled) return false;
+  const total = Object.values(nom.shares).reduce((s, v) => s + (+v || 0), 0);
+  return Math.abs(total - 100) < 0.05;
+}
+
+function updateTotals() {
+  const total = state.assets.reduce((s, a) => s + (+a.value || 0), 0);
+  let nominated = 0;
+  state.assets.forEach(a => {
+    if (isAssetNominated(a.id)) nominated += +a.value || 0;
+  });
+  document.getElementById('total-estate').textContent = formatMoney(total);
+  document.getElementById('total-nominated').textContent = formatMoney(nominated);
+  document.getElementById('total-distrib').textContent = formatMoney(total - nominated);
+}
+
+// ───────── ALLOCATIONS ─────────
+function getAllPeople() {
+  const list = [];
+  if (state.spouse.name && state.spouse.name.trim()) {
+    list.push({ id: 'spouse', gen: 'self', name: state.spouse.name, rel: 'Spouse', age: state.spouse.age });
+  }
+  ['elders', 'kids', 'grand', 'others'].forEach(g => {
+    state.people[g].forEach(p => {
+      if (p.name && p.name.trim()) list.push(p);
+    });
+  });
+  return list;
+}
+
+function getAllocationShares(assetId) {
+  // If nominated, allocations are determined by nomination
+  if (isAssetNominated(assetId)) {
+    return { ...state.nominations[assetId].shares };
+  }
+
+  const alloc = state.allocations[assetId];
+  if (!alloc) return {};
+  const people = getAllPeople();
+  if (people.length === 0) return {};
+
+  if (alloc.mode === 'equal-kids') {
+    const kids = state.people.kids.filter(p => p.name && p.name.trim());
+    if (kids.length === 0) return {};
+    const pct = 100 / kids.length;
+    return Object.fromEntries(kids.map(k => [k.id, pct]));
+  }
+  if (alloc.mode === 'spouse-first') {
+    const spouse = people.find(p => p.id === 'spouse');
+    if (spouse) return { spouse: 100 };
+    const kids = state.people.kids.filter(p => p.name && p.name.trim());
+    if (kids.length > 0) {
+      const pct = 100 / kids.length;
+      return Object.fromEntries(kids.map(k => [k.id, pct]));
+    }
+    const pct = 100 / people.length;
+    return Object.fromEntries(people.map(p => [p.id, pct]));
+  }
+  if (alloc.mode === 'equal-all') {
+    const pct = 100 / people.length;
+    return Object.fromEntries(people.map(p => [p.id, pct]));
+  }
+  return alloc.shares || {};
+}
+
+function renderAllocations() {
+  const list = document.getElementById('alloc-list');
+  list.innerHTML = '';
+
+  // Filter out nominated assets - they bypass the will entirely
+  const willAssets = state.assets.filter(a => !isAssetNominated(a.id));
+  const nominatedAssets = state.assets.filter(a => isAssetNominated(a.id));
+
+  if (state.assets.length === 0) {
+    list.innerHTML = '<div class="empty">Add assets first on the previous tab.</div>';
+    return;
+  }
+  const people = getAllPeople();
+  if (people.length === 0) {
+    list.innerHTML = '<div class="empty">Add at least one beneficiary in the Family tab first.</div>';
+    return;
+  }
+
+  // Show summary of nominated assets at top
+  if (nominatedAssets.length > 0) {
+    const nomTotal = nominatedAssets.reduce((s, a) => s + (+a.value || 0), 0);
+    const summary = document.createElement('div');
+    summary.style.cssText = 'background: linear-gradient(180deg, rgba(184,146,79,0.12), rgba(184,146,79,0.04)); border: 1px solid var(--gold); border-radius: 12px; padding: 16px 18px; margin-bottom: 18px;';
+    let listHTML = nominatedAssets.map(a => {
+      const typeObj = ASSET_TYPES.find(t => t.id === a.type) || ASSET_TYPES[0];
+      return `<span style="display:inline-block; padding: 4px 10px; background: white; border: 1px solid var(--gold-soft); border-radius: 100px; margin: 2px 4px 2px 0; font-size: 12px;">${typeObj.icon} ${escapeHtml(a.name) || typeObj.label} · ${formatMoney(a.value)}</span>`;
+    }).join('');
+    summary.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+        <span style="font-size: 16px;">🔒</span>
+        <strong style="font-family: 'Fraunces', serif; font-size: 16px; color: var(--ink);">${nominatedAssets.length} nominated asset${nominatedAssets.length > 1 ? 's' : ''} — ${formatMoney(nomTotal)}</strong>
+      </div>
+      <div style="font-size: 12px; color: var(--mute); margin-bottom: 10px; line-height: 1.6;">These bypass the will and go directly to nominees. Manage them on the Assets tab.</div>
+      <div>${listHTML}</div>
+    `;
+    list.appendChild(summary);
+  }
+
+  if (willAssets.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'empty';
+    empty.innerHTML = 'All assets are nominated — nothing to allocate via the will.';
+    list.appendChild(empty);
+    return;
+  }
+
+  // Section header for will assets
+  const willHeader = document.createElement('div');
+  willHeader.style.cssText = 'font-family: "Fraunces", serif; font-size: 18px; color: var(--ink); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed var(--line);';
+  willHeader.innerHTML = `📜 Allocate via Will <span style="font-size: 12px; color: var(--mute); font-style: italic; font-family: 'Inter', sans-serif; font-weight: 400; margin-left: 8px;">${willAssets.length} asset${willAssets.length > 1 ? 's' : ''}</span>`;
+  list.appendChild(willHeader);
+
+  willAssets.forEach(asset => {
+    const alloc = state.allocations[asset.id];
+    const typeObj = ASSET_TYPES.find(t => t.id === asset.type) || ASSET_TYPES[0];
+    const card = document.createElement('div');
+    card.className = 'allocation-card';
+
+    const shares = getAllocationShares(asset.id);
+
+    const modeBtnsHTML = `
+      <div class="alloc-mode">
+        <button class="mode-btn ${alloc.mode === 'spouse-first' ? 'active' : ''}" data-mode="spouse-first">Spouse first</button>
+        <button class="mode-btn ${alloc.mode === 'equal-kids' ? 'active' : ''}" data-mode="equal-kids">Equal · kids</button>
+        <button class="mode-btn ${alloc.mode === 'equal-all' ? 'active' : ''}" data-mode="equal-all">Equal · all</button>
+        <button class="mode-btn ${alloc.mode === 'custom' ? 'active' : ''}" data-mode="custom">Custom</button>
+      </div>
+    `;
+
+    card.innerHTML = `
+      <div class="alloc-head">
+        <div class="alloc-title">
+          <span style="font-size:20px;">${typeObj.icon}</span>
+          <span>${escapeHtml(asset.name) || '<em style="color:var(--mute);">(unnamed asset)</em>'}</span>
+          <span class="alloc-amount">${formatMoney(asset.value)}</span>
+        </div>
+        ${modeBtnsHTML}
+      </div>
+      <div class="benef-rows"></div>
+      <div class="alloc-warning" data-warn></div>
+    `;
+
+    const benefRows = card.querySelector('.benef-rows');
+    people.forEach(person => {
+      const pctVal = shares[person.id] !== undefined ? shares[person.id] : 0;
+      const isIncluded = pctVal > 0;
+      const amount = (asset.value * pctVal) / 100;
+      const isCustom = alloc.mode === 'custom';
+
+      const row = document.createElement('div');
+      row.className = 'beneficiary-row' + (isIncluded ? ' included' : '');
+      row.innerHTML = `
+        <div class="benef-name">
+          <div class="benef-checkbox ${isIncluded ? 'checked' : ''}" ${isCustom ? '' : 'style="opacity:0.5;cursor:not-allowed;"'}>
+            ${isIncluded ? '✓' : ''}
+          </div>
+          <span><strong>${escapeHtml(person.name)}</strong>
+            <span style="color:var(--mute);font-size:11px;"> · ${person.rel}</span>
+          </span>
+        </div>
+        <input type="number" class="benef-pct" value="${pctVal.toFixed(1)}" min="0" max="100" step="0.1" ${isCustom ? '' : 'disabled'}>
+        <div class="benef-amount ${isIncluded ? 'included' : ''}">${formatMoney(amount)}</div>
+      `;
+
+      if (isCustom) {
+        const cb = row.querySelector('.benef-checkbox');
+        const input = row.querySelector('.benef-pct');
+        cb.addEventListener('click', () => {
+          if (alloc.shares[person.id]) delete alloc.shares[person.id];
+          else alloc.shares[person.id] = 0;
+          renderAllocations();
+        });
+        input.addEventListener('input', e => {
+          const v = +e.target.value || 0;
+          alloc.shares[person.id] = v;
+          row.querySelector('.benef-amount').textContent = formatMoney((asset.value * v) / 100);
+          updateWarning(card, asset);
+        });
+      }
+
+      benefRows.appendChild(row);
+    });
+
+    card.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        alloc.mode = btn.dataset.mode;
+        if (alloc.mode === 'custom' && Object.keys(alloc.shares).length === 0) {
+          alloc.shares = { ...getAllocationShares(asset.id) };
+        }
+        renderAllocations();
+      });
+    });
+
+    list.appendChild(card);
+    updateWarning(card, asset);
+  });
+}
+
+function updateWarning(card, asset) {
+  if (isAssetNominated(asset.id)) return;
+  const alloc = state.allocations[asset.id];
+  const shares = getAllocationShares(asset.id);
+  const total = Object.values(shares).reduce((s, v) => s + (+v || 0), 0);
+  const warn = card.querySelector('[data-warn]');
+  if (alloc.mode === 'custom') {
+    if (Math.abs(total - 100) < 0.05) {
+      warn.className = 'alloc-warning show ok';
+      warn.textContent = `✓ Allocated 100%`;
+    } else if (total === 0) {
+      warn.className = 'alloc-warning show error';
+      warn.textContent = `⚠ Nothing allocated yet`;
+    } else {
+      warn.className = 'alloc-warning show error';
+      warn.textContent = `⚠ Total = ${total.toFixed(1)}% (need 100%)`;
+    }
+  } else {
+    warn.className = 'alloc-warning';
+    warn.textContent = '';
+  }
+}
+
+// ───────── CANVAS ─────────
+function renderCanvas() {
+  const svg = document.getElementById('legacy-canvas');
+  svg.innerHTML = '';
+  const people = getAllPeople();
+  if (people.length === 0 || state.assets.length === 0) {
+    svg.innerHTML = `<text x="50%" y="50%" text-anchor="middle" font-family="Fraunces,serif" fill="#8a7d68" font-size="16" font-style="italic">Add family members and assets to see the map</text>`;
+    svg.setAttribute('viewBox', '0 0 800 400');
+    return;
+  }
+
+  const W = 1200, padX = 60;
+  const colAssetX = padX + 20;
+  const colPersonX = W - padX - 220;
+  const cardW = 200, cardH = 64, gapY = 18;
+
+  const assetPositions = {};
+  state.assets.forEach((a, i) => {
+    assetPositions[a.id] = { x: colAssetX, y: 80 + i * (cardH + gapY), cx: colAssetX + cardW / 2, cy: 80 + i * (cardH + gapY) + cardH / 2 };
+  });
+
+  const genOrder = ['self', 'kids', 'elders', 'grand', 'others'];
+  const ordered = [];
+  genOrder.forEach(g => { people.filter(p => p.gen === g).forEach(p => ordered.push(p)); });
+
+  const personPositions = {};
+  ordered.forEach((p, i) => {
+    personPositions[p.id] = { x: colPersonX, y: 80 + i * (cardH + gapY), cx: colPersonX + cardW / 2, cy: 80 + i * (cardH + gapY) + cardH / 2 };
+  });
+
+  const H = Math.max(80 + state.assets.length * (cardH + gapY) + 60, 80 + ordered.length * (cardH + gapY) + 60, 500);
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+  const defs = svgEl('defs');
+  defs.innerHTML = `
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+      <feOffset dx="0" dy="2" result="offset"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.15"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  `;
+  svg.appendChild(defs);
+
+  const lbl1 = svgEl('text', { x: colAssetX + cardW / 2, y: 50, 'text-anchor': 'middle', 'font-family': 'Inter, sans-serif', 'font-size': 11, 'font-weight': 700, fill: '#b8924f', 'letter-spacing': 2 });
+  lbl1.textContent = 'ASSETS';
+  svg.appendChild(lbl1);
+  const lbl2 = svgEl('text', { x: colPersonX + cardW / 2, y: 50, 'text-anchor': 'middle', 'font-family': 'Inter, sans-serif', 'font-size': 11, 'font-weight': 700, fill: '#b8924f', 'letter-spacing': 2 });
+  lbl2.textContent = 'BENEFICIARIES';
+  svg.appendChild(lbl2);
+
+  // Connections
+  state.assets.forEach(asset => {
+    const shares = getAllocationShares(asset.id);
+    const isNominated = isAssetNominated(asset.id);
+    const ap = assetPositions[asset.id];
+    Object.entries(shares).forEach(([pid, pct]) => {
+      const pp = personPositions[pid];
+      if (!pp || pct <= 0) return;
+      const strokeW = Math.max(1.5, Math.min(8, pct / 12));
+      const opacity = Math.max(0.25, Math.min(0.85, pct / 100 + 0.25));
+      const color = isNominated ? '#b8924f' : colorForGen((people.find(p => p.id === pid) || {}).gen || 'self');
+      const dashArray = isNominated ? '0' : '0';
+
+      const path = svgEl('path', {
+        d: bezierPath(ap.x + cardW, ap.cy, pp.x, pp.cy),
+        stroke: color, 'stroke-width': strokeW, fill: 'none', opacity,
+        'stroke-linecap': 'round', 'stroke-dasharray': dashArray
+      });
+      svg.appendChild(path);
+
+      const midX = (ap.x + cardW + pp.x) / 2;
+      const midY = (ap.cy + pp.cy) / 2;
+      const lblBg = svgEl('rect', { x: midX - 24, y: midY - 9, width: 48, height: 18, rx: 9, fill: 'white', stroke: color, 'stroke-width': 1, opacity: 0.95 });
+      svg.appendChild(lblBg);
+      const lblTxt = svgEl('text', { x: midX, y: midY + 4, 'text-anchor': 'middle', 'font-family': 'Inter, sans-serif', 'font-size': 10, 'font-weight': 700, fill: color });
+      lblTxt.textContent = `${pct.toFixed(0)}%`;
+      svg.appendChild(lblTxt);
+    });
+  });
+
+  // Asset cards
+  state.assets.forEach(asset => {
+    const p = assetPositions[asset.id];
+    const typeObj = ASSET_TYPES.find(t => t.id === asset.type) || ASSET_TYPES[0];
+    const isNominated = isAssetNominated(asset.id);
+    const stripeColor = isNominated ? '#b8924f' : '#5a7a5e';
+    const g = svgEl('g', { filter: 'url(#shadow)' });
+    g.appendChild(svgEl('rect', { x: p.x, y: p.y, width: cardW, height: cardH, rx: 12, fill: 'white', stroke: isNominated ? '#b8924f' : '#e8d9b3', 'stroke-width': 1.5 }));
+    g.appendChild(svgEl('rect', { x: p.x, y: p.y, width: 4, height: cardH, fill: stripeColor }));
+    const icon = svgEl('text', { x: p.x + 20, y: p.y + 28, 'font-size': 18, 'text-anchor': 'middle' });
+    icon.textContent = typeObj.icon;
+    g.appendChild(icon);
+    const name = svgEl('text', { x: p.x + 38, y: p.y + 24, 'font-family': 'Fraunces, serif', 'font-size': 14, 'font-weight': 600, fill: '#2c1810' });
+    name.textContent = truncate(asset.name || typeObj.label, 22);
+    g.appendChild(name);
+    const val = svgEl('text', { x: p.x + 38, y: p.y + 44, 'font-family': 'Inter, sans-serif', 'font-size': 12, 'font-weight': 600, fill: '#b8924f' });
+    val.textContent = formatMoney(asset.value);
+    g.appendChild(val);
+    const t = svgEl('text', { x: p.x + 38, y: p.y + 58, 'font-family': 'Inter, sans-serif', 'font-size': 10, fill: '#8a7d68', 'letter-spacing': 1 });
+    t.textContent = (isNominated ? '🔒 NOMINATED · ' : '') + typeObj.label.toUpperCase();
+    g.appendChild(t);
+    svg.appendChild(g);
+  });
+
+  // Person cards
+  ordered.forEach(person => {
+    const p = personPositions[person.id];
+    const color = colorForGen(person.gen);
+    const g = svgEl('g', { filter: 'url(#shadow)' });
+    g.appendChild(svgEl('rect', { x: p.x, y: p.y, width: cardW, height: cardH, rx: 12, fill: 'white', stroke: color, 'stroke-width': 1.5 }));
+    g.appendChild(svgEl('rect', { x: p.x + cardW - 4, y: p.y, width: 4, height: cardH, fill: color }));
+    g.appendChild(svgEl('circle', { cx: p.x + 26, cy: p.y + 32, r: 16, fill: color, opacity: 0.15 }));
+    const initial = svgEl('text', { x: p.x + 26, y: p.y + 37, 'text-anchor': 'middle', 'font-family': 'Fraunces, serif', 'font-size': 16, 'font-weight': 600, fill: color });
+    initial.textContent = (person.name || '?').charAt(0).toUpperCase();
+    g.appendChild(initial);
+    const name = svgEl('text', { x: p.x + 50, y: p.y + 26, 'font-family': 'Fraunces, serif', 'font-size': 14, 'font-weight': 600, fill: '#2c1810' });
+    name.textContent = truncate(person.name, 18);
+    g.appendChild(name);
+    const rel = svgEl('text', { x: p.x + 50, y: p.y + 42, 'font-family': 'Inter, sans-serif', 'font-size': 11, fill: '#8a7d68' });
+    rel.textContent = person.rel + (person.age ? ` · age ${person.age}` : '');
+    g.appendChild(rel);
+    const total = totalForPerson(person.id);
+    if (total > 0) {
+      const t = svgEl('text', { x: p.x + 50, y: p.y + 56, 'font-family': 'Inter, sans-serif', 'font-size': 11, 'font-weight': 700, fill: color });
+      t.textContent = '↩ ' + formatMoney(total);
+      g.appendChild(t);
+    }
+    svg.appendChild(g);
+  });
+}
+
+function totalForPerson(pid) {
+  let total = 0;
+  state.assets.forEach(a => {
+    const shares = getAllocationShares(a.id);
+    if (shares[pid]) total += (a.value * shares[pid]) / 100;
+  });
+  return total;
+}
+
+function bezierPath(x1, y1, x2, y2) { const dx = (x2 - x1) * 0.5; return `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`; }
+function svgEl(tag, attrs = {}) { const el = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const k in attrs) el.setAttribute(k, attrs[k]); return el; }
+function colorForGen(gen) { return ({ elders: '#8a6a8a', self: '#5a7a5e', kids: '#b8924f', grand: '#6b8cae', others: '#8a7d68' })[gen] || '#5a7a5e'; }
+function truncate(s, n) { if (!s) return ''; return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+
+function downloadSVG() {
+  const svg = document.getElementById('legacy-canvas');
+  const str = '<?xml version="1.0" encoding="UTF-8"?>\n' + new XMLSerializer().serializeToString(svg);
+  const blob = new Blob([str], { type: 'image/svg+xml' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = `legacy-map-${(state.client.name || 'client').replace(/\s+/g, '_')}.svg`; a.click();
+}
+
+// ───────── ISA SIMULATION ─────────
+function calculateISADistribution() {
+  const distributable = state.assets
+    .filter(a => !isAssetNominated(a.id))
+    .reduce((s, a) => s + (+a.value || 0), 0);
+
+  // Filter family members by ISA-relevant relationships
+  const namedFilter = p => p.name && p.name.trim();
+  const spouse = (state.spouse.name && state.spouse.name.trim()) ? { id: 'spouse', name: state.spouse.name } : null;
+  const kids = state.people.kids.filter(namedFilter);
+  // Parents under ISA = biological/adoptive parents only, NOT in-laws or grandparents
+  const parents = state.people.elders.filter(p => namedFilter(p) && /^(Father|Mother)$/.test(p.rel));
+  // Siblings live under "Others" with rel = Brother or Sister
+  const siblings = state.people.others.filter(p => namedFilter(p) && /^(Brother|Sister)$/.test(p.rel));
+  // Grandparents live under "Elders" with rel = Grandparent
+  const grandparents = state.people.elders.filter(p => namedFilter(p) && p.rel === 'Grandparent');
+
+  const ctx = {
+    hasSpouse: !!spouse,
+    hasKids: kids.length > 0,
+    hasParents: parents.length > 0,
+    hasSiblings: siblings.length > 0,
+    hasGrandparents: grandparents.length > 0
+  };
+
+  let appliedRule = null;
+  let dist = {};
+
+  // Rules in priority order — first match applies
+  if (ctx.hasSpouse && !ctx.hasKids && !ctx.hasParents) {
+    appliedRule = ISA_RULES[0]; // Rule 1
+    dist[spouse.id] = distributable;
+  } else if (ctx.hasSpouse && ctx.hasKids) {
+    appliedRule = ISA_RULES[1]; // Rule 2
+    dist[spouse.id] = distributable * 0.5;
+    const each = (distributable * 0.5) / kids.length;
+    kids.forEach(k => { dist[k.id] = each; });
+  } else if (!ctx.hasSpouse && ctx.hasKids) {
+    appliedRule = ISA_RULES[2]; // Rule 3
+    const each = distributable / kids.length;
+    kids.forEach(k => { dist[k.id] = each; });
+  } else if (ctx.hasSpouse && !ctx.hasKids && ctx.hasParents) {
+    appliedRule = ISA_RULES[3]; // Rule 4
+    dist[spouse.id] = distributable * 0.5;
+    const each = (distributable * 0.5) / parents.length;
+    parents.forEach(p => { dist[p.id] = each; });
+  } else if (!ctx.hasSpouse && !ctx.hasKids && ctx.hasParents) {
+    appliedRule = ISA_RULES[4]; // Rule 5
+    const each = distributable / parents.length;
+    parents.forEach(p => { dist[p.id] = each; });
+  } else if (!ctx.hasSpouse && !ctx.hasKids && !ctx.hasParents && ctx.hasSiblings) {
+    appliedRule = ISA_RULES[5]; // Rule 6
+    const each = distributable / siblings.length;
+    siblings.forEach(s => { dist[s.id] = each; });
+  } else if (!ctx.hasSpouse && !ctx.hasKids && !ctx.hasParents && !ctx.hasSiblings && ctx.hasGrandparents) {
+    appliedRule = ISA_RULES[6]; // Rule 7
+    const each = distributable / grandparents.length;
+    grandparents.forEach(g => { dist[g.id] = each; });
+  } else {
+    // Rule 9: Government takes everything
+    appliedRule = ISA_RULES[8];
+  }
+
+  return {
+    rule: appliedRule,
+    distribution: dist,
+    distributable
+  };
+}
+
+// ───────── REPORT ─────────
+function renderReport() {
+  const content = document.getElementById('report-content');
+  const people = getAllPeople();
+  const totalEstate = state.assets.reduce((s, a) => s + (+a.value || 0), 0);
+  const allocated = people.reduce((s, p) => s + totalForPerson(p.id), 0);
+  const unallocated = totalEstate - allocated;
+  const nominatedTotal = state.assets.reduce((s, a) => s + (isAssetNominated(a.id) ? (+a.value || 0) : 0), 0);
+
+  let html = '';
+
+  // ─── 1. SUMMARY HEADER ───
+  html += `
+    <div class="section">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Estate summary</div>
+          <div class="section-sub">${escapeHtml(state.client.name)}${state.spouse.name ? ' &amp; ' + escapeHtml(state.spouse.name) : ''} · ${new Date().toLocaleDateString('en-SG', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+        </div>
+        <button class="canvas-btn primary" onclick="window.print()">🖨 Print full report</button>
+      </div>
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-label">Total estate</div>
+          <div class="summary-value">${formatMoney(totalEstate)}</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Via nomination</div>
+          <div class="summary-value" style="color: var(--gold);">${formatMoney(nominatedTotal)}</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Allocated (Will)</div>
+          <div class="summary-value">${formatMoney(allocated - nominatedTotal)}</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Unallocated</div>
+          <div class="summary-value" style="color: ${unallocated > 1 ? 'var(--rose)' : 'var(--sage)'};">${formatMoney(unallocated)}</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // ─── 2. PER-BENEFICIARY ───
+  if (people.length > 0) {
+    html += `
+      <div class="section">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Per-beneficiary breakdown</div>
+            <div class="section-sub">What each person receives, totalled across all assets.</div>
+          </div>
+        </div>
+        <div class="benef-cards">
+    `;
+    people.forEach(p => {
+      const total = totalForPerson(p.id);
+      if (total <= 0) return;
+      const pctOfEstate = totalEstate > 0 ? (total / totalEstate * 100).toFixed(1) : '0';
+      let items = '';
+      state.assets.forEach(a => {
+        const shares = getAllocationShares(a.id);
+        if (shares[p.id]) {
+          const amt = (a.value * shares[p.id]) / 100;
+          const typeObj = ASSET_TYPES.find(t => t.id === a.type) || ASSET_TYPES[0];
+          const nomTag = isAssetNominated(a.id) ? `<span class="nom-tag">NOM</span>` : '';
+          items += `
+            <div class="benef-card-item">
+              <span class="name">${typeObj.icon} ${escapeHtml(a.name) || typeObj.label} ${nomTag}</span>
+              <span class="amt">${formatMoney(amt)}</span>
+            </div>
+          `;
+        }
+      });
+      html += `
+        <div class="benef-card ${p.gen}">
+          <div class="benef-card-name">${escapeHtml(p.name)}</div>
+          <div class="benef-card-rel">${p.rel}${p.age ? ' · age ' + p.age : ''}</div>
+          <div class="benef-card-total">${formatMoney(total)}</div>
+          <div style="font-size:11px;color:var(--mute);margin-bottom:8px;">${pctOfEstate}% of estate</div>
+          <div class="benef-card-list">${items}</div>
+        </div>
+      `;
+    });
+    html += `</div></div>`;
+  }
+
+  // ─── 3. PROJECTED GROWTH ───
+  html += renderGrowthSection();
+
+  // ─── 4. WITH vs WITHOUT PLANNING ───
+  html += renderComparisonSection();
+
+  // ─── 5. ISA EXPLAINER ───
+  html += renderISASection();
+
+  // ─── 6. WILL/TRUST HANDOVER ───
+  html += renderHandoverSection();
+
+  content.innerHTML = html;
+}
+
+function renderGrowthSection() {
+  const currentAge = +state.client.age || 53;
+  const ALL_MILESTONES = [55, 65, 70, 80, 90];
+  const milestones = ALL_MILESTONES.filter(age => age > currentAge);
+  if (milestones.length === 0) return '';
+
+  // Helper: project one asset to a target age
+  const projectAsset = (a, targetAge) => {
+    const yrs = Math.max(0, targetAge - currentAge);
+    const r = (a.growth || 0) / 100;
+    return (a.value || 0) * Math.pow(1 + r, yrs);
+  };
+
+  let rowsHTML = '';
+  state.assets.forEach(a => {
+    const typeObj = ASSET_TYPES.find(t => t.id === a.type) || ASSET_TYPES[0];
+    const cells = milestones.map(age => `<td>${formatMoney(projectAsset(a, age))}</td>`).join('');
+    rowsHTML += `
+      <tr>
+        <td>${typeObj.icon} ${escapeHtml(a.name) || typeObj.label}</td>
+        <td style="font-size: 11px; color: var(--mute);">${(a.growth || 0).toFixed(1)}%</td>
+        <td>${formatMoney(a.value)}</td>
+        ${cells}
+      </tr>
+    `;
+  });
+
+  // Totals row
+  const totalsCells = milestones.map(age => {
+    const tot = state.assets.reduce((s, a) => s + projectAsset(a, age), 0);
+    return `<td>${formatMoney(tot)}</td>`;
+  }).join('');
+  const currentTotal = state.assets.reduce((s, a) => s + (+a.value || 0), 0);
+
+  const ageHeaderCells = milestones.map(age => {
+    const subtitle = age === 55 ? 'CPF withdrawal' : age === 65 ? 'CPF payouts' : '';
+    return `<th class="age-col"><span style="color: var(--gold-soft);">Age</span> ${age}${subtitle ? `<br><span style="font-size: 9px; opacity: 0.7; font-weight: 400; letter-spacing: 0.05em;">${subtitle}</span>` : ''}</th>`;
+  }).join('');
+
+  return `
+    <div class="section">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Estate growth projection</div>
+          <div class="section-sub">Each asset compounded at its own rate from current age ${currentAge}. CRM data can refresh values at age 55 and 65.</div>
+        </div>
+      </div>
+      <table class="growth-table">
+        <thead>
+          <tr>
+            <th>Asset</th>
+            <th style="font-size: 9px;">Rate</th>
+            <th>Today (age ${currentAge})</th>
+            ${ageHeaderCells}
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHTML}
+          <tr class="total">
+            <td>Total estate</td>
+            <td></td>
+            <td>${formatMoney(currentTotal)}</td>
+            ${totalsCells}
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size: 11px; color: var(--mute); font-style: italic; margin-top: 10px;">
+        Compounded annually at each asset's individual growth rate. Useful for the death-at-age scenario discussion. Actual values at retirement milestones (55, 65) should be refreshed from CRM/CPF/bank data when available — these projections assume continued growth at the same rate.
+      </p>
+    </div>
+  `;
+}
+
+function renderComparisonSection() {
+  const isaResult = calculateISADistribution();
+  const totalEstate = state.assets.reduce((s, a) => s + (+a.value || 0), 0);
+  const distributable = isaResult.distributable;
+  const nominatedTotal = totalEstate - distributable;
+
+  const people = getAllPeople();
+
+  // Build comparison rows: each beneficiary, with planning vs without
+  let rowsHTML = '';
+  people.forEach(p => {
+    const withPlanning = totalForPerson(p.id);
+    const withoutPlanning = (isaResult.distribution[p.id] || 0) + getNominationOnlyAmount(p.id);
+
+    if (withPlanning === 0 && withoutPlanning === 0) return;
+
+    const diff = withPlanning - withoutPlanning;
+    const diffStr = diff > 0
+      ? `<span style="color: var(--sage-dark); font-weight: 600;">+${formatMoney(diff)}</span>`
+      : diff < 0
+        ? `<span style="color: var(--rose); font-weight: 600;">${formatMoney(diff)}</span>`
+        : `<span style="color: var(--mute);">—</span>`;
+
+    rowsHTML += `
+      <tr>
+        <td class="label">${escapeHtml(p.name)}<br><span style="font-size:10px;color:var(--mute);font-weight:400;">${p.rel}</span></td>
+        <td class="with-cell"><span class="compare-amt">${formatMoney(withPlanning)}</span></td>
+        <td class="without-cell"><span class="compare-amt">${formatMoney(withoutPlanning)}</span></td>
+        <td>${diffStr}</td>
+      </tr>
+    `;
+  });
+
+  // Calculate "no qualifying relatives" scenario warning
+  const totalAllocatedISA = Object.values(isaResult.distribution).reduce((s, v) => s + v, 0) + nominatedTotal;
+  const isaUnallocated = totalEstate - totalAllocatedISA;
+  let warningRow = '';
+  if (isaUnallocated > 1) {
+    warningRow = `
+      <tr>
+        <td class="label" style="color: var(--rose);">⚠ Goes to Government<br><span style="font-size:10px;font-weight:400;">(bona vacantia)</span></td>
+        <td class="with-cell">${formatMoney(0)}</td>
+        <td class="without-cell"><span class="compare-amt">${formatMoney(isaUnallocated)}</span></td>
+        <td><span style="color: var(--rose); font-weight: 600;">+${formatMoney(isaUnallocated)} kept in family</span></td>
+      </tr>
+    `;
+  }
+
+  return `
+    <div class="section">
+      <div class="section-head">
+        <div>
+          <div class="section-title">With planning vs without planning</div>
+          <div class="section-sub">If ${escapeHtml(state.client.name)} passes today with no will, here's how the Intestate Succession Act would distribute the estate.</div>
+        </div>
+      </div>
+
+      <div style="background: var(--paper-2); border-radius: 10px; padding: 14px 18px; margin-bottom: 14px; border-left: 4px solid var(--ink);">
+        <div style="font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700; color: var(--gold); margin-bottom: 4px;">Applicable ISA Rule</div>
+        <div style="font-family: 'Fraunces', serif; font-size: 17px; color: var(--ink); margin-bottom: 4px;">
+          ${isaResult.rule.num} — ${isaResult.rule.cond}
+        </div>
+        <div style="font-size: 12px; color: var(--mute);">${isaResult.rule.dist}</div>
+      </div>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Beneficiary</th>
+            <th class="with">With your plan</th>
+            <th class="without">Without (intestate)</th>
+            <th>Difference</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHTML || '<tr><td colspan="4" style="text-align:center;color:var(--mute);font-style:italic;padding:20px;">No beneficiaries.</td></tr>'}
+          ${warningRow}
+        </tbody>
+      </table>
+
+      <div style="margin-top: 14px; padding: 12px 16px; background: rgba(232,217,179,0.3); border-radius: 8px; font-size: 12px; line-height: 1.6; color: var(--ink);">
+        <strong style="color: var(--gold-soft); filter: brightness(0.6);">📍 Note on nominations:</strong> CPF and nominated insurance amounts always go directly to nominees regardless of whether you have a will. They form part of the "without planning" column only if a CPF nomination has been made.
+      </div>
+    </div>
+  `;
+}
+
+function getNominationOnlyAmount(pid) {
+  // For "without planning" scenario: only count nominated assets
+  let total = 0;
+  state.assets.forEach(a => {
+    if (isAssetNominated(a.id)) {
+      const shares = state.nominations[a.id].shares;
+      if (shares[pid]) total += (a.value * shares[pid]) / 100;
+    }
+  });
+  return total;
+}
+
+function renderISASection() {
+  const isaResult = calculateISADistribution();
+
+  let rulesHTML = '';
+  ISA_RULES.forEach(rule => {
+    const applies = rule.num === isaResult.rule.num;
+    rulesHTML += `
+      <div class="isa-rule ${applies ? 'applies' : ''}">
+        <div class="rule-num">${rule.num}</div>
+        <div class="rule-cond">${rule.cond}</div>
+        <div class="rule-dist">${rule.dist}</div>
+        ${applies ? '<div class="applies-tag">✓ Applies to you</div>' : ''}
+      </div>
+    `;
+  });
+
+  return `
+    <div class="section">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Singapore Intestate Succession Act 1967</div>
+          <div class="section-sub">The default distribution if there is no will. Section 7, nine rules in priority order.</div>
+        </div>
+      </div>
+      <p style="font-size: 13px; color: var(--ink); line-height: 1.7; margin-bottom: 8px;">
+        For non-Muslims domiciled in Singapore, the <strong>Intestate Succession Act 1967</strong> governs how an estate is distributed when there is no valid will. The rules apply in priority order — only the first matching rule applies. Muslims are governed by Faraidh under the Administration of Muslim Law Act.
+      </p>
+      <p style="font-size: 12px; color: var(--mute); margin-bottom: 12px;">
+        The rule that applies to ${escapeHtml(state.client.name)}'s current family situation is highlighted below.
+      </p>
+      <div class="isa-rules">${rulesHTML}</div>
+      <div style="margin-top: 16px; padding: 12px 16px; background: var(--paper-2); border-radius: 8px; font-size: 12px; line-height: 1.6; color: var(--mute);">
+        <strong style="color: var(--ink); display: block; margin-bottom: 4px;">Important context:</strong>
+        "Children" under the ISA means <em>legitimate</em> and <em>legally adopted</em> children only — illegitimate children, stepchildren (not adopted), and informally fostered children do <strong>not</strong> inherit under intestacy. Per stirpes applies: if a child predeceases the intestate, that child's share passes equally to their issue (i.e. the intestate's grandchildren).
+      </div>
+    </div>
+  `;
+}
+
+function renderHandoverSection() {
+  const totalEstate = state.assets.reduce((s, a) => s + (+a.value || 0), 0);
+  const recommendsTrust = totalEstate >= 2000000 || state.people.kids.some(k => k.age && +k.age < 21);
+  const hasMinorKids = state.people.kids.some(k => k.age && +k.age < 21);
+
+  // Detect what's already done
+  const cpfAssets = state.assets.filter(a => a.type === 'cpf');
+  const cpfDone = cpfAssets.length > 0 && cpfAssets.every(a => isAssetNominated(a.id));
+  const cpfPartial = cpfAssets.some(a => isAssetNominated(a.id)) && !cpfDone;
+
+  const insuranceAssets = state.assets.filter(a => a.type === 'insurance');
+  const insuranceDone = insuranceAssets.length > 0 && insuranceAssets.every(a => isAssetNominated(a.id));
+  const insurancePartial = insuranceAssets.some(a => isAssetNominated(a.id)) && !insuranceDone;
+  const hasInsurance = insuranceAssets.length > 0;
+
+  let recommendation = 'A simple will is sufficient for your situation.';
+  if (recommendsTrust) {
+    if (hasMinorKids) {
+      recommendation = `Consider a <strong>testamentary trust</strong> (built into the will) — you have minor children${totalEstate >= 2000000 ? ' and a substantial estate' : ''}. A trust lets you control when and how children receive funds (e.g. age 25 instead of 21).`;
+    } else {
+      recommendation = `Consider a <strong>standby trust or living trust</strong> alongside your will — your estate size warrants it for asset protection and probate efficiency.`;
+    }
+  }
+
+  // Build steps array adaptively
+  const steps = [];
+
+  // Step: CPF nomination
+  if (cpfAssets.length > 0) {
+    if (cpfDone) {
+      steps.push({
+        title: 'CPF nomination — ✓ already in place',
+        body: `Your CPF nomination is captured. <strong>Action:</strong> verify it's still active at <strong>cpf.gov.sg</strong> and review every 3-5 years (especially after marriage, divorce, or birth).`
+      });
+    } else if (cpfPartial) {
+      steps.push({
+        title: 'Complete the remaining CPF nominations',
+        body: `Some CPF accounts have nominations but not all. Without complete coverage, the un-nominated portion goes to the Public Trustee's Office (slower, with fees) and follows ISA rules. Complete the remaining nomination at <strong>cpf.gov.sg</strong> in 10 minutes.`
+      });
+    } else {
+      steps.push({
+        title: 'Lock in your CPF nomination today (free, online)',
+        body: `CPF balances <strong>cannot</strong> be distributed via your will — they require a separate CPF nomination. Without one, funds go to the Public Trustee's Office, which charges fees and applies ISA rules. Make a nomination at <strong>cpf.gov.sg</strong> in 10 minutes (need 2 witnesses, online or at any ServiceSG centre).`
+      });
+    }
+  }
+
+  // Step: Insurance nominations
+  if (hasInsurance) {
+    if (insuranceDone) {
+      steps.push({
+        title: `Insurance nominations — ✓ all ${insuranceAssets.length} polic${insuranceAssets.length > 1 ? 'ies' : 'y'} done`,
+        body: `Your insurance policies have nominations registered. <strong>Action:</strong> confirm with each insurer that nomination forms are on file. Note: from 2 Jan 2024, a will made <em>after</em> a revocable nomination automatically supersedes that nomination if disclosed to the insurer — so coordinate the will draft with these nominations.`
+      });
+    } else if (insurancePartial) {
+      const remaining = insuranceAssets.filter(a => !isAssetNominated(a.id)).length;
+      steps.push({
+        title: `Complete nominations for the remaining ${remaining} polic${remaining > 1 ? 'ies' : 'y'}`,
+        body: `${insuranceAssets.length - remaining} of ${insuranceAssets.length} policies have nominations. Complete the rest — each policy needs its own form submitted directly to the insurer. <strong>Revocable</strong> = you keep control. <strong>Trust nomination</strong> = irrevocable but creditor-protected.`
+      });
+    } else {
+      steps.push({
+        title: 'Make insurance nominations for each policy',
+        body: `Each life insurance policy needs its own nomination form — submit directly to the insurer. <strong>Revocable nomination</strong> (most common): you keep full control, can change anytime. <strong>Trust nomination</strong> (irrevocable): policy proceeds protected from your creditors but you lose flexibility. Note: from 2 Jan 2024, a will made <em>after</em> a revocable nomination automatically supersedes that nomination if disclosed to the insurer.`
+      });
+    }
+  }
+
+  // Step: Engage will-writer or estate lawyer (always)
+  steps.push({
+    title: 'Engage a will-writer or estate lawyer',
+    body: `${recommendation} Bring this Legacy Map printout to the appointment. A simple will costs S$200–$400 with a lawyer; a will with testamentary trust runs S$800–$2,000. Will-writing services (non-lawyer) can be cheaper but you may sacrifice complexity handling.`
+  });
+
+  // Step: Sign properly (always)
+  steps.push({
+    title: 'Sign the will properly',
+    body: `Two witnesses (21+, of sound mind) must be physically present at the same time. <strong>Witnesses cannot be beneficiaries or spouses of beneficiaries</strong> — if they are, those gifts may fail. Sign in wet ink at the foot. Keep the original with the executor or in a safe place; tell family where it is.`
+  });
+
+  // Step: Review periodically (always)
+  steps.push({
+    title: 'Review every 3–5 years or after major life events',
+    body: `Marriage <strong>automatically revokes</strong> a prior will (unless made in contemplation of marriage). Update the map and the will after marriage, divorce, birth, death, large asset purchases/sales, or moving abroad.`
+  });
+
+  let stepsHTML = '';
+  steps.forEach((step, i) => {
+    stepsHTML += `
+      <div class="handover-step">
+        <div class="step-num">${i + 1}</div>
+        <div class="step-content">
+          <h4>${step.title}</h4>
+          <p>${step.body}</p>
+        </div>
+      </div>
+    `;
+  });
+
+  // Adaptive subtitle
+  const completionCount = (cpfDone ? 1 : 0) + (insuranceDone ? 1 : 0);
+  const totalAvailable = (cpfAssets.length > 0 ? 1 : 0) + (hasInsurance ? 1 : 0);
+  let subtitle = `Based on your family structure and estate size of ${formatMoney(totalEstate)}.`;
+  if (totalAvailable > 0 && completionCount === totalAvailable && completionCount > 0) {
+    subtitle = `${formatMoney(totalEstate)} estate · all nominations in place — focus shifts to the will itself.`;
+  } else if (completionCount > 0) {
+    subtitle = `${formatMoney(totalEstate)} estate · ${completionCount} of ${totalAvailable} nomination categories complete.`;
+  }
+
+  return `
+    <div class="section">
+      <div class="section-head">
+        <div>
+          <div class="section-title">From this map to a legal will</div>
+          <div class="section-sub">What this document is, what it isn't, and the next steps to make it legally binding.</div>
+        </div>
+      </div>
+
+      <div style="background: var(--paper-2); padding: 16px 18px; border-radius: 10px; margin-bottom: 18px; border-left: 4px solid var(--sage);">
+        <div style="font-family: 'Fraunces', serif; font-size: 16px; color: var(--ink); margin-bottom: 6px;">What this Legacy Map <em>is</em>:</div>
+        <div style="font-size: 13px; color: var(--ink); line-height: 1.7;">
+          A complete blueprint of your estate, family, and intentions — ready to hand to a will-writer or estate lawyer. It documents every asset, every beneficiary, the exact split you want, and which items are already covered by nomination. <strong>This saves your lawyer 1–2 hours of discovery, which means a faster and cheaper engagement with fewer mistakes.</strong>
+        </div>
+      </div>
+
+      <div class="disclaimer-box">
+        <strong>What this Legacy Map is NOT:</strong>
+        Under Singapore's <strong>Wills Act 1838</strong>, a valid will requires: testator aged 21+, sound mind, signed in <em>wet ink</em> at the foot of the document, witnessed by <strong>two</strong> witnesses physically present at the same time who are not beneficiaries (or spouses of beneficiaries). Electronic wills are not recognised. <strong>This printout, even if signed, is not a legally valid will.</strong> A trust requires a properly drafted trust deed and is even more formality-heavy. Always consult a qualified will-writer or estate lawyer.
+      </div>
+
+      <div class="handover-card">
+        <div class="handover-title">Recommended next steps</div>
+        <div class="handover-sub">${subtitle}</div>
+        ${stepsHTML}
+      </div>
+    </div>
+  `;
+}
+
+// ───────── HELPERS ─────────
+function formatMoney(amount) { if (!amount) return '$0'; return '$' + Math.round(amount).toLocaleString(); }
+function escapeHtml(s) { if (!s) return ''; return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function renderAll() { renderAllPeople(); renderAssets(); }
+
+init();
+</script>
+</body>
+</html>
