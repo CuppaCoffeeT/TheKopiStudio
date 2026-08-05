@@ -64,7 +64,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         aria-busy={loading || undefined}
         className={cn(
           iconSize,
-          'rounded-md inline-flex items-center justify-center cursor-pointer transition-transform',
+          'rounded-md inline-flex items-center justify-center cursor-pointer transition duration-[var(--motion-duration-hover)] ease-[var(--motion-ease-out-expo)]',
           'bg-transparent text-muted-foreground',
           'hover:bg-card hover:text-[color:var(--fg-dim)]',
           'active:scale-[0.94] active:bg-secondary',
@@ -103,7 +103,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       className={cn(
         sizeMap,
         variantClass,
-        'rounded-lg inline-flex items-center gap-2 font-medium whitespace-nowrap cursor-pointer transition-transform',
+        'rounded-lg inline-flex items-center gap-2 font-medium whitespace-nowrap cursor-pointer transition duration-[var(--motion-duration-hover)] ease-[var(--motion-ease-out-expo)]',
         'active:scale-[0.97]',
         'disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',

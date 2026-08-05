@@ -73,8 +73,9 @@ export function PageShell({
           keeps detail pages composed on wide screens, and because every band
           carries the same PANE_X gutter, their left edges stay on one grid. */}
       <div className="mx-auto w-full max-w-8xl">
-        {hero}
-        {tabs}
+        {/* Entrance stagger (2026-08-05 motion pass): hero → tabs → columns. */}
+        {hero && <div className="motion-rise">{hero}</div>}
+        {tabs && <div className="motion-rise motion-rise-2">{tabs}</div>}
         {/* Single render path — responsive via one-column→md:grid. A second path
             mounts children twice, breaking hook state + form ownership.
             W09 P2 · fix 2026-04-21. */}
@@ -85,9 +86,9 @@ export function PageShell({
             showSideRail && 'md:grid-cols-[1.4fr_1fr]',
           )}
         >
-          <main className="flex min-w-0 flex-col gap-6">{main}</main>
+          <main className="flex min-w-0 flex-col gap-6 motion-rise motion-rise-2">{main}</main>
           {showSideRail && (
-            <aside className={cn('flex min-w-0 flex-col gap-6', sideRailClassName)}>
+            <aside className={cn('flex min-w-0 flex-col gap-6 motion-rise motion-rise-3', sideRailClassName)}>
               {sideRail}
             </aside>
           )}

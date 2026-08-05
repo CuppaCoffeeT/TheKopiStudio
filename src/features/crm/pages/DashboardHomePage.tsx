@@ -100,7 +100,7 @@ export default function DashboardHomePage() {
     <div className="min-h-dvh bg-background px-4 py-7 sm:px-10 sm:py-12">
       <div className="mx-auto max-w-5xl">
         <GreetingHeader
-          className="mb-10"
+          className="mb-10 motion-rise-hero"
           name={profile?.name || user?.email?.split('@')[0] || 'there'}
           dateText={dateText}
           timeOfDay={timeOfDay}
@@ -113,7 +113,11 @@ export default function DashboardHomePage() {
           }
         />
 
-        {canProfile && <StartProfilerBand onStart={() => navigate(PROFILER_PATH)} />}
+        {canProfile && (
+          <div className="motion-rise motion-rise-2">
+            <StartProfilerBand onStart={() => navigate(PROFILER_PATH)} />
+          </div>
+        )}
 
         {!hasClients ? (
           <p className="text-[13px] leading-[1.6] text-[color:var(--fg-dim)]">
@@ -132,13 +136,13 @@ export default function DashboardHomePage() {
             onRetry={() => void queueQuery.refetch()}
           />
         ) : queue ? (
-          <>
+          <div className="motion-rise motion-rise-3">
             <CustomerQueueBoard
               queue={queue}
               resolveAction={resolveAction}
               onAddCustomer={() => setChoiceOpen(true)}
             />
-          </>
+          </div>
         ) : null}
       </div>
 

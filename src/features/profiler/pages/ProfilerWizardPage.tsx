@@ -23,6 +23,8 @@
  * progress rail, the content and the footer nav share one column.
  */
 
+import { cn } from '@/lib/utils';
+import { useScrolled } from '@/hooks/useScrolled';
 import { SEO } from '@/components/primitives/shell/SEO';
 import { Button } from '@/components/primitives/shell/Button';
 import { Progress } from '@/components/primitives/form';
@@ -41,6 +43,7 @@ import '../lib/print.css';
 export default function ProfilerWizardPage() {
   const c = useWizardController();
   const { wizard, info, screen, inFlow, isQuestionScreen } = c;
+  const scrolled = useScrolled();
 
   return (
     <div className="min-h-dvh bg-background">
@@ -48,7 +51,12 @@ export default function ProfilerWizardPage() {
       {/* ONE sticky block for the bar + the progress rail. Pinning them
           separately needed a hardcoded `top-[53px]` that silently broke
           whenever the bar's height changed; nesting removes the constant. */}
-      <div className="print-hide sticky top-0 z-40">
+      <div
+        className={cn(
+          'print-hide sticky top-0 z-40 transition-shadow duration-300 ease-[var(--motion-ease-out-expo)]',
+          scrolled && 'shadow-[var(--card-shadow-hover)]',
+        )}
+      >
         <WizardTopBar subtitle={c.subtitle} isAuthenticated={Boolean(c.user)} />
         {inFlow && (
           <div className="border-b border-border bg-card">

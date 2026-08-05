@@ -38,7 +38,7 @@ export function IntakeForm({ intake, onChange, onStart }: IntakeFormProps) {
           saturated off-palette mark; the serif line carries the screen now.
           Hero step matches the app's fluid rhythm (2026-08-05 retune) —
           same clamp family as the login wordmark. */}
-      <header className="border-b border-border pb-6 pt-2">
+      <header className="border-b border-border pb-6 pt-2 motion-rise-hero">
         <Eyebrow className="text-[color:var(--brown-text)]">Prospect Profiling</Eyebrow>
         <PageTitle
           className="leading-[1.05] tracking-[-0.02em]"
@@ -51,7 +51,7 @@ export function IntakeForm({ intake, onChange, onStart }: IntakeFormProps) {
         </PageDescription>
       </header>
 
-      <Card>
+      <Card className="motion-rise motion-rise-2">
         <Eyebrow>Your Details</Eyebrow>
         <div className="flex flex-col gap-4">
           <Field label="Your Name (Advisor)">
@@ -125,7 +125,7 @@ export function IntakeForm({ intake, onChange, onStart }: IntakeFormProps) {
           (cn is twMerge, so it replaced Card's bg-card), which both inverted the
           raised-card ladder and dropped this block's copy to 3.68–4.06:1. On
           card cream the list reads 4.72:1 and the eyebrow 5.21:1. */}
-      <Card className="border-accent/30">
+      <Card className="border-accent/30 motion-rise motion-rise-3">
         <Eyebrow className="text-[color:var(--brown-text)]">How it works</Eyebrow>
         <ol className="m-0 list-decimal pl-4 text-[13px] leading-7 text-muted-foreground">
           <li>Answer 8 profiling questions</li>
@@ -135,7 +135,7 @@ export function IntakeForm({ intake, onChange, onStart }: IntakeFormProps) {
         </ol>
       </Card>
 
-      <Button size="lg" className="w-full" onClick={onStart} data-testid="wizard-start-btn">
+      <Button size="lg" className="w-full motion-rise motion-rise-4" onClick={onStart} data-testid="wizard-start-btn">
         Start Profiling →
       </Button>
     </div>

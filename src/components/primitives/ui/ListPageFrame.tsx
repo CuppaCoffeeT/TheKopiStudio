@@ -117,6 +117,9 @@ export function ListPageFrame(props: ListPageFrameProps) {
       {chrome.impersonation.active && <ImpersonationBanner {...chrome.impersonation.props} />}
 
       <div className="max-w-8xl mx-auto px-4 py-6 sm:px-6 sm:py-10 lg:px-10 lg:py-12">
+        {/* Entrance stagger (2026-08-05 motion pass): header → chrome → table,
+            ~70ms apart, once per mount. Collapsed by prefers-reduced-motion. */}
+        <div className="motion-rise">
         <ListPageHeader
           kicker={kicker}
           title={title}
@@ -131,22 +134,23 @@ export function ListPageFrame(props: ListPageFrameProps) {
           primaryActionTestId={primaryActionTestId}
           showPrimaryAction={!floatingCTAOnly}
         />
+        </div>
 
-        {banner && <div className="mb-8">{banner}</div>}
+        {banner && <div className="mb-8 motion-rise motion-rise-2">{banner}</div>}
 
         {kpiTiles && (
-          <div className="mb-8 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+          <div className="mb-8 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 motion-rise motion-rise-2">
             {kpiTiles}
           </div>
         )}
 
         {tabs && tabs.length > 0 && activeTab && onTabChange && (
-          <StatusTabs tabs={tabs} activeTab={activeTab} onTabChange={onTabChange} className="mb-5" />
+          <StatusTabs tabs={tabs} activeTab={activeTab} onTabChange={onTabChange} className="mb-5 motion-rise motion-rise-3" />
         )}
 
         {hasFilterRow && (
           <FilterBar
-            className="mb-5"
+            className="mb-5 motion-rise motion-rise-3"
             showSearch={false}
             query={searchQuery}
             onQueryChange={onSearchChange}
@@ -160,7 +164,9 @@ export function ListPageFrame(props: ListPageFrameProps) {
           />
         )}
 
-        <ListPageTable {...props} stateAction={stateAction} />
+        <div className="motion-rise motion-rise-4">
+          <ListPageTable {...props} stateAction={stateAction} />
+        </div>
 
         {primaryAction && (
           <div className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-20 md:hidden">

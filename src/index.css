@@ -169,6 +169,25 @@
 }
 
 /* ---------------------------------------------------------------------------
+ * Entrance motion (2026-08-05) — extends the RESERVED philosophy: page-level
+ * blocks rise in once, staggered ~70ms, ease-out-expo, and nothing loops.
+ * `backwards` keeps delayed blocks invisible until their turn. Compose:
+ * `motion-rise` (or `motion-rise-hero` for mastheads) + one optional
+ * `motion-rise-N` delay step. The reduced-motion block at the end of this
+ * file collapses all of it to an instant appearance.
+ * ------------------------------------------------------------------------- */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+.motion-rise { animation: rise-in var(--motion-duration-entrance) var(--motion-ease-out-expo) backwards; }
+.motion-rise-hero { animation: rise-in 600ms var(--motion-ease-out-expo) backwards; }
+.motion-rise-2 { animation-delay: 70ms; }
+.motion-rise-3 { animation-delay: 140ms; }
+.motion-rise-4 { animation-delay: 210ms; }
+.motion-rise-5 { animation-delay: 280ms; }
+
+/* ---------------------------------------------------------------------------
  * Runtime CSS custom properties — shadcn HSL pattern (unchanged from v3).
  * These are what the 400+ existing components reference via utilities like
  * `bg-background`, `text-foreground`, `border-border`, etc.
@@ -486,6 +505,8 @@
   --motion-duration-instant: 80ms;                    /* button feedback */
   --motion-duration-quick: 180ms;                     /* row enter/exit, hover */
   --motion-duration-smooth: 400ms;                    /* page transitions */
+  --motion-duration-entrance: 500ms;                  /* block rise-in on mount (2026-08-05) */
+  --motion-duration-hover: 200ms;                     /* colour/shadow hover transitions */
   --motion-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);   /* locked 2026-04-20 (LOCKED_PICKS motion) */
   --motion-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
@@ -583,6 +604,7 @@
   a {
     color: var(--brand-red);
     text-decoration: none;
+    transition: color var(--motion-duration-hover) var(--motion-ease-out-expo);
   }
   a:hover {
     color: var(--cta-primary-bg-hover);
@@ -601,5 +623,22 @@
 
   input[type="number"] {
     -moz-appearance: textfield;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Reduced motion — the whole motion system collapses to instant state
+ * changes. Unlayered + !important on purpose: it must beat every utility,
+ * token and inline animation the app declares. (JS-driven Motion-library
+ * springs are out of CSS reach; primitives using them should also check
+ * `useReducedMotion`.)
+ * ------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

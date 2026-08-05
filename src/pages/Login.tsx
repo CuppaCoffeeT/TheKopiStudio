@@ -53,7 +53,7 @@ export default function Login() {
       style={{ fontFamily: 'var(--font-sans)' }}
     >
       <main className="w-full max-w-sm">
-        <header className="mb-10">
+        <header className="mb-10 motion-rise-hero">
           <p
             className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--fg-dim)]"
             data-testid="login-kicker"
@@ -68,7 +68,7 @@ export default function Login() {
           </h1>
         </header>
 
-        <Card>
+        <Card className="motion-rise motion-rise-2">
           <h2
             className="text-[22px] leading-tight text-foreground m-0"
             style={{ fontFamily: 'var(--font-pixel)', fontWeight: 400 }}

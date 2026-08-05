@@ -17,6 +17,7 @@
  * `.no-print` class `features/crm/lib/report-print.css` owns), like the rail.
  */
 import { cn } from '@/lib/utils';
+import { useScrolled } from '@/hooks/useScrolled';
 import type { BreadcrumbSegment } from './Breadcrumb';
 import { AppHeaderLogo } from './AppHeaderLogo';
 import { AppHeaderUserMenu } from './AppHeaderUserMenu';
@@ -69,6 +70,7 @@ export function AppHeaderMobileBar({
   className,
 }: AppHeaderMobileBarProps) {
   const last = breadcrumb[breadcrumb.length - 1];
+  const scrolled = useScrolled();
 
   const resolvedGlobalSearchClick =
     onGlobalSearchClick === null
@@ -82,6 +84,8 @@ export function AppHeaderMobileBar({
         'no-print print:hidden lg:hidden',
         'sticky top-0 z-30 backdrop-blur-xl backdrop-saturate-[1.4]',
         'bg-card/[0.72] border-b border-border',
+        'transition-shadow duration-300 ease-[var(--motion-ease-out-expo)]',
+        scrolled && 'shadow-[var(--card-shadow-hover)]',
         className,
       )}
       style={{ fontFamily: 'var(--font-sans)' }}

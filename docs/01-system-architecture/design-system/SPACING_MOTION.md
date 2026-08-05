@@ -81,7 +81,24 @@ Retuned 2026-07-25 for the Kopi cream canvas. **2a cards rest FLAT** — the lif
 |---|---|---|---|
 | `--motion-duration-instant` | 80ms | linear | Tooltip fade, icon flip — "instant" feedback |
 | `--motion-duration-quick` | 180ms | `--motion-ease-out-expo` | Row enter / exit, hover-to-active |
+| `--motion-duration-hover` | 200ms | `--motion-ease-out-expo` | Colour/shadow hover on buttons + links (2026-08-05) |
 | `--motion-duration-smooth` | 400ms | `--motion-ease-spring` | Modal / drawer open, count-up, tab swap |
+| `--motion-duration-entrance` | 500ms (hero 600ms) | `--motion-ease-out-expo` | Block rise-in on mount (2026-08-05) |
+
+### Entrance system (2026-08-05 — extends RESERVED)
+
+Page-level blocks rise in **once per mount**: 10px up-fade, `ease-out-expo`,
+staggered ~70ms via `motion-rise` / `motion-rise-hero` + `motion-rise-2…5`
+(`src/index.css`). Wired centrally in `ListPageFrame` (header → chrome →
+table) and `PageShell` (hero → tabs → columns), plus the dashboard, login and
+profiler-intake heroes — pages composed from the frames inherit it for free.
+Sticky bars (`AppHeaderMobileBar`, the wizard's sticky block) gain
+`--card-shadow-hover` once scrolled past 8px via `useScrolled`, eased over
+300ms. Nothing loops, springs or bounces in this system — `ease-spring`
+stays reserved for the signature moments above. A global
+`prefers-reduced-motion` block at the end of `src/index.css` collapses every
+CSS animation/transition to instant; Motion-library springs must keep
+checking `useReducedMotion` themselves.
 
 ### Easing curves
 
