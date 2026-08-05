@@ -70,7 +70,7 @@ export class WizardPage {
     }
   }
 
-  /** Click "Start Profiling →" and wait for question screen 1. */
+  /** Click "Continue to questions →" (wizard-start-btn) and wait for question screen 1. */
   async start(): Promise<void> {
     await this.page.getByTestId('wizard-start-btn').click();
     await this.page.getByTestId('wizard-questions-screen-1').waitFor({ state: 'visible', timeout: 15_000 });
