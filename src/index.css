@@ -623,6 +623,32 @@
     outline-offset: 2px;
   }
 
+  /* ── Finishing details (2026-08-05) — the quiet tells of a finished
+        surface; each inherits the brand instead of a browser default. ── */
+  ::selection {
+    background: rgb(139 106 71 / 0.25);   /* brown wash — ink stays readable */
+    color: var(--fg);
+  }
+  html {
+    scroll-behavior: smooth;              /* reduced-motion block forces auto */
+    scrollbar-color: #c9b9a5 transparent; /* warm thumb on the cream ground */
+  }
+  body {
+    -webkit-tap-highlight-color: transparent; /* our active states carry the feedback */
+  }
+  input, textarea, select {
+    caret-color: var(--brand-brown);
+    accent-color: var(--brand-brown);     /* native checks/radios pick up the brand */
+  }
+  /* Autofill must not repaint the raised-white input yellow. */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset; /* --popover white */
+    -webkit-text-fill-color: var(--fg);
+    caret-color: var(--brand-brown);
+  }
+
   /* Hide number input spinner arrows */
   input[type="number"]::-webkit-inner-spin-button,
   input[type="number"]::-webkit-outer-spin-button {
