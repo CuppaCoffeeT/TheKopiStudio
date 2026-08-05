@@ -52,7 +52,7 @@ export function useWizardController() {
       ? `${info.name} · Profile Ready`
       : inFlow
         ? `Profiling ${info.name}`
-        : 'DISC × MBTI · Auto-Profile';
+        : 'Read any prospect in one meeting';
 
   const handleGenerate = () => {
     const generated = wizard.generate();

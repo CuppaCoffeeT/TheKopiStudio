@@ -119,7 +119,7 @@ export function IntakeForm({ intake, onChange, onStart }: IntakeFormProps) {
             <Field label="Age Range">
               <SelectMenu value={intake.age || undefined} onValueChange={(v) => set({ age: v })}>
                 <SelectMenuTrigger aria-label="Age Range" data-testid="wizard-intake-age-select">
-                  <SelectMenuValue placeholder="Select..." />
+                  <SelectMenuValue placeholder="e.g. 31-35" />
                 </SelectMenuTrigger>
                 <SelectMenuContent>
                   {AGE_RANGES.map((a) => (
@@ -174,10 +174,10 @@ export function IntakeForm({ intake, onChange, onStart }: IntakeFormProps) {
       <Card ref={howRef} className="border-accent/30 motion-rise motion-rise-4 scroll-mt-24">
         <Eyebrow className="text-[color:var(--brown-text)]">How it works</Eyebrow>
         <ol className="m-0 list-decimal pl-4 text-[13px] leading-7 text-muted-foreground">
-          <li>Answer 8 profiling questions</li>
-          <li>Tick body language signals</li>
-          <li>Get instant DISC + MBTI profile</li>
-          <li>Save to database or download</li>
+          <li>Answer 8 questions you can weave into any conversation</li>
+          <li>Tick the body language you're already seeing</li>
+          <li>Get the full DISC × MBTI communication read</li>
+          <li>Save to your CRM, or export the PDF</li>
         </ol>
       </Card>
     </div>

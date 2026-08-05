@@ -76,7 +76,8 @@ export default function Login() {
             Sign in
           </h2>
           <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">
-            Use your account credentials to continue.
+            Accounts are provisioned by your administrator — there is no
+            self-serve sign-up.
           </p>
 
           <form

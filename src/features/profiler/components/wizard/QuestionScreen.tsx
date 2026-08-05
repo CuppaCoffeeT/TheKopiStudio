@@ -17,12 +17,11 @@ interface QuestionScreenProps {
   batch: readonly number[];
   /** 1-based batch number — drives the "Questions 1-4 / 5-8" heading. */
   batchNumber: 1 | 2;
-  prospectName: string;
   answers: ReadonlyArray<RawAnswer | null>;
   onSelect: (qi: number, oi: number) => void;
 }
 
-export function QuestionScreen({ batch, batchNumber, prospectName, answers, onSelect }: QuestionScreenProps) {
+export function QuestionScreen({ batch, batchNumber, answers, onSelect }: QuestionScreenProps) {
   return (
     <div className="flex flex-col gap-3" data-testid={`wizard-questions-screen-${batchNumber}`}>
       {/* Section head, 2a type scale: kicker over Instrument Serif 22px ink,
@@ -30,17 +29,20 @@ export function QuestionScreen({ batch, batchNumber, prospectName, answers, onSe
           direction, so the title stays --fg. */}
       <div className="border-b border-border pb-4">
         <Eyebrow>Questions {batchNumber === 1 ? '1-4' : '5-8'}</Eyebrow>
+        {/* The sticky bar above already carries "Profiling {name}" — repeating
+            it here said nothing (2026-08-05 copy pass). The heading now holds
+            the instruction; the sub holds the judgement call. */}
         <h2
           className="m-0 text-[22px] leading-tight text-foreground"
           style={{ fontFamily: 'var(--font-pixel)', fontWeight: 400 }}
         >
-          Profiling {prospectName}
+          Weave these into the conversation
         </h2>
         {/* This header block is outside the per-question Card, so it paints on
             the page cream where --fg-muted is 4.12:1. --fg-dim reads 6.40:1;
             the Eyebrow above already defaults to it. */}
         <p className="m-0 mt-1.5 text-[13px] leading-6 text-[color:var(--fg-dim)]">
-          Weave into conversation. Pick the best match.
+          Pick the closest match — a gut call beats deliberation.
         </p>
       </div>
 

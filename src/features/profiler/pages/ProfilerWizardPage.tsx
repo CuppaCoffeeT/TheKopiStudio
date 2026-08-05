@@ -91,7 +91,6 @@ export default function ProfilerWizardPage() {
           <QuestionScreen
             batch={QUESTION_BATCHES[(screen as number) - 1]}
             batchNumber={screen as 1 | 2}
-            prospectName={info.name}
             answers={wizard.answers}
             onSelect={wizard.selectOption}
           />
