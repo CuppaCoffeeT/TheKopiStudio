@@ -23,6 +23,8 @@
  * progress rail, the content and the footer nav share one column.
  */
 
+import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useScrolled } from '@/hooks/useScrolled';
 import { AppSidebar, SIDEBAR_OFFSET_CLASS } from '@/components/primitives/shell';
@@ -49,6 +51,23 @@ export default function ProfilerWizardPage() {
   // the shell; anonymous visitors keep the rail-free public flow. The route
   // itself stays public — this is chrome, not access control.
   const authed = Boolean(c.user);
+
+  // CRM entry points pass ?prospect=<name> so the advisor never retypes who
+  // they came to profile. Seed once on arrival; a draft-restored or
+  // hand-typed name always wins.
+  const [searchParams] = useSearchParams();
+  useEffect(() => {
+    const prospect = searchParams.get('prospect');
+    if (prospect && !wizard.intake.name.trim()) {
+      wizard.setIntake({ ...wizard.intake, name: prospect });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Live count for the disabled-Next explanation on question screens.
+  const answeredInBatch = isQuestionScreen
+    ? QUESTION_BATCHES[(screen as number) - 1].filter((qi) => wizard.answers[qi] !== undefined).length
+    : 0;
 
   return (
     <div className="min-h-dvh bg-background">
@@ -127,6 +146,16 @@ export default function ProfilerWizardPage() {
             authed && 'lg:left-[200px]',
           )}
         >
+          {/* Disabled buttons that explain nothing are friction — say what's
+              left. aria-live so screen readers hear progress too. */}
+          {isQuestionScreen && (
+            <p
+              className="m-0 mx-auto w-full max-w-[42rem] px-4 pt-2 text-center text-[12px] text-[color:var(--fg-dim)]"
+              aria-live="polite"
+            >
+              {answeredInBatch < 4 ? `${answeredInBatch} of 4 answered` : 'All 4 answered'}
+            </p>
+          )}
           <div className="mx-auto flex w-full max-w-[42rem] gap-2.5 px-4 py-3">
             <Button size="lg" variant="outline" onClick={c.handleBack} data-testid="wizard-back-btn">
               ← Back

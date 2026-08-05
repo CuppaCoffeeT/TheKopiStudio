@@ -284,3 +284,8 @@ Two rulings, both recorded in full at
 **Why**: Blunt-review round (2026-08-05): the flow labelled itself three times in 120px, and several strings did no work. All QS/NVG persisted content untouched — these are chrome strings only; no test targets them.
 **Flagged, deliberately NOT fixed here**: (1) the five consecutive observation screens (steps 3–7) are the monotony trough of the funnel — collapsing them changes the step count that drafts persist and specs walk, so it needs its own versioned change; (2) the report reveal is where a top agency would spend next (score build-in, printed-report texture) — worth a design handoff, not a drive-by.
 **Impact**: `QuestionScreen.tsx`, `ProfilerWizardPage.tsx`, `useWizardController.ts`, `IntakeForm.tsx`, `Login.tsx`.
+
+## 2026-08-05 — Wizard accepts `?prospect=<name>`; disabled-Next explains itself (UX audit)
+**Decision**: CRM entry points may pass `?prospect=<name>` to `/profiler`; the wizard seeds `intake.name` once on arrival, and a draft-restored or hand-typed name always wins (the seed only fills an empty field). The dashboard queue's per-row "Start profiler" now sends the row's customer name — the generic band and modal entries stay bare on purpose. The in-flow bottom bar shows a live "{n} of 4 answered" line on question screens (aria-live polite) so a disabled Next is never unexplained.
+**Why**: Full-app UX audit (2026-08-05): the queue named who to profile and then made the advisor retype it; and the disabled Next gave no clue what was missing. Anonymous flow unaffected — the param is optional and the route contract unchanged.
+**Impact**: `ProfilerWizardPage.tsx`, `DashboardHomePage.tsx` (crm). Sidebar ⌘K search row shipped in the same audit (`AppSidebar.tsx`, `app-sidebar-search`).

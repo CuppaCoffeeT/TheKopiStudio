@@ -80,7 +80,12 @@ export default function DashboardHomePage() {
   const resolveAction = (customer: QueueCustomer): QueueRowAction => {
     const open = { label: 'Open', onClick: () => navigate(`/clients/${customer.id}`) };
     if (customer.journey.nextStep === 'profiler' && canProfile) {
-      return { label: 'Start profiler', onClick: () => navigate(PROFILER_PATH) };
+      // Carry the customer's name into the wizard — the row names who to
+      // profile; making the advisor retype it was the audit's worst paper-cut.
+      return {
+        label: 'Start profiler',
+        onClick: () => navigate(`${PROFILER_PATH}?prospect=${encodeURIComponent(customer.name)}`),
+      };
     }
     if (customer.journey.nextStep === 'info') {
       return { label: 'Complete info', onClick: () => navigate(`/clients/${customer.id}`) };
