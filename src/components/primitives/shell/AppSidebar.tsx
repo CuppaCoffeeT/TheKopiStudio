@@ -212,26 +212,6 @@ export function AppSidebar() {
         aria-label="Primary"
         className="flex min-h-0 flex-col gap-0.5 overflow-y-auto overscroll-contain"
       >
-        {/* The ⌘K palette is the module jump, but until now nothing on the
-            desktop rail said so — it was undiscoverable chrome (2026-08-05
-            UX audit). Styled as an idle item; dispatches the same event the
-            mobile bar's search icon uses. */}
-        <button
-          type="button"
-          onClick={() => window.dispatchEvent(new Event('open-command-palette'))}
-          className={cn(
-            ITEM_BASE,
-            'w-full cursor-pointer justify-between border-l-transparent text-muted-foreground',
-            'hover:bg-sidebar-accent hover:text-[color:var(--brown-text)]',
-            FOCUS_RING,
-          )}
-          data-testid="app-sidebar-search"
-        >
-          <span>Search</span>
-          <kbd className="rounded border border-sidebar-border px-1.5 py-0.5 text-[10px] text-muted-foreground">
-            ⌘K
-          </kbd>
-        </button>
         <SidebarItem to={HOME_PATH} label={HOME_LABEL} end />
         {hasCustomers && <SidebarItem to={CUSTOMERS_PATH} label={CUSTOMERS_LABEL} />}
 

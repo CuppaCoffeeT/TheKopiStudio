@@ -54,7 +54,6 @@ export interface ListPageFrameProps extends ListPageTableProps {
   searchQuery: string;
   onSearchChange: (q: string) => void;
   searchPlaceholder?: string;
-  showCommandHint?: boolean;
   filters?: ReactNode;
   onClearFilters?: () => void;
   onColumnsClick?: () => void;
@@ -83,7 +82,7 @@ export function ListPageFrame(props: ListPageFrameProps) {
   const {
     title, kicker, description, primaryAction, banner, kpiTiles,
     tabs, activeTab, onTabChange,
-    searchQuery, onSearchChange, searchPlaceholder, showCommandHint,
+    searchQuery, onSearchChange, searchPlaceholder,
     filters, onClearFilters, onColumnsClick, onExportClick,
     variant = 'default', totalItems, floatingCTAOnly = false,
     searchTestId, exportTestId, columnsTestId, primaryActionTestId, clearFiltersTestId,
@@ -129,7 +128,6 @@ export function ListPageFrame(props: ListPageFrameProps) {
           onSearchChange={onSearchChange}
           searchPlaceholder={searchPlaceholder}
           searchTestId={searchTestId}
-          showCommandHint={showCommandHint}
           primaryAction={primaryAction}
           primaryActionTestId={primaryActionTestId}
           showPrimaryAction={!floatingCTAOnly}

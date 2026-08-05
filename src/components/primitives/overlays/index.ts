@@ -88,6 +88,5 @@ export {
   CommandPaletteSeparator,
   CommandPaletteEmpty,
 } from './CommandPaletteAtoms';
-export { useCommandPaletteHotkey } from './useCommandPaletteHotkey';
 export type { OverlayVariant } from './shared';
 export { VARIANT_ACCENT, VARIANT_ICON, GLASS_SURFACE, GLASS_BACKDROP } from './shared';

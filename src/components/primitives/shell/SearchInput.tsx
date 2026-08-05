@@ -8,8 +8,8 @@
  *
  * Spec parity: matches the left half of `<FilterBar>` (S-shell ListAtoms) —
  * same type ramp, same brown focus ring (`--ring` at 50%), same mag-glass icon.
- * Difference: the ⌘K hint is hidden by default (most cell-level places
- * don't wire up a palette hotkey); set `showKbd` to re-enable it.
+ * (The former `showKbd` ⌘K hint was removed 2026-08-05 with the palette
+ * hotkey itself — user direction.)
  *
  * If you need active-filter chips + filter popovers alongside the search,
  * reach for `<FilterBar>` instead — this primitive is the atom inside it.
@@ -27,7 +27,6 @@
 import { forwardRef, useId } from 'react';
 import { Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Kbd } from '../overlays/Kbd';
 
 export type SearchInputSize = 'sm' | 'md';
 
@@ -40,8 +39,6 @@ interface SearchInputProps {
   placeholder?: string;
   /** `md` (default, h-9 320px — FilterBar parity) · `sm` (h-8 240px — cell/modal). */
   size?: SearchInputSize;
-  /** Show the `⌘K` hint on the right. Defaults to `false` for cell-level use. */
-  showKbd?: boolean;
   /** Show a clear (X) button when `query` is non-empty. Defaults to `true`. */
   clearable?: boolean;
   /** Fix the width. Overrides the size preset. */
@@ -59,8 +56,8 @@ interface SearchInputProps {
 }
 
 /**
- * Accessible search input with mag-glass icon, optional ⌘K hint, and a clear
- * button. Uncontrolled callers should hold their own state + debounce.
+ * Accessible search input with mag-glass icon and a clear button.
+ * Uncontrolled callers should hold their own state + debounce.
  */
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(function SearchInput(
   {
@@ -68,7 +65,6 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(functi
     onQueryChange,
     placeholder = 'Search…',
     size = 'md',
-    showKbd = false,
     clearable = true,
     className,
     ariaLabel,
@@ -132,7 +128,6 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(functi
           <X className="w-2.5 h-2.5" strokeWidth={1.5} />
         </button>
       )}
-      {showKbd && !hasQuery && <Kbd className="ml-1.5">⌘K</Kbd>}
     </div>
   );
 });

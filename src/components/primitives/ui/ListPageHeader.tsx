@@ -35,7 +35,6 @@ export interface ListPageHeaderProps {
   onSearchChange: (q: string) => void;
   searchPlaceholder?: string;
   searchTestId?: string;
-  showCommandHint?: boolean;
   primaryAction?: { label: string; onClick: () => void; icon?: ReactNode };
   primaryActionTestId?: string;
   /** False when the page defers the CTA to the mobile FloatingCTA only. */
@@ -51,7 +50,6 @@ export function ListPageHeader({
   onSearchChange,
   searchPlaceholder,
   searchTestId,
-  showCommandHint,
   primaryAction,
   primaryActionTestId,
   showPrimaryAction = true,
@@ -76,7 +74,6 @@ export function ListPageHeader({
           onQueryChange={onSearchChange}
           placeholder={searchPlaceholder}
           size="md"
-          showKbd={showCommandHint}
           clearable={false}
           inputTestId={searchTestId}
           className="w-[220px] max-w-full flex-1 sm:flex-none"

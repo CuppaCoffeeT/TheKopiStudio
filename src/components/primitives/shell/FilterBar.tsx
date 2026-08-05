@@ -16,10 +16,6 @@ interface FilterBarProps {
   query: string;
   onQueryChange: (next: string) => void;
   searchPlaceholder?: string;
-  /** Show the `⌘K` hint inside the search input. Defaults to `false`.
-   *  Opt-in ONLY when the consumer has wired up a `CommandPalette` hotkey —
-   *  showing the hint without a working hotkey lies to users. */
-  showCommandHint?: boolean;
   /** Render the search field. Defaults to `true`. The 2a list archetype sets
    *  this `false` because search sits on the title row there, leaving this bar
    *  to carry only the filter popovers and the columns/export controls. */
@@ -52,14 +48,12 @@ interface FilterBarProps {
  * Horizontal list-view FilterBar. Search input + caller-provided filter popovers
  * (`filters` prop) + optional active-filter chip row below.
  * Caller controls debounce on `onQueryChange`.
- * `⌘K` hint is OFF by default — opt-in via `showCommandHint` when a palette hotkey is wired.
  */
 export const FilterBar = forwardRef<HTMLInputElement, FilterBarProps>(function FilterBar(
   {
     query,
     onQueryChange,
     searchPlaceholder = 'Search…',
-    showCommandHint = false,
     showSearch = true,
     filters,
     activeFilters = [],
@@ -88,7 +82,6 @@ export const FilterBar = forwardRef<HTMLInputElement, FilterBarProps>(function F
             onQueryChange={onQueryChange}
             placeholder={searchPlaceholder}
             size="md"
-            showKbd={showCommandHint}
             clearable={false}
             inputTestId={searchTestId}
           />

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCommandState } from 'cmdk';
 import { useAuth } from '@/contexts/AuthContext';
@@ -9,7 +9,6 @@ import {
   CommandPaletteGroup,
   CommandPaletteItem,
   CommandPaletteSeparator,
-  useCommandPaletteHotkey,
 } from '@/components/primitives/overlays';
 import {
   groupModulesByCategory,
@@ -23,8 +22,8 @@ const GlobalCommandPalette: React.FC = () => {
   const navigate = useNavigate();
   const { modules } = useAuth();
 
-  useCommandPaletteHotkey(useCallback(() => setOpen((prev) => !prev), []));
-
+  // ⌘K hotkey removed 2026-08-05 by user direction — the palette opens only
+  // from the mobile bar's search icon (the open-command-palette event).
   useEffect(() => {
     const handleOpen = () => setOpen(true);
     window.addEventListener('open-command-palette', handleOpen);
