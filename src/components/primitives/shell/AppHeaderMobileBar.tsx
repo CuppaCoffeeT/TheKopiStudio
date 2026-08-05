@@ -48,7 +48,8 @@ interface AppHeaderMobileBarProps {
 }
 
 const ICON_BUTTON_CLASS = cn(
-  'w-9 h-9 rounded-md inline-flex items-center justify-center text-muted-foreground',
+  // 44px floor — this bar only exists on touch-sized viewports (< lg).
+  'w-11 h-11 rounded-md inline-flex items-center justify-center text-muted-foreground',
   'hover:bg-secondary hover:text-[color:var(--brown-text)]',
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
   'focus-visible:ring-offset-2 focus-visible:ring-offset-background',

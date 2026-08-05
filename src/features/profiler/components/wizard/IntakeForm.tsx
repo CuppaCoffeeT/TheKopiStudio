@@ -64,7 +64,7 @@ export function IntakeForm({ intake, onChange, onStart }: IntakeFormProps) {
             mechanism the headline can't. */}
         <PageTitle
           className="leading-[1.05] tracking-[-0.02em]"
-          style={{ fontSize: 'clamp(38px, 4vw + 22px, 56px)' }}
+          style={{ fontSize: 'clamp(34px, 5vw + 15px, 56px)' }}
         >
           Know how they think before you pitch.
         </PageTitle>
@@ -159,11 +159,19 @@ export function IntakeForm({ intake, onChange, onStart }: IntakeFormProps) {
         </div>
       </Card>
 
+      {/* Advance CTA sits directly under the form — on a phone the thumb lands
+          on it the moment the last field is filled, with no scroll past the
+          supporting card (2026-08-05 mobile pass: content before chrome,
+          CTA before explanation). */}
+      <Button size="lg" className="w-full motion-rise motion-rise-3" onClick={onStart} data-testid="wizard-start-btn">
+        Continue to questions →
+      </Button>
+
       {/* Border-only accent. `bg-accent/10` composited brown over the PAGE cream
           (cn is twMerge, so it replaced Card's bg-card), which both inverted the
           raised-card ladder and dropped this block's copy to 3.68–4.06:1. On
           card cream the list reads 4.72:1 and the eyebrow 5.21:1. */}
-      <Card ref={howRef} className="border-accent/30 motion-rise motion-rise-3 scroll-mt-24">
+      <Card ref={howRef} className="border-accent/30 motion-rise motion-rise-4 scroll-mt-24">
         <Eyebrow className="text-[color:var(--brown-text)]">How it works</Eyebrow>
         <ol className="m-0 list-decimal pl-4 text-[13px] leading-7 text-muted-foreground">
           <li>Answer 8 profiling questions</li>
@@ -172,10 +180,6 @@ export function IntakeForm({ intake, onChange, onStart }: IntakeFormProps) {
           <li>Save to database or download</li>
         </ol>
       </Card>
-
-      <Button size="lg" className="w-full motion-rise motion-rise-4" onClick={onStart} data-testid="wizard-start-btn">
-        Continue to questions →
-      </Button>
     </div>
   );
 }

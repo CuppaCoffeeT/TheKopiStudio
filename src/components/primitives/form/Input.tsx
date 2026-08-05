@@ -56,7 +56,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 ) {
   const heightCls = size === 'lg'
     ? 'h-12 text-[15px] pointer-coarse:text-[16px]'
-    : 'h-10 text-[13px] pointer-coarse:text-[16px]';
+    : 'h-10 pointer-coarse:h-11 text-[13px] pointer-coarse:text-[16px]';
   const hasSlots = !!prefix || !!suffix || !!leadingIcon || !!readOnly;
 
   // Bare mode — no slots. One <input> is the root; Slot/FormControl forwarding works.

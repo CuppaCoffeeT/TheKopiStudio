@@ -30,7 +30,7 @@ export type SelectMenuSize = 'sm' | 'md' | 'lg';
 
 const SIZE_CLASSES: Record<SelectMenuSize, string> = {
   sm: 'h-8 text-[13px]',
-  md: 'h-10 text-[14px]',
+  md: 'h-10 pointer-coarse:h-11 text-[14px]',
   lg: 'h-12 text-[15px]',
 };
 

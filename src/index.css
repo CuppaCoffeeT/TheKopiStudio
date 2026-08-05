@@ -187,6 +187,15 @@
 .motion-rise-4 { animation-delay: 210ms; }
 .motion-rise-5 { animation-delay: 280ms; }
 
+/* Phones get a faster, flatter entrance — same grammar, less waiting, and
+   less main-thread work on low-end devices. (Reduced-motion still wins.) */
+@media (max-width: 640px) {
+  .motion-rise, .motion-rise-hero { animation-duration: 320ms; }
+  .motion-rise-2 { animation-delay: 50ms; }
+  .motion-rise-3 { animation-delay: 100ms; }
+  .motion-rise-4, .motion-rise-5 { animation-delay: 140ms; }
+}
+
 /* ---------------------------------------------------------------------------
  * Runtime CSS custom properties — shadcn HSL pattern (unchanged from v3).
  * These are what the 400+ existing components reference via utilities like
