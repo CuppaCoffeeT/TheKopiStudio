@@ -29,7 +29,7 @@ import { cn } from '@/lib/utils';
 import { useScrolled } from '@/hooks/useScrolled';
 import { AppSidebar, SIDEBAR_OFFSET_CLASS } from '@/components/primitives/shell';
 import { SEO } from '@/components/primitives/shell/SEO';
-import { Button } from '@/components/primitives/shell/Button';
+import { WizardBottomBar } from '../components/wizard/WizardBottomBar';
 import { Progress } from '@/components/primitives/form';
 import { Modal, ModalGhostAction, ModalPrimaryAction } from '@/components/primitives/overlays/Modal';
 import { formatDisplayDateLong } from '@/utils/timezoneUtils';
@@ -140,37 +140,14 @@ export default function ProfilerWizardPage() {
       </div>
 
       {inFlow && (
-        <div
-          className={cn(
-            'print-hide fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card pb-[env(safe-area-inset-bottom)]',
-            authed && 'lg:left-[200px]',
-          )}
-        >
-          {/* Disabled buttons that explain nothing are friction — say what's
-              left. aria-live so screen readers hear progress too. */}
-          {isQuestionScreen && (
-            <p
-              className="m-0 mx-auto w-full max-w-[42rem] px-4 pt-2 text-center text-[12px] text-[color:var(--fg-dim)]"
-              aria-live="polite"
-            >
-              {answeredInBatch < 4 ? `${answeredInBatch} of 4 answered` : 'All 4 answered'}
-            </p>
-          )}
-          <div className="mx-auto flex w-full max-w-[42rem] gap-2.5 px-4 py-3">
-            <Button size="lg" variant="outline" onClick={c.handleBack} data-testid="wizard-back-btn">
-              ← Back
-            </Button>
-            <Button
-              size="lg"
-              className="flex-1"
-              disabled={c.nextDisabled}
-              onClick={c.handleNext}
-              data-testid="wizard-next-btn"
-            >
-              {screen === TOTAL_STEPS ? 'Generate Profile →' : 'Next →'}
-            </Button>
-          </div>
-        </div>
+        <WizardBottomBar
+          isLastStep={screen === TOTAL_STEPS}
+          nextDisabled={c.nextDisabled}
+          onBack={c.handleBack}
+          onNext={c.handleNext}
+          answeredInBatch={isQuestionScreen ? answeredInBatch : null}
+          railOffset={authed}
+        />
       )}
 
       <Modal
