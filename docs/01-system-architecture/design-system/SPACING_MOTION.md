@@ -1,7 +1,7 @@
 # Spacing · Radius · Shadow · Motion
 
 **Created**: 2026-04-19 SGT
-**Last Updated**: 2026-07-25 SGT
+**Last Updated**: 2026-08-05 SGT
 **Status**: 🟢 Production
 **Priority**: 🟡 High
 
@@ -18,11 +18,26 @@ Tailwind v4 default — no custom additions. Locked primitives settle at these c
 | 0.25 | 4 | Icon offset, chip inner padding |
 | 0.5 | 8 | Button gap, chip padding |
 | 0.75 | 12 | Form field padding-y |
-| 1 | 16 | Standard padding (button, input, card) |
-| 1.25 | 20 | Card padding · `--card-padding` |
-| 1.5 | 24 | Section spacing |
-| 2 | 32 | Major layout gap |
-| 3 | 48 | Page section gap |
+| 1 | 16 | Standard padding (button, input) · mobile page gutter |
+| 1.25 | 20 | Compact padding (dense tiles) — former card padding, retired 2026-08-05 |
+| 1.5 | 24 | Card padding · `--card-padding` · detail stack gap |
+| 2 | 32 | Major layout gap (title block → content) |
+| 2.5 | 40 | Desktop content gutter (the comp's own 40px, restored) · hero room |
+| 3 | 48 | Page section gap · desktop frame padding-y |
+
+### Page rhythm (2026-08-05 retune)
+
+Every archetype frame shares one container rhythm — mobile gets its own compact
+scale rather than a shrunk desktop one, and no frame carries arbitrary px values:
+
+- **Gutter / padding-y**: `px-4 py-6` mobile → `sm:px-6 sm:py-10` → `lg:px-10 lg:py-12`
+  (`ListPageFrame` · `AppHeaderShell`; `PageShell` panes use the same `px-4 sm:px-6 md:px-10`).
+- **Content cap**: `max-w-8xl` = **1480px** (retuned from 1650) on every frame,
+  including the detail archetype, which previously had no cap at all.
+- **Detail stack gap**: the comp's 22px ships as `gap-6` (24px, on-scale).
+- **Section gaps inside frames**: banner/KPI `mb-8`, tabs/filter `mb-5`.
+- **Heroes**: masthead block `pb-8` + `mb-10` below; dashboard/login pages
+  `py-12` at desktop.
 
 ## Radius
 

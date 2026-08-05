@@ -49,11 +49,11 @@ export default function Login() {
 
   return (
     <div
-      className="min-h-dvh flex flex-col items-center justify-center bg-background px-4 py-10"
+      className="min-h-dvh flex flex-col items-center justify-center bg-background px-4 py-12"
       style={{ fontFamily: 'var(--font-sans)' }}
     >
       <main className="w-full max-w-sm">
-        <header className="mb-6">
+        <header className="mb-10">
           <p
             className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--fg-dim)]"
             data-testid="login-kicker"

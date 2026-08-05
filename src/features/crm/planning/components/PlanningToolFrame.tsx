@@ -84,7 +84,7 @@ export function PlanningToolFrame({
           <span className="text-foreground">{title}</span>
         </nav>
 
-        <div className="mb-[26px] flex items-end justify-between gap-4 border-b border-border pb-4">
+        <div className="mb-8 flex items-end justify-between gap-4 border-b border-border pb-5">
           <div className="min-w-0">
             <h1 className="m-0 text-[38px] leading-[1.1] tracking-[-0.018em] text-foreground" style={{ fontFamily: 'var(--font-pixel)' }}>
               <span

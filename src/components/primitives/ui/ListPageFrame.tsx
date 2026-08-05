@@ -116,7 +116,7 @@ export function ListPageFrame(props: ListPageFrameProps) {
       />
       {chrome.impersonation.active && <ImpersonationBanner {...chrome.impersonation.props} />}
 
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+      <div className="max-w-8xl mx-auto px-4 py-6 sm:px-6 sm:py-10 lg:px-10 lg:py-12">
         <ListPageHeader
           kicker={kicker}
           title={title}
@@ -132,21 +132,21 @@ export function ListPageFrame(props: ListPageFrameProps) {
           showPrimaryAction={!floatingCTAOnly}
         />
 
-        {banner && <div className="mb-6">{banner}</div>}
+        {banner && <div className="mb-8">{banner}</div>}
 
         {kpiTiles && (
-          <div className="mb-6 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="mb-8 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
             {kpiTiles}
           </div>
         )}
 
         {tabs && tabs.length > 0 && activeTab && onTabChange && (
-          <StatusTabs tabs={tabs} activeTab={activeTab} onTabChange={onTabChange} className="mb-4" />
+          <StatusTabs tabs={tabs} activeTab={activeTab} onTabChange={onTabChange} className="mb-5" />
         )}
 
         {hasFilterRow && (
           <FilterBar
-            className="mb-4"
+            className="mb-5"
             showSearch={false}
             query={searchQuery}
             onQueryChange={onSearchChange}
@@ -163,7 +163,7 @@ export function ListPageFrame(props: ListPageFrameProps) {
         <ListPageTable {...props} stateAction={stateAction} />
 
         {primaryAction && (
-          <div className="fixed bottom-4 right-4 z-20 md:hidden">
+          <div className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-20 md:hidden">
             <FloatingCTA
               label={primaryAction.label}
               onClick={primaryAction.onClick}

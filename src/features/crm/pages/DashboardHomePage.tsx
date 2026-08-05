@@ -97,10 +97,10 @@ export default function DashboardHomePage() {
   const waiting = queue?.totalWaiting ?? 0;
 
   return (
-    <div className="min-h-dvh bg-background px-4 py-6 sm:px-10 sm:py-[34px]">
+    <div className="min-h-dvh bg-background px-4 py-7 sm:px-10 sm:py-12">
       <div className="mx-auto max-w-5xl">
         <GreetingHeader
-          className="mb-[26px]"
+          className="mb-10"
           name={profile?.name || user?.email?.split('@')[0] || 'there'}
           dateText={dateText}
           timeOfDay={timeOfDay}

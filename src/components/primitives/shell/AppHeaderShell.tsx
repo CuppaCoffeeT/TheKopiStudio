@@ -75,7 +75,7 @@ export interface AppHeaderShellProps {
 
   /**
    * Override the default content wrapper class.
-   * Default: `max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10`.
+   * Default: `max-w-8xl mx-auto px-4 py-6 sm:px-6 sm:py-10 lg:px-10 lg:py-12`.
    * Pass full-bleed pages (e.g. Dashboard) something like
    * `max-w-none px-4 py-6`.
    */
@@ -131,7 +131,7 @@ export function AppHeaderShell({
   };
 
   const wrapperClass =
-    contentClassName ?? 'max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10';
+    contentClassName ?? 'max-w-8xl mx-auto px-4 py-6 sm:px-6 sm:py-10 lg:px-10 lg:py-12';
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--page-bg, #f0e6d6)' }}>

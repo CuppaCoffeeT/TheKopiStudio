@@ -9,8 +9,9 @@
  *  - hero = inline breadcrumb (16px above) → Instrument Serif title → 13px meta
  *    line (6px below the title) → `--color-border` hairline at 20px
  *  - actions right, `align-items: flex-end`, secondary then primary, gap 10px
- *  - body = `1.4fr 1fr` grid, 22px gap, 22px below the hairline; each column a
- *    flex column with the same 22px gap. `fullWidth` drops the second track.
+ *  - body = `1.4fr 1fr` grid; the comp's 22px stack gap ships as the scale's
+ *    24px step (gap-6) since the 2026-08-05 spacing retune — see the 2a
+ *    handoff decisions.md. `fullWidth` drops the second track.
  *  - mobile stacks to one column and keeps the sticky bottom action bar
  *  - h1 = `<PageTitle>` (primitives/shell/PageTitle.tsx), family/weight locked
  *    there; the detail archetype's 38px step is applied here (see below).
@@ -49,8 +50,9 @@ interface PageShellProps {
   className?: string;
 }
 
-/** Content-pane gutter — the comp's 34px/40px, softened on mobile. */
-const PANE_X = 'px-5 md:px-10';
+/** Content-pane gutter — the comp's 40px at desktop, with a genuinely
+ *  compact mobile rhythm (16px) rather than a shrunk desktop one. */
+const PANE_X = 'px-4 sm:px-6 md:px-10';
 
 export function PageShell({
   hero,
@@ -67,24 +69,29 @@ export function PageShell({
   const actionBarHide = actionBarBreakpoint === 'lg' ? 'lg:hidden' : 'md:hidden';
   return (
     <div className={cn('min-h-full bg-background text-foreground', className)}>
-      {hero}
-      {tabs}
-      {/* Single render path — responsive via one-column→md:grid. A second path
-          mounts children twice, breaking hook state + form ownership.
-          W09 P2 · fix 2026-04-21. */}
-      <div
-        className={cn(
-          PANE_X,
-          'grid items-start gap-[22px] pb-8 pt-[22px] md:pb-10',
-          showSideRail && 'md:grid-cols-[1.4fr_1fr]',
-        )}
-      >
-        <main className="flex min-w-0 flex-col gap-[22px]">{main}</main>
-        {showSideRail && (
-          <aside className={cn('flex min-w-0 flex-col gap-[22px]', sideRailClassName)}>
-            {sideRail}
-          </aside>
-        )}
+      {/* One shared max-width column for hero + tabs + body: the cap is what
+          keeps detail pages composed on wide screens, and because every band
+          carries the same PANE_X gutter, their left edges stay on one grid. */}
+      <div className="mx-auto w-full max-w-8xl">
+        {hero}
+        {tabs}
+        {/* Single render path — responsive via one-column→md:grid. A second path
+            mounts children twice, breaking hook state + form ownership.
+            W09 P2 · fix 2026-04-21. */}
+        <div
+          className={cn(
+            PANE_X,
+            'grid items-start gap-6 pb-10 pt-6 md:pb-12 md:pt-8',
+            showSideRail && 'md:grid-cols-[1.4fr_1fr]',
+          )}
+        >
+          <main className="flex min-w-0 flex-col gap-6">{main}</main>
+          {showSideRail && (
+            <aside className={cn('flex min-w-0 flex-col gap-6', sideRailClassName)}>
+              {sideRail}
+            </aside>
+          )}
+        </div>
       </div>
       {mobileActionBar && (
         <div
@@ -179,5 +186,5 @@ export function PageShellHero({
 // ─── Side-rail container ─────────────────────────────────────
 
 export function PageShellSideRail({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn('flex flex-col gap-[22px]', className)}>{children}</div>;
+  return <div className={cn('flex flex-col gap-6', className)}>{children}</div>;
 }

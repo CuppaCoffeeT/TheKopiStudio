@@ -24,7 +24,7 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   tone?: CardTone;
   /** Interactive (hover-lift + cursor-pointer). Do not pair with `as="button"` unless you handle keyboard semantics. */
   interactive?: boolean;
-  /** Override padding — default `p-5` (20px). Pass `p-0` for edge-to-edge content like tables. */
+  /** Override padding — default `p-6` (24px, 2026-08-05 spacing retune). Pass `p-0` for edge-to-edge content like tables. */
   padding?: string;
 }
 
@@ -37,7 +37,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
       ref={ref}
       className={cn(
         'rounded-2xl',
-        padding ?? 'p-5',
+        padding ?? 'p-6',
         tone === 'translucent'
           ? 'bg-card/70 backdrop-blur-md backdrop-saturate-150 border border-border/60'
           : cn(

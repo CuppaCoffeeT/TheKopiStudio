@@ -69,8 +69,11 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 
-  /* --- legacy maxWidth extension --- */
-  --max-width-8xl: 1650px;
+  /* --- content max-width cap (legacy 8xl name) ---
+     1650px → 1480px on 2026-08-05: every archetype frame reads `max-w-8xl`,
+     and 1650 let content stretch uncomfortably wide on 27"+ displays. 1480
+     keeps tables roomy while the page reads as a composed column. */
+  --max-width-8xl: 1480px;
 
   /* --- container (v3 `container` plugin replacement) --- */
   --container-2xl: 1400px;
@@ -287,7 +290,7 @@
   --card-border: #d9ccc0;                             /* hairline */
   --card-shadow-rest: none;
   --card-shadow-hover: 0 2px 8px rgb(58 46 36 / 0.1); /* warmed — comp overrides the brand card's rgba(0,0,0,.1) */
-  --card-padding: 1.25rem;
+  --card-padding: 1.5rem;                             /* 20px → 24px, 2026-08-05 spacing retune (matches Card p-6) */
 
   /* v1 — DataTable (TanStack + Motion row enter/exit).
      A translucent brown wash, not a solid, so the hover reads on BOTH the

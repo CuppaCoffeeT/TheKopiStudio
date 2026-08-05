@@ -42,7 +42,7 @@ export function GreetingHeader({
   const datelineParts = [dateText.replace(', ', ' · '), role, contextStat].filter(Boolean);
   return (
     <div
-      className={cn('w-full border-b pb-5', className)}
+      className={cn('w-full border-b pb-8', className)}
       style={{ borderColor: 'var(--border-soft)' }}
     >
       <div
@@ -52,7 +52,7 @@ export function GreetingHeader({
         {datelineParts.join(' · ')}
       </div>
       <h1
-        className="mt-2 leading-[1.05] tracking-[-0.02em]"
+        className="mt-3 leading-[1.05] tracking-[-0.02em]"
         style={{
           fontFamily: 'var(--font-pixel)',
           fontSize: 'clamp(38px, 2.2vw + 22px, 50px)',
