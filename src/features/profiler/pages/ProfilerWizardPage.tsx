@@ -25,6 +25,7 @@
 
 import { cn } from '@/lib/utils';
 import { useScrolled } from '@/hooks/useScrolled';
+import { AppSidebar, SIDEBAR_OFFSET_CLASS } from '@/components/primitives/shell';
 import { SEO } from '@/components/primitives/shell/SEO';
 import { Button } from '@/components/primitives/shell/Button';
 import { Progress } from '@/components/primitives/form';
@@ -44,10 +45,16 @@ export default function ProfilerWizardPage() {
   const c = useWizardController();
   const { wizard, info, screen, inFlow, isQuestionScreen } = c;
   const scrolled = useScrolled();
+  // Signed-in advisors get the app rail (≥ lg) so the wizard reads as part of
+  // the shell; anonymous visitors keep the rail-free public flow. The route
+  // itself stays public — this is chrome, not access control.
+  const authed = Boolean(c.user);
 
   return (
     <div className="min-h-dvh bg-background">
       <SEO title="Prospect Profiler" description="Run a DISC × MBTI prospect profile" />
+      {authed && <AppSidebar />}
+      <div className={cn(authed && [SIDEBAR_OFFSET_CLASS, 'print:pl-0!'])}>
       {/* ONE sticky block for the bar + the progress rail. Pinning them
           separately needed a hardcoded `top-[53px]` that silently broke
           whenever the bar's height changed; nesting removes the constant. */}
@@ -57,7 +64,12 @@ export default function ProfilerWizardPage() {
           scrolled && 'shadow-[var(--card-shadow-hover)]',
         )}
       >
-        <WizardTopBar subtitle={c.subtitle} isAuthenticated={Boolean(c.user)} />
+        {/* With the rail on screen (authed, ≥ lg) the bar's wordmark + Dashboard
+            button duplicate the rail's own chrome — the bar yields to it there
+            and stays for mobile + anonymous visitors. */}
+        <div className={cn(authed && 'lg:hidden')}>
+          <WizardTopBar subtitle={c.subtitle} isAuthenticated={authed} />
+        </div>
         {inFlow && (
           <div className="border-b border-border bg-card">
             <div className="mx-auto w-full max-w-[42rem] px-4 py-2.5" data-testid="wizard-progress">
@@ -107,9 +119,15 @@ export default function ProfilerWizardPage() {
           />
         )}
       </main>
+      </div>
 
       {inFlow && (
-        <div className="print-hide fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card pb-[env(safe-area-inset-bottom)]">
+        <div
+          className={cn(
+            'print-hide fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card pb-[env(safe-area-inset-bottom)]',
+            authed && 'lg:left-[200px]',
+          )}
+        >
           <div className="mx-auto flex w-full max-w-[42rem] gap-2.5 px-4 py-3">
             <Button size="lg" variant="outline" onClick={c.handleBack} data-testid="wizard-back-btn">
               ← Back

@@ -2,10 +2,12 @@
  * WizardTopBar — the PUBLIC /profiler route's own chrome.
  *
  * /profiler sits outside `DashboardLayout` and outside `ProtectedRoute` so
- * anonymous visitors can run a profile; it therefore never gets `AppSidebar`.
- * That makes this bar the tool's entire identity surface, which is why it
- * carries the shared `Wordmark` — the public tool and the signed-in app must
- * read as one brand. The flow-aware line sits under it as the 2a dateline
+ * anonymous visitors can run a profile. Since 2026-08-05 the page renders
+ * `AppSidebar` itself for signed-in advisors (chrome only — the route stays
+ * public), and hides this bar at ≥ lg in that case so the wordmark/Dashboard
+ * chrome is never doubled; for mobile and anonymous visitors this bar remains
+ * the tool's entire identity surface, which is why it carries the shared
+ * `Wordmark` — the public tool and the signed-in app must read as one brand. The flow-aware line sits under it as the 2a dateline
  * (600 11px, .14em, uppercase, muted), the same kicker treatment the app's
  * mastheads use. Right side: Login (logged out) or Dashboard (logged in).
  *
