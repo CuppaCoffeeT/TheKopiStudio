@@ -1,9 +1,10 @@
 # CI Test-DB Isolation — stop the E2E suite writing to production
 
-**Status**: CODE COMPLETE, AWAITING FIRST CI RUN. All four remaining pieces are written; none
-has ever been executed, because `supabase start` needs Docker and the authoring Mac has none.
-The first `pull_request` / `workflow_dispatch` run on `worktree-ci-test-db-isolation` is the
-first execution of any of it. **Last Updated**: 2026-08-13
+**Status**: 🟢 GREEN ON CI, NOT YET MERGED. Two `workflow_dispatch` runs on
+`worktree-ci-test-db-isolation`: run 1 (`31680893296`) proved the whole Supabase path on the
+first attempt and failed 10 specs; run 2 (`31682524855`) is **fully green — chromium-desktop
+48 passed, mobile-safari 47 passed, zero failures**, the first green run this repo has had.
+The E2E suite no longer touches production. **Last Updated**: 2026-08-13
 
 ## Progress — 2026-08-13
 
@@ -44,26 +45,38 @@ first execution of any of it. **Last Updated**: 2026-08-13
   `public.profiles.role`.
 - **`public.profiles.role` is its own contract.** `get_my_role()` reads it, and
   "Managers read all results/profiles" are written against `get_my_role() = 'manager'`. Its
-  CHECK allows only `advisor|manager`, so **super_admin maps to `manager`** — the same mapping
-  `supabase/functions/role-sync/index.ts` (v2) applies in prod. Get this wrong and
-  results-superadmin.spec sees nothing.
+  CHECK allows only `advisor|manager`. The manager is `manager`; the **super_admin is
+  `advisor`** — role-sync v2 would map it to `manager`, but that account has never been through
+  role-sync in prod, and `results-superadmin.spec` asserts the pre-cutover behaviour (it must
+  NOT see the legacy rows). Run 1 failed on exactly this: a fixture DB has to be faithful to
+  prod, not more internally consistent than it.
 - **The edge runtime must stay ON.** `manage-accounts.spec.ts` (@p0) drives the role round-trip
   through `/functions/v1/role-sync` from the UI *and* restores the advisor role in `afterAll`
   by POSTing that endpoint directly. Disabling `[edge_runtime]` 404s both.
 - **`supabase status -o env` emits `KEY="value"`.** `$GITHUB_ENV` takes the line literally, so
   the quotes must be stripped or every value arrives wrapped in `"`.
 
-### Still unvalidated — what the first CI run has to prove
+### What the CI runs proved
 
-Nothing below has ever run. In rough order of how likely it is to be what goes red first:
+Run 1 (`31680893296`) — the entire Supabase path passed on the **first attempt**: `supabase
+start` accepted the config on CLI 2.114.0, the baseline applied clean under psql 17, `seed.sql`
+applied after it, PostgREST could reach the tables, and `seed-auth-users.mjs` created and
+verified all accounts. Ten specs then failed, in three groups:
 
-1. `supabase start` accepts this `config.toml` on CLI 2.114.0 (`major_version = 17`,
-   `[db.seed]`, the four `enabled = false` service blocks).
-2. The baseline migration applies clean under psql 17 — one bad statement aborts the whole file.
-3. `seed.sql` applies after it (FK order, and that `public` grants really do reach PostgREST).
-4. `seed-auth-users.mjs` — `createUser({ id })` is honoured, `handle_new_user()` fires, and the
-   `protect_user_privileges` trigger admits the service-role UPDATE.
-5. The suite itself. Only here are failures likely to be about the app rather than the harness.
+| Group | Count | Cause | Fix |
+|---|---|---|---|
+| `results-superadmin` | 2 | **Seeding bug.** super_admin's `profiles.role` was set to `manager` (role-sync v2's mapping). That account is pre-cutover in prod and the spec asserts it CANNOT see the legacy rows. Compounding it, the "Bee zhen" owner is pinned by three specs at once and no e2e account satisfies all three. | `profilesRole: 'advisor'`, plus a fourth never-signs-in account as the Keane stand-in. |
+| a11y `color-contrast` | 6 | **A race the fast DB exposed, not a new defect.** axe computes contrast on alpha-blended colours at scan time, and every surface carries `motion-rise` entrance animations (staggered to 280ms, 600ms heroes). Remote-Supabase latency used to push each scan past the window; a local DB answering in single-digit ms does not. Tell: the node count varied 4 → 11 across retries of one identical test, and one target was literally `.motion-rise-3`. | `tests/runners/a11yChecks.ts` — one `expectWcag2aaClean` that settles animations first, replacing three byte-identical copies. Also fixes `profiler/load-a11y:69`, which fails on `main` against prod for the same reason. |
+| `account-settings` | 2 | **Pre-existing**, fails identically on `main` against prod (run `31679318758`). sonner pauses a toast's dismiss timer while hovered; Playwright parks the cursor on the Save button it just clicked, under the bottom-right toast stack. | `page.mouse.move(0, 0)` before awaiting auto-dismiss. |
+
+Run 2 (`31682524855`) — **green on both legs**: chromium-desktop 48 passed in 2.6 min,
+mobile-safari 47 passed in 5.7 min, zero failures, every axe scan clean. Two of the three groups
+were latent harness bugs the isolation work *surfaced* rather than caused; only the first was a
+defect in this change.
+
+Worth noting what run 1 did NOT go wrong on, since it was the whole risk of the approach: the
+CLI accepted the config, the 1780-line baseline applied clean, the seed applied after it, and
+the admin-API account seeding worked — first attempt, no iteration.
 
 ## The problem
 
@@ -155,22 +168,34 @@ RBAC backbone, with exact IDs so FKs line up:
   supervisor.
 - **user_modules**: 0 rows — no per-user overrides to reproduce.
 
-Three test accounts (auth.users + profiles/users rows, `is_approved = is_active = true`,
-email-confirm disabled locally so they can sign in):
+**Four** accounts (auth.users + profiles/users rows, `is_approved = is_active = true`,
+email-confirm disabled locally so they can sign in). `users.role` is what drives module grants;
+`profiles.role` is the separate legacy surface `get_my_role()` reads (CHECK allows only
+`advisor|manager`):
 
-| role | id | email | name |
-|---|---|---|---|
-| advisor | `ddd53c7d-d034-4ee9-826c-37550cc28306` | skytwech+e2e-advisor@gmail.com | e2e-advisor |
-| manager | `c1ae358a-a34f-4db5-bea2-40729faa2dca` | skytwech+e2e-manager@gmail.com | e2e-manager |
-| super_admin | `ea135b9e-ccd6-46cd-8aca-f77aec581168` | skytwech+e2e-superadmin@gmail.com | e2e-superadmin |
+| users.role | profiles.role | id | email | name |
+|---|---|---|---|---|
+| advisor | advisor | `ddd53c7d-d034-4ee9-826c-37550cc28306` | skytwech+e2e-advisor@gmail.com | e2e-advisor |
+| manager | manager | `c1ae358a-a34f-4db5-bea2-40729faa2dca` | skytwech+e2e-manager@gmail.com | e2e-manager |
+| super_admin | **advisor** (pre-cutover) | `ea135b9e-ccd6-46cd-8aca-f77aec581168` | skytwech+e2e-superadmin@gmail.com | e2e-superadmin |
+| advisor | advisor | `5e0ac7d1-0b17-4d3e-9f2a-6c1d5e8a4b70` | legacy-owner@kopistudio.invalid | Legacy Owner |
 
 Eight legacy `results` fixtures — canonical copy already in-repo at
 `src/features/profiler/lib/__fixtures__/legacy-results.ts` (`LEGACY_RESULTS`, byte-identical
 to the pre-foundation snapshot). E2E asserts total ≥ 8, a "Bee zhen" search, and James
-opening read-only. **Adaptation**: prod's "Bee zhen" is owned by Keane (`507f36ef…`, a real
-user we will NOT seed); reassign it to the seeded super_admin so it stays foreign-to-manager
-(still exercises `view_all_results`) without importing a real person. James stays
-`user_id = NULL` (the unclaimed read-only case).
+opening read-only. James stays `user_id = NULL` (the unclaimed read-only case).
+
+**"Bee zhen" needs the fourth account** — prod's copy is owned by Keane (`507f36ef…`, a real
+user we will NOT seed), and three specs pin the owner from three directions: it must be
+non-NULL (results-manager asserts no 'unclaimed' badge), and it must be neither the manager
+(who must open it read-only) nor the advisor nor the super_admin (both assert a search for it
+yields zero rows). No e2e account satisfies all three, hence a synthetic stand-in that never
+signs in. It has to be a real auth user because `public.profiles.id` FKs `auth.users(id)`, and
+its email deliberately contains no `e2e` — `manage-accounts.spec` searches that string.
+
+> **Superseded**: the original plan said "reassign it to the seeded super_admin so it stays
+> foreign-to-manager". That fails `results-superadmin.spec`, which requires the super_admin to
+> see nothing. Run 1 caught it.
 
 ## File changes — as built (2026-08-13)
 
@@ -202,11 +227,16 @@ burning many CI runs on it.
 
 1. ~~**[you]** run the dump commands → commit `supabase/schema.sql`.~~ **Done.**
 2. ~~**[me]** `seed.sql` + `config.toml` + `seatbelt.yml` + squash migrations.~~ **Done.**
-3. **[CI]** ← *you are here.* Dispatch the workflow on the branch; iterate to green.
-4. **[you]** merge; then rotate/retire the now-unused prod E2E GitHub secrets
+3. ~~**[CI]** dispatch the workflow on the branch; iterate to green.~~ **Done — run
+   `31682524855` is green on both legs.**
+4. **[you]** ← *you are here.* Merge; then rotate/retire the now-unused prod E2E GitHub secrets
    (`VITE_SUPABASE_*`, `SUPABASE_URL`, `SUPABASE_KEY`, `TEST_*_PASSWORD` — the job reads none
    of them any more) and do a final prod residue clean, since CI stops adding to it from then
    on. The prod DB password used for the dump is burned (pasted in chat) — rotate it too.
+5. **[follow-up]** Raise `max-parallel` from 1 to 2 on the e2e matrix. Held back deliberately so
+   the first green run had one variable in it; the shared-book race it guarded against no longer
+   exists, because each leg now builds its own database. Flip it, confirm green twice, and delete
+   the comment block in the workflow.
 
 ## Related
 
