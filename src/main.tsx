@@ -63,9 +63,19 @@ const queryClient = new QueryClient({
 // `vite preview`, CI, and any non-prod host the `/_vercel/insights/script.js`
 // endpoint does not exist (it is injected by Vercel's edge), so loading it there
 // 404s — which pollutes the console and trips console-clean E2E assertions. The
-// real prospect-profiler-app.vercel.app deploy is unaffected.
+// real www.thekopistudio.com deploy is unaffected.
+//
+// Host updated 2026-08-13: this pinned `prospect-profiler-app.vercel.app`, which
+// now 404s — the Vercel project was replaced by `thekopistudio`, serving
+// www.thekopistudio.com (the apex 308s to www). Analytics had therefore been
+// silently OFF on the only host that is actually production. Matching the apex
+// and its subdomains keeps it working if the redirect is ever reversed, while
+// still excluding localhost, previews (*.vercel.app) and CI.
+const PROD_DOMAIN = 'thekopistudio.com';
 const isProdHost =
-  typeof window !== 'undefined' && window.location.hostname === 'prospect-profiler-app.vercel.app';
+  typeof window !== 'undefined' &&
+  (window.location.hostname === PROD_DOMAIN ||
+    window.location.hostname.endsWith(`.${PROD_DOMAIN}`));
 
 createRoot(document.getElementById("root")!).render(
   <AuthProvider>

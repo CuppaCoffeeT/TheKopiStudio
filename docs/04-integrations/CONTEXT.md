@@ -21,7 +21,7 @@ Four docs live here. Every row was path-verified 2026-07-27.
 
 | File | Service | Purpose |
 |------|---------|---------|
-| `VERCEL_DEPLOYMENT_GUIDE.md` | Vercel | App hosting (`prospect-profiler-app.vercel.app`) — CLI setup, env, deploy flow, SPA rewrite |
+| `VERCEL_DEPLOYMENT_GUIDE.md` | Vercel | App hosting (`www.thekopistudio.com`, project `thekopistudio`) — CLI setup, env, deploy flow, SPA rewrite |
 | `EDGE_FUNCTION_DEPLOYMENT_GUIDE.md` | Supabase | Edge function deployment (`deploy-edge-functions.sh`) |
 | `MCP_DB_ACCESS.md` | Supabase MCP | MCP database access patterns — MCP only, never the CLI |
 | `TOAST_SYSTEM.md` | Sonner | Toast notification library (legacy doc — enforceable rules in `.claude/rules/toast-system.md`) |
