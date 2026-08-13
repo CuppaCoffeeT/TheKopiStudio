@@ -14,12 +14,18 @@
 
 ## Inventory
 
-**One domain today** — verified against the filesystem 2026-07-27
+**Two domains today** — verified against the filesystem 2026-08-13
 (`find src/components/shared -name '*.tsx'`):
 
 | Sub-domain / file | Holds | Used by (verified) |
 |-------------------|-------|---------|
 | `app-shell/` | `ProtectedRoute` · `DashboardLayout` · `GlobalCommandPalette` · `ErrorBoundary` | `src/App.tsx` (routing shell); `DashboardLayout` mounts `GlobalCommandPalette` |
+| `auth-shell/` | `AuthShell` + `AUTH_LINK_CLASS` — the signed-out counterpart of `app-shell` (cream ground, masthead, one card) | `pages/Login` · `pages/Signup` · `pages/ForgotPassword` · `pages/ResetPassword` |
+
+The tier rule above is phrased in **features**; both shells serve `src/pages/` route
+components instead, which is why they sit here rather than under `features/`. Four
+signed-out screens sharing one masthead is the same "≥2 consumers, never duplicate"
+call the rule is making.
 
 There are no loose `.tsx` files at the root of `shared/` and no barrel `index.ts` —
 import by explicit path, e.g. `@/components/shared/app-shell/ProtectedRoute`.
