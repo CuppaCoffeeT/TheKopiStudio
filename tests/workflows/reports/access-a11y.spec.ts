@@ -66,11 +66,11 @@
 
 import { resolve } from 'path';
 import { test, expect, type Browser, type Locator, type Page, type TestInfo } from '@playwright/test';
-import { checkA11y, injectAxe } from 'axe-playwright';
 import { acquireAdvisorBookLock, releaseAdvisorBookLock } from '../../fixtures/advisorBookLock';
 import { authFileFor } from '../../fixtures/roleAuth';
 import { ClientsPage } from '../../pom/ClientsPage';
 import { WizardPage } from '../../pom/WizardPage';
+import { expectWcag2aaClean, settleAnimations } from '../../runners/a11yChecks';
 import { deleteOwnResultsByProspect } from '../../runners/resultsCleanup';
 
 /** Syntactically valid UUID that matches no row — anonymous redirect probe. */
@@ -100,37 +100,9 @@ const CLIENT_REPORT_SECTIONS = [
   'report-disclaimer',
 ] as const;
 
-/**
- * Inject axe and assert ZERO critical/serious violations against the WCAG 2.0
- * A+AA rule set (the `wcag2aa` tag alone holds only the AA-specific rules —
- * AA conformance requires the A-level `wcag2a` rules too). Failures print the
- * detailed per-node terminal report (impact, selector, offending HTML).
- */
-async function expectWcag2aaClean(page: Page): Promise<void> {
-  await injectAxe(page);
-  await checkA11y(page, undefined, {
-    detailedReport: true,
-    detailedReportOptions: { html: true },
-    includedImpacts: ['critical', 'serious'],
-    axeOptions: { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] } },
-  });
-}
-
-/**
- * Wait for every FINITE animation under `root` to finish before scanning.
- * axe computes color-contrast on the alpha-blended mid-animation colors, so
- * scanning a Modal during its 150ms fade-in/zoom-in reports phantom serious
- * violations (crm load-a11y precedent). Infinite animations (pulse skeletons)
- * are skipped — the specs already wait out skeletons via testids.
- */
-async function settleAnimations(root: Locator): Promise<void> {
-  await root.evaluate(async (el) => {
-    const finite = el.getAnimations({ subtree: true }).filter(
-      (a) => a.effect?.getComputedTiming().iterations !== Infinity,
-    );
-    await Promise.all(finite.map((a) => a.finished.catch(() => undefined)));
-  });
-}
+// Both helpers lived here in full until 2026-08-13; they are now shared with
+// crm/load-a11y and profiler/load-a11y. expectWcag2aaClean settles the page's
+// animations itself — see the note in the runner for why every scan needs that.
 
 function successToast(page: Page, text: string): Locator {
   return page.getByTestId('toast-success').filter({ hasText: text }).first();

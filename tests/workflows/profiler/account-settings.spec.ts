@@ -132,6 +132,15 @@ async function saveProfile(page: Page): Promise<void> {
     page.getByTestId('toast-success').filter({ hasText: 'Profile updated' }),
   ).toBeVisible({ timeout: 20_000 });
   await expect(saveBtn).toBeDisabled({ timeout: 15_000 });
+  // Park the cursor away from the toast stack before waiting for auto-dismiss.
+  // Playwright leaves the virtual mouse wherever it last clicked, the Toaster
+  // renders bottom-right (App.tsx / Toaster.tsx), and sonner PAUSES a toast's
+  // 4s dismiss timer for as long as it is hovered — so a Save button that sits
+  // under the toast stack holds the toast open forever and this count-0 wait
+  // can never resolve. Failed on CI at 14×"resolved to 1 element" over the full
+  // 10s, identically against production (main, run 31679318758) and against the
+  // ephemeral local DB, which is what rules out a data cause.
+  await page.mouse.move(0, 0);
   await expect(page.getByTestId('toast-success')).toHaveCount(0, { timeout: 10_000 });
 }
 

@@ -25,25 +25,13 @@
  */
 
 import { test, expect, type Page } from '@playwright/test';
-import { checkA11y, injectAxe } from 'axe-playwright';
 import { authFileFor } from '../../fixtures/roleAuth';
 import { WizardPage } from '../../pom/WizardPage';
+import { expectWcag2aaClean } from '../../runners/a11yChecks';
 
-/**
- * Inject axe and assert ZERO critical/serious violations against the WCAG 2.0
- * A+AA rule set (the `wcag2aa` tag alone holds only the AA-specific rules —
- * AA conformance requires the A-level `wcag2a` rules too). Failures print the
- * detailed per-node terminal report (impact, selector, offending HTML).
- */
-async function expectWcag2aaClean(page: Page): Promise<void> {
-  await injectAxe(page);
-  await checkA11y(page, undefined, {
-    detailedReport: true,
-    detailedReportOptions: { html: true },
-    includedImpacts: ['critical', 'serious'],
-    axeOptions: { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] } },
-  });
-}
+// expectWcag2aaClean lived here in full until 2026-08-13; it is now shared with
+// crm/load-a11y and reports/access-a11y, and settles page animations before
+// scanning (see the runner for why).
 
 /** Legacy seed row "Bee zhen" — read-only reference data, NEVER mutated. */
 const BEE_ZHEN_RESULT_ID = '883d2eca-e09a-4dc8-957c-b1a84bf15e5d';

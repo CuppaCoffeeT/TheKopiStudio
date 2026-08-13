@@ -25,9 +25,14 @@
  *     us because PostgREST presents `request.jwt.claims.role = service_role`.
  *  3. `public.profiles.role` — the legacy table. `get_my_role()` reads it, and
  *     the "Managers read all results/profiles" policies are written against
- *     get_my_role() = 'manager'. Its CHECK constraint allows only
- *     advisor|manager, so super_admin maps to 'manager' — the exact mapping
- *     supabase/functions/role-sync/index.ts (v2) applies in prod.
+ *     get_my_role() = 'manager'. Its CHECK allows only advisor|manager.
+ *     **The super_admin is 'advisor' here, deliberately.** role-sync v2 would
+ *     map super_admin→manager, but the e2e super_admin account has never been
+ *     through role-sync in prod: it is still pre-cutover, and
+ *     results-superadmin.spec.ts asserts exactly that (it must NOT see the
+ *     legacy rows; deep-linking 'Bee zhen' must resolve not-found). Mapping it
+ *     to 'manager' here makes the local DB more "correct" than prod and fails
+ *     that spec — which is what the first CI run did.
  *
  * Idempotent: re-running against an already-seeded stack updates in place.
  */
@@ -86,16 +91,44 @@ const USERS = [
     email: 'skytwech+e2e-superadmin@gmail.com',
     name: 'e2e-superadmin',
     role: 'super_admin',
-    profilesRole: 'manager',
+    // 'advisor', NOT 'manager' — pre-cutover, per results-superadmin.spec.
+    profilesRole: 'advisor',
     passwordEnv: 'TEST_SUPER_ADMIN_PASSWORD',
+  },
+  /**
+   * A FOURTH account, standing in for Keane — the real advisor who owns the
+   * legacy "Bee zhen" row in prod and whom we will not import.
+   *
+   * It exists because that row's owner is pinned from three directions at once
+   * and no e2e account can satisfy all three:
+   *   - results-manager.spec asserts the row does NOT carry the 'unclaimed'
+   *     badge → owner must NOT be NULL (that is James's job);
+   *   - results-manager.spec asserts the manager opens it READ-ONLY → owner
+   *     must not be the manager;
+   *   - results-advisor.spec and results-superadmin.spec both assert a search
+   *     for 'Bee zhen' yields ZERO rows → owner must be neither of those two.
+   * So: a real profiles row belonging to nobody the specs sign in as. It has
+   * to be a real auth user because public.profiles.id FKs auth.users(id).
+   *
+   * Its email deliberately contains no 'e2e' — manage-accounts.spec searches
+   * that string and asserts on the accounts it surfaces.
+   */
+  {
+    id: '5e0ac7d1-0b17-4d3e-9f2a-6c1d5e8a4b70',
+    email: 'legacy-owner@kopistudio.invalid',
+    name: 'Legacy Owner',
+    role: 'advisor',
+    profilesRole: 'advisor',
+    passwordEnv: 'TEST_LEGACY_OWNER_PASSWORD',
+    // Never signs in; no storageState is minted for it.
+    skipSignInProbe: true,
   },
 ];
 
-/** The legacy "Bee zhen" fixture — owned by the super_admin so it stays
- *  FOREIGN to the manager, which is what results-manager.spec's read-all
- *  assertion actually exercises. results.user_id FKs to profiles, not users. */
+/** The legacy "Bee zhen" fixture → the Keane stand-in above. results.user_id
+ *  FKs to profiles, not users. */
 const BEE_ZHEN_RESULT_ID = '883d2eca-e09a-4dc8-957c-b1a84bf15e5d';
-const RESULT_OWNER_ID = USERS[2].id;
+const RESULT_OWNER_ID = '5e0ac7d1-0b17-4d3e-9f2a-6c1d5e8a4b70';
 
 function passwordFor(user) {
   const password = process.env[user.passwordEnv];
@@ -183,12 +216,14 @@ async function verify(user) {
 
   // Sign in for real: proves the password + email_confirm landed, which is the
   // one thing a service-role read cannot tell us.
-  const { error: signInError } = await probe.auth.signInWithPassword({
-    email: user.email,
-    password: passwordFor(user),
-  });
-  if (signInError) {
-    throw new Error(`[seed-auth-users] sign-in ${user.email}: ${signInError.message}`);
+  if (!user.skipSignInProbe) {
+    const { error: signInError } = await probe.auth.signInWithPassword({
+      email: user.email,
+      password: passwordFor(user),
+    });
+    if (signInError) {
+      throw new Error(`[seed-auth-users] sign-in ${user.email}: ${signInError.message}`);
+    }
   }
 
   console.log(`[seed-auth-users] ok ${user.email} — ${user.role}, ${count} module grant(s)`);

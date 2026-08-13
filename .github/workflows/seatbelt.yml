@@ -113,6 +113,10 @@ jobs:
           TEST_ADVISOR_PASSWORD: e2e-advisor-pw
           TEST_MANAGER_PASSWORD: e2e-manager-pw
           TEST_SUPER_ADMIN_PASSWORD: e2e-superadmin-pw
+          # Fourth account: the stand-in owner of the legacy "Bee zhen" row.
+          # Never signs in — the specs need the row to belong to somebody who
+          # is not any of the three above. See the seed script for why.
+          TEST_LEGACY_OWNER_PASSWORD: legacy-owner-pw
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps

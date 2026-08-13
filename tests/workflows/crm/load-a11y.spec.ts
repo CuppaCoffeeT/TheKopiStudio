@@ -37,42 +37,13 @@
  */
 
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { checkA11y, injectAxe } from 'axe-playwright';
 import { authFileFor } from '../../fixtures/roleAuth';
 import { ClientsPage } from '../../pom/ClientsPage';
-
-/**
- * Inject axe and assert ZERO critical/serious violations against the WCAG 2.0
- * A+AA rule set (the `wcag2aa` tag alone holds only the AA-specific rules —
- * AA conformance requires the A-level `wcag2a` rules too). Failures print the
- * detailed per-node terminal report (impact, selector, offending HTML).
- */
-async function expectWcag2aaClean(page: Page): Promise<void> {
-  await injectAxe(page);
-  await checkA11y(page, undefined, {
-    detailedReport: true,
-    detailedReportOptions: { html: true },
-    includedImpacts: ['critical', 'serious'],
-    axeOptions: { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] } },
-  });
-}
-
-/**
- * Wait for every FINITE animation under `root` to finish before scanning.
- * axe computes color-contrast on the alpha-blended mid-animation colors, so
- * scanning a Modal during its 150ms fade-in/zoom-in reports phantom serious
- * violations (e.g. white-on-slate-800 "failing" at 3.26:1 — verified
- * empirically). Infinite animations (pulse skeletons) are skipped — awaiting
- * them would hang, and the specs already wait out skeletons via testids.
- */
-async function settleAnimations(root: Locator): Promise<void> {
-  await root.evaluate(async (el) => {
-    const finite = el.getAnimations({ subtree: true }).filter(
-      (a) => a.effect?.getComputedTiming().iterations !== Infinity,
-    );
-    await Promise.all(finite.map((a) => a.finished.catch(() => undefined)));
-  });
-}
+// Both helpers used to live here in full; they are now shared with
+// profiler/load-a11y and reports/access-a11y. expectWcag2aaClean settles the
+// page's animations itself — see the note in the runner for why every scan
+// needs that, not just the modal ones.
+import { expectWcag2aaClean, settleAnimations } from '../../runners/a11yChecks';
 
 /**
  * Wait for a ListPageFrame table to settle into REAL content: rows (default)
