@@ -9,10 +9,8 @@
  * enforces it, the UI explains it). PDF = window.print() + lib/print.css
  * `.print-area`; CSV = lib/export from the stored fields (legacy format).
  *
- * Convert is a TWO-modal flow: the confirm, then — only when a customer of
- * that name already exists — the duplicate fork (link vs create a second
- * record). The page holds `useConvertResult` so both the keyed-retry state
- * and the found duplicate survive a modal close/reopen.
+ * Convert is a two-modal flow of its own (`ConvertFlow`); the page holds
+ * `useConvertResult` so its retry state survives a modal close.
  */
 
 import { useState } from 'react';
@@ -26,17 +24,15 @@ import { ErrorState } from '@/components/primitives/shell/ErrorState';
 import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
 import { NoResultsState } from '@/components/primitives/shell/NoResultsState';
 import { useAuth } from '@/contexts/AuthContext';
-import { formatDisplayDateLong, getLocalDateString } from '@/utils/timezoneUtils';
-import { showSuccess } from '@/utils/toastHelper';
-import { buildCsv, downloadCsv } from '../lib/export';
+import { formatDisplayDateLong } from '@/utils/timezoneUtils';
+import { downloadRowCsv } from '../lib/export';
 import { PR } from '../lib/content';
 import { meetingLabel } from '../lib/meeting';
-import type { DiscLetter, ProfilerResult } from '../types';
+import type { DiscLetter } from '../types';
 import { useConvertResult } from '../hooks/useConvertResult';
 import { useResultDetail } from '../hooks/useResultDetail';
 import { useDeleteResult, useUpdateResultNotes } from '../hooks/useResultMutations';
-import { ConvertResultModal } from '../components/detail/ConvertResultModal';
-import { DuplicateCustomerModal } from '../components/detail/DuplicateCustomerModal';
+import { ConvertFlow } from '../components/detail/ConvertFlow';
 import { ResultDetailActions } from '../components/detail/ResultDetailActions';
 import { ResultNotesModal } from '../components/detail/ResultNotesModal';
 import { StoredResultReport } from '../components/detail/StoredResultReport';
@@ -48,31 +44,6 @@ const STATUS_TONES: Record<DiscLetter, PageShellStatusTone> = {
   S: 'success',
   C: 'info',
 };
-
-/** Legacy CSV export of a saved row — date is the download date (legacy `dlCSV`). */
-function downloadRowCsv(row: ProfilerResult): void {
-  const date = getLocalDateString(new Date());
-  const csv = buildCsv({
-    date,
-    advisor: row.advisor_name,
-    prospect: row.prospect_name,
-    age: row.age_range ?? '',
-    occupation: row.occupation ?? '',
-    meeting: row.meeting ?? '',
-    discPrimary: row.disc_primary,
-    discSecondary: row.disc_secondary,
-    mbti: row.mbti,
-    scoreD: row.score_d,
-    scoreI: row.score_i,
-    scoreS: row.score_s,
-    scoreC: row.score_c,
-    questions: row.questions_answered,
-    observations: row.observations_count,
-    notes: row.notes ?? '',
-  });
-  downloadCsv(`profile_${row.prospect_name.replace(/\s+/g, '_')}_${date}.csv`, csv);
-  showSuccess('CSV saved');
-}
 
 export default function ResultDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -87,7 +58,6 @@ export default function ResultDetailPage() {
 
   const row = detail.data ?? null;
   const convert = useConvertResult(row);
-  const duplicate = convert.duplicate;
   const isOwn = Boolean(row && user && row.user_id === user.id);
   const statusTone = row ? STATUS_TONES[row.disc_primary as DiscLetter] : undefined;
 
@@ -166,32 +136,12 @@ export default function ResultDetailPage() {
       {row && <StoredResultReport row={row} />}
 
       {row && isOwn && !row.client_id && (
-        <>
-          {/* The confirm closes as soon as the duplicate check answers, so the
-              two modals never stack on top of each other. */}
-          <ConvertResultModal
-            open={convertOpen && !convert.duplicate}
-            onOpenChange={setConvertOpen}
-            prospectName={row.prospect_name}
-            converting={convert.isPending}
-            onConfirm={() => convert.mutate({ mode: 'auto' })}
-          />
-          {duplicate && (
-            <DuplicateCustomerModal
-              open
-              onOpenChange={(next) => {
-                if (next) return;
-                convert.dismissDuplicate();
-                setConvertOpen(false);
-              }}
-              prospectName={row.prospect_name}
-              existingName={duplicate.name}
-              converting={convert.isPending}
-              onLink={() => convert.linkToExisting(duplicate.id)}
-              onCreateAnyway={() => convert.createAnyway()}
-            />
-          )}
-        </>
+        <ConvertFlow
+          open={convertOpen}
+          onOpenChange={setConvertOpen}
+          prospectName={row.prospect_name}
+          convert={convert}
+        />
       )}
       {row && (
         <ResultNotesModal
