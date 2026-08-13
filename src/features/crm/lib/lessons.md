@@ -35,3 +35,11 @@ Last Updated: 2026-07-27
 **Root cause**: the component was copied from the profiler along with its bug. Neither copy inherited the `--fg-dim` call that `PageShellHero`'s own meta line makes on the same ground for the same reason.
 
 **Fix**: both variants take `var(--fg-dim)` (6.40:1). Generally: `text-muted-foreground` is a CARD-cream token — anything rendered into a `DetailPageFrame`/`ListPageFrame` hero sits on the page cream and needs `--fg-dim` under 18px. When mirroring a component across features, re-measure its colours against the new parent's ground rather than trusting the source.
+
+## 2026-08-13 — /dashboard had no navigation at all on a phone
+
+**What happened**: logged in on mobile, `/dashboard` rendered the greeting, profiler band and queue with no app chrome above them — no rail, no bar, no way to reach another module. Every other route was fine.
+
+**Root cause**: `AppHeaderMobileBar` is homed PER PAGE by the three archetype frames, not by `DashboardLayout`. `DashboardHomePage` composes no frame (its `GreetingHeader` masthead is the header block, so `AppHeaderShell` would stack a second H1 over it), so it inherited no bar. `AppSidebar` is `hidden lg:flex`, and the ⌘K hotkey was removed 2026-08-05 — the bar's search icon is now the *only* opener of the module palette — so the three facts composed into a dead-end page. The existing rail spec asserted only that the rail is hidden below lg and returned early, so nothing caught it.
+
+**Fix**: `DashboardHomePage` renders `AppHeaderMobileBar` + `ImpersonationBanner` off `useDashboardChrome`, the same wiring `ListPageFrame` uses. The spec's mobile branch now walks the whole escape path — search icon → palette → `/clients` — instead of returning early. Generally: chrome that lives in the frames is absent from any page that skips them; a page composing its own layout must render the bar itself, and a mobile assertion that only checks something is *hidden* proves nothing about what stands in for it.

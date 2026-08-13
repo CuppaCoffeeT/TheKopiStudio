@@ -34,13 +34,25 @@
  * opening `crm-add-customer-choice-modal`.
  */
 
+/**
+ * Chrome: this page composes NO archetype frame — its GreetingHeader masthead
+ * is the header block, and AppHeaderShell would stack a second H1 over it — so
+ * it renders `AppHeaderMobileBar` itself. Don't remove it: below lg the rail is
+ * hidden and the ⌘K hotkey is gone, so that bar's search icon is the only way
+ * off this page.
+ */
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/primitives/shell';
 import { GreetingHeader } from '@/components/primitives/dashboard';
+import { AppHeaderMobileBar } from '@/components/primitives/shell/AppHeaderMobileBar';
+import { ImpersonationBanner } from '@/components/primitives/shell/ImpersonationBanner';
+import { ViewAsSelector } from '@/components/primitives/shell/ViewAsSelector';
 import { ErrorState } from '@/components/primitives/shell/ErrorState';
 import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
+import { useDashboardChrome } from '@/hooks/useDashboardChrome';
 import { getSingaporeGreeting } from '@/utils/dashboardHelpers';
 import { CustomerQueueBoard } from '../components/CustomerQueueBoard';
 import type { QueueRowAction } from '../components/CustomerQueueSection';
@@ -53,6 +65,13 @@ import type { QueueCustomer } from '../api/customerQueueService';
 const CLIENTS_PATH = '/clients';
 const PROFILER_PATH = '/profiler';
 
+/**
+ * Page label for the < lg bar. One segment: the bar shows only the last, and
+ * this page IS the root — a `Workspace /` crumb above it would point at itself.
+ * Matches `AppSidebar`'s HOME_LABEL so the rail and the bar name it the same.
+ */
+const BAR_BREADCRUMB = [{ label: 'Overview' }];
+
 function plural(count: number, one: string, many: string): string {
   return count === 1 ? one : many;
 }
@@ -60,6 +79,7 @@ function plural(count: number, one: string, many: string): string {
 export default function DashboardHomePage() {
   const navigate = useNavigate();
   const { user, profile, modules } = useAuth();
+  const chrome = useDashboardChrome();
   const { timeOfDay, dateText } = getSingaporeGreeting();
 
   const hasClients = modules.some((mod) => mod.path === CLIENTS_PATH);
@@ -102,7 +122,25 @@ export default function DashboardHomePage() {
   const waiting = queue?.totalWaiting ?? 0;
 
   return (
-    <div className="min-h-dvh bg-background px-4 py-7 sm:px-10 sm:py-12">
+    <div className="min-h-dvh bg-background">
+      {/* This page composes no archetype frame (its GreetingHeader masthead IS
+          the header block, and AppHeaderShell would stack a second H1 over it),
+          so it renders the < lg chrome itself, exactly as the frames do. Without
+          this the rail is `hidden lg:flex` and nothing stands in: /dashboard had
+          no navigation at all on a phone, and since the ⌘K hotkey was removed
+          (2026-08-05) the bar's search icon is the only way to open the module
+          palette. */}
+      <AppHeaderMobileBar
+        breadcrumb={BAR_BREADCRUMB}
+        {...chrome.user}
+        viewAsSlot={<ViewAsSelector {...chrome.viewAs} />}
+        onSignOut={chrome.onSignOut}
+      />
+      {chrome.impersonation.active && <ImpersonationBanner {...chrome.impersonation.props} />}
+
+      {/* Padding stays OUTSIDE `max-w-5xl` — inside it, the gutters would eat
+          into the measure and narrow the column on wide screens. */}
+      <div className="px-4 py-7 sm:px-10 sm:py-12">
       <div className="mx-auto max-w-5xl">
         <GreetingHeader
           className="mb-10 motion-rise-hero"
@@ -149,6 +187,7 @@ export default function DashboardHomePage() {
             />
           </div>
         ) : null}
+      </div>
       </div>
 
       {hasClients && (

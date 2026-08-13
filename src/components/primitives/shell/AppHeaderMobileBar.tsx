@@ -11,6 +11,12 @@
  * Breakpoint: `lg:hidden`, matched to the rail. It used to be `md:hidden`,
  * which left 768–1023px with neither rail nor bar.
  *
+ * Homed by the three archetype frames (ListPageFrame · DetailPageFrame ·
+ * AppHeaderShell) AND, since 2026-08-13, by `DashboardHomePage` directly —
+ * that page composes no frame, so it was the one route in the app with no
+ * navigation at all below lg. Any future page that skips the frames must
+ * render this bar itself.
+ *
  * Locked: 52px row · sticky top-0 z-30 · glass card cream @ 72%
  * (`bg-card/[0.72]`) + backdrop-blur-xl saturate-140 · bottom hairline
  * `--border`. Excluded from print twice over (Tailwind `print:` + the
