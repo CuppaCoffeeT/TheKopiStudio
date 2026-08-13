@@ -28,6 +28,7 @@ SOPs, migration governance, code hygiene, E2E runbooks, and operational procedur
 | `MODULE_COMPLIANCE_CHECKLIST.md` | The Definition-of-Done gates `/check-module` audits against |
 | `PARALLEL_E2E_TESTING.md` | Running the Playwright suite across N parallel workers |
 | `CI_TEST_DB_ISOLATION.md` | Plan: move CI E2E off prod onto an ephemeral local Supabase per run |
+| `CI_TEST_DB_ISOLATION_HANDOFF.md` | Self-contained handoff to finish that work — done/failed/next-steps |
 | `MAC_MINI_E2E_CRON_RUNNER_RUNBOOK.md` | The nightly Mac-Mini E2E + self-heal pipeline |
 | `REACT_QUERY_RACE_CONDITION_TROUBLESHOOTING.md` | React Query debugging |
 | `ROOT_CLEANUP_AND_FILE_STANDARDS.md` | Project root file organization |
