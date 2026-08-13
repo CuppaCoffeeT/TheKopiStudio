@@ -42,22 +42,25 @@ jobs:
   e2e-p0:
     name: Playwright @p0 (${{ matrix.project }})
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Was 20. `supabase start` pulls ~5 images and applies the baseline
+    # migration + seed before Playwright even boots — budget for the cold pull.
+    timeout-minutes: 35
     needs: typecheck-lint
     strategy:
       fail-fast: false
-      # SERIALISED ON PURPOSE — do not raise. Both matrix legs drive the SAME
-      # live Supabase project with the SAME three e2e accounts. The advisor-book
-      # mutex (tests/fixtures/advisorBookLock.ts) is a `mkdir` on os.tmpdir(),
-      # which is atomic per HOST — and each matrix leg is a different runner, so
-      # the lock cannot see its peer. Run them together and dashboard.spec
-      # (asserts the advisor book is EMPTY) races portfolio-convert.spec
-      # (asserts baseline+1) on one shared book: seen 2026-07-27 as
-      # "Expected 3, Received 2" plus a residue sweep timing out mid-delete.
-      # tests/lessons.md 2026-06-01 (fixtureLock cross-host) prescribes exactly
-      # this remedy — an operational non-overlap window — until a DB-backed
-      # cross-host lock exists. Costs ~4min of wall-clock; the 20min per-job
-      # timeout is unaffected because it is per job, not per matrix.
+      # STILL SERIAL, but for a different (and temporary) reason. The original
+      # reason is GONE: as of the ephemeral-DB change below, each matrix leg
+      # starts its OWN Supabase on its OWN runner, so there is no longer a
+      # shared book for dashboard.spec (asserts the advisor book is EMPTY) to
+      # race against portfolio-convert.spec (asserts baseline+1) — the
+      # cross-host hole in tests/fixtures/advisorBookLock.ts (a per-host
+      # `mkdir` mutex) no longer matters, because there is nothing to share.
+      #
+      # Kept at 1 only to get ONE green serial run on the new stack first.
+      # Raising this is a deliberate follow-up: flip to 2, confirm green twice,
+      # and delete this block. Do NOT raise it in the same change that
+      # introduces the ephemeral DB — that would leave two variables in play if
+      # it goes red.
       max-parallel: 1
       matrix:
         project: [chromium-desktop, mobile-safari]
@@ -68,17 +71,56 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'npm'
       - run: npm ci
+
+      # ── Ephemeral Supabase ────────────────────────────────────────────────
+      # Until 2026-08-13 this job ran against the LIVE production project via
+      # repo secrets. That left `E2E-…` residue in prod on every run and raced
+      # three shared accounts across the two matrix legs, which is why the
+      # badge was red for weeks for reasons unrelated to the code.
+      #
+      # Everything below is deterministic and non-secret: the local anon /
+      # service_role keys are the fixed demo JWTs the CLI derives from its
+      # default JWT secret, and the test passwords are committed constants for
+      # a database that is destroyed with the runner. No GitHub secret is read
+      # by this job any more.
+      # Design + rationale: docs/06-operations/CI_TEST_DB_ISOLATION.md
+      - uses: supabase/setup-cli@v1
+        with:
+          # Pinned, not `latest` — supabase/config.toml uses `[db.seed]`,
+          # `[edge_runtime]` and `major_version = 17`, and a CLI that predates
+          # any of those fails at `start` rather than at parse.
+          version: 2.114.0
+      - name: Start ephemeral Supabase (db + auth + rest + edge functions)
+        # Applies supabase/migrations/00000000000000_baseline_prod_schema.sql
+        # (the faithful prod public schema) then supabase/seed.sql (RBAC
+        # backbone + the 8 legacy `results` fixtures). studio/storage/realtime/
+        # analytics are disabled in config.toml — the suite touches none of them.
+        run: supabase start
+      - name: Export the local (non-secret) keys into the job env
+        # `-o env` emits KEY="value" pairs; $GITHUB_ENV takes them literally, so
+        # the quotes must be stripped or every value arrives wrapped in `"`.
+        run: supabase status -o env | sed 's/"//g' >> "$GITHUB_ENV"
+      - name: Seed the three E2E auth accounts
+        # Admin API, not raw SQL — see the header of the script for why, and for
+        # the three role surfaces (JWT app_metadata, public.users,
+        # public.profiles) it has to line up. Fails loudly here rather than as
+        # N opaque login timeouts.
+        run: node tests/setup/seed-auth-users.mjs
+        env:
+          SUPABASE_URL: http://127.0.0.1:54321
+          SUPABASE_KEY: ${{ env.SERVICE_ROLE_KEY }}
+          SUPABASE_ANON_KEY: ${{ env.ANON_KEY }}
+          TEST_ADVISOR_PASSWORD: e2e-advisor-pw
+          TEST_MANAGER_PASSWORD: e2e-manager-pw
+          TEST_SUPER_ADMIN_PASSWORD: e2e-superadmin-pw
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
       - name: Run @p0 seatbelt (${{ matrix.project }})
         env:
           CI: 'true'
-          # There is no .env in CI — it is gitignored. Every value below comes
-          # from a GitHub repo secret (Settings → Secrets and variables →
-          # Actions). Secrets do NOT follow a repo rename/transfer, so they must
-          # be re-added on each repo. An unset secret expands to an EMPTY STRING,
-          # not an error, which is why a missing one surfaces as tests/global-setup.ts
-          # throwing "missing dev-server env" rather than as a workflow failure.
+          # There is no .env in CI — it is gitignored. Every value below is a
+          # literal or comes from `supabase status` (exported two steps up).
           #
           # Required, or the run cannot start:
           #   VITE_SUPABASE_URL · VITE_SUPABASE_PUBLISHABLE_KEY  (global-setup contract)
@@ -87,21 +129,21 @@ jobs:
           #   TEST_{ADVISOR,MANAGER,SUPER_ADMIN}_PASSWORD        (auth.setup signs in per role)
 
           # Dev server (npm run dev) needs the VITE_* names
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
-          VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
+          VITE_SUPABASE_URL: http://127.0.0.1:54321
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ env.ANON_KEY }}
 
           # tests/runners/supabaseChecks.ts — SUPABASE_URL falls back to
           # VITE_SUPABASE_URL; SUPABASE_KEY (service role) has no fallback.
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_URL: http://127.0.0.1:54321
+          SUPABASE_KEY: ${{ env.SERVICE_ROLE_KEY }}
 
-          # tests/fixtures/testUsers.ts — the three pre-provisioned e2e accounts.
-          # Emails and user-ids have committed defaults, so only the passwords
-          # are strictly required; set the others to override per environment.
-          TEST_ADVISOR_PASSWORD: ${{ secrets.TEST_ADVISOR_PASSWORD }}
-          TEST_MANAGER_PASSWORD: ${{ secrets.TEST_MANAGER_PASSWORD }}
-          TEST_SUPER_ADMIN_PASSWORD: ${{ secrets.TEST_SUPER_ADMIN_PASSWORD }}
+          # tests/fixtures/testUsers.ts — emails and user-ids have committed
+          # defaults that match tests/setup/seed-auth-users.mjs, so only the
+          # passwords are passed. These are constants for a throwaway DB, NOT
+          # secrets; changing one here means changing it in the seed step too.
+          TEST_ADVISOR_PASSWORD: e2e-advisor-pw
+          TEST_MANAGER_PASSWORD: e2e-manager-pw
+          TEST_SUPER_ADMIN_PASSWORD: e2e-superadmin-pw
         # NO --config: this uses the base playwright.config.ts, which is tuned
         # for CI (workers 2, retries 2, trace/video off, 90s timeout) and now
         # declares the `setup` project that mints tests/.auth/<role>.json.
@@ -126,6 +168,18 @@ jobs:
           name: playwright-report-${{ matrix.project }}
           path: playwright-report/
           retention-days: 7
+      - name: Supabase container logs on failure
+        # A red run on the new stack is far more often "the DB never came up
+        # right" than "a spec broke". Print that first so the next person does
+        # not read 45 login timeouts looking for the cause.
+        if: failure()
+        run: |
+          supabase status || true
+          docker ps -a || true
+          for c in $(docker ps -aq --filter "name=supabase_"); do
+            echo "───── $(docker inspect --format '{{.Name}}' "$c") ─────"
+            docker logs --tail 100 "$c" 2>&1 || true
+          done
 
 # REMOVED 2026-07-27 — the `sync-ledger` job.
 #

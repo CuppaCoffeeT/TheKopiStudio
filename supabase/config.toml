@@ -1,6 +1,74 @@
 # Link this folder to your project once with:  supabase link --project-ref <ref>
 project_id = "mymzcbalyqqgdmzsfmam"
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Everything below configures the EPHEMERAL LOCAL stack (`supabase start`) that
+# CI runs the E2E suite against — see .github/workflows/seatbelt.yml and
+# docs/06-operations/CI_TEST_DB_ISOLATION.md. It has NO effect on the hosted
+# project; `project_id` above is only the container-name prefix locally.
+# ─────────────────────────────────────────────────────────────────────────────
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+# Match prod: "Dumped from database version 17.6" in the baseline migration.
+# The dump also carries pg17-only syntax, so do not drop this to 15.
+major_version = 17
+
+[db.seed]
+# Applied AFTER migrations, on `supabase start` / `db reset`. Stated
+# explicitly rather than relying on the CLI default so the ordering
+# (baseline schema → RBAC + fixtures → tests/setup/seed-auth-users.mjs) is
+# readable from the config alone.
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[auth]
+enabled = true
+# The dev server serves the app here (playwright.config.ts E2E_PORT, default 8080).
+site_url = "http://localhost:8080"
+additional_redirect_urls = ["http://localhost:8080", "http://127.0.0.1:8080"]
+enable_signup = true
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+# CRITICAL for CI: with confirmations ON, a seeded account cannot sign in until
+# someone clicks a link in a mail no one reads. tests/setup/seed-auth-users.mjs
+# also passes email_confirm: true, so this is the second of two belts.
+enable_confirmations = false
+
+# Services the suite does not touch. Left off so `supabase start` on the runner
+# pulls ~5 images instead of ~12 (verified: src/ has no storage.from(),
+# functions.invoke(), or .channel() call sites).
+[studio]
+enabled = false
+
+[storage]
+enabled = false
+
+[realtime]
+enabled = false
+
+[analytics]
+enabled = false
+
+# MUST stay on. manage-accounts.spec.ts (@p0) drives the role/approval
+# round-trip through `/functions/v1/role-sync` from the UI, and restores the
+# advisor role in afterAll by POSTing that same endpoint directly. With the
+# runtime off, both the mutation and its restoration 404.
+[edge_runtime]
+enabled = true
+policy = "per_worker"
+
 # Edge functions verified by signature (not JWT) must opt out of the gateway's
 # JWT check. Example for the bundled resend-webhook template:
 # [functions.resend-webhook]

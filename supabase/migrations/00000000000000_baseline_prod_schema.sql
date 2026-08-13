@@ -1,4 +1,17 @@
 --
+-- BASELINE MIGRATION — faithful snapshot of the PROD public schema.
+--
+-- Squash point, not a dated change: version `00000000000000` so it always
+-- sorts first. The 10 pre-existing migrations it replaces never CREATEd these
+-- tables and had drifted from prod's applied history (they also collided on
+-- the CLI's version parse — everything before the first `_`, so eight of them
+-- were all version "20260611"). They are preserved verbatim, out of the apply
+-- path, in `_archive/` — see docs/06-operations/migrations/MIGRATION_SYSTEM_RECONSTRUCTION.md.
+--
+-- Applied by `supabase start` / `supabase db reset` to build the EPHEMERAL
+-- LOCAL test DB, then `supabase/seed.sql` loads the RBAC backbone + fixtures.
+-- Prod is NOT managed by this file — prod already has this schema.
+--
 -- PostgreSQL database dump
 --
 
@@ -23,7 +36,10 @@ SET row_security = off;
 -- Name: public; Type: SCHEMA; Schema: -; Owner: -
 --
 
-CREATE SCHEMA public;
+-- IF NOT EXISTS added to the dump: a local Supabase DB already has `public`
+-- (created by the CLI's own bootstrap), so a bare CREATE SCHEMA aborts the
+-- migration on statement 1.
+CREATE SCHEMA IF NOT EXISTS public;
 
 
 --
@@ -1780,3 +1796,21 @@ CREATE POLICY users_update ON public.users FOR UPDATE TO authenticated USING (((
 --
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+
+--
+-- Role grants. The dump carries NO GRANT statements (it was taken with a
+-- native pg_dump over the pooler, not `supabase db dump`), and PostgREST
+-- reaches every table as `anon`/`authenticated`/`service_role` — with no
+-- privileges those roles get 42501 on every request and RLS never even runs.
+-- Supabase's ALTER DEFAULT PRIVILEGES normally covers tables created by
+-- `postgres`, but this is belt-and-braces and idempotent either way.
+--
+GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL FUNCTIONS IN SCHEMA public TO anon, authenticated, service_role;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON FUNCTIONS TO anon, authenticated, service_role;

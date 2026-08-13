@@ -92,3 +92,34 @@ guard is UPDATE-only); no `FORCE ROW LEVEL SECURITY` was added for exactly this
 reason. Promote/demote/approve for OTHER users flows through the role-sync edge
 function (service role), not direct client UPDATEs — `users_update` being self-only
 encodes that.
+
+---
+
+## 2026-08-13 — Squash to a baseline migration; archive the 10 drifted files
+
+**Decision**: `supabase/migrations/` now holds exactly one applied file,
+`00000000000000_baseline_prod_schema.sql` — the faithful `pg_dump` of prod's public
+schema (15 tables, 15 functions, 48 RLS policies, 12 triggers) plus the
+`on_auth_user_created` trigger on `auth.users`. The 10 previous files moved verbatim to
+`_archive/`, which the CLI never globs.
+
+**Why**: they could not rebuild the database. They never `CREATE`d the tables, their
+timestamps did not match prod's 12 applied versions (most changes went in via MCP), and
+— found while moving them — the CLI parses a migration's version as the digits before the
+FIRST underscore, so `20260611_162101_…` and seven siblings were all version `20260611`:
+a duplicate-version history, which `supabase start` rejects outright. The repo could not
+reproduce its own schema, which blocks the ephemeral CI test DB
+([docs/06-operations/CI_TEST_DB_ISOLATION.md](../../docs/06-operations/CI_TEST_DB_ISOLATION.md)).
+
+**Impact**: `supabase start` / `db reset` rebuilds prod's schema exactly, then applies
+`seed.sql`. New changes are ordinary timestamped migrations stacked on the baseline —
+and the naming convention needs the full 14-digit `YYYYMMDDHHMMSS` prefix with NO
+internal underscore, or versions collide again. Prod is unaffected: it already has this
+schema and is not managed by this file.
+
+**Two edits to the raw dump**, both required and both commented in place: `CREATE SCHEMA
+public` → `IF NOT EXISTS` (a local DB already has `public`, so a bare CREATE aborts on
+statement 1), and a trailing `GRANT` / `ALTER DEFAULT PRIVILEGES` block — a native
+`pg_dump` over the pooler carries no grants, and PostgREST reaches every table as
+`anon` / `authenticated` / `service_role`, which without privileges get 42501 before RLS
+is ever consulted.

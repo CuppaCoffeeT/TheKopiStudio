@@ -1,45 +1,69 @@
 # CI Test-DB Isolation — stop the E2E suite writing to production
 
-**Status**: IN PROGRESS. Schema captured + committed; seed built. Remaining: config.toml,
-migration snapshot, auth-seed script, workflow rewrite — all needing CI (Docker) to
-validate. **Last Updated**: 2026-08-13
+**Status**: CODE COMPLETE, AWAITING FIRST CI RUN. All four remaining pieces are written; none
+has ever been executed, because `supabase start` needs Docker and the authoring Mac has none.
+The first `pull_request` / `workflow_dispatch` run on `worktree-ci-test-db-isolation` is the
+first execution of any of it. **Last Updated**: 2026-08-13
 
 ## Progress — 2026-08-13
 
-Done and committed on `worktree-ci-test-db-isolation`:
+### Landed earlier (schema + seed)
+
 - **`supabase/schema.sql`** — faithful prod public schema (15 tables, 15 functions, 48 RLS
   policies, 12 triggers) + the `on_auth_user_created` trigger. Obtained via `pg_dump` (brew
   `libpq`) over the **IPv4 session pooler** — the direct host `db.<ref>.supabase.co` is
   IPv6-only and would not resolve. Exact pooler host came from `supabase/.temp/pooler-url`:
   `aws-1-ap-southeast-2.pooler.supabase.com:5432`, user `postgres.<ref>`.
+  **Now at `supabase/migrations/00000000000000_baseline_prod_schema.sql`** (see below).
 - **`supabase/seed.sql`** — RBAC backbone (roles/modules/role_modules/rls_capabilities,
   verbatim) + the 8 legacy `results` fixtures (owner NULL, empty scoring jsonb).
 
-Gotchas found (bake into the remaining steps):
+### Landed this pass (the four remaining pieces)
+
+| # | Change | Notes |
+|---|---|---|
+| 1 | `schema.sql` → `supabase/migrations/00000000000000_baseline_prod_schema.sql` | Version `00000000000000` so it always sorts first. Two edits to the dump: `CREATE SCHEMA public` → `IF NOT EXISTS` (local `public` already exists → aborts on statement 1), and a trailing `GRANT`/`ALTER DEFAULT PRIVILEGES` block (a native `pg_dump` carries no grants, and PostgREST reaches every table as `anon`/`authenticated`/`service_role`). |
+| 1b | The 10 drifted migrations → `supabase/migrations/_archive/` | **Archived, not deleted** — code-hygiene keeps history. The CLI globs `migrations/*.sql` non-recursively, so nothing there is applied. Third defect found while doing it: the CLI parses the version as the digits before the FIRST `_`, so eight of the ten were all version `20260611` — a duplicate-version history, not merely a drifted one. |
+| 2 | `supabase/config.toml` | `[auth.email] enable_confirmations = false` (**not** `[auth]` — that key does not exist there), explicit `[api]`/`[db]` ports, `major_version = 17` to match prod's 17.6, explicit `[db.seed]`, and studio/storage/realtime/analytics off. |
+| 3 | `tests/setup/seed-auth-users.mjs` | Admin-API auth seeding + verification. |
+| 4 | `.github/workflows/seatbelt.yml` | `supabase/setup-cli@v1` (pinned 2.114.0) → `supabase start` → export `supabase status -o env` → seed script → Playwright. Every GitHub secret dropped from the job. Timeout 20 → 35 min for the cold image pull; a `failure()` step dumps the container logs. |
+
+### Gotchas found (all of them already baked into the files above)
+
 - **`pg_dump` 18 emits `\restrict`/`\unrestrict`** psql meta-commands that the local Supabase
-  **psql 17** container errors on — already stripped from `schema.sql`; strip from any future
-  re-dump too.
+  **psql 17** container errors on — already stripped; strip from any future re-dump too.
 - **Auth users are seeded via the admin API, not raw SQL** — `auth.users`/`auth.identities`
-  inserts are gotrue-version-sensitive. The auth-seed script must run AFTER `supabase start`,
-  create the 3 accounts with `auth.admin.createUser({ email_confirm: true })`, then UPDATE
-  their `public.users`/`profiles` role/approved/active and reassign "Bee zhen"
-  (`883d2eca…`).`user_id` to the super_admin.
-- **`results.user_id` FKs to `profiles`** (not `users`) — the reassignment targets a profiles row.
+  inserts are gotrue-version-sensitive.
+- **`results.user_id` FKs to `profiles`** (not `users`) — the "Bee zhen" reassignment targets a
+  profiles row.
+- **The role that RLS reads is in the JWT, not in `public.users`.** `has_capability()` and
+  `is_super_admin()` both read `auth.jwt()->'app_metadata'->>'role'`. Seeding `public.users.role`
+  alone leaves every capability check failing closed — manager sees an empty book, and
+  `view_all_clients` / `view_all_results` never engage. The seed script therefore sets
+  **three** role surfaces: JWT `app_metadata.role`, `public.users.role`, and
+  `public.profiles.role`.
+- **`public.profiles.role` is its own contract.** `get_my_role()` reads it, and
+  "Managers read all results/profiles" are written against `get_my_role() = 'manager'`. Its
+  CHECK allows only `advisor|manager`, so **super_admin maps to `manager`** — the same mapping
+  `supabase/functions/role-sync/index.ts` (v2) applies in prod. Get this wrong and
+  results-superadmin.spec sees nothing.
+- **The edge runtime must stay ON.** `manage-accounts.spec.ts` (@p0) drives the role round-trip
+  through `/functions/v1/role-sync` from the UI *and* restores the advisor role in `afterAll`
+  by POSTing that endpoint directly. Disabling `[edge_runtime]` 404s both.
+- **`supabase status -o env` emits `KEY="value"`.** `$GITHUB_ENV` takes the line literally, so
+  the quotes must be stripped or every value arrives wrapped in `"`.
 
-Remaining (each needs a `supabase start` — i.e. Docker/CI — to validate; not possible in the
-authoring env):
-1. **Migration snapshot** — move `schema.sql` into `supabase/migrations/<ts>_baseline.sql`
-   and delete the 10 drifted files, so `supabase start` rebuilds the exact schema. (Also fixes
-   the standalone "repo can't rebuild its DB" drift.)
-2. **`supabase/config.toml`** — `[auth] enable_confirmations = false`; confirm ports.
-3. **`tests/setup/seed-auth-users.mjs`** — admin-API auth seeding (above), run as a CI step
-   after `supabase start`, using the fixed local service_role key.
-4. **`.github/workflows/seatbelt.yml`** — add Supabase-CLI setup + `supabase start` + the
-   auth-seed step; replace the secret-backed `env:` with local literals (fixed anon/service
-   JWTs + committed test passwords). With an isolated DB the shared-account race is gone, so
-   `max-parallel` can later go back up — confirm one green serial run first.
+### Still unvalidated — what the first CI run has to prove
 
-The original plan below stands; the above is the current state against it.
+Nothing below has ever run. In rough order of how likely it is to be what goes red first:
+
+1. `supabase start` accepts this `config.toml` on CLI 2.114.0 (`major_version = 17`,
+   `[db.seed]`, the four `enabled = false` service blocks).
+2. The baseline migration applies clean under psql 17 — one bad statement aborts the whole file.
+3. `seed.sql` applies after it (FK order, and that `public` grants really do reach PostgREST).
+4. `seed-auth-users.mjs` — `createUser({ id })` is honoured, `handle_new_user()` fires, and the
+   `protect_user_privileges` trigger admits the service-role UPDATE.
+5. The suite itself. Only here are failures likely to be about the app rather than the harness.
 
 ## The problem
 
@@ -72,7 +96,13 @@ Why this over a second persistent test project:
   non-secret constants. The whole `env:` block becomes literals.
 - Costs nothing per run; nothing to maintain between runs.
 
-## Blocker (needs the DB password — your one action)
+## Historical (pre-dump blocker, resolved 2026-08-13)
+
+> Kept verbatim: this is why the baseline exists at all, and the `--schema-only` /
+> IPv6 / pooler-shard dead ends are recorded in the handoff's failure table.
+> The dump has been taken; the baseline migration now carries the schema. The commands
+> below are the re-dump recipe, and they still need a **fresh** DB password — the one
+> used on 2026-08-13 was pasted in chat and must be treated as burned.
 
 The committed migrations have **drifted** from prod and cannot rebuild the schema:
 prod's `supabase_migrations.schema_migrations` records **12** applied versions
@@ -142,42 +172,41 @@ user we will NOT seed); reassign it to the seeded super_admin so it stays foreig
 (still exercises `view_all_results`) without importing a real person. James stays
 `user_id = NULL` (the unclaimed read-only case).
 
-## File changes (once the schema lands)
+## File changes — as built (2026-08-13)
 
-1. `supabase/schema.sql` (+ `schema_auth.sql`) — from the dump. Squash `supabase/migrations/`
-   into one canonical migration derived from it, OR keep and let `db reset` apply schema then
-   seed. Squashing also fixes the standalone drift problem.
-2. `supabase/config.toml` — set `[auth] enable_confirmations = false`, seed path, local ports.
-3. `supabase/seed.sql` — RBAC (above) → auth users (3, `crypt()` passwords) → profiles/users
-   rows → 8 results. **Validate on first `supabase start`**: the `auth.users`/`auth.identities`
-   insert shape is CLI-version-sensitive and cannot be checked here (no Docker in the authoring
-   env).
-4. `.github/workflows/seatbelt.yml` — add a Supabase-CLI setup + `supabase start` step; replace
-   the secret-backed `env:` with local literals:
-   ```yaml
-   VITE_SUPABASE_URL: http://127.0.0.1:54321
-   VITE_SUPABASE_PUBLISHABLE_KEY: <fixed local anon JWT>
-   SUPABASE_URL: http://127.0.0.1:54321
-   SUPABASE_KEY: <fixed local service_role JWT>
-   TEST_ADVISOR_PASSWORD: <committed test constant>   # + manager, super_admin
-   ```
-   Keep `max-parallel: 1`? With an isolated DB per leg the shared-book race is gone, so the two
-   legs can run in parallel again — but confirm with one green serial run first, then relax.
+The plan called for four changes; all four are written. Deviations from the plan, and why:
+
+| Planned | Built | Why it differs |
+|---|---|---|
+| `supabase/schema.sql` + `schema_auth.sql` | one `migrations/00000000000000_baseline_prod_schema.sql` | The auth-schema dump was never needed: the only auth-side object is the `on_auth_user_created` trigger, appended by hand to the public dump. |
+| "squash OR keep and let `db reset` apply" | squash | Keeping both would have left the duplicate-version history in the apply path. |
+| delete the 10 drifted migrations | move to `migrations/_archive/` | Same effect on the CLI (it globs non-recursively) without discarding history. |
+| `[auth] enable_confirmations = false` | `[auth.email] enable_confirmations = false` | The key does not exist under `[auth]`. Doubled up with `email_confirm: true` per user in the seed script. |
+| auth users seeded in `seed.sql` with `crypt()` | `tests/setup/seed-auth-users.mjs`, admin API | A hand-written `auth.users` INSERT is gotrue-version-fragile and silently yields accounts that cannot sign in. |
+| the `env:` block gets hardcoded local JWTs | keys come from `supabase status -o env` | The demo JWTs are deterministic but version-dependent; reading them from the CLI cannot go stale. |
+| `max-parallel` can go back up | still 1 | Deliberately deferred — one variable at a time. See the comment in the workflow. |
 
 ## Validation path (no local Docker in the authoring env)
 
-The local stack cannot be exercised here, so validation is: open a PR from
-`worktree-ci-test-db-isolation`; the `pull_request` trigger runs the new workflow; iterate on
-`seed.sql` / `config.toml` against the runner logs until green. Do NOT merge to main until a
-run is green — a broken workflow on main blocks every push.
+The local stack cannot be exercised here, so validation is CI. `workflow_dispatch` on
+`worktree-ci-test-db-isolation` is the cheapest loop (this repo ships direct to `main`, no
+PRs). Iterate on `config.toml` / the baseline / `seed.sql` against the runner logs until
+green. Do NOT merge to `main` until a run is green — a broken workflow on main blocks every
+push.
+
+**If you do install Docker**, the whole loop collapses to a local
+`supabase db reset && node tests/setup/seed-auth-users.mjs`, which is worth doing before
+burning many CI runs on it.
 
 ## Sequencing
 
-1. **[you]** run the dump commands above → commit `supabase/schema.sql` (+ auth).
-2. **[me]** write `seed.sql` + `config.toml` + the `seatbelt.yml` rewrite; squash migrations.
-3. **[CI]** open PR → iterate to green.
-4. **[you]** merge; then rotate/retire the now-unused prod E2E GitHub secrets and, once green,
-   do a final prod residue clean — CI stops adding to it from then on.
+1. ~~**[you]** run the dump commands → commit `supabase/schema.sql`.~~ **Done.**
+2. ~~**[me]** `seed.sql` + `config.toml` + `seatbelt.yml` + squash migrations.~~ **Done.**
+3. **[CI]** ← *you are here.* Dispatch the workflow on the branch; iterate to green.
+4. **[you]** merge; then rotate/retire the now-unused prod E2E GitHub secrets
+   (`VITE_SUPABASE_*`, `SUPABASE_URL`, `SUPABASE_KEY`, `TEST_*_PASSWORD` — the job reads none
+   of them any more) and do a final prod residue clean, since CI stops adding to it from then
+   on. The prod DB password used for the dump is burned (pasted in chat) — rotate it too.
 
 ## Related
 

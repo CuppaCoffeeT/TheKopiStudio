@@ -4,6 +4,12 @@
 **Written**: 2026-08-13 · **Branch**: `worktree-ci-test-db-isolation` (3 commits ahead of `main`,
 NOT merged). **Repo**: `~/Documents/Projects/TheKopiStudio` · **Prod project**: `mymzcbalyqqgdmzsfmam`.
 
+> **PICKED UP 2026-08-13.** All four pieces in §3 are now written and committed on this branch.
+> The live status, the as-built deviations from §3, and the list of what the first CI run still
+> has to prove are in [CI_TEST_DB_ISOLATION.md](CI_TEST_DB_ISOLATION.md) — **read that, not §3**,
+> for what to do next. This file is kept for §2 (the failure table) and §5 (reference data),
+> which are still current and still worth not re-deriving.
+
 > Paste this whole file into a fresh session as the brief. It is self-contained.
 
 ---
@@ -57,7 +63,14 @@ secrets** (local keys + test passwords are deterministic constants).
 
 ---
 
-## 3. What is LEFT — 4 pieces, each needs `supabase start` (Docker) to validate
+## 3. Historical (the "what is LEFT" brief, retired 2026-08-13 — all four are now written)
+
+> **Superseded.** Every item below has been built; three of them differ from the sketch here in
+> ways that matter (`[auth.email]` not `[auth]`; `createUser({ id })` not `{ user_id }`; the
+> role also has to be set in the JWT's `app_metadata`, which this section misses entirely and
+> which would have left every RLS capability check failing closed). The as-built table and the
+> reasons are in [CI_TEST_DB_ISOLATION.md](CI_TEST_DB_ISOLATION.md#file-changes--as-built-2026-08-13).
+> Kept verbatim as the record of what was specified.
 
 > None of these could be validated in the authoring env (no Docker). Validate by opening a PR
 > (the runner has Docker) OR by running `supabase start` locally after installing Docker Desktop.
