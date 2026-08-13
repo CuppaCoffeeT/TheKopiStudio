@@ -31,6 +31,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { getCurrentSingaporeTime } from '@/utils/timezoneUtils';
 import { resolveClientFollowUp } from '../lib/followUps';
 import { clientFromRow } from '../lib/clientMapping';
+import { profilerHrefFor } from '../lib/profilerEntry';
 import { useClientDetail } from '../hooks/useClientDetail';
 import { useDetailJourney } from '../hooks/useDetailJourney';
 import { useSoftDeleteClient } from '../hooks/useClientMutations';
@@ -148,7 +149,7 @@ export default function ClientDetailPage() {
             linkedResultId={newestLinkedResult?.id ?? null}
             isOwn={isOwn}
             canProfile={canProfile}
-            onStartProfiler={() => navigate('/profiler')}
+            onStartProfiler={() => navigate(profilerHrefFor({ id, name: model.name }))}
             onOpenProfile={(resultId) => navigate(`/profiler-results/${resultId}`)}
             onEditInformation={() => setEditOpen(true)}
             onOpenReport={() => navigate(`/clients/${id}/report`)}

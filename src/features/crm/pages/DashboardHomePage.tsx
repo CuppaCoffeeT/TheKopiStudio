@@ -16,10 +16,14 @@
  * `OverviewKpiRow`, `lib/latestAdditions`. The `KpiIndexCard` PRIMITIVE they
  * used survives in `primitives/dashboard` for the next adopter.
  *
- * Every figure and row is live, RLS-scoped data derived by ONE ruleset
+ * Every figure and row is live data derived by ONE ruleset
  * (`lib/customerJourney` + `lib/customerAttention`) shared with the Customers list and the customer
  * detail launcher — so the queue can never claim a customer is unfinished while
  * their record shows the chain complete.
+ *
+ * Scope: the viewer's OWN customers only, whatever their role — this page is a
+ * personal work queue. Cross-advisor reach lives on the Customers list, which
+ * is the surface built to explain whose customer is whose.
  *
  * Module gating: the queue reads `public.clients`, so it is parked entirely for
  * a viewer without `/clients` (an empty queue would read as "all caught up").
@@ -34,13 +38,23 @@
  * opening `crm-add-customer-choice-modal`.
  */
 
+/**
+ * Chrome: composes NO archetype frame (the GreetingHeader masthead IS the
+ * header block; AppHeaderShell would stack a second H1 over it), so it renders
+ * `AppHeaderMobileBar` itself. Don't drop it — below lg the rail is hidden and
+ * the ⌘K hotkey is gone, so the bar's search icon is the only way off the page.
+ */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/primitives/shell';
 import { GreetingHeader } from '@/components/primitives/dashboard';
+import { AppHeaderMobileBar } from '@/components/primitives/shell/AppHeaderMobileBar';
+import { ImpersonationBanner } from '@/components/primitives/shell/ImpersonationBanner';
+import { ViewAsSelector } from '@/components/primitives/shell/ViewAsSelector';
 import { ErrorState } from '@/components/primitives/shell/ErrorState';
 import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
+import { useDashboardChrome } from '@/hooks/useDashboardChrome';
 import { getSingaporeGreeting } from '@/utils/dashboardHelpers';
 import { CustomerQueueBoard } from '../components/CustomerQueueBoard';
 import type { QueueRowAction } from '../components/CustomerQueueSection';
@@ -48,10 +62,14 @@ import { StartProfilerBand } from '../components/StartProfilerBand';
 import { AddCustomerChoiceModal } from '../components/modals/AddCustomerChoiceModal';
 import { ClientFormModal } from '../components/modals/ClientFormModal';
 import { useCustomerQueue } from '../hooks/useCustomerQueue';
+import { PROFILER_PATH, profilerHrefFor } from '../lib/profilerEntry';
 import type { QueueCustomer } from '../api/customerQueueService';
 
 const CLIENTS_PATH = '/clients';
-const PROFILER_PATH = '/profiler';
+
+/** Page label for the < lg bar (it shows only the last segment). Matches
+ *  `AppSidebar`'s HOME_LABEL so rail and bar name this page the same. */
+const BAR_BREADCRUMB = [{ label: 'Overview' }];
 
 function plural(count: number, one: string, many: string): string {
   return count === 1 ? one : many;
@@ -60,6 +78,7 @@ function plural(count: number, one: string, many: string): string {
 export default function DashboardHomePage() {
   const navigate = useNavigate();
   const { user, profile, modules } = useAuth();
+  const chrome = useDashboardChrome();
   const { timeOfDay, dateText } = getSingaporeGreeting();
 
   const hasClients = modules.some((mod) => mod.path === CLIENTS_PATH);
@@ -80,11 +99,13 @@ export default function DashboardHomePage() {
   const resolveAction = (customer: QueueCustomer): QueueRowAction => {
     const open = { label: 'Open', onClick: () => navigate(`/clients/${customer.id}`) };
     if (customer.journey.nextStep === 'profiler' && canProfile) {
-      // Carry the customer's name into the wizard — the row names who to
-      // profile; making the advisor retype it was the audit's worst paper-cut.
+      // Carry BOTH halves of the entry contract: the name so the advisor
+      // never retypes it, and the id so the saved profile lands ON this
+      // customer. Name-only sent the advisor back to a row that still said
+      // "never profiled" after they had just profiled them.
       return {
         label: 'Start profiler',
-        onClick: () => navigate(`${PROFILER_PATH}?prospect=${encodeURIComponent(customer.name)}`),
+        onClick: () => navigate(profilerHrefFor(customer)),
       };
     }
     if (customer.journey.nextStep === 'info') {
@@ -102,7 +123,17 @@ export default function DashboardHomePage() {
   const waiting = queue?.totalWaiting ?? 0;
 
   return (
-    <div className="min-h-dvh bg-background px-4 py-7 sm:px-10 sm:py-12">
+    <div className="min-h-dvh bg-background">
+      <AppHeaderMobileBar
+        breadcrumb={BAR_BREADCRUMB}
+        {...chrome.user}
+        viewAsSlot={<ViewAsSelector {...chrome.viewAs} />}
+        onSignOut={chrome.onSignOut}
+      />
+      {chrome.impersonation.active && <ImpersonationBanner {...chrome.impersonation.props} />}
+
+      {/* Padding stays OUTSIDE `max-w-5xl` or the gutters eat the measure. */}
+      <div className="px-4 py-7 sm:px-10 sm:py-12">
       <div className="mx-auto max-w-5xl">
         <GreetingHeader
           className="mb-10 motion-rise-hero"
@@ -149,6 +180,7 @@ export default function DashboardHomePage() {
             />
           </div>
         ) : null}
+      </div>
       </div>
 
       {hasClients && (

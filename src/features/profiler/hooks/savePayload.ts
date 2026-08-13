@@ -7,6 +7,13 @@
  * while `observations_count` counts TRUE only (scoring already did). Blank
  * age/occupation/meeting become NULL exactly as legacy `|| null` did.
  *
+ * The ONE addition to that frozen shape is `client_id` — set when the wizard
+ * was entered from a customer (`?customerId=`). Before this, the column was
+ * only ever written by "Convert to client" AFTER the fact, so profiling a
+ * customer who already had a record left them reading as "never profiled"
+ * forever (the Overview queue's profiled test is `results.client_id`, never
+ * a name match).
+ *
  * Kept IO-free (separate from useSaveResult) so the payload parity unit test
  * runs without the supabase client.
  */
@@ -26,6 +33,13 @@ export interface BuildResultInsertArgs {
   notes: string;
   /** Authenticated user id, or null for the anonymous fire-and-forget save. */
   userId: string | null;
+  /**
+   * The customer this profile was started FOR (`?customerId=`), already
+   * resolved as linkable by the caller. Null for a cold-start profile — a
+   * prospect nobody has a customer record for yet, which is still the
+   * wizard's primary use.
+   */
+  clientId?: string | null;
 }
 
 export function buildResultInsert({
@@ -35,10 +49,12 @@ export function buildResultInsert({
   profile,
   notes,
   userId,
+  clientId = null,
 }: BuildResultInsertArgs): ProfilerResultInsert {
   const info = effectiveIntake(intake);
   return {
     user_id: userId,
+    client_id: clientId,
     advisor_name: info.adv,
     prospect_name: info.name,
     age_range: info.age || null,

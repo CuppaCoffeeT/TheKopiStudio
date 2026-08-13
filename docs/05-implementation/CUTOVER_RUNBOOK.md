@@ -6,11 +6,11 @@ The merged app is fully built and green on `main` (4 PRDs completed — see [DOC
 
 ## 1. User-blocked prerequisites
 - [ ] **CRM data import key** — old CRM Supabase dashboard (`uivdgousiyfeyrebloaz`) → Settings → API → `service_role`; put `SOURCE_SUPABASE_SERVICE_ROLE_KEY=<key>` in `"/Users/tenshi/Documents/Projects/Insurance CRM/.env.migration"`. Then the runbook in [CRM_DATA_SPINE.md](../01-system-architecture/CRM_DATA_SPINE.md) executes: `node scripts/export-crm.mjs` → `node scripts/import-crm.mjs` → orchestrated SQL apply + verification (row parity, recomputed totals).
-- [ ] **Production identity** — keep `prospect-profiler-app.vercel.app` (placeholder already in `src/main.tsx`) or a custom domain. Affects §2 and the Supabase auth whitelist.
+- [x] **Production identity** — RESOLVED 2026-08-13 (verified against the live account, not planned): custom domain **`www.thekopistudio.com`**, served by Vercel project **`thekopistudio`**; the apex `thekopistudio.com` 308s to www. The old `prospect-profiler-app.vercel.app` host now 404s and that Vercel project no longer exists. `src/main.tsx` pinned the dead host until 2026-08-13, so Vercel Analytics had been silently off in production.
 
 ## 2. Deploy (additive — needs the §1 domain decision)
-- [ ] Vercel project from `CuppaCoffeeT/prospect-profiler-app` (CLI authed): env vars `VITE_SUPABASE_PROJECT_ID`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` (values in `.env`).
-- [ ] Supabase Dashboard → Auth → URL Configuration: add the new domain + `/login` redirect (needed for signup-confirmation/recovery emails; password login works without it). Keep the OLD apps' entries until §4.
+- [x] Vercel project (CLI authed) with env vars `VITE_SUPABASE_PROJECT_ID`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` — live, deploying from `main` of `CuppaCoffeeT/TheKopiStudio`.
+- [ ] **STILL OPEN — Supabase Dashboard → Auth → URL Configuration**: Site URL `https://www.thekopistudio.com`, and redirect URLs covering `https://www.thekopistudio.com/login`, `https://www.thekopistudio.com/reset-password` (+ the apex and `http://localhost:8080/**` for local work). Needed by the signup-confirmation and password-recovery emails that `/signup` + `/forgot-password` now send — password login works without it, so this fails silently. Could not be verified from here: the management token in `.mcp.json` 403s on `/v1/projects/*/config/auth`.
 - [ ] Smoke: login as skytwech@gmail.com, run a wizard profile, open a client report, print.
 
 ## 3. Verification window (both apps live, shared DB — already the steady state)

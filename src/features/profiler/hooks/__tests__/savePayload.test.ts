@@ -37,6 +37,8 @@ describe('buildResultInsert', () => {
 
       expect(payload).toEqual({
         user_id: row.user_id,
+        // Legacy rows were never linked — a cold-start profile still isn't.
+        client_id: null,
         advisor_name: row.advisor_name,
         prospect_name: row.prospect_name,
         age_range: row.age_range,
@@ -97,6 +99,27 @@ describe('buildResultInsert', () => {
     expect(payload.age_range).toBeNull();
     expect(payload.occupation).toBeNull();
     expect(payload.meeting).toBe('1');
+  });
+
+  /**
+   * The whole point of the column: entering the wizard from a customer must
+   * produce a row the Overview queue can see, because "profiled" is decided
+   * by `client_id` and nothing else.
+   */
+  it('carries the customer link through when the wizard was entered from one', () => {
+    const row = LEGACY_RESULTS[0];
+    const profile = calcProfile(row.raw_answers, tickedIds(row.nv_observations), row.occupation);
+    const payload = buildResultInsert({
+      intake: intakeFromRow(row),
+      answers: row.raw_answers,
+      nv: row.nv_observations,
+      profile,
+      notes: '',
+      userId: 'advisor-uuid-1',
+      clientId: 'client-uuid-1',
+    });
+
+    expect(payload.client_id).toBe('client-uuid-1');
   });
 });
 

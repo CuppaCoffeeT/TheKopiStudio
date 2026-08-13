@@ -8,6 +8,9 @@ import { ProtectedRoute } from "@/components/shared/app-shell/ProtectedRoute";
 import DashboardLayout from "@/components/shared/app-shell/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/app-shell/ErrorBoundary";
 import Login from "@/pages/Login";
+import Signup from "@/pages/Signup";
+import ForgotPassword from "@/pages/ForgotPassword";
+import ResetPassword from "@/pages/ResetPassword";
 import NotFound from "@/pages/NotFound";
 import RouteError from "@/pages/RouteError";
 
@@ -46,10 +49,13 @@ const suspenseFallback = (
 /**
  * Router for the empty base.
  *
- * - `/`          → redirect to `/login`
- * - `/login`     → placeholder sign-in page
- * - `/dashboard` → placeholder authed landing (inside DashboardLayout shell)
- * - `*`          → 404
+ * - `/`                → redirect to `/login`
+ * - `/login`           → sign-in page
+ * - `/signup`          → self-serve account creation (admin-approved)
+ * - `/forgot-password` → request a reset link
+ * - `/reset-password`  → landing page for the emailed recovery link
+ * - `/dashboard`       → authed landing (inside DashboardLayout shell)
+ * - `*`                → 404
  *
  * Add new feature routes as children of the DashboardLayout group, each wrapped
  * in <ProtectedRoute modulePath="/your-path"> for module-based access control.
@@ -65,6 +71,26 @@ function App() {
     {
       path: "/login",
       element: <Login />,
+      errorElement: <RouteError />,
+    },
+    {
+      // Signed-out auth screens. Eager (not lazy) like /login — they share the
+      // AuthShell chunk with it and a spinner between "click the emailed link"
+      // and "type a new password" would read as a broken link.
+      path: "/signup",
+      element: <Signup />,
+      errorElement: <RouteError />,
+    },
+    {
+      path: "/forgot-password",
+      element: <ForgotPassword />,
+      errorElement: <RouteError />,
+    },
+    {
+      // Recovery-link landing. Must stay OUTSIDE ProtectedRoute: the visitor
+      // arrives holding only a recovery session.
+      path: "/reset-password",
+      element: <ResetPassword />,
       errorElement: <RouteError />,
     },
     {

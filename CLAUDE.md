@@ -2,7 +2,7 @@
 
 Reusable starter for new internal apps. Replace this header with your project name + company.
 React 18 + TypeScript + Vite + Supabase (PostgreSQL) + shadcn/ui + TailwindCSS + React Query
-Production: prospect-profiler-app.vercel.app
+Production: www.thekopistudio.com (Vercel project `thekopistudio`; apex 308s to www)
 
 
 ## Output Style (chat + .md)

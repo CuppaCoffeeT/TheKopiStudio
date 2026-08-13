@@ -20,7 +20,10 @@ const DashboardLayout: React.FC = () => {
     <>
       {/* ⌘K — module routing */}
       <GlobalCommandPalette />
-      {/* Primary nav ≥ lg; below that AppHeaderMobileBar keeps the job. */}
+      {/* Primary nav ≥ lg. Below that AppHeaderMobileBar keeps the job — but
+          it is homed PER PAGE (the archetype frames render it; DashboardHomePage
+          renders it itself), not here, so a page that composes no frame and no
+          bar of its own ships with zero navigation on a phone. */}
       <AppSidebar />
       <div className={cn(SIDEBAR_OFFSET_CLASS, 'print:pl-0!')}>
         {/* Single Suspense boundary for any lazy-loaded protected route pages. */}

@@ -9,9 +9,19 @@
  * PRD-sanctioned additions live here: the duplicate-save guard (same inputs
  * ⇒ regenerate doesn't insert again) and the advisor prefill from the
  * logged-in profile (legacy homeHTML behaviour).
+ *
+ * It also owns the CRM ENTRY CONTRACT — both query params a customer-shaped
+ * entry point passes, kept in ONE place so the pair can't drift apart:
+ *   ?prospect=<name>       seeds the intake name (a draft or typed name wins)
+ *   ?customerId=<uuid>     links the saved result to that customer record
+ * The id is the load-bearing half: the Overview queue decides "profiled" from
+ * `results.client_id` alone, so a name-only entry produced a profile that
+ * left the customer reading "never profiled" for good. Both are read here,
+ * not in the page, because the save payload is assembled here.
  */
 
 import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { getLocalDateString } from '@/utils/timezoneUtils';
 import { showSuccess } from '@/utils/toastHelper';
@@ -30,11 +40,16 @@ export function useWizardController() {
   const { user, profile: authProfile } = useAuth();
   const wizard = useWizardState();
   const save = useSaveResult();
+  const [searchParams] = useSearchParams();
 
   const [saveState, setSaveState] = useState<SaveState>('saving');
   const [exitConfirmOpen, setExitConfirmOpen] = useState(false);
   const lastSavedSignature = useRef<string | null>(null);
   const advisorPrefilled = useRef(false);
+
+  // The wizard never navigates, so the params survive a mid-flow refresh
+  // alongside the sessionStorage draft — no need to mirror them into state.
+  const customerId = searchParams.get('customerId');
 
   // Legacy homeHTML prefilled the advisor field from the logged-in profile.
   useEffect(() => {
@@ -42,6 +57,16 @@ export function useWizardController() {
     advisorPrefilled.current = true;
     if (!wizard.intake.adv) wizard.setIntake({ ...wizard.intake, adv: authProfile.name });
   }, [authProfile, wizard]);
+
+  // Seed the prospect name once on arrival; a draft-restored or hand-typed
+  // name always wins, so the seed only ever fills an empty field.
+  useEffect(() => {
+    const prospect = searchParams.get('prospect');
+    if (prospect && !wizard.intake.name.trim()) {
+      wizard.setIntake({ ...wizard.intake, name: prospect });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const { screen } = wizard;
   const info = effectiveIntake(wizard.intake);
@@ -70,6 +95,7 @@ export function useWizardController() {
       profile: generated,
       notes: wizard.notes,
       userId: user?.id ?? null,
+      clientId: customerId,
     });
     save.mutate(payload, {
       onSuccess: () => {

@@ -6,7 +6,8 @@
  *   - `AppSidebarFooter` — the >= lg account home, pinned to the bottom of the
  *     200px rail.
  *   - `AppHeaderMobileBar` — the < lg fallback, rendered by ListPageFrame /
- *     DetailPageFrame / AppHeaderShell.
+ *     DetailPageFrame / AppHeaderShell, and by DashboardHomePage, which
+ *     composes none of them.
  *   - `ImpersonationBanner` — rendered by those same frames.
  *
  * It returns connector PROP BAGS rather than pre-rendered slots, so each home

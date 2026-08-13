@@ -8,6 +8,10 @@
  * RFC-4180 style; numeric fields stay bare, as legacy emitted them.
  */
 
+import { getLocalDateString } from '@/utils/timezoneUtils';
+import { showSuccess } from '@/utils/toastHelper';
+import type { ProfilerResult } from '../types';
+
 /** Frozen legacy header row — do not reorder or rename. */
 const CSV_HEADER =
   'Date,Advisor,Prospect,Age,Occupation,Meeting,DISC Primary,DISC Secondary,MBTI,Score D,Score I,Score S,Score C,Questions,Observations,Notes';
@@ -81,4 +85,34 @@ export function downloadCsv(filename: string, csv: string): void {
   anchor.click();
   document.body.removeChild(anchor);
   URL.revokeObjectURL(url);
+}
+
+/**
+ * Export ONE saved `public.results` row as the legacy CSV. Lives beside
+ * `buildCsv` rather than in the detail page because it is column mapping,
+ * not page logic. The date is the DOWNLOAD date, not the profiling date —
+ * legacy `dlCSV` behaviour, kept deliberately.
+ */
+export function downloadRowCsv(row: ProfilerResult): void {
+  const date = getLocalDateString(new Date());
+  const csv = buildCsv({
+    date,
+    advisor: row.advisor_name,
+    prospect: row.prospect_name,
+    age: row.age_range ?? '',
+    occupation: row.occupation ?? '',
+    meeting: row.meeting ?? '',
+    discPrimary: row.disc_primary,
+    discSecondary: row.disc_secondary,
+    mbti: row.mbti,
+    scoreD: row.score_d,
+    scoreI: row.score_i,
+    scoreS: row.score_s,
+    scoreC: row.score_c,
+    questions: row.questions_answered,
+    observations: row.observations_count,
+    notes: row.notes ?? '',
+  });
+  downloadCsv(`profile_${row.prospect_name.replace(/\s+/g, '_')}_${date}.csv`, csv);
+  showSuccess('CSV saved');
 }

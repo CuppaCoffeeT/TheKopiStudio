@@ -509,8 +509,25 @@ test.describe('advisor shell — sidebar rail navigation', () => {
     if (isMobile) {
       // AppSidebar is `hidden lg:flex` — at phone width the rail must not paint
       // over the content column. Navigation there is the ⌘K palette, reached
-      // from the frames' mobile bar.
+      // from the mobile bar's search icon (the hotkey was removed 2026-08-05).
       await expect(rail).toBeHidden();
+
+      // ...so the bar MUST be there. /dashboard composes no archetype frame, so
+      // it renders the bar itself; when it did not, this page was the one route
+      // in the app with zero navigation on a phone. Assert the whole path, not
+      // just the button: search icon → palette → another module.
+      const search = page.getByTestId('app-header-mobile-search');
+      await expect(search).toBeVisible({ timeout: 30_000 });
+      await search.click();
+
+      const palette = page.getByRole('dialog');
+      await expect(palette).toBeVisible({ timeout: 30_000 });
+      // The palette lists modules under their DB `name` ("Clients"), not the
+      // rail's customer-centred relabel ("Customers"), and each option's
+      // accessible name carries its description too — hence the anchored regex.
+      await palette.getByRole('option', { name: /^Clients\b/ }).click();
+      await page.waitForURL(/\/clients(\?.*)?$/, { timeout: 30_000 });
+      await expect(page.getByTestId('clients-table')).toBeVisible({ timeout: 30_000 });
       return;
     }
 
