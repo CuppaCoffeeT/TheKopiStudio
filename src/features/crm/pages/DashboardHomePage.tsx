@@ -35,13 +35,11 @@
  */
 
 /**
- * Chrome: this page composes NO archetype frame — its GreetingHeader masthead
- * is the header block, and AppHeaderShell would stack a second H1 over it — so
- * it renders `AppHeaderMobileBar` itself. Don't remove it: below lg the rail is
- * hidden and the ⌘K hotkey is gone, so that bar's search icon is the only way
- * off this page.
+ * Chrome: composes NO archetype frame (the GreetingHeader masthead IS the
+ * header block; AppHeaderShell would stack a second H1 over it), so it renders
+ * `AppHeaderMobileBar` itself. Don't drop it — below lg the rail is hidden and
+ * the ⌘K hotkey is gone, so the bar's search icon is the only way off the page.
  */
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -65,11 +63,8 @@ import type { QueueCustomer } from '../api/customerQueueService';
 const CLIENTS_PATH = '/clients';
 const PROFILER_PATH = '/profiler';
 
-/**
- * Page label for the < lg bar. One segment: the bar shows only the last, and
- * this page IS the root — a `Workspace /` crumb above it would point at itself.
- * Matches `AppSidebar`'s HOME_LABEL so the rail and the bar name it the same.
- */
+/** Page label for the < lg bar (it shows only the last segment). Matches
+ *  `AppSidebar`'s HOME_LABEL so rail and bar name this page the same. */
 const BAR_BREADCRUMB = [{ label: 'Overview' }];
 
 function plural(count: number, one: string, many: string): string {
@@ -123,13 +118,6 @@ export default function DashboardHomePage() {
 
   return (
     <div className="min-h-dvh bg-background">
-      {/* This page composes no archetype frame (its GreetingHeader masthead IS
-          the header block, and AppHeaderShell would stack a second H1 over it),
-          so it renders the < lg chrome itself, exactly as the frames do. Without
-          this the rail is `hidden lg:flex` and nothing stands in: /dashboard had
-          no navigation at all on a phone, and since the ⌘K hotkey was removed
-          (2026-08-05) the bar's search icon is the only way to open the module
-          palette. */}
       <AppHeaderMobileBar
         breadcrumb={BAR_BREADCRUMB}
         {...chrome.user}
@@ -138,8 +126,7 @@ export default function DashboardHomePage() {
       />
       {chrome.impersonation.active && <ImpersonationBanner {...chrome.impersonation.props} />}
 
-      {/* Padding stays OUTSIDE `max-w-5xl` — inside it, the gutters would eat
-          into the measure and narrow the column on wide screens. */}
+      {/* Padding stays OUTSIDE `max-w-5xl` or the gutters eat the measure. */}
       <div className="px-4 py-7 sm:px-10 sm:py-12">
       <div className="mx-auto max-w-5xl">
         <GreetingHeader
