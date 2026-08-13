@@ -35,6 +35,7 @@ const CHAIN_METHODS = [
   'upsert',
   'eq',
   'neq',
+  'ilike',
   'or',
   'not',
   'in',

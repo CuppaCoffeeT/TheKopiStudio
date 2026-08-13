@@ -23,8 +23,6 @@
  * progress rail, the content and the footer nav share one column.
  */
 
-import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useScrolled } from '@/hooks/useScrolled';
 import { AppSidebar, SIDEBAR_OFFSET_CLASS } from '@/components/primitives/shell';
@@ -52,17 +50,8 @@ export default function ProfilerWizardPage() {
   // itself stays public — this is chrome, not access control.
   const authed = Boolean(c.user);
 
-  // CRM entry points pass ?prospect=<name> so the advisor never retypes who
-  // they came to profile. Seed once on arrival; a draft-restored or
-  // hand-typed name always wins.
-  const [searchParams] = useSearchParams();
-  useEffect(() => {
-    const prospect = searchParams.get('prospect');
-    if (prospect && !wizard.intake.name.trim()) {
-      wizard.setIntake({ ...wizard.intake, name: prospect });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // The CRM entry contract (?prospect= + ?customerId=) is read in
+  // useWizardController — it owns both the intake seed and the save payload.
 
   // Live count for the disabled-Next explanation on question screens.
   const answeredInBatch = isQuestionScreen

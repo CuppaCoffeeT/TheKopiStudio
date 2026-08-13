@@ -1,6 +1,6 @@
 # Lessons — src/features/crm
 
-Last Updated: 2026-07-27
+Last Updated: 2026-08-13
 
 ## 2026-07-14 — getCurrentSingaporeTime() is browser-local; SGT display strings need an explicit timeZone
 
@@ -43,3 +43,11 @@ Last Updated: 2026-07-27
 **Root cause**: `AppHeaderMobileBar` is homed PER PAGE by the three archetype frames, not by `DashboardLayout`. `DashboardHomePage` composes no frame (its `GreetingHeader` masthead is the header block, so `AppHeaderShell` would stack a second H1 over it), so it inherited no bar. `AppSidebar` is `hidden lg:flex`, and the ⌘K hotkey was removed 2026-08-05 — the bar's search icon is now the *only* opener of the module palette — so the three facts composed into a dead-end page. The existing rail spec asserted only that the rail is hidden below lg and returned early, so nothing caught it.
 
 **Fix**: `DashboardHomePage` renders `AppHeaderMobileBar` + `ImpersonationBanner` off `useDashboardChrome`, the same wiring `ListPageFrame` uses. The spec's mobile branch now walks the whole escape path — search icon → palette → `/clients` — instead of returning early. Generally: chrome that lives in the frames is absent from any page that skips them; a page composing its own layout must render the bar itself, and a mobile assertion that only checks something is *hidden* proves nothing about what stands in for it.
+
+## 2026-08-13 — The Overview queue trusted RLS for a boundary RLS does not draw
+
+**What happened**: a super_admin's `/dashboard` "Unfinished work" band listed another advisor's customers alongside their own, under the caption "Pick up where you left off". The same page also showed a customer as "Never profiled" who had just been profiled.
+
+**Root cause**: two different faces of one assumption — *the row I can read is the row that is mine*. (1) `getCustomerQueue` filtered nothing but `is_deleted`, leaning on RLS for scope; but `clients_select` also passes `has_capability('view_all_clients')` and `results` carries a "Managers read all results" policy, so for an elevated viewer the personal work queue silently became the whole firm's. (2) `deriveJourney({ hasProfile })` reads `results.client_id` and nothing else, while the wizard only ever wrote that column via "Convert to client" afterwards — so a profile saved for an existing customer never attached to them.
+
+**Fix**: `getCustomerQueue(userId)` takes the advisor as a REQUIRED argument and filters `user_id` on all three reads (the id is in the query key too — impersonation swaps the advisor without unmounting). Cross-advisor reach stays on the Customers list, which is built to show whose customer is whose. Separately, the profiler now sets `client_id` at save time via `?customerId=`. Generally: RLS answers *may I read this row*, never *is this row mine* — any surface whose copy says "you"/"your" must filter the owner itself, and a service that defaults to no owner filter will eventually be called by an elevated viewer.

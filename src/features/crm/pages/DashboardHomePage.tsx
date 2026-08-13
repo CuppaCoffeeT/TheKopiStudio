@@ -16,10 +16,14 @@
  * `OverviewKpiRow`, `lib/latestAdditions`. The `KpiIndexCard` PRIMITIVE they
  * used survives in `primitives/dashboard` for the next adopter.
  *
- * Every figure and row is live, RLS-scoped data derived by ONE ruleset
+ * Every figure and row is live data derived by ONE ruleset
  * (`lib/customerJourney` + `lib/customerAttention`) shared with the Customers list and the customer
  * detail launcher — so the queue can never claim a customer is unfinished while
  * their record shows the chain complete.
+ *
+ * Scope: the viewer's OWN customers only, whatever their role — this page is a
+ * personal work queue. Cross-advisor reach lives on the Customers list, which
+ * is the surface built to explain whose customer is whose.
  *
  * Module gating: the queue reads `public.clients`, so it is parked entirely for
  * a viewer without `/clients` (an empty queue would read as "all caught up").
@@ -58,10 +62,10 @@ import { StartProfilerBand } from '../components/StartProfilerBand';
 import { AddCustomerChoiceModal } from '../components/modals/AddCustomerChoiceModal';
 import { ClientFormModal } from '../components/modals/ClientFormModal';
 import { useCustomerQueue } from '../hooks/useCustomerQueue';
+import { PROFILER_PATH, profilerHrefFor } from '../lib/profilerEntry';
 import type { QueueCustomer } from '../api/customerQueueService';
 
 const CLIENTS_PATH = '/clients';
-const PROFILER_PATH = '/profiler';
 
 /** Page label for the < lg bar (it shows only the last segment). Matches
  *  `AppSidebar`'s HOME_LABEL so rail and bar name this page the same. */
@@ -95,11 +99,13 @@ export default function DashboardHomePage() {
   const resolveAction = (customer: QueueCustomer): QueueRowAction => {
     const open = { label: 'Open', onClick: () => navigate(`/clients/${customer.id}`) };
     if (customer.journey.nextStep === 'profiler' && canProfile) {
-      // Carry the customer's name into the wizard — the row names who to
-      // profile; making the advisor retype it was the audit's worst paper-cut.
+      // Carry BOTH halves of the entry contract: the name so the advisor
+      // never retypes it, and the id so the saved profile lands ON this
+      // customer. Name-only sent the advisor back to a row that still said
+      // "never profiled" after they had just profiled them.
       return {
         label: 'Start profiler',
-        onClick: () => navigate(`${PROFILER_PATH}?prospect=${encodeURIComponent(customer.name)}`),
+        onClick: () => navigate(profilerHrefFor(customer)),
       };
     }
     if (customer.journey.nextStep === 'info') {

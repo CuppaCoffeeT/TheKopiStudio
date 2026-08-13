@@ -8,6 +8,11 @@
  * delete exist only on OWN rows; foreign/NULL-owner rows are read-only (RLS
  * enforces it, the UI explains it). PDF = window.print() + lib/print.css
  * `.print-area`; CSV = lib/export from the stored fields (legacy format).
+ *
+ * Convert is a TWO-modal flow: the confirm, then — only when a customer of
+ * that name already exists — the duplicate fork (link vs create a second
+ * record). The page holds `useConvertResult` so both the keyed-retry state
+ * and the found duplicate survive a modal close/reopen.
  */
 
 import { useState } from 'react';
@@ -31,6 +36,7 @@ import { useConvertResult } from '../hooks/useConvertResult';
 import { useResultDetail } from '../hooks/useResultDetail';
 import { useDeleteResult, useUpdateResultNotes } from '../hooks/useResultMutations';
 import { ConvertResultModal } from '../components/detail/ConvertResultModal';
+import { DuplicateCustomerModal } from '../components/detail/DuplicateCustomerModal';
 import { ResultDetailActions } from '../components/detail/ResultDetailActions';
 import { ResultNotesModal } from '../components/detail/ResultNotesModal';
 import { StoredResultReport } from '../components/detail/StoredResultReport';
@@ -81,6 +87,7 @@ export default function ResultDetailPage() {
 
   const row = detail.data ?? null;
   const convert = useConvertResult(row);
+  const duplicate = convert.duplicate;
   const isOwn = Boolean(row && user && row.user_id === user.id);
   const statusTone = row ? STATUS_TONES[row.disc_primary as DiscLetter] : undefined;
 
@@ -159,13 +166,32 @@ export default function ResultDetailPage() {
       {row && <StoredResultReport row={row} />}
 
       {row && isOwn && !row.client_id && (
-        <ConvertResultModal
-          open={convertOpen}
-          onOpenChange={setConvertOpen}
-          prospectName={row.prospect_name}
-          converting={convert.isPending}
-          onConfirm={() => convert.mutate()}
-        />
+        <>
+          {/* The confirm closes as soon as the duplicate check answers, so the
+              two modals never stack on top of each other. */}
+          <ConvertResultModal
+            open={convertOpen && !convert.duplicate}
+            onOpenChange={setConvertOpen}
+            prospectName={row.prospect_name}
+            converting={convert.isPending}
+            onConfirm={() => convert.mutate({ mode: 'auto' })}
+          />
+          {duplicate && (
+            <DuplicateCustomerModal
+              open
+              onOpenChange={(next) => {
+                if (next) return;
+                convert.dismissDuplicate();
+                setConvertOpen(false);
+              }}
+              prospectName={row.prospect_name}
+              existingName={duplicate.name}
+              converting={convert.isPending}
+              onLink={() => convert.linkToExisting(duplicate.id)}
+              onCreateAnyway={() => convert.createAnyway()}
+            />
+          )}
+        </>
       )}
       {row && (
         <ResultNotesModal

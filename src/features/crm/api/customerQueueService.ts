@@ -17,6 +17,15 @@
  * `linkedResultsService`). RLS prunes both sides, so a customer whose profile
  * belongs to another advisor simply reads as un-profiled — the neutral,
  * indistinguishable result the REPORTS_LINK_PRD asks for.
+ *
+ * OWN BOOK ONLY — every select filters `user_id` explicitly (2026-08-13).
+ * RLS alone was the wrong boundary here: `clients_select` also passes anyone
+ * holding `view_all_clients`, and `results` has a manager-reads-all policy,
+ * so a super_admin's "pick up where you left off" quietly filled with other
+ * advisors' customers — a personal work queue nobody could act on. Seeing the
+ * whole firm is a CUSTOMERS-LIST job (`clientsService` keeps that reach); the
+ * queue answers "who is waiting on ME". When impersonating, `useAuth().user`
+ * is the impersonated advisor, so the queue follows View-as as it should.
  */
 
 import { supabase } from '@/integrations/supabase/client';
@@ -66,27 +75,35 @@ export interface CustomerQueue {
 }
 
 /**
- * Fetch and assemble the Overview queue. Sections are mutually exclusive —
- * `deriveAttention` picks one headline reason per customer — so the four
- * figures across the top never double-count a single person.
+ * Fetch and assemble the Overview queue for ONE advisor. Sections are
+ * mutually exclusive — `deriveAttention` picks one headline reason per
+ * customer — so the four figures across the top never double-count a single
+ * person.
+ *
+ * @param userId the advisor whose book this is. Required, not optional: a
+ *   default-to-everything signature is exactly how the cross-advisor leak got
+ *   in, and the compiler is the cheapest place to prevent the next one.
  */
-export async function getCustomerQueue(): Promise<CustomerQueue> {
+export async function getCustomerQueue(userId: string): Promise<CustomerQueue> {
   const [customersResult, interactionsResult, resultsResult] = await Promise.all([
     supabase
       .from('clients')
       .select(CUSTOMER_COLUMNS)
+      .eq('user_id', userId)
       .eq('is_deleted', false)
       .order('created_at', { ascending: false })
       .limit(QUEUE_LIMIT),
     supabase
       .from('interactions')
       .select('client_id, date')
+      .eq('user_id', userId)
       .eq('is_deleted', false)
       .order('date', { ascending: false })
       .limit(QUEUE_LIMIT),
     supabase
       .from('results')
       .select('client_id')
+      .eq('user_id', userId)
       .not('client_id', 'is', null)
       .limit(QUEUE_LIMIT),
   ]);

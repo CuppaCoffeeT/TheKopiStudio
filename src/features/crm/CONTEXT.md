@@ -7,10 +7,10 @@ Insurance CRM (SHIPPED): customers/policies/interactions/bank + dashboards + rep
 ## Map
 
 - `pages/` — DashboardHomePage (/dashboard = ACTION QUEUE: dateline + profiler launcher band + 4 queue figures + quiet/unfinished/reviews bands) · CrmDashboardPage · ClientsListPage ("Customers" + journey checklist column) · ClientDetailPage (tool launcher + 4 tabs + comm card) · ClientReportPage (13 sections) · PortfolioReportPage
-- `api/` — clients/policies/interactions/bank/dashboard + portfolioService (bounded) + linkedResultsService (crm-owned `results` reads, by client_id .limit(10)) + customerQueueService (getCustomerQueue = whole-book queue; getCustomerSignals = ids on ONE list page)
+- `api/` — clients/policies/interactions/bank/dashboard + portfolioService (bounded) + linkedResultsService (crm-owned `results` reads, by client_id .limit(10)) + customerQueueService (getCustomerQueue(userId) = OWN-book queue, all 3 reads filter user_id; getCustomerSignals = ids on ONE list page)
 - `hooks/` — detail(id) sub-keys incl. linkedResults · usePortfolioReport · useCustomerQueue · useCustomerSignals (page-scoped, keepPreviousData)
-- Keys: crmClients (incl. `signals(ids)`) / crmDashboard (incl. `customerQueue()`) only
-- `lib/` — finance.ts (exact port) · financeReport barrel + Bands/Economics/Portfolio/Sections (oracle-locked math) · followUps · **customerJourney (3-step chain + queue rule; pure, tz-injected)** · mapping · report-print.css · decisions.md
+- Keys: crmClients (incl. `signals(ids)`) / crmDashboard (incl. `customerQueue(userId)`) only
+- `lib/` — finance.ts (exact port) · financeReport barrel + Bands/Economics/Portfolio/Sections (oracle-locked math) · followUps · **customerJourney (3-step chain + queue rule; pure, tz-injected)** · profilerEntry (the ONE `/profiler?prospect=&customerId=` builder) · mapping · report-print.css · decisions.md
 - `components/` — report/ (format-only) · detail/ (incl. CustomerToolLauncher) · modals/ (incl. AddCustomerChoiceModal fork) · FollowUpBadge · JourneyChecklist · QueueStatStrip · StartProfilerBand · CustomerQueueSection
 - `planning/` — **sub-workspace**: the three customer-scoped advisory tools (tax · SRS · Legacy Map) at `/clients/:id/<tool>`. Own CONTEXT.md + decisions/lessons. Inside crm because they read the customer record — see its decisions.md.
 
@@ -19,6 +19,7 @@ Insurance CRM (SHIPPED): customers/policies/interactions/bank + dashboards + rep
 - MATH PURITY: components format only; all numbers from lib (1.025/1.06 kept; oracle tests cite legacy JSX)
 - JOURNEY PURITY: no surface re-derives "gone quiet" / "unfinished" / step state — import from `lib/customerJourney`, inject `refDate`
 - HONEST SIGNALS: profiler is binary (no partial rows exist); report `done` = *ready to generate* (no issued flag); "Last contact" never reports the added-date fallback
+- OWN-BOOK SCOPE: /dashboard is a personal queue — filter `user_id` in the service, never lean on RLS (it also passes `view_all_clients` holders + managers). Cross-advisor reach belongs to /clients. See lib/lessons.md 2026-08-13
 - Band tones Kopi + WCAG-darkened (#4A6A4E/#7D5F3D/#8F3D1F) — logic/labels legacy-exact; premiums ANNUALISED (footnoted)
 - report-canvas light-locked; `.no-print` chrome; window.print()
 - Comm card: LOCAL DISC palette (no profiler import); ONE neutral empty state (never-converted ≡ RLS-hidden)

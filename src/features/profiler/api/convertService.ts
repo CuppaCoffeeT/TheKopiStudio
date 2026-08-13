@@ -11,6 +11,14 @@
  * When it matches 0 rows the client already exists with no linked result —
  * `ConvertLinkError` carries the created client id so the caller can retry
  * with `relinkResultToClient` instead of inserting a duplicate client.
+ *
+ * It also owns the two READS that keep the bridge from duplicating people:
+ * `findClientByName` (does this customer already exist? — asked BEFORE the
+ * insert) and `resolveLinkableClientId` (may this save link to the customer
+ * the URL named?). Both scope to the caller's OWN book: `clients_select`
+ * lets a manager read the whole firm, but linking someone else's customer to
+ * your result would put a profile on their record that their own RLS then
+ * hides from them.
  */
 
 import { supabase } from '@/integrations/supabase/client';
@@ -31,6 +39,58 @@ export class ConvertLinkError extends Error {
     this.name = 'ConvertLinkError';
     this.createdClientId = createdClientId;
   }
+}
+
+/** The identity fields the duplicate check and the link check read back. */
+export interface LinkableClient {
+  id: string;
+  name: string;
+}
+
+/**
+ * The customer this result would duplicate, or null. Matched on the trimmed
+ * name, case-insensitively, within the caller's own non-deleted book —
+ * `results` carries no email, so the name IS the only identity signal the
+ * profiler holds. Deliberately NOT fuzzy: "Sky Tan" and "Sky Tan" merge,
+ * "S Tan" does not, and the caller always confirms before either branch runs.
+ */
+export async function findClientByName(
+  name: string,
+  userId: string,
+): Promise<LinkableClient | null> {
+  const trimmed = name.trim();
+  if (!trimmed) return null;
+  const { data, error } = await supabase
+    .from('clients')
+    .select('id, name')
+    .eq('user_id', userId)
+    .eq('is_deleted', false)
+    .ilike('name', trimmed.replace(/[%_]/g, ' '))
+    .order('created_at', { ascending: true })
+    .limit(1);
+  if (error) throw error;
+  return data?.[0] ?? null;
+}
+
+/**
+ * Confirm a `?customerId=` is a customer this saver may link to, resolving
+ * the id back or null. Null is not an error — the wizard saves the profile
+ * unlinked and says so, which beats failing a completed profile over a stale
+ * or hand-edited URL.
+ */
+export async function resolveLinkableClientId(
+  clientId: string,
+  userId: string,
+): Promise<string | null> {
+  const { data, error } = await supabase
+    .from('clients')
+    .select('id')
+    .eq('id', clientId)
+    .eq('user_id', userId)
+    .eq('is_deleted', false)
+    .maybeSingle();
+  if (error) throw error;
+  return data?.id ?? null;
 }
 
 /** Provenance block prepended to the client notes (legacy-auditable origin). */

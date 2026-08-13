@@ -76,8 +76,13 @@ const crmDashboardKeys = {
   stats: () => [...crmDashboardBase.all, 'stats'] as const,
   /** Newest saved profiler results feeding the /dashboard "Latest additions" table. */
   recentResults: (limit: number) => [...crmDashboardBase.all, 'recent-results', limit] as const,
-  /** The customer-centred Overview action queue (who is waiting on you). */
-  customerQueue: () => [...crmDashboardBase.all, 'customer-queue'] as const,
+  /**
+   * The customer-centred Overview action queue (who is waiting on you).
+   * Keyed by the advisor whose book it is — the queue is own-book only, and
+   * impersonation swaps that advisor without unmounting the page.
+   */
+  customerQueue: (userId: string) =>
+    [...crmDashboardBase.all, 'customer-queue', userId] as const,
 };
 
 const crmPortfolioBase = createQueryKeys('crmPortfolio');
