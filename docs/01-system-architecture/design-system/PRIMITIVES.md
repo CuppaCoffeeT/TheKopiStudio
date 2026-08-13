@@ -34,7 +34,7 @@ Logged in [DEPRECATIONS.md](../../99-refactor/_system/DEPRECATIONS.md) (P3 + P4 
 | Group | Files | Import pattern | What's inside (barrel exports) |
 |---|---|---|---|
 | **root atoms** | 3 | deep import, no barrel | `Avatar` · `IconButton` · `StatusBadge` |
-| **[shell/](../../../src/components/primitives/shell/)** | 40 | `@/components/primitives/shell` | **Chrome**: `AppSidebar` (+ `SIDEBAR_OFFSET_CLASS`) · `AppHeaderMobileBar` · `AppHeaderLogo` · `AppHeaderUserMenu` · `AppHeaderShell` · `Wordmark` · `ImpersonationBanner` · `NotificationsBell` · `ViewAsSelector` · `Breadcrumb` · `SEO`. **Atoms**: `Badge` · `Button` · `Card` · `Chip` · `TruncatedText` · `ScrollArea`. **List chrome**: `FilterBar` · `FilterCard` · `FilterDropdown` · `FilterPill` · `SearchInput` · `FloatingCTA` · `ExpandableDataTable` · `cells/{DateCell · DateTimeCell · CurrencyCell · NumberCell}`. **States**: `LoadingSkeleton` · `LoadingSpinner` · `ErrorState` · `NoResultsState` · `PageTitle` · `PageDescription`. **Prose**: `MarkdownProse` · `SanitizedHtmlProse`. **Email/AI**: `AIInboxRail` (`InboxChip` · `SituationBar` · `InboxRailPanel`) · `EmailSidebar` · `EmailCategoryBadge` · `AttachmentChip` · `LinkedEntityPill` · `DrawingStatusBar`. **Not barrel-exported** (internal splits): `AppSidebarFooter` · `ErrorStateHero` |
+| **[shell/](../../../src/components/primitives/shell/)** | 40 | `@/components/primitives/shell` | **Chrome**: `AppSidebar` (+ `SIDEBAR_OFFSET_CLASS`) · `AppSidebarNav` · `AppNavDrawer` · `AppHeaderMobileBar` · `AppHeaderLogo` · `AppHeaderUserMenu` · `AppHeaderShell` · `Wordmark` · `ImpersonationBanner` · `NotificationsBell` · `ViewAsSelector` · `Breadcrumb` · `SEO`. **Atoms**: `Badge` · `Button` · `Card` · `Chip` · `TruncatedText` · `ScrollArea`. **List chrome**: `FilterBar` · `FilterCard` · `FilterDropdown` · `FilterPill` · `SearchInput` · `FloatingCTA` · `ExpandableDataTable` · `cells/{DateCell · DateTimeCell · CurrencyCell · NumberCell}`. **States**: `LoadingSkeleton` · `LoadingSpinner` · `ErrorState` · `NoResultsState` · `PageTitle` · `PageDescription`. **Prose**: `MarkdownProse` · `SanitizedHtmlProse`. **Email/AI**: `AIInboxRail` (`InboxChip` · `SituationBar` · `InboxRailPanel`) · `EmailSidebar` · `EmailCategoryBadge` · `AttachmentChip` · `LinkedEntityPill` · `DrawingStatusBar`. **Not barrel-exported** (internal splits): `AppSidebarFooter` · `ErrorStateHero` |
 | **[overlays/](../../../src/components/primitives/overlays/)** | 18 + `wizard/` | `@/components/primitives/overlays` | `Alert` · `ChoiceCards` · `Collapsible` · `CommandPalette` (+ `useCommandPaletteHotkey`) · `ContextMenu` · `DialogCompat` · `Drawer` (`DrawerRoot` …) · `DropdownMenu` · `Kbd` · `Modal` · `Popover` · `RecipientPickerDialog` · `SearchableMultiSelect` · `SelectMenu` · `Tabs` · `Toaster` · `Tooltip` · `wizard/{WizardShell · WizardMobileDrawer · WizardStepperHeader · WizardFooter}` · surface constants `GLASS_SURFACE` / `GLASS_BACKDROP` · [RECIPES.md](../../../src/components/primitives/overlays/RECIPES.md) |
 | **[dashboard/](../../../src/components/primitives/dashboard/)** | 9 | `@/components/primitives/dashboard` | `KpiIndexCard` · `KpiTile` (+ `KpiDeltaBadge`, deep import) · `NumberTicker` · `GreetingHeader` · `AttentionHeader` · `NeedsAttentionPill` · `CountBadge` · `CDWProgressTimeline` |
 | **[detail/](../../../src/components/primitives/detail/)** | 18 + `dossier/` | **deep import** (`…/detail/DetailPageFrame`) — the barrel only re-exports the email/AI subset | `DetailPageFrame` · `PageShell` (+ `PageShellHero`) · `PageShellStatusPill` · `TabNav` · `Timeline` · `ActivityLogTimeline` · `HistoryTrailList` · `RelatedRecordsCard` · `LineItemsEditor/` · `SendEmailDialog` · `StatusTransitionModal` · `DestructiveConfirmDialog` · `QuotationReferencePanel` · `EmailDetailHeader` · `EmailMessageCard` · `AIPanel` · `AIClassificationPanel` · `AIOverrideClassificationPanel` · `AIDraftReplyPanel` · **`dossier/{DossierPanel · DossierStatGrid · DossierRampBar · DossierKeyValueList · DossierLoadingPanel}`** |
@@ -49,13 +49,18 @@ DashboardLayout  (src/components/shared/app-shell/DashboardLayout.tsx)
 ├── GlobalCommandPalette        ⌘K — module routing
 ├── AppSidebar                  fixed 200px rail, ≥ lg only
 │   ├── Wordmark                "The Kopi Studio" lockup (Instrument Serif 22px)
-│   ├── nav items               one per granted module, from useAuth().modules
+│   ├── AppSidebarNav           one item per granted module, from useAuth().modules
 │   └── AppSidebarFooter        bell · ViewAs · account · sign-out
 └── <div class="lg:pl-[200px] print:pl-0!">
-    └── <Outlet/>               the routed page (ListPageFrame / DetailPageFrame / AppHeaderShell)
+    └── <Outlet/>               the routed page (ListPageFrame / DetailPageFrame / AppHeaderShell
+                                / DashboardHomePage, which frames itself)
 ```
 
-Below `lg` the rail is hidden and `AppHeaderMobileBar` carries navigation + account. The rail is `position: fixed`, so the content pane owns the offset via the exported `SIDEBAR_OFFSET_CLASS`. Both are excluded from print so `/clients/:id/report` keeps its full-bleed canvas.
+Below `lg` the rail is hidden and `AppHeaderMobileBar` carries page context + account, with
+navigation on its menu button → `AppNavDrawer`, a left sheet rendering the same `AppSidebarNav`.
+**The bar is homed per page, not by the layout** — the three archetype frames render it, and so
+does `DashboardHomePage` (which composes no frame). A page that skips both ships with no mobile
+navigation at all; that was live on `/dashboard` until 2026-08-13. The rail is `position: fixed`, so the content pane owns the offset via the exported `SIDEBAR_OFFSET_CLASS`. Both are excluded from print so `/clients/:id/report` keeps its full-bleed canvas.
 
 **The rail ships on card cream (`--sidebar-background` == `--card`), never a dark rail.** That surface is load-bearing: idle items are `--fg-muted`, which clears AA on card cream (4.72) and fails on the page cream (4.12).
 

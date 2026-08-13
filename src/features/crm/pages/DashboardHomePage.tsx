@@ -41,8 +41,8 @@
 /**
  * Chrome: composes NO archetype frame (the GreetingHeader masthead IS the
  * header block; AppHeaderShell would stack a second H1 over it), so it renders
- * `AppHeaderMobileBar` itself. Don't drop it — below lg the rail is hidden and
- * the ⌘K hotkey is gone, so the bar's search icon is the only way off the page.
+ * `AppHeaderMobileBar` itself. Don't drop it — below lg the rail is hidden, so
+ * the bar (its menu button → `AppNavDrawer`) is the only way off this page.
  */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';

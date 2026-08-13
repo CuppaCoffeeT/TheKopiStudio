@@ -514,20 +514,35 @@ test.describe('advisor shell — sidebar rail navigation', () => {
 
       // ...so the bar MUST be there. /dashboard composes no archetype frame, so
       // it renders the bar itself; when it did not, this page was the one route
-      // in the app with zero navigation on a phone. Assert the whole path, not
-      // just the button: search icon → palette → another module.
-      const search = page.getByTestId('app-header-mobile-search');
-      await expect(search).toBeVisible({ timeout: 30_000 });
-      await search.click();
+      // in the app with zero navigation on a phone.
+      const menu = page.getByTestId('app-header-mobile-menu');
+      await expect(menu).toBeVisible({ timeout: 30_000 });
 
-      const palette = page.getByRole('dialog');
-      await expect(palette).toBeVisible({ timeout: 30_000 });
-      // The palette lists modules under their DB `name` ("Clients"), not the
-      // rail's customer-centred relabel ("Customers"), and each option's
-      // accessible name carries its description too — hence the anchored regex.
-      await palette.getByRole('option', { name: /^Clients\b/ }).click();
+      // The menu button is the DISCOVERABLE path — the search icon opens the
+      // same modules but reads as "search this page". Walk the whole escape
+      // route, not just the button: menu → drawer → another module.
+      await menu.click();
+      const drawer = page.getByTestId('app-nav-drawer');
+      await expect(drawer).toBeVisible({ timeout: 30_000 });
+
+      // The drawer renders AppSidebarNav — the rail's own list — so it uses the
+      // comp label "Customers", not the DB module name.
+      await drawer.getByRole('link', { name: 'Customers', exact: true }).click();
       await page.waitForURL(/\/clients(\?.*)?$/, { timeout: 30_000 });
       await expect(page.getByTestId('clients-table')).toBeVisible({ timeout: 30_000 });
+      // Choosing a destination closes the drawer — it must not sit over the page.
+      await expect(drawer).toHaveCount(0);
+
+      // The search icon still opens the palette — the fast path is not removed.
+      const search = page.getByTestId('app-header-mobile-search');
+      await expect(search).toBeVisible();
+      await search.click();
+      // The palette lists modules under their DB `name` ("Clients"), not the
+      // rail's relabel, and each option's accessible name carries its
+      // description too — hence the anchored regex.
+      await expect(
+        page.getByRole('dialog').getByRole('option', { name: /^Clients\b/ }),
+      ).toBeVisible({ timeout: 30_000 });
       return;
     }
 
