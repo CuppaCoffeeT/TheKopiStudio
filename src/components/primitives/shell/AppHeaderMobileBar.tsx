@@ -17,16 +17,23 @@
  * navigation at all below lg. Any future page that skips the frames must
  * render this bar itself.
  *
+ * Navigation lives on the LEADING menu button, which opens `AppNavDrawer` (the
+ * rail's own module list). The trailing search icon still opens the ⌘K palette
+ * — the fast path once you know it — but it is no longer the only way off the
+ * page: a magnifying glass reads as "search this page", not "go elsewhere".
+ *
  * Locked: 52px row · sticky top-0 z-30 · glass card cream @ 72%
  * (`bg-card/[0.72]`) + backdrop-blur-xl saturate-140 · bottom hairline
  * `--border`. Excluded from print twice over (Tailwind `print:` + the
  * `.no-print` class `features/crm/lib/report-print.css` owns), like the rail.
  */
+import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useScrolled } from '@/hooks/useScrolled';
 import type { BreadcrumbSegment } from './Breadcrumb';
 import { AppHeaderLogo } from './AppHeaderLogo';
 import { AppHeaderUserMenu } from './AppHeaderUserMenu';
+import { AppNavDrawer } from './AppNavDrawer';
 
 interface AppHeaderMobileBarProps {
   /** Page trail. Only the last segment is shown — it is the page label here. */
@@ -78,6 +85,7 @@ export function AppHeaderMobileBar({
 }: AppHeaderMobileBarProps) {
   const last = breadcrumb[breadcrumb.length - 1];
   const scrolled = useScrolled();
+  const [navOpen, setNavOpen] = useState(false);
 
   const resolvedGlobalSearchClick =
     onGlobalSearchClick === null
@@ -98,6 +106,32 @@ export function AppHeaderMobileBar({
       style={{ fontFamily: 'var(--font-sans)' }}
     >
       <div className="flex h-[52px] items-center gap-1.5 px-2.5">
+        {/* Leading position, before the wordmark — the one place a touch user
+            looks for navigation. The search icon opens the module palette, but
+            a magnifying glass reads as "search this page", so it cannot be the
+            only way off the page. */}
+        <button
+          type="button"
+          onClick={() => setNavOpen(true)}
+          aria-label="Open navigation menu"
+          aria-expanded={navOpen}
+          data-testid="app-header-mobile-menu"
+          className={ICON_BUTTON_CLASS}
+        >
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+            {[4.5, 9, 13.5].map((y) => (
+              <path
+                key={y}
+                d={`M2.5 ${y} H15.5`}
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            ))}
+          </svg>
+        </button>
+        <AppNavDrawer open={navOpen} onOpenChange={setNavOpen} />
+
         <AppHeaderLogo />
         <div className="h-3.5 w-px flex-shrink-0 bg-[color:var(--border-soft)]" />
         <div className="min-w-0 flex-1 truncate text-[13px] font-medium text-muted-foreground">

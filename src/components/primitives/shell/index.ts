@@ -1,7 +1,9 @@
 export { AppHeaderLogo } from './AppHeaderLogo';
 export { AppHeaderMobileBar } from './AppHeaderMobileBar';
 export { AppHeaderUserMenu, type AppHeaderUserMenuProps } from './AppHeaderUserMenu';
+export { AppNavDrawer } from './AppNavDrawer';
 export { AppSidebar, SIDEBAR_OFFSET_CLASS } from './AppSidebar';
+export { AppSidebarNav } from './AppSidebarNav';
 export { Breadcrumb, type BreadcrumbSegment } from './Breadcrumb';
 export { ImpersonationBanner } from './ImpersonationBanner';
 export { Badge, type BadgeTone, type BadgeVariant } from './Badge';
