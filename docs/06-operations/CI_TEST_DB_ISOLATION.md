@@ -1,7 +1,45 @@
 # CI Test-DB Isolation — stop the E2E suite writing to production
 
-**Status**: PLAN (approved direction: ephemeral local Supabase in CI). Blocked on one
-user action — a prod schema dump. **Last Updated**: 2026-08-07
+**Status**: IN PROGRESS. Schema captured + committed; seed built. Remaining: config.toml,
+migration snapshot, auth-seed script, workflow rewrite — all needing CI (Docker) to
+validate. **Last Updated**: 2026-08-13
+
+## Progress — 2026-08-13
+
+Done and committed on `worktree-ci-test-db-isolation`:
+- **`supabase/schema.sql`** — faithful prod public schema (15 tables, 15 functions, 48 RLS
+  policies, 12 triggers) + the `on_auth_user_created` trigger. Obtained via `pg_dump` (brew
+  `libpq`) over the **IPv4 session pooler** — the direct host `db.<ref>.supabase.co` is
+  IPv6-only and would not resolve. Exact pooler host came from `supabase/.temp/pooler-url`:
+  `aws-1-ap-southeast-2.pooler.supabase.com:5432`, user `postgres.<ref>`.
+- **`supabase/seed.sql`** — RBAC backbone (roles/modules/role_modules/rls_capabilities,
+  verbatim) + the 8 legacy `results` fixtures (owner NULL, empty scoring jsonb).
+
+Gotchas found (bake into the remaining steps):
+- **`pg_dump` 18 emits `\restrict`/`\unrestrict`** psql meta-commands that the local Supabase
+  **psql 17** container errors on — already stripped from `schema.sql`; strip from any future
+  re-dump too.
+- **Auth users are seeded via the admin API, not raw SQL** — `auth.users`/`auth.identities`
+  inserts are gotrue-version-sensitive. The auth-seed script must run AFTER `supabase start`,
+  create the 3 accounts with `auth.admin.createUser({ email_confirm: true })`, then UPDATE
+  their `public.users`/`profiles` role/approved/active and reassign "Bee zhen"
+  (`883d2eca…`).`user_id` to the super_admin.
+- **`results.user_id` FKs to `profiles`** (not `users`) — the reassignment targets a profiles row.
+
+Remaining (each needs a `supabase start` — i.e. Docker/CI — to validate; not possible in the
+authoring env):
+1. **Migration snapshot** — move `schema.sql` into `supabase/migrations/<ts>_baseline.sql`
+   and delete the 10 drifted files, so `supabase start` rebuilds the exact schema. (Also fixes
+   the standalone "repo can't rebuild its DB" drift.)
+2. **`supabase/config.toml`** — `[auth] enable_confirmations = false`; confirm ports.
+3. **`tests/setup/seed-auth-users.mjs`** — admin-API auth seeding (above), run as a CI step
+   after `supabase start`, using the fixed local service_role key.
+4. **`.github/workflows/seatbelt.yml`** — add Supabase-CLI setup + `supabase start` + the
+   auth-seed step; replace the secret-backed `env:` with local literals (fixed anon/service
+   JWTs + committed test passwords). With an isolated DB the shared-account race is gone, so
+   `max-parallel` can later go back up — confirm one green serial run first.
+
+The original plan below stands; the above is the current state against it.
 
 ## The problem
 

@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict lwdRvWbqlYHoinMxG57aDoIvC7Tu0AwAo3hLHluxvFYaJ8DI0aLQVZapIrKXh90
+-- (pg_dump 18 \restrict meta-command stripped — the local Supabase psql is v17 and errors on it)
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 18.4
@@ -1768,7 +1768,7 @@ CREATE POLICY users_update ON public.users FOR UPDATE TO authenticated USING (((
 -- PostgreSQL database dump complete
 --
 
-\unrestrict lwdRvWbqlYHoinMxG57aDoIvC7Tu0AwAo3hLHluxvFYaJ8DI0aLQVZapIrKXh90
+-- (pg_dump 18 \unrestrict meta-command stripped — see note above)
 
 
 
