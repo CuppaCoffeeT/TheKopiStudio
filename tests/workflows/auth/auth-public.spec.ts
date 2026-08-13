@@ -25,31 +25,24 @@
  * emulation never reaches the context under this config; a probe measured
  * `matchMedia('(prefers-reduced-motion: reduce)').matches === false` with both
  * animations still running. Don't swap the wait for it.)
+ *
+ * That paragraph turned out to describe a SUITE-WIDE bug, not a quirk of these
+ * four screens: the same race was latent in five other specs, hidden only by
+ * remote-Supabase latency, and it went red the moment CI moved to an ephemeral
+ * local database. The settle now lives inside the shared `expectWcag2aaClean`
+ * (tests/runners/a11yChecks.ts) so no scan can forget it. Everything above
+ * still holds — it is why that runner exists.
  */
 
-import { test, expect, type Page } from '@playwright/test';
-import { checkA11y, injectAxe } from 'axe-playwright';
+import { test, expect } from '@playwright/test';
+// Both helpers were local to this file until 2026-08-13, when the ephemeral CI
+// database made the same mid-fade race fail across five OTHER specs and the
+// four scattered copies were consolidated. The shared expectWcag2aaClean
+// settles animations itself, so callers no longer have to remember to — which
+// is exactly how the other specs came to be missing it.
+import { expectWcag2aaClean } from '../../runners/a11yChecks';
 
 test.use({ storageState: { cookies: [], origins: [] } });
-
-/** Resolve once every running CSS animation has finished (entrance fades). */
-async function settleAnimations(page: Page): Promise<void> {
-  await page.evaluate(() =>
-    Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))).then(
-      () => undefined,
-    ),
-  );
-}
-
-async function expectWcag2aaClean(page: Page): Promise<void> {
-  await injectAxe(page);
-  await checkA11y(page, undefined, {
-    axeOptions: { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] } },
-    detailedReport: true,
-    detailedReportOptions: { html: true },
-    includedImpacts: ['critical', 'serious'],
-  });
-}
 
 test.describe('signed-out auth screens', () => {
   test('/login offers both ways out — reset and create account @p0 @mobile', async ({ page }) => {
@@ -123,7 +116,7 @@ test.describe('signed-out auth screens', () => {
           }[path]!,
         ),
       ).toBeVisible();
-      await settleAnimations(page);
+      // No explicit settle — expectWcag2aaClean does it for every scan now.
       await expectWcag2aaClean(page);
     }
   });

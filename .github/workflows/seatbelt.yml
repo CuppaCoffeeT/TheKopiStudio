@@ -158,9 +158,10 @@ jobs:
         # Do NOT point this at playwright.parallel.config.ts. That config is
         # LOCAL-ONLY by its own header, and it overrides workers to 10 and
         # retries to 1 — 10 Chromium instances on a 2-vCPU runner, which is what
-        # timed out ClientsPage.waitForDetail on 2026-07-27. It selects the same
-        # 45 specs either way (its testIgnore '**/auth/**' matches nothing —
-        # tests/workflows/auth/ does not exist), so there is no coverage to gain.
+        # timed out ClientsPage.waitForDetail on 2026-07-27. It now selects
+        # FEWER specs, not the same set: its `testIgnore: '**/auth/**'` matched
+        # nothing until tests/workflows/auth/auth-public.spec.ts landed
+        # (2026-08-13), and would now silently drop those 4 @p0 tests.
         run: >-
           npx playwright test
           --grep @p0
