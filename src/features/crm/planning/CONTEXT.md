@@ -11,8 +11,11 @@ Launched from `../components/detail/CustomerToolLauncher`, never from the nav ra
 - `lib/singaporeTax.ts` — the YA 2025/26 band ladder + auto reliefs. **Shared**: the SRS tool prices withdrawals with it, so the two tools can never quote different tax for the same income.
 - `lib/taxReliefs.ts` — the 19-relief CATALOGUE (declarative; adding a relief is one entry)
 - `lib/taxAssessment.ts` — `assessTax`, the single entry point the tax page calls
-- `lib/srs.ts` — constants + `taxOnSlice` + `projectContributions` (paying in)
-- `lib/srsWithdrawals.ts` — `equalWithdrawals` + `planWithdrawals` (taking out)
+- `lib/srs.ts` — statutory constants + `taxOnSlice` + `projectContributions` (paying in) + the milestone rows
+- `lib/srsSchedules.ts` — drawdown SHAPES: `equalWithdrawals` (level annuity) · `customWithdrawals` (3 legs) · `deferBalance` · `annualTaxFreeCeiling`
+- `lib/srsWithdrawals.ts` — drawdown PRICING: `planWithdrawals` (taking out)
+- `lib/srsJourney.ts` — `buildJourney`: both ends netted into the lifetime tax benefit
+- `hooks/useSrsPlanner.ts` — the tool's sixteen form fields and the four-stage derivation
 - `lib/legacy.ts` — estate model: asset types, nominations, totals, projection
 - `lib/legacyIsa.ts` — Intestate Succession Act 1967 s.7 ladder
 - `lib/useLegacyPlan.ts` — Legacy Map state + referential integrity on delete
@@ -27,6 +30,7 @@ Launched from `../components/detail/CustomerToolLauncher`, never from the nav ra
 ## Constraints
 
 - **Every lib file is PURE and takes an injected reference age/year** — no `Date.now()`. An assessment attached to a report must render identically a year later.
+- **SRS: no fixed 63 or 72 anywhere.** The penalty-free age is the customer's own (62/63/64, locked in by their FIRST contribution) and the 10-year window is counted from their FIRST WITHDRAWAL — so a deferred start moves the close with it. Use `forcedPayoutAge(startAge)`; `SRS_DEFAULT_WITHDRAWAL_AGE` is for seeding only, never arithmetic. See `decisions.md`.
 - **Faithful port, not "improved" maths.** Where the reference rounds or caps, so do we. A corrected figure that disagrees with the advisor's own spreadsheet is worse than a faithfully ported one. Record any deviation here.
 - **Seed at the boundary, never in shared math.** `ageFromDOB` is golden-locked by the CRM report oracle; nonsense inputs are clamped in `customerSeed.ts`. See `lessons.md` — a future DOB shipped a −60 age into the tax calculator.
 - **`ToolSelect`, never the native `Select`** — `no-restricted-imports` bans it app-wide.

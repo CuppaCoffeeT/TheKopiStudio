@@ -164,7 +164,7 @@ export function buildPlanningCards(): ToolCard[] {
       label: 'SRS planner',
       state: 'available',
       detail:
-        'What contributing saves now, and what the 10-year withdrawal window actually costs.',
+        'What contributing saves now, what the 10-year window costs, and whether the two net out.',
       action: { label: 'Open planner', kind: 'open-srs' },
       reason: '',
     },

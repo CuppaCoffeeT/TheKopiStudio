@@ -1,32 +1,47 @@
 /**
  * SrsContributionsPanel — the "paying in" half of the SRS planner.
  *
- * Extracted from `SrsPlannerPage` (W23 LOC ceiling). Fully controlled; the
- * page owns the state and the `projectContributions` call, so this file has no
- * maths at all.
+ * Fully controlled; `useSrsPlanner` owns the state and the
+ * `projectContributions` call, so this file has no maths at all.
+ *
+ * The withdrawal age is an INPUT, not a constant: it is locked in at the
+ * statutory retirement age that applied when the customer made their FIRST
+ * contribution, so two customers of the same age can have different ones.
  */
 
 import { Field, Input } from '@/components/primitives/form';
-import { SummaryRow, ToolPanel } from '../PlanningAtoms';
+import { SummaryRow, ToolPanel, ToolSelect } from '../PlanningAtoms';
 import { money, percent } from '../../lib/format';
-import { SRS_CAP_CITIZEN, SRS_WITHDRAWAL_AGE, type ContributionProjection } from '../../lib/srs';
+import { SRS_CAP_CITIZEN, SRS_STATUTORY_AGES, type ContributionProjection } from '../../lib/srs';
 
 interface Values {
   currentAge: string; annualIncome: string; contributionThisYear: string;
-  currentBalance: string; growthRate: string; annualContribution: string; contributeUntilAge: string;
+  currentBalance: string; growthRate: string; annualContribution: string;
+  contributeUntilAge: string; withdrawalAge: string;
 }
 interface Setters {
   setCurrentAge: (v: string) => void; setAnnualIncome: (v: string) => void;
   setContributionThisYear: (v: string) => void; setCurrentBalance: (v: string) => void;
   setGrowthRate: (v: string) => void; setAnnualContribution: (v: string) => void;
-  setContributeUntilAge: (v: string) => void;
+  setContributeUntilAge: (v: string) => void; setWithdrawalAge: (v: string) => void;
 }
+
+/**
+ * What fixes each statutory age — the date of the customer's FIRST
+ * contribution. Kept terse so the option does not wrap in the half-width
+ * trigger; the full sentence is the field's hint.
+ */
+const AGE_HINTS: Record<number, string> = {
+  62: 'before 1 Jul 2022',
+  63: 'before 1 Jul 2026',
+  64: 'from 1 Jul 2026',
+};
 
 export function SrsContributionsPanel({
   values, setters, projection,
 }: { values: Values; setters: Setters; projection: ContributionProjection }) {
-  const { currentAge, annualIncome, contributionThisYear, currentBalance, growthRate, annualContribution, contributeUntilAge } = values;
-  const { setCurrentAge, setAnnualIncome, setContributionThisYear, setCurrentBalance, setGrowthRate, setAnnualContribution, setContributeUntilAge } = setters;
+  const { currentAge, annualIncome, contributionThisYear, currentBalance, growthRate, annualContribution, contributeUntilAge, withdrawalAge } = values;
+  const { setCurrentAge, setAnnualIncome, setContributionThisYear, setCurrentBalance, setGrowthRate, setAnnualContribution, setContributeUntilAge, setWithdrawalAge } = setters;
 
   return (
 <ToolPanel label="Paying in" testId="srs-contributions">
@@ -61,10 +76,25 @@ export function SrsContributionsPanel({
         onChange={(e) => setAnnualContribution(e.target.value)}
         className="pointer-coarse:text-[16px]" data-testid="srs-annual" />
     </Field>
-    <Field label="Contribute until age">
-      <Input type="number" min={18} max={62} value={contributeUntilAge}
+    <Field label="Contribute until age" hint="Contributions must stop once withdrawals start">
+      <Input type="number" min={18} max={75} value={contributeUntilAge}
         onChange={(e) => setContributeUntilAge(e.target.value)}
         className="pointer-coarse:text-[16px]" data-testid="srs-until" />
+    </Field>
+    <Field
+      label="Withdrawal age"
+      hint="Set by the date of the first contribution — it never moves afterwards"
+    >
+      <ToolSelect
+        value={withdrawalAge}
+        onChange={setWithdrawalAge}
+        ariaLabel="Penalty-free withdrawal age"
+        options={SRS_STATUTORY_AGES.map((age) => ({
+          value: String(age),
+          label: `${age} — ${AGE_HINTS[age]}`,
+        }))}
+        testId="srs-withdrawal-age"
+      />
     </Field>
   </div>
 
@@ -77,7 +107,7 @@ export function SrsContributionsPanel({
     />
     <SummaryRow label="Total contributed" value={money(projection.totalContributed)} />
     <SummaryRow
-      label={`Balance at ${SRS_WITHDRAWAL_AGE}`}
+      label={`Balance at ${withdrawalAge}`}
       value={money(projection.balanceAtWithdrawalAge)}
       total
       testId="srs-projected-balance"

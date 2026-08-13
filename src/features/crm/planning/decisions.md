@@ -1,6 +1,6 @@
 # Planning — Decisions
 
-**Last Updated**: 2026-07-28 SGT
+**Last Updated**: 2026-08-13 SGT
 
 ## 2026-07-28 — One `planning` folder, INSIDE crm, not three sibling features
 
@@ -61,6 +61,50 @@ they have always quoted costs more trust than it buys.
 **Impact**: none of the three ports deviates from its reference so far. The one
 deliberate ADDITION is input clamping at the seeding boundary (see lessons.md),
 which changes no formula.
+
+_(2026-08-13: still holds. The SRS rebuild below re-ported every formula from
+the newer reference rather than reconciling the old one — same rule, applied to
+a moved target. Its two UI deviations are recorded there; neither is a formula.)_
+
+## 2026-08-13 — SRS: the withdrawal age is a customer PROPERTY, not a constant
+
+**Decision**: `SRS_WITHDRAWAL_AGE = 63` is gone. The age is an input
+(`SRS_STATUTORY_AGES` = 62 · 63 · 64), and `SRS_FORCED_PAYOUT_AGE = 72` is
+replaced by `forcedPayoutAge(firstWithdrawalAge)`.
+**Why**: the penalty-free age is locked in at the statutory retirement age that
+applied on the customer's FIRST contribution, so two customers of the same age
+can have different ones — and the 10-year window is counted from the first
+WITHDRAWAL, not from that birthday. Both were hardcoded to the 63/72 pair, which
+is right for exactly one cohort and silently wrong for the others. Deferring the
+start is the tool's most under-used lever and it was unrepresentable.
+**Impact**: every age in the drawdown is now relative to `startAge`. Anything
+reading a fixed 63 or 72 is a bug. `SRS_DEFAULT_WITHDRAWAL_AGE` remains for
+seeding only — never for arithmetic.
+
+## 2026-08-13 — SRS: the level draw replaced the rising one
+
+**Decision**: `equalWithdrawals` returns one LEVEL payment
+(`PMT = PV·r·(1+r)^n / ((1+r)^n − 1)`) instead of `balance / years remaining`.
+**Why**: both exhaust the account, but the old form produced a RISING series —
+every year a different withdrawal, a different taxed portion, a different
+answer. An advisor cannot commit a customer to that, and the reference changed
+for the same reason. With zero growth the two agree exactly, which is why the
+original tests did not catch the difference.
+**Impact**: quoted per-year figures change for any non-zero drawdown growth.
+Totals and the exhaustion property do not.
+
+## 2026-08-13 — Two UI deviations from the SRS reference
+
+**Decision**: the reference is a two-TAB tool (Contribution & Tax · Withdrawal
+Planning) with a Calculate button per tab; the port stays a single scrolling
+page of panels that recomputes live. The withdrawal age is a three-option
+`ToolSelect`, not the reference's `min=62 max=70` number input.
+**Why**: the tabs and buttons are artefacts of a hand-rolled HTML file with no
+reactive layer — splitting the two halves across tabs hides the chain between
+them, which is the tool's argument. And only three ages are legally reachable;
+a number input that accepts 65–70 invites a figure no customer can have.
+**Impact**: both are presentation-only. Every formula, constant and rounding
+decision is ported verbatim — see the faithful-port rule above.
 
 ## 2026-07-28 — The Legacy Map editor mounts only after storage settles
 

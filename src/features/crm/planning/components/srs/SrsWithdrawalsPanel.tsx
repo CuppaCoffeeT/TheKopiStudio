@@ -1,74 +1,116 @@
 /**
  * SrsWithdrawalsPanel — the "taking out" half of the SRS planner.
  *
- * Extracted from `SrsPlannerPage` (W23 LOC ceiling). The remainder warning is
- * the panel's reason to exist: it is what tells an advisor the drawdown plan
- * does not actually clear the account before the window shuts.
+ * Two levers the earlier version did not have, both from the reference tool:
+ *
+ *  - START AGE. The 10-year window opens at the FIRST withdrawal, not at the
+ *    statutory age. Deferring compounds the balance AND shifts the window —
+ *    the panel shows what those years earned.
+ *  - STRATEGY. A level annual draw, or up to three custom legs.
+ *
+ * The remainder warning is still the panel's reason to exist: it is what tells
+ * an advisor the plan does not clear the account before the window shuts.
  */
 
 import { Field, Input } from '@/components/primitives/form';
 import { SummaryRow, ToolPanel, ToolSelect } from '../PlanningAtoms';
 import { money, percent } from '../../lib/format';
-import {
-  SRS_FORCED_PAYOUT_AGE,
-  SRS_WITHDRAWAL_AGE,
-  SRS_WITHDRAWAL_WINDOW_YEARS,
-} from '../../lib/srs';
+import { SRS_WITHDRAWAL_WINDOW_YEARS } from '../../lib/srs';
+import type { DeferralResult } from '../../lib/srsSchedules';
 import type { WithdrawalPlan } from '../../lib/srsWithdrawals';
+import type { PeriodFields, WithdrawalStrategy } from '../../hooks/useSrsPlanner';
+import { SrsPeriodFields } from './SrsPeriodFields';
 
 interface Values {
-  balanceOverride: string; withdrawalYears: string; withdrawalGrowth: string; otherIncome: string;
+  balanceOverride: string; startAge: string; withdrawalYears: string;
+  withdrawalGrowth: string; otherIncome: string;
+  strategy: WithdrawalStrategy; periods: PeriodFields[];
 }
 interface Setters {
-  setBalanceOverride: (v: string) => void; setWithdrawalYears: (v: string) => void;
-  setWithdrawalGrowth: (v: string) => void; setOtherIncome: (v: string) => void;
+  setBalanceOverride: (v: string) => void; setStartAge: (v: string) => void;
+  setWithdrawalYears: (v: string) => void; setWithdrawalGrowth: (v: string) => void;
+  setOtherIncome: (v: string) => void; setStrategy: (v: WithdrawalStrategy) => void;
+  setPeriod: (index: number, field: keyof PeriodFields, value: string) => void;
+}
+
+interface SrsWithdrawalsPanelProps {
+  projectedBalance: number;
+  withdrawalAge: number;
+  deferral: DeferralResult;
+  values: Values;
+  setters: Setters;
+  plan: WithdrawalPlan;
 }
 
 export function SrsWithdrawalsPanel({
-  projectedBalance, values, setters, plan,
-}: { projectedBalance: number; values: Values; setters: Setters; plan: WithdrawalPlan }) {
-  const { balanceOverride, withdrawalYears, withdrawalGrowth, otherIncome } = values;
-  const { setBalanceOverride, setWithdrawalYears, setWithdrawalGrowth, setOtherIncome } = setters;
-  const projection = { balanceAtWithdrawalAge: projectedBalance };
-  const overWindow = Number(withdrawalYears) > SRS_WITHDRAWAL_WINDOW_YEARS;
+  projectedBalance, withdrawalAge, deferral, values, setters, plan,
+}: SrsWithdrawalsPanelProps) {
+  const { balanceOverride, startAge, withdrawalYears, withdrawalGrowth, otherIncome, strategy, periods } = values;
+  const { setBalanceOverride, setStartAge, setWithdrawalYears, setWithdrawalGrowth, setOtherIncome, setStrategy, setPeriod } = setters;
+  const deferredYears = Math.max(0, Number(startAge) - withdrawalAge);
 
   return (
 <ToolPanel label="Taking out" testId="srs-withdrawals">
   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-    <Field
-      label={`Balance at ${SRS_WITHDRAWAL_AGE}`}
-      hint="Blank = use the projection"
-    >
+    <Field label={`Balance at ${withdrawalAge}`} hint="Blank = use the projection">
       <Input type="number" min={0} value={balanceOverride}
-        placeholder={String(Math.round(projection.balanceAtWithdrawalAge))}
+        placeholder={String(Math.round(projectedBalance))}
         onChange={(e) => setBalanceOverride(e.target.value)}
         className="pointer-coarse:text-[16px]" data-testid="srs-withdrawal-balance" />
     </Field>
-    <Field label="Spread over" hint={`${SRS_WITHDRAWAL_WINDOW_YEARS} years is penalty-free`}>
-      <ToolSelect
-        value={withdrawalYears}
-        onChange={setWithdrawalYears}
-        ariaLabel="Spread withdrawals over"
-        options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => ({
-          value: String(n),
-          label: `${n} year${n === 1 ? '' : 's'}`,
-        }))}
-        testId="srs-withdrawal-years"
-      />
+    <Field label="Start drawing at" hint={`${withdrawalAge} or later — the window opens on the first withdrawal`}>
+      <Input type="number" min={withdrawalAge} max={75} value={startAge}
+        onChange={(e) => setStartAge(e.target.value)}
+        className="pointer-coarse:text-[16px]" data-testid="srs-start-age" />
     </Field>
     <Field label="Growth during drawdown" hint="Percent per year">
       <Input type="number" min={0} step="0.5" value={withdrawalGrowth}
         onChange={(e) => setWithdrawalGrowth(e.target.value)}
         className="pointer-coarse:text-[16px]" data-testid="srs-withdrawal-growth" />
     </Field>
-    <Field label="Other income then" hint="Eats the tax-free room first">
+    <Field label="Other taxable income then" hint="Rent, work, taxable pensions. CPF LIFE is not taxable — leave it out">
       <Input type="number" min={0} value={otherIncome}
         onChange={(e) => setOtherIncome(e.target.value)}
         className="pointer-coarse:text-[16px]" data-testid="srs-other-income" />
     </Field>
+    <Field label="Strategy" hint="How the money comes out">
+      <ToolSelect
+        value={strategy}
+        onChange={(next) => setStrategy(next as WithdrawalStrategy)}
+        ariaLabel="Withdrawal strategy"
+        options={[
+          { value: 'equal', label: 'Level annual draw' },
+          { value: 'custom', label: 'Custom legs' },
+        ]}
+        testId="srs-strategy"
+      />
+    </Field>
+    {strategy === 'equal' && (
+      <Field label="Spread over" hint={`${SRS_WITHDRAWAL_WINDOW_YEARS} years is the whole window`}>
+        <ToolSelect
+          value={withdrawalYears}
+          onChange={setWithdrawalYears}
+          ariaLabel="Spread withdrawals over"
+          options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => ({
+            value: String(n),
+            label: `${n} year${n === 1 ? '' : 's'}`,
+          }))}
+          testId="srs-withdrawal-years"
+        />
+      </Field>
+    )}
   </div>
 
+  {strategy === 'custom' && <SrsPeriodFields periods={periods} onChange={setPeriod} />}
+
   <div className="mt-4 border-t border-[color:var(--border-soft)] pt-3">
+    {deferredYears > 0 && (
+      <SummaryRow
+        label={`Growth from waiting ${deferredYears}y (${withdrawalAge} → ${startAge})`}
+        value={money(deferral.growth)}
+        testId="srs-deferral-growth"
+      />
+    )}
     <SummaryRow label="Total withdrawn" value={money(plan.totalWithdrawn)} />
     <SummaryRow label="Growth during drawdown" value={money(plan.totalGrowth)} />
     <SummaryRow label="Actually tax-free" value={money(plan.totalTaxFree)} />
@@ -89,15 +131,9 @@ export function SrsWithdrawalsPanel({
     >
       <strong className="font-semibold">{money(plan.remainingBalance)} would be left.</strong>{' '}
       Anything still in the account when the {SRS_WITHDRAWAL_WINDOW_YEARS}-year window
-      closes at {SRS_FORCED_PAYOUT_AGE} is deemed withdrawn in one lump — roughly{' '}
+      closes at {plan.windowEndsAt} is deemed withdrawn in one lump — roughly{' '}
       {money(plan.forcedPayoutTax)} of tax in a single year. Spread the drawdown wider or
       contribute less.
-    </p>
-  )}
-
-  {overWindow && (
-    <p className="m-0 mt-3 text-[12px] text-[color:var(--negative-text)]">
-      Beyond {SRS_WITHDRAWAL_WINDOW_YEARS} years the penalty-free window has closed.
     </p>
   )}
 </ToolPanel>
