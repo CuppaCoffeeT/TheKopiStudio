@@ -62,11 +62,11 @@
  */
 
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { checkA11y, injectAxe } from 'axe-playwright';
 import { acquireAdvisorBookLock, releaseAdvisorBookLock } from '../../fixtures/advisorBookLock';
 import { authFileFor } from '../../fixtures/roleAuth';
 import { ClientsPage } from '../../pom/ClientsPage';
 import { WizardPage } from '../../pom/WizardPage';
+import { expectWcag2aaClean } from '../../runners/a11yChecks';
 import { deleteOwnResultsByProspect } from '../../runners/resultsCleanup';
 
 // ── Shared spec utilities ────────────────────────────────────────────────────
@@ -99,20 +99,12 @@ function money(value: number): string {
   return `$${Math.round(value).toLocaleString('en-US')}`;
 }
 
-/**
- * Inject axe and assert ZERO critical/serious violations against the WCAG 2.0
- * A+AA rule set — same gate as the crm/profiler load-a11y specs.
- */
-async function expectWcag2aaClean(page: Page): Promise<void> {
-  await injectAxe(page);
-  await checkA11y(page, undefined, {
-    detailedReport: true,
-    detailedReportOptions: { html: true },
-    includedImpacts: ['critical', 'serious'],
-    axeOptions: { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] } },
-  });
-}
-
+// expectWcag2aaClean lived here in full — the FIFTH copy, and the one the
+// 2026-08-13 consolidation missed, because unlike the other four it sits in a
+// spec whose name says nothing about a11y. It cost a red main: the shared
+// version settles entrance animations before scanning and this one did not, so
+// the populated /crm-reports scan kept catching the print CTA mid-fade
+// (one node, '.px-5', reported as a serious colour-contrast failure).
 /**
  * The results list mounts BOTH the desktop table and the mobile card list
  * (hidden via CSS at the other breakpoint) — match the visible rendering.

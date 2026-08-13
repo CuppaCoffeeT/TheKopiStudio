@@ -150,4 +150,32 @@ export default tseslint.config(
       ],
     },
   },
+  /**
+   * axe goes through ONE runner. Five specs had each grown their own copy of
+   * `expectWcag2aaClean`; the shared one waits for entrance animations to
+   * finish before scanning (axe folds mid-fade opacity into its contrast
+   * maths and reports phantom `serious` failures), and every private copy is
+   * a scan that silently skips that wait. Four were consolidated on
+   * 2026-08-13 and the fifth — in portfolio-convert.spec.ts, a file whose
+   * name gives no hint it scans — was missed and turned main red the same
+   * day. This rule is why there will not be a sixth.
+   */
+  {
+    files: ["tests/**/*.ts"],
+    ignores: ["tests/runners/a11yChecks.ts"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "axe-playwright",
+              message:
+                "Import { expectWcag2aaClean } from tests/runners/a11yChecks instead. It settles entrance animations before scanning; a direct checkA11y call does not, and reports phantom colour-contrast failures.",
+            },
+          ],
+        },
+      ],
+    },
+  },
 );
