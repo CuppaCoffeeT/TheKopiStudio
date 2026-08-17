@@ -68,6 +68,13 @@ const crmClientsKeys = {
    * fetched for viewers who can see other advisors' customers.
    */
   owners: (ids: readonly string[]) => [...crmClientsBase.all, 'owners', ids.join(',')] as const,
+  /**
+   * id + name of the viewer's OWN customers, for the Overview tool-shortcut
+   * picker. Keyed by advisor because the list is `user_id`-filtered rather than
+   * RLS-scoped, and impersonation swaps that advisor without a remount — a
+   * shared key would serve the previous advisor's book from cache.
+   */
+  ownOptions: (userId: string) => [...crmClientsBase.all, 'own-options', userId] as const,
 };
 
 const crmDashboardBase = createQueryKeys('crmDashboard');

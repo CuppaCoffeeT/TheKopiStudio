@@ -22,12 +22,20 @@ interface CustomerQueueBoardProps {
   queue: CustomerQueue;
   resolveAction: (customer: QueueCustomer) => QueueRowAction;
   onAddCustomer: () => void;
+  /**
+   * Slot rendered directly under the four figures (the Overview tool-shortcut
+   * row). A slot rather than a prop-driven render: the shortcuts launch routes,
+   * so the page that owns the router owns them — this component only knows
+   * WHERE they sit, which is a layout decision and belongs here.
+   */
+  belowStats?: React.ReactNode;
 }
 
 export function CustomerQueueBoard({
   queue,
   resolveAction,
   onAddCustomer,
+  belowStats,
 }: CustomerQueueBoardProps) {
   return (
     <>
@@ -59,6 +67,8 @@ export function CustomerQueueBoard({
           },
         ]}
       />
+
+      {belowStats}
 
       <div className="mt-[26px] flex items-center justify-end">
         <Button

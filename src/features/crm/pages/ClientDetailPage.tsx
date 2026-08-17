@@ -32,6 +32,7 @@ import { getCurrentSingaporeTime } from '@/utils/timezoneUtils';
 import { resolveClientFollowUp } from '../lib/followUps';
 import { clientFromRow } from '../lib/clientMapping';
 import { profilerHrefFor } from '../lib/profilerEntry';
+import { useInfoToolParam } from '../hooks/useInfoToolParam';
 import { useClientDetail } from '../hooks/useClientDetail';
 import { useDetailJourney } from '../hooks/useDetailJourney';
 import { useSoftDeleteClient } from '../hooks/useClientMutations';
@@ -69,6 +70,10 @@ export default function ClientDetailPage() {
     : null;
 
   const { journey, newestLinkedResult, canProfile } = useDetailJourney(model, linkedResults.data);
+
+  // `?tool=info` — the Overview shortcut for step 02, the one tool with no
+  // route of its own. Opens this page's edit form; see the hook for why.
+  useInfoToolParam(Boolean(model), isOwn, () => setEditOpen(true));
 
   const tabs: TabNavItem[] = [
     { value: 'overview', label: 'Overview', testId: 'clients-detail-tab-overview' },

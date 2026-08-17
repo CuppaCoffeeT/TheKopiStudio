@@ -59,6 +59,7 @@ import { getSingaporeGreeting } from '@/utils/dashboardHelpers';
 import { CustomerQueueBoard } from '../components/CustomerQueueBoard';
 import type { QueueRowAction } from '../components/CustomerQueueSection';
 import { StartProfilerBand } from '../components/StartProfilerBand';
+import { ToolShortcutLauncher } from '../components/ToolShortcutLauncher';
 import { AddCustomerChoiceModal } from '../components/modals/AddCustomerChoiceModal';
 import { ClientFormModal } from '../components/modals/ClientFormModal';
 import { useCustomerQueue } from '../hooks/useCustomerQueue';
@@ -177,6 +178,7 @@ export default function DashboardHomePage() {
               queue={queue}
               resolveAction={resolveAction}
               onAddCustomer={() => setChoiceOpen(true)}
+              belowStats={<ToolShortcutLauncher />}
             />
           </div>
         ) : null}

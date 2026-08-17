@@ -497,3 +497,26 @@ fall out of step; `customerRowModel.test.ts` pins that invariant.
 **Impact**: the viewer's own rows read "You". Adding the column cost no change to
 the list query or its RLS. If an advisor should ever edit a foreign customer,
 that is a separate RLS decision — this is read-only visibility only.
+
+## 2026-08-17 — Overview tool shortcuts ask for the customer FIRST
+
+**Decision**: `/dashboard` offers all six tools as a button row under the queue
+figures (`ToolShortcutRow`). Pressing one opens `ToolCustomerPickerModal` and only
+then navigates — to the byte-identical route `ClientDetailPage`'s launcher would
+have used. The row model lives in `lib/dashboardToolShortcuts.ts`, SEPARATE from
+`lib/customerToolCards.ts`.
+**Why**: the customer-centred IA says a tool always acts on a customer, and the
+planning routes enforce it — `PlanningToolFrame` reads `useParams().id` and has no
+"no-customer" mode. Inverting the order (tool → customer) keeps that contract
+while saving the advisor the list → record → launcher walk when they already know
+which tool they want. The two models stay apart because `customerToolCards`
+carries per-customer STATE (done/locked, the missing-info count) and gates 01→03;
+a shortcut is pressed before any customer exists, so it can honour nothing but
+MODULE access. Folding them together would mean deriving a journey for a customer
+nobody has picked.
+**Impact**: step 02 (Customer information) has no route of its own, so the shortcut
+uses `/clients/:id?tool=info`; `ClientDetailPage` opens `ClientFormModal` and
+strips the param (left in the URL, a refresh reopens a dismissed form). The picker
+reads `getOwnClientOptions` — an explicit `user_id` filter, NOT `getClientsPaginated`,
+whose RLS scope would hand a `view_all_clients` holder the whole firm's book. Same
+boundary, same reason as the queue: see lessons.md 2026-08-13.

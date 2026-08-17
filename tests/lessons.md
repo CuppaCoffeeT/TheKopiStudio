@@ -2,7 +2,7 @@
 
 Append-only. Newest at the bottom. Format authority: [DECISIONS_LESSONS_PATTERN.md](/Volumes/YourVolume/META_FOLDER_STRUCTURE/DECISIONS_LESSONS_PATTERN.md).
 
-Last Updated: 2026-08-13 (ephemeral CI test DB: the three role surfaces a seeded account needs)
+Last Updated: 2026-08-17 (count list rows only after the table mounts — see the 2026-08-17 entry)
 
 ---
 
@@ -189,3 +189,19 @@ Last Updated: 2026-08-13 (ephemeral CI test DB: the three role surfaces a seeded
 **Root cause**: a **fifth** private copy of the helper, in `portfolio-convert.spec.ts`. It skipped the animation settle, so that scan still raced the entrance fade. I found the first four by grepping for the file-naming pattern `*a11y*` and by reading the specs that had failed — both searches that select on where the bug had already *shown up*, not on where it could exist. This spec scans a11y but says nothing about a11y in its name, so it fell outside both. It was also intermittent (green on 4 runs, red on the 5th), which is exactly what a race looks like and is why the branch runs did not catch it.
 **Fix**: point it at the shared runner, and make a sixth copy impossible rather than merely unlikely — an ESLint `no-restricted-imports` rule banning `axe-playwright` anywhere under `tests/**` except the runner itself. Verified it errors by probing with a throwaway importer before removing it.
 **How to apply**: when consolidating duplicated logic, enumerate by what the code IMPORTS, not by filename or by which copies have misbehaved — `grep -rn "from 'the-package'"` finds every call site; a filename convention finds the ones you already knew about. And when the consolidation exists to make a wait unskippable, land the lint rule in the same change: a shared helper that callers can still bypass has not removed the failure mode, it has only made it rarer, and rarer means it surfaces after the merge instead of before it. Corollary, learned the hard way here: a green branch run is not proof for an intermittent failure — four were not enough.
+
+## 2026-08-17 — Counting list rows before the table mounts silently skipped E2E cleanup
+
+**What happened**: `dashboard-tool-shortcuts.spec.ts` seeds one `E2E-` customer and
+removes it in a `finally`. The suite reported 7/7 green while FOUR seeded customers
+were left live in the e2e advisor's book — enough to turn dashboard.spec's zero-KPI
+assertions red on the next run. The same bug in the manager test made a scope
+assertion pass as `0 <= 0`, proving nothing.
+**Root cause**: both did `page.goto('/clients')` and then counted rows immediately.
+The list fetches after mount, so the count read an empty DOM: cleanup concluded
+"already clean" and returned, and the scope check compared two zeroes. Nothing
+fails loudly — a no-op teardown and a vacuous assertion both look like success.
+**Fix**: wait for `clients-table` to be visible (the query has resolved) BEFORE
+counting, then poll for the specific row. Generally: any assertion or teardown
+whose "nothing here" branch is benign must first prove the data HAD a chance to
+arrive, or the benign branch becomes the branch that always runs.
