@@ -48,7 +48,7 @@ describe('nilOr / nilMoney', () => {
 
 describe('reportGaps', () => {
   it('names every gap on an empty record, and points at the tool that fills it', () => {
-    const gaps = reportGaps(blank, []);
+    const gaps = reportGaps(blank, [], false);
     const fields = gaps.map((gap) => gap.field);
     expect(fields).toContain('Risk profile');
     expect(fields).toContain('Annual income');
@@ -58,16 +58,25 @@ describe('reportGaps', () => {
     );
   });
 
-  it('reports nothing once the record and the portfolio are populated', () => {
-    expect(reportGaps(filled, [policy])).toEqual([]);
+  it('reports nothing once the record, the profile and the portfolio are populated', () => {
+    expect(reportGaps(filled, [policy], true)).toEqual([]);
   });
 
   it('counts contact details as present when either channel is on file', () => {
-    const gaps = reportGaps({ ...filled, email: '' }, [policy]);
+    const gaps = reportGaps({ ...filled, email: '' }, [policy], true);
     expect(gaps.map((gap) => gap.field)).not.toContain('Contact details');
   });
 
   it('flags the portfolio when the customer holds no policies', () => {
-    expect(reportGaps(filled, []).map((gap) => gap.field)).toContain('Portfolio');
+    expect(reportGaps(filled, [], true).map((gap) => gap.field)).toContain('Portfolio');
+  });
+
+  it('asks for the profiler on a customer who has never been profiled — even though the add form defaulted their risk profile to Moderate', () => {
+    // THE BUG THIS PINS: inferring "profiled" from `client.riskProfile` reported
+    // a completed profiler for every new customer, because `EMPTY_CLIENT`
+    // ships 'Moderate'. `results.client_id` is the app's single definition.
+    const gaps = reportGaps(filled, [policy], false);
+    const risk = gaps.find((gap) => gap.field === 'Risk profile');
+    expect(risk?.remedy).toContain('Complete the Prospect Profiler');
   });
 });

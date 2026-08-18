@@ -22,10 +22,22 @@
  * `SearchableMultiSelect` in single-select mode is the mandated picker
  * (.claude/rules/ui-components.md). It is NOT inside a Dialog here, so the
  * Portal caveat that applies in modals does not arise.
+ *
+ * CLEARING gets its own real `<button>` rather than relying on the primitive's
+ * inline X. That X is a `<span aria-hidden>` inside the trigger — fine as a
+ * mouse shortcut, but not reachable by keyboard and not announced at all, and
+ * "put this tool back to blank" is a first-class action here, not a shortcut.
+ * (The primitive's own affordance is left alone; fixing it is a shared-component
+ * change with its own blast radius.)
  */
 
-import { SearchableMultiSelect, type SMSOption } from '@/components/primitives/overlays';
-import { useOwnClientOptions } from '../hooks/useOwnClientOptions';
+import { X } from "lucide-react";
+import {
+  SearchableMultiSelect,
+  type SMSOption,
+} from "@/components/primitives/overlays";
+import { Button } from "@/components/primitives/shell/Button";
+import { useOwnClientOptions } from "../hooks/useOwnClientOptions";
 
 interface ToolCustomerBarProps {
   /** Currently chosen customer id, or null for the blank tool. */
@@ -43,9 +55,14 @@ export function ToolCustomerBar({
   value,
   onChange,
   blankHint,
-  testId = 'tool-customer-bar',
+  testId = "tool-customer-bar",
 }: ToolCustomerBarProps) {
-  const { data: customers, isLoading, isError, refetch } = useOwnClientOptions(true);
+  const {
+    data: customers,
+    isLoading,
+    isError,
+    refetch,
+  } = useOwnClientOptions(true);
 
   const options: SMSOption[] = (customers ?? []).map((customer) => ({
     value: customer.id,
@@ -58,33 +75,47 @@ export function ToolCustomerBar({
       className="mb-7 rounded-xl border border-border bg-card px-4 py-3.5 sm:px-5"
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0 sm:max-w-[420px] sm:flex-1">
-          <SearchableMultiSelect
-            label="Customer"
-            options={options}
-            value={value}
-            onValueChange={onChange}
-            clearable
-            searchable
-            disabled={isLoading || isError}
-            placeholder={
-              isLoading
-                ? 'Loading your customers…'
-                : isError
-                  ? 'Customers could not be loaded'
-                  : options.length === 0
-                    ? 'No customers in your book yet'
-                    : 'Search your customers…'
-            }
-            triggerTestId={`${testId}-select`}
-            optionTestIdPrefix={`${testId}-option`}
-          />
+        <div className="flex min-w-0 items-end gap-2 sm:max-w-[520px] sm:flex-1">
+          <div className="min-w-0 flex-1">
+            <SearchableMultiSelect
+              label="Customer"
+              options={options}
+              value={value}
+              onValueChange={onChange}
+              clearable
+              searchable
+              disabled={isLoading || isError}
+              placeholder={
+                isLoading
+                  ? "Loading your customers…"
+                  : isError
+                    ? "Customers could not be loaded"
+                    : options.length === 0
+                      ? "No customers in your book yet"
+                      : "Search your customers…"
+              }
+              triggerTestId={`${testId}-select`}
+              optionTestIdPrefix={`${testId}-option`}
+            />
+          </div>
+          {value && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-none pointer-coarse:min-h-11"
+              leadingIcon={<X className="h-3.5 w-3.5" aria-hidden="true" />}
+              onClick={() => onChange(null)}
+              data-testid={`${testId}-clear`}
+            >
+              Clear
+            </Button>
+          )}
         </div>
 
         <p className="m-0 text-[12px] leading-[1.6] text-[color:var(--fg-dim)] sm:max-w-[46%] sm:text-right">
           {isError ? (
             <>
-              Your customer list didn&rsquo;t load.{' '}
+              Your customer list didn&rsquo;t load.{" "}
               <button
                 type="button"
                 onClick={() => void refetch()}
@@ -95,7 +126,7 @@ export function ToolCustomerBar({
               .
             </>
           ) : value ? (
-            'Pre-filled from their record — edit anything here without changing it.'
+            "Pre-filled from their record — edit anything here without changing it."
           ) : (
             blankHint
           )}

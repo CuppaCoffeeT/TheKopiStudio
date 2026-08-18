@@ -87,7 +87,7 @@ export default function ClientReportPage() {
     setParams(updated);
   };
 
-  const { client, policies, interactions, bankHistory } = useClientDetail(id);
+  const { client, policies, interactions, bankHistory, linkedResults } = useClientDetail(id);
 
   // Opening the report IS generating it — there is no separate build step, and
   // the printed PDF is just this page. The customer's timeline records it once
@@ -151,8 +151,13 @@ export default function ClientReportPage() {
   const hospitalPolicies = policyList.filter((p) => p.isHospitalization);
   const investmentPolicies = policyList.filter((p) => p.isInvestmentLinked);
 
-  /** What the record could not supply — printed above the hero, never hidden. */
-  const gaps = model ? reportGaps(model, policyList) : [];
+  /**
+   * What the record could not supply — printed above the hero, never hidden.
+   * "Profiled" is `results.client_id`, NOT `client.riskProfile`: the add form
+   * defaults that column to 'Moderate', so reading it would report a completed
+   * profiler for every customer who has never been near one.
+   */
+  const gaps = model ? reportGaps(model, policyList, (linkedResults.data ?? []).length > 0) : [];
 
   return (
     <div className="bg-background px-3 py-4 sm:px-6 sm:py-6 print:bg-white">

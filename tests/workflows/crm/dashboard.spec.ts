@@ -59,13 +59,13 @@
  * Selectors: real data-testids from src/features/crm/pages/CrmDashboardPage
  * (crm-dashboard, crm-kpi-*, crm-add-first-client-btn, crm-quick-link-clients,
  * crm-dashboard-loading), ClientsListPage (clients-table via the ClientsPage
- * POM), DashboardHomePage + its children (home-start-profiler-band,
- * home-start-profiler-btn, home-queue-stats, home-stat-*, home-queue-quiet,
- * home-queue-unfinished, home-queue-reviews, <band>-row-<id>, <band>-empty,
+ * POM), DashboardHomePage + its children (home-daily-quote, home-queue-reviews,
+ * home-queue-unfinished, home-queue-quiet, <band>-row-<id>, <band>-empty,
  * home-add-customer-btn), AddCustomerChoiceModal
  * (crm-add-customer-choice-modal, crm-add-customer-choice-empty),
  * ClientFormModal (crm-client-form-modal, crm-client-cancel-btn) and
- * AppSidebar (app-sidebar, app-sidebar-more-heading).
+ * AppSidebar (app-sidebar, app-sidebar-others-toggle, app-sidebar-hide,
+ * app-sidebar-show).
  *
  * Run: npx playwright test tests/workflows/crm/dashboard.spec.ts \
  *        --config=playwright.parallel.config.ts
@@ -341,10 +341,10 @@ test.describe('manager /crm dashboard — scope: all books', () => {
 
 // ── (3) Advisor: /dashboard Overview dateline + launcher band + queue figures ─
 
-test.describe('advisor /dashboard Overview — dateline + launcher + queue figures', () => {
+test.describe('advisor /dashboard Overview — dateline + quote of the day', () => {
   test.use({ storageState: authFileFor('advisor') });
 
-  test('SGT dateline greeting; the profiler launcher band navigates; four queue figures @p0 @mobile', async ({
+  test('SGT dateline greeting; a deterministic daily quote; every retired surface stays retired @p0 @mobile', async ({
     page,
   }) => {
     await page.goto('/dashboard');
@@ -382,41 +382,34 @@ test.describe('advisor /dashboard Overview — dateline + launcher + queue figur
       );
     });
 
-    await test.step('the launcher band offers the profiler without going through the list', async () => {
-      const band = page.getByTestId('home-start-profiler-band');
-      await expect(band).toBeVisible({ timeout: 30_000 });
-      await expect(band).toContainText('Start a Prospect Profiler');
+    await test.step('the quote of the day renders, and is the same on a reload', async () => {
+      const quote = page.getByTestId('home-daily-quote');
+      await expect(quote).toBeVisible({ timeout: 30_000 });
 
-      // The two retired launchers must not come back: the 2a module grid, and
-      // the index KPI cards the customer-centred IA replaced with the queue.
-      await expect(page.getByTestId('home-module-grid')).toHaveCount(0);
-      await expect(page.getByTestId('home-kpi-row')).toHaveCount(0);
+      // Deterministic per SG calendar date (lib/dailyQuote) — a `Math.random()`
+      // pick would reshuffle here and the block would read as noise.
+      const first = (await quote.innerText()).trim();
+      expect(first.length).toBeGreaterThan(0);
+      await page.reload();
+      await expect(page.getByTestId('home-daily-quote')).toBeVisible({ timeout: 30_000 });
+      expect((await page.getByTestId('home-daily-quote').innerText()).trim()).toBe(first);
     });
 
-    await test.step('the four queue figures settle to real non-negative numbers', async () => {
-      const stats = page.getByTestId('home-queue-stats');
-      await expect(stats).toBeVisible({ timeout: 30_000 });
-
-      for (const testId of [
-        'home-stat-quiet',
-        'home-stat-unfinished',
-        'home-stat-reviews',
-        'home-stat-added',
+    await test.step('every retired Overview surface stays retired', async () => {
+      // The 2a module grid and the index KPI cards the customer-centred IA
+      // replaced with the queue — plus, since 2026-08-18, the profiler launcher
+      // band, the tool-shortcut row and the four queue figures. The Overview is
+      // people, not tools, and not a count of the rows printed below it.
+      for (const retired of [
+        'home-module-grid',
+        'home-kpi-row',
+        'home-start-profiler-band',
+        'home-start-profiler-btn',
+        'home-queue-stats',
+        'home-tool-shortcuts',
       ] as const) {
-        const tile = page.getByTestId(testId);
-        await expect(tile).toBeVisible({ timeout: 30_000 });
-        // No value assumptions on a shared live book — only that each figure is
-        // a real, settled, non-negative number rather than a dash or a skeleton.
-        const text = await tile.innerText();
-        const match = text.match(/[\d,]+/);
-        expect(match, `queue figure "${testId}" must render a number`).not.toBeNull();
-        expect(Number(match![0].replace(/,/g, ''))).toBeGreaterThanOrEqual(0);
+        await expect(page.getByTestId(retired)).toHaveCount(0);
       }
-    });
-
-    await test.step('the launcher band is the real navigation into the profiler', async () => {
-      await page.getByTestId('home-start-profiler-btn').click();
-      await page.waitForURL(/\/profiler(\?.*)?$/, { timeout: 30_000 });
     });
   });
 });
@@ -433,7 +426,10 @@ test.describe('advisor /dashboard Overview — the action queue', () => {
 
     // The three bands are MUTUALLY EXCLUSIVE by construction (deriveAttention
     // assigns one reason per customer), so a customer can appear in at most one.
-    const BANDS = ['home-queue-quiet', 'home-queue-unfinished', 'home-queue-reviews'] as const;
+    // DOM ORDER IS THE PRIORITY ORDER (2026-08-18): the band with a deadline
+    // reads first, "gone quiet" last. Asserted below, because reading order is
+    // priority whether or not anyone intends it to be.
+    const BANDS = ['home-queue-reviews', 'home-queue-unfinished', 'home-queue-quiet'] as const;
 
     await test.step('every band settles — rows or its empty state, never a stuck skeleton', async () => {
       for (const band of BANDS) {
@@ -462,6 +458,19 @@ test.describe('advisor /dashboard Overview — the action queue', () => {
           await expect(first.getByRole('button')).toHaveCount(1);
         }
       }
+    });
+
+    await test.step('the bands read most-urgent-first', async () => {
+      // Runs AFTER the settle step above, which is what guarantees the three
+      // sections are mounted — read straight after `goto` this returned [].
+      const order = (
+        await page.locator('section[data-testid^="home-queue-"] h2').allInnerTexts()
+      ).map((text) => text.trim());
+      expect(order).toEqual([
+        'Reviews coming up',
+        'Unfinished work',
+        'No contact in 14 days',
+      ]);
     });
 
     await test.step('the queue rule is stated on the page', async () => {
@@ -502,7 +511,7 @@ test.describe('advisor shell — sidebar rail navigation', () => {
     isMobile,
   }) => {
     await page.goto('/dashboard');
-    await expect(page.getByTestId('home-queue-stats')).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByTestId('home-daily-quote')).toBeVisible({ timeout: 30_000 });
 
     const rail = page.getByTestId('app-sidebar');
 
@@ -556,16 +565,44 @@ test.describe('advisor shell — sidebar rail navigation', () => {
     await expect(overview).toBeVisible();
     await expect(clients).toBeVisible();
 
-    // Everything else the advisor holds is DEMOTED under the "More" hairline —
-    // reachable, but visibly not a peer of the book. The tools in particular
-    // must no longer sit alongside it.
-    const more = rail.getByTestId('app-sidebar-more-heading');
-    await expect(more).toBeVisible();
+    // Everything else the advisor holds is COLLAPSED behind "Others"
+    // (2026-08-18) — reachable in one click, but not competing with the two
+    // destinations. Closed, it must hold no focusable link at all.
+    const nav = rail.getByRole('navigation', { name: 'Primary' });
+    const othersToggle = rail.getByTestId('app-sidebar-others-toggle');
+    await expect(othersToggle).toBeVisible();
+
     // Scope to the nav landmark, NOT the whole rail — the wordmark above it is
     // also a link and would shift every index by one.
-    const navLinks = rail.getByRole('navigation', { name: 'Primary' }).getByRole('link');
-    const labels = await navLinks.allInnerTexts();
+    const labels = await nav.getByRole('link').allInnerTexts();
     expect(labels.slice(0, 2)).toEqual(['Overview', 'Customers']);
+
+    if ((await othersToggle.getAttribute('aria-expanded')) === 'true') {
+      await othersToggle.click();
+    }
+    await expect(othersToggle).toHaveAttribute('aria-expanded', 'false');
+    // Account Settings is pinned OUTSIDE the group, so it survives the collapse
+    // — that is the point of pinning it.
+    await expect(nav.getByRole('link', { name: 'Prospect Profiler', exact: true })).toHaveCount(0);
+
+    await othersToggle.click();
+    await expect(othersToggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(
+      nav.getByRole('link', { name: 'Tax calculator', exact: true }),
+    ).toBeVisible({ timeout: 30_000 });
+    await expect(nav.getByRole('link', { name: 'Client Report', exact: true })).toBeVisible();
+
+    // Account Settings sits last, whatever the group is doing.
+    const withGroup = await nav.getByRole('link').allInnerTexts();
+    expect(withGroup[withGroup.length - 1]).toBe('Account Settings');
+
+    // The rail hides and comes back, leaving exactly one control behind.
+    await rail.getByTestId('app-sidebar-hide').click();
+    await expect(rail).toHaveCount(0);
+    const show = page.getByTestId('app-sidebar-show');
+    await expect(show).toBeVisible({ timeout: 30_000 });
+    await show.click();
+    await expect(page.getByTestId('app-sidebar')).toBeVisible({ timeout: 30_000 });
 
     // NavLink stamps aria-current="page" on the matched item ONLY — that is the
     // active marker the 2px brown left border renders from.

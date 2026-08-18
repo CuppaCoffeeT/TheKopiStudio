@@ -174,7 +174,12 @@ export default function ClientDetailPage() {
         <PoliciesTab clientId={id} readOnly={!isOwn} policies={policies} />
       )}
       {model && id && tab === 'activity' && (
-        <ActivityTab clientId={id} readOnly={!isOwn} activity={activity} />
+        <ActivityTab
+          clientId={id}
+          readOnly={!isOwn}
+          activity={activity}
+          interactions={interactions}
+        />
       )}
       {model && id && tab === 'bank' && (
         <BankHistoryTab clientId={id} readOnly={!isOwn} client={model} bankHistory={bankHistory} />

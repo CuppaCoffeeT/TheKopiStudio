@@ -54,11 +54,25 @@ const POLICY_REMEDY = 'Add their policies to populate the portfolio sections.';
  * for the work queue, and it is allowed to be opinionated. This one answers
  * "what did the report have to print NIL for?", which is a fact about the
  * rendered document — the two would drift the moment either question changed.
+ *
+ * @param hasProfile whether a profiler result is LINKED to this customer.
+ *   Passed in rather than inferred from `client.riskProfile`, because the add
+ *   form defaults that column to 'Moderate' — so a customer nobody has ever
+ *   profiled still arrives here carrying a risk profile, and inferring from it
+ *   would report a completed profiler for every new record. `results.client_id`
+ *   is the app's single definition of "profiled" (lib/customerJourney); this
+ *   uses the same one.
  */
-export function reportGaps(client: CrmClient, policies: readonly CrmPolicy[]): ReportGap[] {
+export function reportGaps(
+  client: CrmClient,
+  policies: readonly CrmPolicy[],
+  hasProfile: boolean,
+): ReportGap[] {
   const gaps: ReportGap[] = [];
 
-  if (!client.riskProfile.trim()) gaps.push({ field: 'Risk profile', remedy: PROFILER_REMEDY });
+  if (!hasProfile) gaps.push({ field: 'Risk profile', remedy: PROFILER_REMEDY });
+  else if (!client.riskProfile.trim())
+    gaps.push({ field: 'Risk profile', remedy: 'Set it on the customer information.' });
   if (!client.dateOfBirth.trim())
     gaps.push({ field: 'Date of birth', remedy: `${INFO_REMEDY} Age and retirement horizon read from it.` });
   if (!client.annualIncome.trim()) gaps.push({ field: 'Annual income', remedy: INFO_REMEDY });

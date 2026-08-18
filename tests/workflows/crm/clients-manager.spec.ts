@@ -214,13 +214,20 @@ async function assertReadAllWriteNone(page: Page): Promise<void> {
     await expect(page.locator('[data-testid^="clients-policy-delete-btn-"]')).toHaveCount(0);
   });
 
-  await test.step('Interactions tab: read-only empty state, no Add affordance', async () => {
+  await test.step('Activity tab: automatic history readable, zero write affordances (NEGATIVE)', async () => {
     await crm.switchTab('interactions');
-    const empty = page.getByTestId('clients-interactions-empty');
-    await expect(empty).toBeVisible({ timeout: 30_000 });
-    await expect(empty).toContainText(
-      'No meetings, calls or reviews have been logged for this client.',
-    );
+
+    // NOT an empty state any more (2026-08-18): the beforeAll created this
+    // customer through the real UI, and `useCreateClient` writes a
+    // `customer_created` entry. A manager holding `view_all_clients` may READ
+    // that history — `customer_activity_select` mirrors `clients_select`.
+    const created = page
+      .locator('[data-testid^="clients-activity-row-"]')
+      .filter({ hasText: 'Customer record created' });
+    await expect(created).toHaveCount(1, { timeout: 30_000 });
+
+    // …and may write nothing. There is no INSERT path for them (the policy
+    // checks the OWNER), and the automatic rows carry no actions for anyone.
     await expect(page.getByTestId('clients-interactions-add-btn')).toHaveCount(0);
     await expect(page.locator('[data-testid^="clients-interaction-edit-btn-"]')).toHaveCount(0);
     await expect(page.locator('[data-testid^="clients-interaction-delete-btn-"]')).toHaveCount(0);

@@ -20,7 +20,10 @@ async function openSrsPlanner(page: Page) {
   const row = clients.visibleRows().first();
   await expect(row).toBeVisible({ timeout: 30_000 });
   const id = await clients.idFromRow(row);
-  await page.goto(`/clients/${id}/srs`);
+  // The canonical route since 2026-08-18 — `/clients/:id/srs` still redirects
+  // here (covered by tool-routes.spec), but a spec about the PLANNER should not
+  // spend its first assertion on a redirect.
+  await page.goto(`/tools/srs?customer=${id}`);
   await expect(page.getByTestId('srs-planner')).toBeVisible({ timeout: 30_000 });
 }
 

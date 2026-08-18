@@ -4,14 +4,14 @@ import { selectStatusTab } from './statusTabs';
 
 /**
  * ClientsPage — POM for the CRM module: the /clients list, the client detail
- * page (Overview · Policies · Interactions · Bank history tabs) and the four
+ * page (Overview · Policies · Activity · Bank history tabs) and the four
  * CRM form modals (ClientFormModal / PolicyFormModal / InteractionFormModal /
  * BankBalanceModal).
  *
  * All selectors are real data-testids read from:
  *   src/features/crm/pages/{ClientsListPage,ClientDetailPage}.tsx
  *   src/features/crm/components/detail/{ListSection,RowActions,ClientDetailActions,
- *     OverviewTab,PoliciesTab,InteractionsTab,BankHistoryTab}.tsx
+ *     OverviewTab,PoliciesTab,ActivityTab,BankHistoryTab}.tsx
  *   src/features/crm/components/modals/{ClientFormModal,PolicyFormModal,
  *     InteractionFormModal,BankBalanceModal,shared}.tsx (+ client/ and policy/ sections)
  *
@@ -129,12 +129,19 @@ export interface BankFormInput {
   notes?: string;
 }
 
+/**
+ * `interactions` is kept as the KEY for the third tab even though the tab is
+ * now labelled "Activity" (2026-08-18). The key names the CHILD LIST the specs
+ * seed and clean up — `public.interactions` — which is unchanged; only the
+ * surface that renders it was replaced. Renaming the key would have touched
+ * every cleanup loop in the suite for no behaviour.
+ */
 export type ClientDetailTab = 'overview' | 'policies' | 'interactions' | 'bank';
 
 const DETAIL_TABS: Record<ClientDetailTab, { label: RegExp; content: string }> = {
   overview: { label: /^Overview/, content: 'clients-detail-overview' },
   policies: { label: /^Policies/, content: 'clients-policies' },
-  interactions: { label: /^Interactions/, content: 'clients-interactions' },
+  interactions: { label: /^Activity/, content: 'clients-activity' },
   bank: { label: /^Bank history/, content: 'clients-bank' },
 };
 
@@ -148,7 +155,9 @@ const CHILD_LISTS = {
     dialog: 'clients-policy-delete-dialog',
   },
   interactions: {
-    section: 'clients-interactions',
+    // The manual rows inside the Activity tab. Automatic entries render as
+    // `clients-activity-row-*` and have no actions — see ActivityTab.
+    section: 'clients-activity',
     rowPrefix: 'clients-interaction-row-',
     editPrefix: 'clients-interaction-edit-btn-',
     deletePrefix: 'clients-interaction-delete-btn-',
