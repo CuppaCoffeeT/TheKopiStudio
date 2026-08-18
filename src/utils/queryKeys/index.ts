@@ -54,6 +54,7 @@ const crmClientsKeys = {
   interactions: (id: string) => [...crmClientsBase.detail(id), 'interactions'] as const,
   bankHistory: (id: string) => [...crmClientsBase.detail(id), 'bank-history'] as const,
   linkedResults: (id: string) => [...crmClientsBase.detail(id), 'linked-results'] as const,
+  activity: (id: string) => [...crmClientsBase.detail(id), 'activity'] as const,
   /** The customer's saved Legacy Map — nests under detail(id) like the others. */
   legacyPlan: (id: string) => [...crmClientsBase.detail(id), 'legacy-plan'] as const,
   /**

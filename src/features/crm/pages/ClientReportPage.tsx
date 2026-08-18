@@ -48,6 +48,7 @@ import { assessRetirementReadiness, heroTotals } from '../lib/financeReport';
 import { clientFromRow } from '../lib/clientMapping';
 import { reportGaps } from '../lib/reportCompleteness';
 import { useClientDetail } from '../hooks/useClientDetail';
+import { useLogToolOpen } from '../hooks/useLogToolOpen';
 import { ToolCustomerBar } from '../components/ToolCustomerBar';
 import { ReportMissingInfo } from '../components/report/ReportMissingInfo';
 import { ReportCashValue } from '../components/report/ReportCashValue';
@@ -87,6 +88,19 @@ export default function ClientReportPage() {
   };
 
   const { client, policies, interactions, bankHistory } = useClientDetail(id);
+
+  // Opening the report IS generating it — there is no separate build step, and
+  // the printed PDF is just this page. The customer's timeline records it once
+  // per visit. (The book-wide Portfolio Report is deliberately NOT logged: it
+  // covers every customer, and writing one entry onto each of them would bury
+  // the log under an event nobody performed against any individual.)
+  useLogToolOpen(
+    'client-report',
+    'Client Report generated',
+    client.data ? (id ?? null) : null,
+    client.data?.user_id ?? null,
+    'report_generated',
+  );
 
   const row = client.data ?? null;
   const model = useMemo(() => (row ? clientFromRow(row) : null), [row]);

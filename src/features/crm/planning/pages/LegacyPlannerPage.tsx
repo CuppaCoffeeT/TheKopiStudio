@@ -102,6 +102,7 @@ export default function LegacyPlannerPage() {
       title="Legacy Map"
       description="Who actually inherits — and what the law would do instead."
       testId="legacy-planner"
+      activityTool="legacy-map"
       // The ONLY tool that insists on a customer: its plan is persisted against
       // one (`legacy_plans.client_id`), so a blank map has nowhere to be saved.
       requiresCustomer

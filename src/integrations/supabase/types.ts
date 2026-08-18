@@ -221,6 +221,70 @@ export type Database = {
           },
         ]
       }
+      customer_activity: {
+        Row: {
+          activity_type: string
+          actor_id: string | null
+          changes: Json | null
+          client_id: string
+          created_at: string
+          id: string
+          is_deleted: boolean
+          occurred_at: string
+          summary: string
+          tool: string | null
+          user_id: string
+        }
+        Insert: {
+          activity_type: string
+          actor_id?: string | null
+          changes?: Json | null
+          client_id: string
+          created_at?: string
+          id?: string
+          is_deleted?: boolean
+          occurred_at?: string
+          summary: string
+          tool?: string | null
+          user_id: string
+        }
+        Update: {
+          activity_type?: string
+          actor_id?: string | null
+          changes?: Json | null
+          client_id?: string
+          created_at?: string
+          id?: string
+          is_deleted?: boolean
+          occurred_at?: string
+          summary?: string
+          tool?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_activity_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_activity_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_activity_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interactions: {
         Row: {
           client_id: string

@@ -191,6 +191,7 @@ export default function TaxCalculatorPage() {
       title="Tax calculator"
       description="Singapore resident income tax for YA 2025/2026, relief by relief."
       testId="tax-calculator"
+      activityTool="tax-calculator"
       blankHint="No customer chosen — the calculator starts blank. Pick one to pre-fill age and income."
     >
       {/* Keyed on the customer so switching re-seeds the inputs: every field

@@ -31,8 +31,10 @@ import { ErrorState } from '@/components/primitives/shell/ErrorState';
 import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
 import { NoResultsState } from '@/components/primitives/shell/NoResultsState';
 import { useAuth } from '@/contexts/AuthContext';
+import type { ActivityTool } from '@/lib/activityLog';
 import { CUSTOMER_PARAM } from '@/lib/toolRoutes';
 import { useClientDetail } from '../../hooks/useClientDetail';
+import { useLogToolOpen } from '../../hooks/useLogToolOpen';
 import { clientFromRow } from '../../lib/clientMapping';
 import { EMPTY_CLIENT } from '../../components/modals/client/clientFormModel';
 import { ToolCustomerBar } from '../../components/ToolCustomerBar';
@@ -50,6 +52,8 @@ interface PlanningToolFrameProps {
   /** Index numeral shown beside the title — the tool's step in the chain. */
   index: string;
   testId: string;
+  /** Which tool this is, for the customer's activity log. */
+  activityTool: ActivityTool;
   /** What the tool is worth with no customer chosen — shown beside the picker. */
   blankHint: string;
   /**
@@ -72,6 +76,7 @@ export function PlanningToolFrame({
   description,
   index,
   testId,
+  activityTool,
   blankHint,
   requiresCustomer = false,
   children,
@@ -86,6 +91,15 @@ export function PlanningToolFrame({
   const row = client.data ?? null;
   const model = row ? clientFromRow(row) : null;
   const isOwn = Boolean(row && user && row.user_id === user.id);
+
+  // The customer's timeline records that their numbers were pulled up here.
+  // Fires once the record has resolved, so a mistyped `?customer=` logs nothing.
+  useLogToolOpen(
+    activityTool,
+    `${title} opened`,
+    model ? customerId : null,
+    row?.user_id ?? null,
+  );
 
   /**
    * `replace: false` — stepping between customers is real navigation, so Back

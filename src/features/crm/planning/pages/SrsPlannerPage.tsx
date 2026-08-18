@@ -124,6 +124,7 @@ export default function SrsPlannerPage() {
       title="SRS planner"
       description="What contributing saves now, and what taking it out actually costs."
       testId="srs-planner"
+      activityTool="srs-planner"
       blankHint="No customer chosen — the planner starts blank. Pick one to pre-fill age and income."
     >
       {/* Keyed on the customer — `useSrsPlanner` seeds its state once. */}

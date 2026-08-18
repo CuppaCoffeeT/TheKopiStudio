@@ -35,24 +35,28 @@ import { clientFromRow } from '../lib/clientMapping';
 import { profilerHrefFor } from '../lib/profilerEntry';
 import { useInfoToolParam } from '../hooks/useInfoToolParam';
 import { useClientDetail } from '../hooks/useClientDetail';
+import { useCustomerActivity } from '../hooks/useCustomerActivity';
 import { useDetailJourney } from '../hooks/useDetailJourney';
 import { useSoftDeleteClient } from '../hooks/useClientMutations';
 import { BankHistoryTab } from '../components/detail/BankHistoryTab';
 import { ClientDetailActions } from '../components/detail/ClientDetailActions';
 import { CustomerToolLauncher } from '../components/detail/CustomerToolLauncher';
-import { InteractionsTab } from '../components/detail/InteractionsTab';
+import { ActivityTab } from '../components/detail/ActivityTab';
 import { OverviewTab } from '../components/detail/OverviewTab';
 import { PoliciesTab } from '../components/detail/PoliciesTab';
 import { FollowUpBadge } from '../components/FollowUpBadge';
 import { ClientFormModal } from '../components/modals/ClientFormModal';
 
-type DetailTab = 'overview' | 'policies' | 'interactions' | 'bank';
+type DetailTab = 'overview' | 'policies' | 'activity' | 'bank';
 
 export default function ClientDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { client, policies, interactions, bankHistory, linkedResults } = useClientDetail(id);
+  // The merged automatic + manual timeline. `interactions` is still fetched
+  // above because the follow-up badge and the report section read it directly.
+  const activity = useCustomerActivity(id);
   const removeClient = useSoftDeleteClient(id ?? '');
   const [tab, setTab] = useState<DetailTab>('overview');
   const [editOpen, setEditOpen] = useState(false);
@@ -79,7 +83,7 @@ export default function ClientDetailPage() {
   const tabs: TabNavItem[] = [
     { value: 'overview', label: 'Overview', testId: 'clients-detail-tab-overview' },
     { value: 'policies', label: 'Policies', count: policies.data?.length ?? null, testId: 'clients-detail-tab-policies' },
-    { value: 'interactions', label: 'Interactions', count: interactions.data?.length ?? null, testId: 'clients-detail-tab-interactions' },
+    { value: 'activity', label: 'Activity', count: activity.data?.length ?? null, testId: 'clients-detail-tab-activity' },
     { value: 'bank', label: 'Bank history', count: bankHistory.data?.length ?? null, testId: 'clients-detail-tab-bank' },
   ];
 
@@ -169,8 +173,8 @@ export default function ClientDetailPage() {
       {model && id && tab === 'policies' && (
         <PoliciesTab clientId={id} readOnly={!isOwn} policies={policies} />
       )}
-      {model && id && tab === 'interactions' && (
-        <InteractionsTab clientId={id} readOnly={!isOwn} interactions={interactions} refDate={refDate} />
+      {model && id && tab === 'activity' && (
+        <ActivityTab clientId={id} readOnly={!isOwn} activity={activity} />
       )}
       {model && id && tab === 'bank' && (
         <BankHistoryTab clientId={id} readOnly={!isOwn} client={model} bankHistory={bankHistory} />

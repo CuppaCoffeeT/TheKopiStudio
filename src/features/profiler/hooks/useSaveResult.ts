@@ -19,13 +19,27 @@
  *
  * Legacy saved silently and swallowed errors; the port surfaces failures via
  * showError (PRD "legacy bugs fixed").
+ *
+ * HISTORY (2026-08-18): a LINKED save also writes the customer's activity log
+ * — `profile_created` the first time, `profile_updated` afterwards carrying the
+ * field-level diff against the previous profile (`DISC primary: S → D`). The
+ * previous row is read BEFORE the insert, so the new profile cannot be its own
+ * predecessor.
+ *
+ * It writes through `@/lib/activityLog`, not through the CRM feature:
+ * `.dependency-cruiser.cjs` forbids cross-feature imports, and the log is
+ * written by two features, so it lives one level up where both can see it.
+ * The write is fire-and-forget — a profile that saved must never report failure
+ * because its history entry did not.
  */
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { recordActivity } from '@/lib/activityLog';
 import { queryKeys } from '@/utils/queryKeys';
 import { showError, showSuccess } from '@/utils/toastHelper';
 import { resolveLinkableClientId } from '../api/convertService';
+import { diffProfiles, snapshotFromResult, summariseProfileChanges } from '../lib/profileHistory';
 import type { ProfilerResult, ProfilerResultInsert } from '../types';
 
 export interface SaveResultOutcome {
@@ -35,6 +49,23 @@ export interface SaveResultOutcome {
   linkRequested: boolean;
   /** …and it resolved to a customer this advisor owns, so the row carries it. */
   linked: boolean;
+}
+
+/**
+ * The customer's most recent profile before this one, or null on a first
+ * profile. Bounded to one row; failure resolves to null rather than throwing —
+ * a history lookup must not be able to fail a save.
+ */
+async function readPreviousProfile(clientId: string) {
+  const { data, error } = await supabase
+    .from('results')
+    .select('disc_primary, disc_secondary, mbti, age_range, occupation, meeting, observations_count, questions_answered')
+    .eq('client_id', clientId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error || !data) return null;
+  return snapshotFromResult(data);
 }
 
 export function useSaveResult() {
@@ -54,12 +85,34 @@ export function useSaveResult() {
       };
 
       if (row.user_id) {
+        // Read the customer's previous profile BEFORE inserting, or the new row
+        // becomes its own predecessor and every diff comes out empty.
+        const previous = linkedClientId ? await readPreviousProfile(linkedClientId) : null;
+
         const { data, error } = await supabase
           .from('results')
           .insert(row)
           .select()
           .single();
         if (error) throw error;
+
+        if (linkedClientId) {
+          const changes = diffProfiles(previous, snapshotFromResult(data));
+          void recordActivity({
+            clientId: linkedClientId,
+            // `resolveLinkableClientId` only returns an id this user OWNS, so
+            // the owner and the actor are necessarily the same person here.
+            ownerId: row.user_id,
+            actorId: row.user_id,
+            type: previous ? 'profile_updated' : 'profile_created',
+            tool: 'prospect-profiler',
+            summary: previous
+              ? summariseProfileChanges(changes)
+              : 'Prospect Profiler completed — risk profile on file',
+            changes,
+          });
+        }
+
         return { saved: data, ...outcome };
       }
       // Anonymous: fire-and-forget — no .select(), RLS blocks returning rows.
