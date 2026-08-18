@@ -10,3 +10,4 @@ export {
   type CDWProgressStep,
   type CDWProgressTimelineProps,
 } from './CDWProgressTimeline';
+export { DailyQuoteCard } from './DailyQuoteCard';

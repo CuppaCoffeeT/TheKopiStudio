@@ -29,7 +29,7 @@ import { ToolNote, ToolStatGrid } from '../components/PlanningAtoms';
 import { money, percent } from '../lib/format';
 import { SRS_WITHDRAWAL_WINDOW_YEARS } from '../lib/srs';
 
-function SrsPlanner({ customer }: { customer: CrmClient }) {
+function SrsPlanner({ customer, named }: { customer: CrmClient; named: boolean }) {
   const model = useSrsPlanner(customer, currentRefYear());
   const { contribution, withdrawal, numbers, projection, milestones, deferral, plan, journey } = model;
 
@@ -111,7 +111,7 @@ function SrsPlanner({ customer }: { customer: CrmClient }) {
         Withdrawals may begin at the statutory retirement age locked in by the first
         contribution — 62, 63 or 64. Half of each withdrawal is chargeable, and the{' '}
         {SRS_WITHDRAWAL_WINDOW_YEARS}-year penalty-free window opens on the first withdrawal,
-        not on that birthday. Nothing here is saved to {customer.name}&rsquo;s record.
+        not on that birthday. Nothing here is saved{named ? ` to ${customer.name}’s record` : ''}.
       </ToolNote>
     </div>
   );
@@ -124,8 +124,12 @@ export default function SrsPlannerPage() {
       title="SRS planner"
       description="What contributing saves now, and what taking it out actually costs."
       testId="srs-planner"
+      blankHint="No customer chosen — the planner starts blank. Pick one to pre-fill age and income."
     >
-      {(customer) => <SrsPlanner customer={customer} />}
+      {/* Keyed on the customer — `useSrsPlanner` seeds its state once. */}
+      {(customer, customerId) => (
+        <SrsPlanner key={customerId ?? 'blank'} customer={customer} named={Boolean(customerId)} />
+      )}
     </PlanningToolFrame>
   );
 }

@@ -51,7 +51,7 @@ export function AppNavDrawer({ open, onOpenChange }: AppNavDrawerProps) {
 
         <AppSidebarNav
           onNavigate={() => onOpenChange(false)}
-          moreHeadingTestId="app-nav-drawer-more-heading"
+          othersToggleTestId="app-nav-drawer-others-toggle"
           className="flex-1"
         />
       </SheetContent>

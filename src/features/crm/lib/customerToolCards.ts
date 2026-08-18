@@ -8,9 +8,15 @@
  *
  * TWO GROUPS, and the distinction is deliberate:
  *
- * - **The chain (01–03)** — Profiler → Information → Report. These are ordered
- *   and they GATE each other: the report is locked until the two above it are
- *   done. `deriveJourney` owns those states.
+ * - **The chain (01–03)** — Profiler → Information → Report. These are ORDERED,
+ *   and `deriveJourney` still owns each step's done/todo state — but since
+ *   2026-08-18 they no longer GATE each other. The report used to be locked
+ *   until the two above it were done, which withheld the one artifact an
+ *   advisor can put in front of a customer at exactly the moment it is most
+ *   useful: the first meeting, where the report's own "Missing information"
+ *   list IS the agenda. It now opens at any stage and prints `NIL` for what is
+ *   not on file (`lib/reportCompleteness`). The order is still advice; it is no
+ *   longer a lock.
  * - **Planning tools (04–06)** — Tax calculator, SRS planner, Legacy Map.
  *   These are always available. They read the customer's record to pre-fill
  *   themselves, but nothing about them is sequenced, and giving them a
@@ -21,8 +27,9 @@
  * customer is not "2 / 6 complete" because they have not opened a calculator.
  *
  * The action a card offers is `null` when there is nothing the viewer can do —
- * a locked report, or another advisor's customer. The component then renders a
- * reason line instead of a control: a clickable lock is a lie.
+ * another advisor's customer, or a profiler the viewer isn't granted. The
+ * component then renders a reason line instead of a control: a clickable lock
+ * is a lie. Card 03 no longer reaches that branch; see the chain note above.
  */
 
 import {
@@ -73,14 +80,15 @@ export interface ToolCardInput {
   canProfile: boolean;
 }
 
-/** Which upstream steps the locked report is still waiting on, named. */
-function blockingSteps(journey: CustomerJourney): string {
+/** Which upstream steps are still outstanding, named — now a NOTE on the report
+ *  card rather than the reason it is locked. */
+function pendingSteps(journey: CustomerJourney): string {
   return JOURNEY_STEP_ORDER.filter((key) => key !== 'report' && journey.steps[key] !== 'done')
     .map((key) => JOURNEY_STEP_LABEL[key])
     .join(' and ');
 }
 
-/** The three CHAIN cards, in order. These gate each other. */
+/** The three CHAIN cards, in order. Ordered advice — no longer a gate. */
 export function buildToolCards({
   journey,
   hasLinkedResult,
@@ -132,10 +140,11 @@ export function buildToolCards({
       detail:
         journey.steps.report === 'done'
           ? 'Ready to generate from the policies and balances on file.'
-          : 'Needs steps 01 and 02 — the report reads the risk profile and the customer information.',
-      action:
-        journey.steps.report === 'done' ? { label: 'Open report', kind: 'open-report' } : null,
-      reason: `Finish ${blockingSteps(journey)} first`,
+          : `Generates now from whatever is on file — anything missing prints NIL. ${pendingSteps(journey)} would fill it in.`,
+      // Always offered. `isOwn` is NOT a condition either: reading another
+      // advisor's customer is read-only, and a report is a read.
+      action: { label: 'Open report', kind: 'open-report' },
+      reason: '',
     },
   ];
 }

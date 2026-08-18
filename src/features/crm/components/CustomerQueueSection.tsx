@@ -12,10 +12,16 @@
  * row is only legitimate when the outer element is not itself a <button>: the
  * row is an <li> with a click handler plus a real anchor on the name, which
  * keeps one tab stop per destination and no invalid nesting.
+ *
+ * The NAME is masked by the privacy eye (`SensitiveName` → `Sk***`); the reason
+ * line, the wait figure and the action label are not. That split is the whole
+ * point of the feature: what a stranger over your shoulder must not read is WHO
+ * is on the list, not that three people are overdue a call.
  */
 
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/primitives/shell/Button';
+import { SensitiveName } from '@/components/primitives/shell/Sensitive';
 import { cn } from '@/lib/utils';
 import type { QueueCustomer } from '../api/customerQueueService';
 import { JourneyChecklist } from './JourneyChecklist';
@@ -94,7 +100,7 @@ export function CustomerQueueSection({
                     to={`/clients/${customer.id}`}
                     className="text-[13.5px] font-semibold text-foreground hover:text-[color:var(--brown-text)] focus-visible:outline-2 focus-visible:outline-[color:var(--ring)]"
                   >
-                    {customer.name}
+                    <SensitiveName value={customer.name} />
                   </Link>
                   <p className="m-0 mt-0.5 truncate text-[12px] text-[color:var(--fg-dim)]">
                     {customer.reasonText}

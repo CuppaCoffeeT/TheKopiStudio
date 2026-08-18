@@ -14,6 +14,7 @@ import ResetPassword from "@/pages/ResetPassword";
 import NotFound from "@/pages/NotFound";
 import RouteError from "@/pages/RouteError";
 
+import { CustomerToolRedirect } from "@/components/shared/app-shell/CustomerToolRedirect";
 import { ThemeProvider } from "@/lib/design/ThemeProvider";
 import { TooltipProvider, Toaster } from "@/components/primitives/overlays";
 import { LoadingSpinner } from "@/components/primitives/shell";
@@ -167,11 +168,14 @@ function App() {
             </ProtectedRoute>
           ),
         },
+
+        // ── Standalone tools (2026-08-18) ────────────────────────────────────
+        // Each tool is now a place you can navigate TO, and asks for the
+        // customer inside itself via `?customer=<id>` (see lib/toolRoutes).
+        // They still read `public.clients`, so they keep sharing that module's
+        // grant and need no module rows of their own.
         {
-          // The three planning tools follow the same sub-route precedent: each
-          // acts on ONE customer, so it shares the customer book's modulePath
-          // and needs no module row of its own.
-          path: "/clients/:id/tax-calculator",
+          path: "/tools/tax-calculator",
           element: (
             <ProtectedRoute modulePath="/clients">
               <TaxCalculatorPage />
@@ -179,7 +183,7 @@ function App() {
           ),
         },
         {
-          path: "/clients/:id/srs",
+          path: "/tools/srs",
           element: (
             <ProtectedRoute modulePath="/clients">
               <SrsPlannerPage />
@@ -187,13 +191,28 @@ function App() {
           ),
         },
         {
-          path: "/clients/:id/legacy-planner",
+          path: "/tools/legacy-planner",
           element: (
             <ProtectedRoute modulePath="/clients">
               <LegacyPlannerPage />
             </ProtectedRoute>
           ),
         },
+        {
+          path: "/tools/client-report",
+          element: (
+            <ProtectedRoute modulePath="/clients">
+              <ClientReportPage />
+            </ProtectedRoute>
+          ),
+        },
+
+        // The customer sub-routes the tools used to live at. Kept as redirects
+        // rather than deleted: they are in browser histories, in the customer
+        // record launcher's muscle memory, and in existing E2E specs.
+        { path: "/clients/:id/tax-calculator", element: <CustomerToolRedirect to="/tools/tax-calculator" /> },
+        { path: "/clients/:id/srs", element: <CustomerToolRedirect to="/tools/srs" /> },
+        { path: "/clients/:id/legacy-planner", element: <CustomerToolRedirect to="/tools/legacy-planner" /> },
         {
           path: "/crm-reports",
           element: (

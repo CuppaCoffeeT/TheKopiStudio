@@ -1,9 +1,11 @@
 /**
- * /clients/:id/tax-calculator — Singapore resident income tax, YA 2025/2026.
+ * /tools/tax-calculator — Singapore resident income tax, YA 2025/2026.
  *
- * Tool 04 in the customer chain. Opens against ONE customer and pre-fills age
- * from their date of birth and gross income from their annual income, so an
- * advisor sitting with someone can go straight to the reliefs.
+ * Tool 04. Opens with or without a customer: pick one in the bar at the top and
+ * age pre-fills from their date of birth and gross income from their annual
+ * income, so an advisor sitting with someone can go straight to the reliefs.
+ * With nobody chosen it is a blank calculator, which is what a walk-in or a
+ * what-if actually needs.
  *
  * Every figure on the page comes from a single `assessTax` call — the relief
  * rows, the summary ladder and the headline all read the same result object,
@@ -49,7 +51,7 @@ const FEDR_OPTIONS = [
   { value: '0.3', label: '30%' },
 ];
 
-function TaxCalculator({ customer }: { customer: CrmClient }) {
+function TaxCalculator({ customer, named }: { customer: CrmClient; named: boolean }) {
   const refYear = currentRefYear();
 
   const [age, setAge] = useState(() => String(seedAge(customer.dateOfBirth, refYear)));
@@ -175,7 +177,8 @@ function TaxCalculator({ customer }: { customer: CrmClient }) {
       </div>
 
       <ToolNote testId="tax-not-saved">
-        Nothing on this page is saved to {customer.name}&rsquo;s record — change anything you like.
+        Nothing on this page is saved{named ? ` to ${customer.name}’s record` : ''} — change
+        anything you like.
       </ToolNote>
     </div>
   );
@@ -188,8 +191,13 @@ export default function TaxCalculatorPage() {
       title="Tax calculator"
       description="Singapore resident income tax for YA 2025/2026, relief by relief."
       testId="tax-calculator"
+      blankHint="No customer chosen — the calculator starts blank. Pick one to pre-fill age and income."
     >
-      {(customer) => <TaxCalculator customer={customer} />}
+      {/* Keyed on the customer so switching re-seeds the inputs: every field
+          here is `useState`-initialised, and an initialiser does not re-run. */}
+      {(customer, customerId) => (
+        <TaxCalculator key={customerId ?? 'blank'} customer={customer} named={Boolean(customerId)} />
+      )}
     </PlanningToolFrame>
   );
 }

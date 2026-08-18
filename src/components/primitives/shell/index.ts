@@ -24,6 +24,13 @@ export { NoResultsState } from './NoResultsState';
 export { PageTitle } from './PageTitle';
 export { PageDescription } from './PageDescription';
 export { TruncatedText } from './TruncatedText';
+export { PrivacyToggle } from './PrivacyToggle';
+export {
+  SensitiveCount,
+  SensitiveMoney,
+  SensitiveName,
+  SensitiveText,
+} from './Sensitive';
 export { Wordmark } from './Wordmark';
 export { SEO, type SEOProps } from './SEO';
 export {

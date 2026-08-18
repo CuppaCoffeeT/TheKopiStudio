@@ -49,7 +49,9 @@
  */
 
 import { Link } from 'react-router-dom';
+import { PanelLeft, PanelLeftClose } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSidebarState } from '@/contexts/SidebarContext';
 import { cn } from '@/lib/utils';
 import { AppSidebarFooter } from './AppSidebarFooter';
 import { AppSidebarNav, FOCUS_RING, HOME_PATH } from './AppSidebarNav';
@@ -63,12 +65,48 @@ import { Wordmark } from './Wordmark';
 const SIDEBAR_WIDTH_CLASS = 'w-[200px]';
 export const SIDEBAR_OFFSET_CLASS = 'lg:pl-[200px]';
 
+/** Chrome-button box shared by the rail's collapse control and the floating
+ *  re-open control, so the two read as one affordance in two positions. */
+const CHROME_BUTTON = cn(
+  'inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground',
+  'hover:bg-[color:var(--surface-subtle)] hover:text-[color:var(--brown-text)]',
+  'pointer-coarse:min-h-11 pointer-coarse:min-w-11',
+  FOCUS_RING,
+);
+
 export function AppSidebar() {
   const { user, loading } = useAuth();
+  const { railHidden, toggleRail } = useSidebarState();
 
   // No rail while auth resolves or on the signed-out flash before ProtectedRoute
   // redirects — an empty rail reads as "you have no modules".
   if (loading || !user) return null;
+
+  /**
+   * Collapsed: the rail unmounts and leaves one floating control behind. It has
+   * to be `lg:` too — below that breakpoint the rail was never showing and the
+   * mobile bar's own menu button already owns this job, so a second floating
+   * hamburger would sit on top of the page for no reason.
+   */
+  if (railHidden) {
+    return (
+      <button
+        type="button"
+        onClick={toggleRail}
+        aria-label="Show navigation"
+        aria-expanded={false}
+        data-testid="app-sidebar-show"
+        className={cn(
+          'no-print print:hidden',
+          'fixed left-3 top-3 z-40 hidden lg:inline-flex',
+          'border border-sidebar-border bg-sidebar shadow-sm',
+          CHROME_BUTTON,
+        )}
+      >
+        <PanelLeft className="h-4 w-4" aria-hidden="true" />
+      </button>
+    );
+  }
 
   return (
     <aside
@@ -80,20 +118,37 @@ export function AppSidebar() {
         'overflow-hidden border-r border-sidebar-border bg-sidebar py-[22px]',
       )}
     >
-      <Link
-        to={HOME_PATH}
-        aria-label="The Kopi Studio — Home"
-        className={cn('block flex-none px-[22px] pb-[18px] text-sidebar-foreground', FOCUS_RING)}
-      >
-        {/* Shared lockup — the mobile bar and the public /profiler chrome render
-            the same component, so the three identity surfaces cannot drift. */}
-        <Wordmark className="block text-[22px] leading-[1.15]" />
-      </Link>
+      <div className="flex flex-none items-start justify-between gap-1 px-[22px] pb-[18px]">
+        <Link
+          to={HOME_PATH}
+          aria-label="The Kopi Studio — Home"
+          className={cn('block min-w-0 text-sidebar-foreground', FOCUS_RING)}
+        >
+          {/* Shared lockup — the mobile bar and the public /profiler chrome render
+              the same component, so the three identity surfaces cannot drift. */}
+          <Wordmark className="block text-[22px] leading-[1.15]" />
+        </Link>
+
+        {/* Hide the rail. iPad landscape and every desktop width get this; iPad
+            portrait and phones are below `lg`, where `AppHeaderMobileBar`'s
+            menu button already opens `AppNavDrawer` — the behaviour the brief
+            asks to keep unchanged there. */}
+        <button
+          type="button"
+          onClick={toggleRail}
+          aria-label="Hide navigation"
+          aria-expanded
+          data-testid="app-sidebar-hide"
+          className={cn('-mr-1.5 flex-none', CHROME_BUTTON)}
+        >
+          <PanelLeftClose className="h-4 w-4" aria-hidden="true" />
+        </button>
+      </div>
 
       {/* The nav is the only scroller — the footer stays pinned to the rail's
           bottom edge however long the module list gets. Shared with the < lg
           drawer (`AppNavDrawer`) so the two lists cannot drift. */}
-      <AppSidebarNav moreHeadingTestId="app-sidebar-more-heading" />
+      <AppSidebarNav othersToggleTestId="app-sidebar-others-toggle" className="flex-1" />
 
       <AppSidebarFooter />
     </aside>

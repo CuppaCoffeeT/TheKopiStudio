@@ -1,5 +1,5 @@
 /**
- * /clients/:id/legacy-planner — the Legacy Map.
+ * /tools/legacy-planner — the Legacy Map.
  *
  * Tool 06 in the customer chain. The tool exists to show ONE gap: what the
  * customer thinks happens to their estate, versus what the Intestate
@@ -102,9 +102,17 @@ export default function LegacyPlannerPage() {
       title="Legacy Map"
       description="Who actually inherits — and what the law would do instead."
       testId="legacy-planner"
+      // The ONLY tool that insists on a customer: its plan is persisted against
+      // one (`legacy_plans.client_id`), so a blank map has nowhere to be saved.
+      requiresCustomer
+      blankHint="The Legacy Map is saved against a customer — pick one above to open or start their map."
     >
       {(customer, customerId, isOwn) => (
-        <LegacyPlannerLoader customer={customer} customerId={customerId} isOwn={isOwn} />
+        <LegacyPlannerLoader
+          customer={customer}
+          customerId={customerId as string}
+          isOwn={isOwn}
+        />
       )}
     </PlanningToolFrame>
   );

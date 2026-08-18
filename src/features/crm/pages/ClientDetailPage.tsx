@@ -28,6 +28,7 @@ import { ErrorState } from '@/components/primitives/shell/ErrorState';
 import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
 import { NoResultsState } from '@/components/primitives/shell/NoResultsState';
 import { useAuth } from '@/contexts/AuthContext';
+import { CUSTOMER_PARAM } from '@/lib/toolRoutes';
 import { getCurrentSingaporeTime } from '@/utils/timezoneUtils';
 import { resolveClientFollowUp } from '../lib/followUps';
 import { clientFromRow } from '../lib/clientMapping';
@@ -158,9 +159,9 @@ export default function ClientDetailPage() {
             onOpenProfile={(resultId) => navigate(`/profiler-results/${resultId}`)}
             onEditInformation={() => setEditOpen(true)}
             onOpenReport={() => navigate(`/clients/${id}/report`)}
-            onOpenTax={() => navigate(`/clients/${id}/tax-calculator`)}
-            onOpenSrs={() => navigate(`/clients/${id}/srs`)}
-            onOpenLegacy={() => navigate(`/clients/${id}/legacy-planner`)}
+            onOpenTax={() => navigate(`/tools/tax-calculator?${CUSTOMER_PARAM}=${id}`)}
+            onOpenSrs={() => navigate(`/tools/srs?${CUSTOMER_PARAM}=${id}`)}
+            onOpenLegacy={() => navigate(`/tools/legacy-planner?${CUSTOMER_PARAM}=${id}`)}
           />
           <OverviewTab client={model} linkedResults={linkedResults} />
         </>

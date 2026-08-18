@@ -1,6 +1,24 @@
 /**
- * ClientReportPage — printable per-client financial report (route
- * /clients/:id/report; shares modulePath '/clients' — sub-route precedent).
+ * ClientReportPage — printable per-client financial report.
+ *
+ * TWO ROUTES, one component (2026-08-18):
+ *   `/clients/:id/report`             — from the customer record, as before.
+ *   `/tools/client-report?customer=…` — from navigation, with the customer
+ *                                       picker at the top of the page.
+ * The customer resolves from whichever the URL carries, so the report itself is
+ * written once. Reached with no customer at all, the page is the picker and
+ * nothing else — there is no report to print for nobody.
+ *
+ * NO COMPLETENESS GATE (2026-08-18). The report used to be unreachable until
+ * the profiler and the customer information were both marked done. It now
+ * generates from whatever is on file at any stage: blank fields print `NIL`
+ * (`lib/reportCompleteness`), and `ReportMissingInfo` heads the document with a
+ * named list of what is missing and which tool fills it. A report that says
+ * what it does not know is more useful at a first meeting than no report.
+ *
+ * NEVER MASKED. This page ignores the privacy eye (`MaskContext`) on purpose —
+ * it IS the client-facing artifact, and a printed PDF of asterisks is not a
+ * report.
  *
  * PRINT-FIRST CONTRACT (lib/report-print.css): this page is a dedicated
  * report canvas, NOT a DetailPageFrame — the `.report-canvas` is locked to
@@ -17,8 +35,9 @@
  */
 
 import { useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Printer } from 'lucide-react';
+import { CUSTOMER_PARAM } from '@/lib/toolRoutes';
 import { Button } from '@/components/primitives/shell/Button';
 import { Card } from '@/components/primitives/shell/Card';
 import { ErrorState } from '@/components/primitives/shell/ErrorState';
@@ -27,7 +46,10 @@ import { NoResultsState } from '@/components/primitives/shell/NoResultsState';
 import { ageFromDOB, currentRefYear, summariseClient, toFloat } from '../lib/finance';
 import { assessRetirementReadiness, heroTotals } from '../lib/financeReport';
 import { clientFromRow } from '../lib/clientMapping';
+import { reportGaps } from '../lib/reportCompleteness';
 import { useClientDetail } from '../hooks/useClientDetail';
+import { ToolCustomerBar } from '../components/ToolCustomerBar';
+import { ReportMissingInfo } from '../components/report/ReportMissingInfo';
 import { ReportCashValue } from '../components/report/ReportCashValue';
 import { ReportClientProfile } from '../components/report/ReportClientProfile';
 import { ReportCoverageAnalysis } from '../components/report/ReportCoverageAnalysis';
@@ -44,8 +66,26 @@ import { ReportRetirementProjection } from '../components/report/ReportRetiremen
 import '../lib/report-print.css';
 
 export default function ClientReportPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id: routeId } = useParams<{ id: string }>();
+  const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
+
+  /**
+   * The record sub-route wins when present. Only the standalone route shows the
+   * picker — on `/clients/:id/report` the customer is the URL, and offering a
+   * dropdown that silently disagrees with the path would be a second source of
+   * truth for the same question.
+   */
+  const id = routeId ?? params.get(CUSTOMER_PARAM) ?? undefined;
+  const standalone = !routeId;
+
+  const chooseCustomer = (next: string | null) => {
+    const updated = new URLSearchParams(params);
+    if (next) updated.set(CUSTOMER_PARAM, next);
+    else updated.delete(CUSTOMER_PARAM);
+    setParams(updated);
+  };
+
   const { client, policies, interactions, bankHistory } = useClientDetail(id);
 
   const row = client.data ?? null;
@@ -55,8 +95,11 @@ export default function ClientReportPage() {
   const bankList = bankHistory.data ?? [];
 
   const loading =
-    client.isLoading || policies.isLoading || interactions.isLoading || bankHistory.isLoading;
-  const failed = client.isError || policies.isError || interactions.isError || bankHistory.isError;
+    Boolean(id) &&
+    (client.isLoading || policies.isLoading || interactions.isLoading || bankHistory.isLoading);
+  const failed =
+    Boolean(id) &&
+    (client.isError || policies.isError || interactions.isError || bankHistory.isError);
 
   const refYear = currentRefYear();
   const currentAge = model ? ageFromDOB(model.dateOfBirth || null, refYear) : 0;
@@ -94,28 +137,49 @@ export default function ClientReportPage() {
   const hospitalPolicies = policyList.filter((p) => p.isHospitalization);
   const investmentPolicies = policyList.filter((p) => p.isInvestmentLinked);
 
+  /** What the record could not supply — printed above the hero, never hidden. */
+  const gaps = model ? reportGaps(model, policyList) : [];
+
   return (
-    <div className="min-h-dvh bg-background px-3 py-4 sm:px-6 sm:py-6 print:bg-white">
+    <div className="bg-background px-3 py-4 sm:px-6 sm:py-6 print:bg-white">
       <div className="report-print-root mx-auto w-full max-w-4xl">
         <div className="no-print mb-4 flex flex-wrap items-center justify-between gap-3">
-          <Button
-            variant="outline"
-            size="lg"
-            leadingIcon={<ArrowLeft className="h-4 w-4" aria-hidden="true" />}
-            onClick={() => navigate(`/clients/${id ?? ''}`)}
-            data-testid="report-back-to-client"
-          >
-            Back to client
-          </Button>
+          {id ? (
+            <Button
+              variant="outline"
+              size="lg"
+              leadingIcon={<ArrowLeft className="h-4 w-4" aria-hidden="true" />}
+              onClick={() => navigate(`/clients/${id}`)}
+              data-testid="report-back-to-client"
+            >
+              Back to client
+            </Button>
+          ) : (
+            <span />
+          )}
           <Button
             size="lg"
             leadingIcon={<Printer className="h-4 w-4" aria-hidden="true" />}
             onClick={() => window.print()}
+            disabled={!model}
             data-testid="report-print"
           >
             Print / Save as PDF
           </Button>
         </div>
+
+        {/* `.no-print` — the picker is chrome for choosing WHAT to print, and
+            must never appear on the printed artifact. */}
+        {standalone && (
+          <div className="no-print print:hidden">
+            <ToolCustomerBar
+              value={id ?? null}
+              onChange={chooseCustomer}
+              blankHint="Pick a customer to generate their report — it works at any stage, and prints NIL for anything not on file yet."
+              testId="client-report-customer-bar"
+            />
+          </div>
+        )}
 
         {loading && (
           <div data-testid="report-loading">
@@ -135,7 +199,7 @@ export default function ClientReportPage() {
           />
         )}
 
-        {!loading && !failed && !model && (
+        {!loading && !failed && !model && id && (
           <Card data-testid="report-not-found">
             <NoResultsState query={id} />
           </Card>
@@ -143,6 +207,7 @@ export default function ClientReportPage() {
 
         {model && summary && hero && readiness && (
           <article className="report-canvas" data-testid="report-canvas">
+            <ReportMissingInfo gaps={gaps} />
             <ReportHero
               name={model.name}
               policyCount={policyList.length}

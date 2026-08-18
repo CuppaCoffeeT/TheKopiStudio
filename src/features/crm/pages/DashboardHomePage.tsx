@@ -3,9 +3,22 @@
  * 3a/4a, "Overview as home, tools live inside the customer").
  *
  * The page answers ONE question: who is waiting on you? Top to bottom —
- * the dateline masthead carrying the count, the Start-a-Profiler launcher band,
- * the four queue figures, then the queue itself in three mutually-exclusive
- * bands (gone quiet → unfinished work → reviews due), closed by the queue rule.
+ * the dateline masthead carrying the count and the privacy eye, the quote of
+ * the day, then the queue itself in three mutually-exclusive bands, ordered
+ * most-urgent-first (reviews coming up → unfinished work → no contact in 14
+ * days), closed by the queue rule.
+ *
+ * WHAT WAS REMOVED (2026-08-18): `StartProfilerBand` and the tool-shortcut row,
+ * both of which put TOOLS on a page that is about PEOPLE, and `QueueStatStrip`,
+ * four figures that counted the rows printed immediately beneath them. Every
+ * tool now lives in the sidebar's collapsible "Others" group, reachable from
+ * anywhere instead of only from here. What is left is a greeting, a quote, and
+ * the list of who needs the advisor today.
+ *
+ * PRIVACY: customer names on this page are masked by default (`MaskContext` +
+ * `SensitiveName`), toggled by the eye in the masthead. The queue's own copy —
+ * band titles, reasons, counts of waiting customers — is NOT masked; it says
+ * how much work there is, not whose.
  *
  * WHAT THIS REPLACED (2026-07-28): a "Latest additions" feed over two index KPI
  * cards. That page was a *record inventory* — newest-first rows with no notion
@@ -27,15 +40,18 @@
  *
  * Module gating: the queue reads `public.clients`, so it is parked entirely for
  * a viewer without `/clients` (an empty queue would read as "all caught up").
- * The launcher band is gated separately on `/profiler` — never advertise a
- * route the guard would then refuse.
+ * `/profiler` is checked separately, but only to decide whether a queue row's
+ * action may be "Start profiler" — never advertise a route the guard would
+ * then refuse.
  *
  * Testid contract (tests/workflows/crm/dashboard.spec.ts): the greeting is the
- * page's only h1; `home-start-profiler-band` + `home-start-profiler-btn`;
- * `home-queue-stats`; the three queue sections `home-queue-quiet` /
- * `home-queue-unfinished` / `home-queue-reviews`, each resolving to
- * `<section>-row-<id>` rows or `<section>-empty`; and `home-add-customer-btn`
- * opening `crm-add-customer-choice-modal`.
+ * page's only h1; `home-daily-quote`; `privacy-toggle`; the three queue
+ * sections in DOM order `home-queue-reviews` / `home-queue-unfinished` /
+ * `home-queue-quiet`, each resolving to `<section>-row-<id>` rows or
+ * `<section>-empty`; and `home-add-customer-btn` opening
+ * `crm-add-customer-choice-modal`. The retired ids `home-start-profiler-band`,
+ * `home-start-profiler-btn` and `home-queue-stats` are gone from the spec too,
+ * bar one assertion that they stay absent.
  */
 
 /**
@@ -47,19 +63,19 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/primitives/shell';
-import { GreetingHeader } from '@/components/primitives/dashboard';
+import { GreetingHeader, DailyQuoteCard } from '@/components/primitives/dashboard';
+import { PrivacyToggle } from '@/components/primitives/shell/PrivacyToggle';
 import { AppHeaderMobileBar } from '@/components/primitives/shell/AppHeaderMobileBar';
 import { ImpersonationBanner } from '@/components/primitives/shell/ImpersonationBanner';
 import { ViewAsSelector } from '@/components/primitives/shell/ViewAsSelector';
 import { ErrorState } from '@/components/primitives/shell/ErrorState';
 import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
 import { useDashboardChrome } from '@/hooks/useDashboardChrome';
+import { quoteForDate } from '@/lib/dailyQuote';
 import { getSingaporeGreeting } from '@/utils/dashboardHelpers';
+import { getLocalDateString } from '@/utils/timezoneUtils';
 import { CustomerQueueBoard } from '../components/CustomerQueueBoard';
 import type { QueueRowAction } from '../components/CustomerQueueSection';
-import { StartProfilerBand } from '../components/StartProfilerBand';
-import { ToolShortcutLauncher } from '../components/ToolShortcutLauncher';
 import { AddCustomerChoiceModal } from '../components/modals/AddCustomerChoiceModal';
 import { ClientFormModal } from '../components/modals/ClientFormModal';
 import { useCustomerQueue } from '../hooks/useCustomerQueue';
@@ -81,6 +97,9 @@ export default function DashboardHomePage() {
   const { user, profile, modules } = useAuth();
   const chrome = useDashboardChrome();
   const { timeOfDay, dateText } = getSingaporeGreeting();
+  // Same SG date the greeting's dateline reads, so the two can never disagree
+  // about which day it is at the midnight boundary.
+  const quote = quoteForDate(getLocalDateString(new Date()));
 
   const hasClients = modules.some((mod) => mod.path === CLIENTS_PATH);
   const canProfile = modules.some((mod) => mod.path === PROFILER_PATH);
@@ -136,8 +155,9 @@ export default function DashboardHomePage() {
       {/* Padding stays OUTSIDE `max-w-5xl` or the gutters eat the measure. */}
       <div className="px-4 py-7 sm:px-10 sm:py-12">
       <div className="mx-auto max-w-5xl">
+        <div className="mb-10 flex items-start justify-between gap-4">
         <GreetingHeader
-          className="mb-10 motion-rise-hero"
+          className="min-w-0 flex-1 motion-rise-hero"
           name={profile?.name || user?.email?.split('@')[0] || 'there'}
           dateText={dateText}
           timeOfDay={timeOfDay}
@@ -149,12 +169,14 @@ export default function DashboardHomePage() {
               : undefined
           }
         />
+        {/* Beside the greeting, not in global chrome: the eye belongs next to
+            what it hides, which is how a banking app teaches it in one look. */}
+        <PrivacyToggle className="mt-1 flex-none" showLabel />
+        </div>
 
-        {canProfile && (
-          <div className="motion-rise motion-rise-2">
-            <StartProfilerBand onStart={() => navigate(PROFILER_PATH)} />
-          </div>
-        )}
+        <div className="motion-rise motion-rise-2 mb-10">
+          <DailyQuoteCard quote={quote} />
+        </div>
 
         {!hasClients ? (
           <p className="text-[13px] leading-[1.6] text-[color:var(--fg-dim)]">
@@ -178,7 +200,6 @@ export default function DashboardHomePage() {
               queue={queue}
               resolveAction={resolveAction}
               onAddCustomer={() => setChoiceOpen(true)}
-              belowStats={<ToolShortcutLauncher />}
             />
           </div>
         ) : null}
