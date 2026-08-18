@@ -8,8 +8,14 @@
  * the PRD-documented ANNUALISED divergence from the legacy raw sum — flagged
  * by the "(annualised)" footnote. Print-first light-locked styling per the
  * lib/report-print.css contract.
+ *
+ * The premium row also declares what it EXCLUDED (2026-08-18): an ILP policy
+ * with no premium-inclusion percent set contributes $0 to the annualised total,
+ * and a printed report that under-states a book without saying so is the kind
+ * of document an advisor stops trusting. See lib/ilpExclusion.
  */
 
+import { describeIlpExclusion } from '../../lib/ilpExclusion';
 import type { PortfolioTotals } from '../../lib/financeReport';
 
 interface PortfolioSummaryProps {
@@ -32,7 +38,10 @@ export function PortfolioSummary({ totals, generatedAt }: PortfolioSummaryProps)
   const rows = [
     {
       id: 'total-premium',
-      metric: 'Total annual premium revenue (annualised)',
+      metric:
+        totals.excludedIlp.count > 0
+          ? `Total annual premium revenue (annualised) — ${describeIlpExclusion(totals.excludedIlp)}`
+          : 'Total annual premium revenue (annualised)',
       amount: money(totals.totalAnnualPremium),
     },
     {

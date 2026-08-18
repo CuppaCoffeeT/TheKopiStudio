@@ -14,6 +14,7 @@
 import type { ReactNode } from 'react';
 import { Badge } from '@/components/primitives/shell/Badge';
 import { DateCell } from '@/components/primitives/shell/cells/DateCell';
+import { SensitiveName, SensitiveText } from '@/components/primitives/shell/Sensitive';
 import type { DataTableRow } from '@/components/primitives/ui/DataTable';
 import type { TableHeaderColumn } from '@/components/primitives/ui/TableHeader';
 import type { CustomerSignals } from '../api/customerSignalsService';
@@ -152,12 +153,21 @@ export function buildCustomerRow(
       grow: 2,
       content: (
         <span className="flex min-w-0 flex-col">
-          <span className="truncate font-medium">{client.name}</span>
+          {/* Masked by the privacy eye. The row stays clickable and its
+              position stays stable — what a shoulder cannot read is WHO. */}
+          <span className="truncate font-medium">
+            <SensitiveName value={client.name} />
+          </span>
           {/* --fg-dim for the same bare-row reason as ContactCell above:
               `DataRowCells` makes this step for its own `muted` cells, but
               content passed INTO a cell has to make it itself. */}
           <span className="truncate text-[11.5px] text-[color:var(--fg-dim)]">
-            {client.email || client.phone || 'No contact on file'}
+            {client.email || client.phone ? (
+              <SensitiveText value={client.email || client.phone} />
+            ) : (
+              // Not masked: "no contact on file" is a STATUS, not a detail.
+              'No contact on file'
+            )}
           </span>
         </span>
       ),

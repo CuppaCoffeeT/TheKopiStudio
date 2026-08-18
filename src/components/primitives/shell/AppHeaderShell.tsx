@@ -134,7 +134,7 @@ export function AppHeaderShell({
     contentClassName ?? 'max-w-8xl mx-auto px-4 py-6 sm:px-6 sm:py-10 lg:px-10 lg:py-12';
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--page-bg, #f0e6d6)' }}>
+    <div className="min-h-svh" style={{ background: 'var(--page-bg, #f0e6d6)' }}>
       <AppHeaderMobileBar
         breadcrumb={barBreadcrumb}
         {...chrome.user}

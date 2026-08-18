@@ -18,6 +18,7 @@
  * and stay in components — everything here returns RAW values.
  */
 import { summariseClient, type SummaryPolicyInput } from './finance';
+import { ilpExclusion } from './ilpExclusion';
 
 /** A policy as the portfolio math consumes it — summary fields + `status`. */
 export interface PortfolioPolicyInput extends SummaryPolicyInput {
@@ -39,6 +40,13 @@ export interface PortfolioTotals {
   avgAnnualPremiumPerClient: number;
   /** Reports.jsx:79-86 — coverage / clients; 0 when the book is empty. */
   avgCoveragePerClient: number;
+  /**
+   * What `totalAnnualPremium` had to leave out: ILP policies whose
+   * premium-inclusion percent is 0 or unset contribute nothing. Reported so
+   * the printed report can say so rather than quietly under-stating the book
+   * — see lib/ilpExclusion for why the math itself is left alone.
+   */
+  excludedIlp: { count: number; annualPremium: number };
 }
 
 /**
@@ -63,5 +71,6 @@ export function summarisePortfolio(
     totalCoverage,
     avgAnnualPremiumPerClient: totalClients > 0 ? totalAnnualPremium / totalClients : 0,
     avgCoveragePerClient: totalClients > 0 ? totalCoverage / totalClients : 0,
+    excludedIlp: ilpExclusion(policies),
   };
 }

@@ -16,9 +16,11 @@
  * the list of who needs the advisor today.
  *
  * PRIVACY: customer names on this page are masked by default (`MaskContext` +
- * `SensitiveName`), toggled by the eye in the masthead. The queue's own copy —
- * band titles, reasons, counts of waiting customers — is NOT masked; it says
- * how much work there is, not whose.
+ * `SensitiveName`). The eye that reveals them lives in the app chrome — the
+ * rail footer above lg, the mobile bar below it — NOT on this page: it governs
+ * every masked surface, so a per-page copy would be one of several controls for
+ * one switch. The queue's own copy — band titles, reasons, counts of waiting
+ * customers — is NOT masked; it says how much work there is, not whose.
  *
  * WHAT THIS REPLACED (2026-07-28): a "Latest additions" feed over two index KPI
  * cards. That page was a *record inventory* — newest-first rows with no notion
@@ -45,7 +47,7 @@
  * then refuse.
  *
  * Testid contract (tests/workflows/crm/dashboard.spec.ts): the greeting is the
- * page's only h1; `home-daily-quote`; `privacy-toggle`; the three queue
+ * page's only h1; `home-daily-quote`; the three queue
  * sections in DOM order `home-queue-reviews` / `home-queue-unfinished` /
  * `home-queue-quiet`, each resolving to `<section>-row-<id>` rows or
  * `<section>-empty`; and `home-add-customer-btn` opening
@@ -64,7 +66,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { GreetingHeader, DailyQuoteCard } from '@/components/primitives/dashboard';
-import { PrivacyToggle } from '@/components/primitives/shell/PrivacyToggle';
 import { AppHeaderMobileBar } from '@/components/primitives/shell/AppHeaderMobileBar';
 import { ImpersonationBanner } from '@/components/primitives/shell/ImpersonationBanner';
 import { ViewAsSelector } from '@/components/primitives/shell/ViewAsSelector';
@@ -143,7 +144,7 @@ export default function DashboardHomePage() {
   const waiting = queue?.totalWaiting ?? 0;
 
   return (
-    <div className="min-h-dvh bg-background">
+    <div className="min-h-svh bg-background">
       <AppHeaderMobileBar
         breadcrumb={BAR_BREADCRUMB}
         {...chrome.user}
@@ -155,9 +156,8 @@ export default function DashboardHomePage() {
       {/* Padding stays OUTSIDE `max-w-5xl` or the gutters eat the measure. */}
       <div className="px-4 py-7 sm:px-10 sm:py-12">
       <div className="mx-auto max-w-5xl">
-        <div className="mb-10 flex items-start justify-between gap-4">
         <GreetingHeader
-          className="min-w-0 flex-1 motion-rise-hero"
+          className="mb-10 motion-rise-hero"
           name={profile?.name || user?.email?.split('@')[0] || 'there'}
           dateText={dateText}
           timeOfDay={timeOfDay}
@@ -169,10 +169,6 @@ export default function DashboardHomePage() {
               : undefined
           }
         />
-        {/* Beside the greeting, not in global chrome: the eye belongs next to
-            what it hides, which is how a banking app teaches it in one look. */}
-        <PrivacyToggle className="mt-1 flex-none" showLabel />
-        </div>
 
         <div className="motion-rise motion-rise-2 mb-10">
           <DailyQuoteCard quote={quote} />

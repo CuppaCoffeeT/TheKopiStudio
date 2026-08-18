@@ -169,6 +169,13 @@ export interface CrmDashboardStats {
   totalAnnualPremium: number;
   /** Interactions with a follow-up date strictly after now (no window — parity). */
   upcomingFollowUps: number;
+  /**
+   * What `totalAnnualPremium` had to leave out: ILP policies whose
+   * premium-inclusion percent is 0 or unset contribute nothing to it. Surfaced
+   * rather than silently absorbed — see lib/ilpExclusion for why the math is
+   * not "fixed" instead.
+   */
+  excludedIlp: { count: number; annualPremium: number };
 }
 
 // ── P4 — prospect→client bridge (REPORTS_LINK_PRD; crm-owned read of `results`) ──

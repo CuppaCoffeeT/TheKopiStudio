@@ -33,6 +33,7 @@ import { useScrolled } from '@/hooks/useScrolled';
 import type { BreadcrumbSegment } from './Breadcrumb';
 import { AppHeaderLogo } from './AppHeaderLogo';
 import { AppHeaderUserMenu } from './AppHeaderUserMenu';
+import { PrivacyToggle } from './PrivacyToggle';
 import { AppNavDrawer } from './AppNavDrawer';
 
 interface AppHeaderMobileBarProps {
@@ -152,6 +153,10 @@ export function AppHeaderMobileBar({
             </svg>
           </button>
         )}
+
+        {/* The privacy eye — the < lg home of the same switch the rail footer
+            carries above lg, so no masked surface is ever missing its control. */}
+        <PrivacyToggle testId="privacy-toggle-mobile" />
 
         <AppHeaderUserMenu
           initial={initial}

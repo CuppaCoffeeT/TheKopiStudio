@@ -12,11 +12,20 @@
  * `is_deleted = false` by design). Follow-up parity: ALL strictly-future
  * follow-ups count — no window — using the legacy `new Date(str) > now`
  * UTC-midnight comparison (see lib/followUps.ts).
+ *
+ * BLIND SPOT, MADE VISIBLE (2026-08-18): the same ILP scaling that makes the
+ * premium figure correct also drops any ILP policy whose inclusion percent is
+ * 0 or unset — which is the column default, so it is the common case. The
+ * stats now carry `excludedIlp` so the tile can say what it left out instead of
+ * printing a total the advisor can tell is too small and cannot explain. Full
+ * reasoning in lib/ilpExclusion; full field-by-field provenance in
+ * docs/06-operations/CRM_FIGURE_PROVENANCE.md.
  */
 
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentSingaporeTime } from '@/utils/timezoneUtils';
 import { summariseClient } from '../lib/finance';
+import { ilpExclusion } from '../lib/ilpExclusion';
 import type { CrmDashboardStats } from '../types';
 
 /** Stats selects are bounded — far beyond any single advisor's book. */
@@ -38,15 +47,13 @@ export function computeDashboardStats(
   followUpDates: readonly (string | null)[],
   refDate: Date,
 ): CrmDashboardStats {
-  const { totalAnnualPremium } = summariseClient({
-    annualIncome: 0,
-    policies: policies.map((row) => ({
-      premium: row.premium,
-      frequency: row.frequency,
-      isInvestmentLinked: row.is_investment_linked,
-      ilpPremiumInclusionPercent: row.ilp_premium_inclusion_percent,
-    })),
-  });
+  const mapped = policies.map((row) => ({
+    premium: row.premium,
+    frequency: row.frequency,
+    isInvestmentLinked: row.is_investment_linked,
+    ilpPremiumInclusionPercent: row.ilp_premium_inclusion_percent,
+  }));
+  const { totalAnnualPremium } = summariseClient({ annualIncome: 0, policies: mapped });
 
   return {
     totalClients,
@@ -55,6 +62,7 @@ export function computeDashboardStats(
     upcomingFollowUps: followUpDates.filter(
       (date) => date && new Date(date).getTime() > refDate.getTime(),
     ).length,
+    excludedIlp: ilpExclusion(mapped),
   };
 }
 

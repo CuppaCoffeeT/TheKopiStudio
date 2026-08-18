@@ -106,7 +106,7 @@ export function ListPageFrame(props: ListPageFrameProps) {
         : undefined;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-svh bg-background">
       <AppHeaderMobileBar
         breadcrumb={breadcrumb}
         {...chrome.user}

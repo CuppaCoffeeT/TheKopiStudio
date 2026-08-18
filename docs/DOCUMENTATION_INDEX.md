@@ -1,6 +1,6 @@
 # Documentation Index
 
-**Created:** 2026-06-11 · **Last Updated:** 2026-07-27 · **Status:** 🟢 Active
+**Created:** 2026-06-11 · **Last Updated:** 2026-08-18 · **Status:** 🟢 Active
 
 Master registry of project documentation. Register every new doc here (rule: `.claude/rules/documentation.md`).
 Layer-3 reference docs shipped with the AppBase template (01/02/03/04/06/99 categories) are indexed by their per-category `CONTEXT.md` routers; this index tracks **project-specific** additions.
@@ -17,6 +17,12 @@ Layer-3 reference docs shipped with the AppBase template (01/02/03/04/06/99 cate
 |---|---|
 | [profiler/PROFILER_MODULE.md](03-features/profiler/PROFILER_MODULE.md) | Profiler module as-built: wizard + results + convert-to-client (own-rows-only, keyed retry, provenance) + Account Settings + Manage Accounts · scoring parity · legacy save contract · permissions matrix · E2E matrix |
 | [crm/CRM_MODULE.md](03-features/crm/CRM_MODULE.md) | CRM module as-built: dashboard + clients + policies + interactions + bank history + reports (client 13-section + portfolio, math-purity rule, annualised + WCAG band-tone divergences) + communication-style card · 4 corrected legacy bugs · finance golden-vector parity · permissions · E2E summary |
+
+## 06 — Operations (project-specific)
+
+| Doc | Purpose |
+|---|---|
+| [CRM_FIGURE_PROVENANCE.md](06-operations/CRM_FIGURE_PROVENANCE.md) | Every CRM Dashboard + Portfolio Report figure traced to table → columns → filter → arithmetic, reconciled against prod 2026-08-18. Records the zero-percent-ILP premium blind spot ($12,936/yr) and why the math was disclosed rather than changed |
 
 ## 05 — Implementation (Layer 4: active → completed)
 

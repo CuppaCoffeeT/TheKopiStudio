@@ -8,6 +8,15 @@
  * book swaps the quick-link cards for an "Add your first client" CTA; a
  * non-empty book shows two quick actions — the client book and the
  * /crm-reports portfolio report (REPORTS_LINK_PRD.md P3).
+ *
+ * PRIVACY (2026-08-18): three of the four figures are masked by default —
+ * total clients, active policies and annual premium all size the book, which is
+ * commercially sensitive over a shoulder. "Upcoming follow-ups" is NOT masked:
+ * it says how much work is due, not how much business there is, and hiding the
+ * one actionable number on the page would be masking for the sake of it. Every
+ * LABEL and subtitle stays readable — the eye hides values, never wayfinding.
+ * The eye itself is in the app chrome (rail footer / mobile bar), because one
+ * switch governing five surfaces should have one control.
  */
 
 import { useNavigate } from 'react-router-dom';
@@ -27,10 +36,20 @@ import { Card, CardDescription, CardTitle } from '@/components/primitives/shell/
 import { ErrorState } from '@/components/primitives/shell/ErrorState';
 import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
 import { KpiTile } from '@/components/primitives/dashboard/KpiTile';
+import { useMask } from '@/contexts/MaskContext';
+import { describeIlpExclusion } from '../lib/ilpExclusion';
 import { useDashboardStats } from '../hooks/useDashboardStats';
 import type { CrmDashboardStats } from '../types';
 
-function KpiGrid({ stats, onClientsClick }: { stats: CrmDashboardStats; onClientsClick: () => void }) {
+function KpiGrid({
+  stats,
+  masked,
+  onClientsClick,
+}: {
+  stats: CrmDashboardStats;
+  masked: boolean;
+  onClientsClick: () => void;
+}) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <KpiTile
@@ -38,6 +57,7 @@ function KpiGrid({ stats, onClientsClick }: { stats: CrmDashboardStats; onClient
         value={stats.totalClients}
         icon={Users}
         subtitle="Clients in your book"
+        masked={masked}
         onClick={onClientsClick}
         testId="crm-kpi-total-clients"
       />
@@ -46,6 +66,7 @@ function KpiGrid({ stats, onClientsClick }: { stats: CrmDashboardStats; onClient
         value={stats.activePolicies}
         icon={ShieldCheck}
         subtitle="Policies with Active status"
+        masked={masked}
         testId="crm-kpi-active-policies"
       />
       <KpiTile
@@ -53,7 +74,15 @@ function KpiGrid({ stats, onClientsClick }: { stats: CrmDashboardStats; onClient
         value={stats.totalAnnualPremium}
         prefix="$"
         icon={Wallet}
-        subtitle="Annualised across the book"
+        // The subtitle NAMES what the figure left out when the ILP rule
+        // dropped something (lib/ilpExclusion). Silence there is what makes a
+        // correct total read as a wrong one.
+        subtitle={
+          stats.excludedIlp.count > 0
+            ? `Annualised across the book · ${describeIlpExclusion(stats.excludedIlp)}`
+            : 'Annualised across the book'
+        }
+        masked={masked}
         testId="crm-kpi-annual-premium"
       />
       <KpiTile
@@ -134,6 +163,7 @@ function QuickLinkCard({ icon: Icon, title, description, onOpen, testId }: Quick
 export default function CrmDashboardPage() {
   const navigate = useNavigate();
   const { data: stats, isLoading, isError, refetch } = useDashboardStats();
+  const { masked } = useMask();
   const goToClients = () => navigate('/clients');
 
   return (
@@ -161,7 +191,7 @@ export default function CrmDashboardPage() {
 
       {stats && (
         <div className="space-y-6">
-          <KpiGrid stats={stats} onClientsClick={goToClients} />
+          <KpiGrid stats={stats} masked={masked} onClientsClick={goToClients} />
           {stats.totalClients === 0 ? (
             <EmptyBookCard onAddClick={goToClients} />
           ) : (

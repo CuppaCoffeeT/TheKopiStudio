@@ -38,6 +38,14 @@ interface KpiTileProps {
   compact?: boolean;
   /** Disable count-up animation (e.g. SSR / fast refresh). */
   animate?: boolean;
+  /**
+   * Hide the figure behind the privacy run, keeping the label and subtitle
+   * readable. A prop rather than a masked STRING passed as `value` because the
+   * tile owns its formatting, its count-up and its tabular alignment — a caller
+   * that hands it "******" loses all three, and the next caller formats the
+   * asterisks differently.
+   */
+  masked?: boolean;
   /** Optional sparkline slot — usually <AreaChart> from charts primitives. */
   sparkline?: ReactNode;
   /** Optional corner index numeral (e.g. "01") — Instrument Serif 18px raw brown, per the 2a spec. */
@@ -61,6 +69,7 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
     alert = false,
     compact = false,
     animate = true,
+    masked = false,
     sparkline,
     index,
     className,
@@ -151,7 +160,7 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
         {/* Prefix / suffix units pin themselves to the sans face: at 14px they sit
             under the 18px Instrument Serif floor, so they must not inherit the
             parent numeral's serif. */}
-        {prefix && (
+        {prefix && !masked && (
           <span
             className="mr-1 text-[14px]"
             style={{ fontFamily: 'var(--font-sans)', color: 'var(--fg-dim)' }}
@@ -159,12 +168,16 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
             {prefix}
           </span>
         )}
-        {animate ? (
+        {/* The currency prefix goes too: "$******" still says "this is money
+            and there is some", which is most of what the eye is hiding. */}
+        {masked ? (
+          <span style={{ color: 'var(--fg-dim)', letterSpacing: '0.08em' }}>******</span>
+        ) : animate ? (
           <NumberTicker value={value} decimalPlaces={decimals} format={formatValue} />
         ) : (
           formatValue(value)
         )}
-        {suffix && (
+        {suffix && !masked && (
           <span
             className="ml-1 text-[14px]"
             style={{ fontFamily: 'var(--font-sans)', color: 'var(--fg-dim)' }}

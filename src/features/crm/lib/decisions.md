@@ -520,3 +520,24 @@ strips the param (left in the URL, a refresh reopens a dismissed form). The pick
 reads `getOwnClientOptions` — an explicit `user_id` filter, NOT `getClientsPaginated`,
 whose RLS scope would hand a `view_all_clients` holder the whole firm's book. Same
 boundary, same reason as the queue: see lessons.md 2026-08-13.
+
+## 2026-08-18 — Disclose the ILP exclusion; do not "fix" the premium math
+
+**Decision**: when the annualised premium total drops an investment-linked policy
+because its inclusion percent is 0 or unset, the surfaces that print that total
+SAY SO (`lib/ilpExclusion` → the `/crm` tile subtitle and the `/crm-reports`
+premium row). The arithmetic in `summariseClient` is not changed.
+
+**Why**: a 0 percent is ambiguous. On the one live customer with a real
+portfolio, one ILP carries a deliberate 50 while four sit at the column default
+of 0 — so the field is genuinely in use, and re-including zero-percent ILPs at
+100% would inflate every book that has filled it in correctly. The audit that
+found this asked explicitly for the SOURCE of each figure to be traced rather
+than the displayed number adjusted; silently changing a money figure is the
+failure mode, not the fix.
+
+**Impact**: `CrmDashboardStats` and `PortfolioTotals` both carry
+`excludedIlp: { count, annualPremium }`. The remedy is data entry, not code —
+setting a real percent on those four policies corrects the figures with no
+deploy. Provenance and the reconciliation run:
+[docs/06-operations/CRM_FIGURE_PROVENANCE.md](../../../../docs/06-operations/CRM_FIGURE_PROVENANCE.md).

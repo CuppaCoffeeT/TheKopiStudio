@@ -68,7 +68,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
       return (
         <div
-          className="min-h-screen flex items-center justify-center"
+          className="min-h-svh flex items-center justify-center"
           style={{ background: 'var(--page-bg, #f0e6d6)' }}
         >
           {/* The one deliberate `hero` adopter: a whole viewport is what

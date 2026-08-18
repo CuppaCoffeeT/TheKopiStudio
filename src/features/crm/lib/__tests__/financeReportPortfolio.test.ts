@@ -79,6 +79,8 @@ describe('summarisePortfolio', () => {
       totalCoverage: 0,
       avgAnnualPremiumPerClient: 0,
       avgCoveragePerClient: 0,
+      // No policies ⇒ nothing the ILP rule could have dropped.
+      excludedIlp: { count: 0, annualPremium: 0 },
     });
   });
 

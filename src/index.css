@@ -549,6 +549,27 @@
     @apply border-border;
   }
 
+  /* ── iPad / iOS Safari scroll stability (2026-08-18) ──────────────────────
+     The page GROUND is painted here, on <html> and <body>, and its height is
+     `100%` — never a viewport unit. Page shells used to carry `min-h-screen`
+     (`100vh`, the LARGE viewport, measured with the URL bar hidden) or
+     `min-h-dvh` (the DYNAMIC viewport, which literally resizes as that bar
+     collapses and expands during a scroll). On iPad both produce the reported
+     bug: scroll to the bottom, the toolbar animates, the container's height
+     changes mid-gesture, and the last rows shift or slide out of view.
+
+     Every shell now uses `min-h-svh` — the SMALL viewport, measured with the
+     browser chrome SHOWING, which is the one value that never changes while
+     you scroll. It is by definition the shortest, so a short page could leave
+     a strip of untinted ground below it; these two rules are what make that
+     strip the same cream as the page.
+
+     Do NOT "fix" a future short-page gap by putting `dvh` back. */
+  html,
+  body {
+    min-height: 100%;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
@@ -558,6 +579,11 @@
     /* Instrument Serif ships 400 only — never let the browser fake a bold
        from it. IBM Plex Sans loads every weight it is asked for. */
     font-synthesis-weight: none;
+    /* `viewport-fit=cover` (index.html) extends the page under the home
+       indicator, so the LAST element of a scrolled page lands beneath it and
+       reads as cut off. One rule here clears it for every page rather than
+       every page remembering. */
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   /* Tabular numerals / code / Kbd keep the mono stack. Components add the

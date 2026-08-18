@@ -24,7 +24,7 @@ const NotFound = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-6 py-16 relative overflow-hidden"
+      className="min-h-svh flex items-center justify-center px-6 py-16 relative overflow-hidden"
       style={{ background: 'var(--page-bg)', color: 'var(--fg)' }}
     >
       {/* Subtle brown accent dot — signature moment, barely visible */}

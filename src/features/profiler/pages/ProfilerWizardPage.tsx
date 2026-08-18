@@ -59,7 +59,7 @@ export default function ProfilerWizardPage() {
     : 0;
 
   return (
-    <div className="min-h-dvh bg-background">
+    <div className="min-h-svh bg-background">
       <SEO title="Prospect Profiler" description="Run a DISC × MBTI prospect profile" />
       {authed && <AppSidebar />}
       <div className={cn(authed && [SIDEBAR_OFFSET_CLASS, 'print:pl-0!'])}>

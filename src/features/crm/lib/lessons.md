@@ -1,6 +1,6 @@
 # Lessons — src/features/crm
 
-Last Updated: 2026-08-13
+Last Updated: 2026-08-18
 
 ## 2026-07-14 — getCurrentSingaporeTime() is browser-local; SGT display strings need an explicit timeZone
 
@@ -59,3 +59,21 @@ Last Updated: 2026-08-13
 **Root cause**: the 2a decision recorded in `AppSidebar` was "AppHeaderMobileBar serves navigation + account — no second drawer is built". That was true *while ⌘K was a hotkey*: the palette was a first-class navigation surface with a keyboard entry point, and the search icon was a second door to it. When the hotkey was removed (2026-08-05) the palette lost its identity as navigation and became a page-level search icon, but the "no second drawer" decision was never revisited. A decision can be invalidated by a change somewhere else entirely — the note that records it should be re-read whenever its premise moves.
 
 **Fix**: `AppNavDrawer` — a left sheet holding the rail's own list — opened from a leading menu button on the bar. The list itself moved out of `AppSidebar` into `AppSidebarNav`, rendered by both, because two hand-kept copies would drift the first time a module was added (the same reasoning that made the rail and ⌘K share `groupModulesByCategory`). The palette stays as the fast path. Note the testid trick: below lg the rail is `hidden` — still in the DOM — so the shared nav takes its "More" heading testid as a prop, or an unscoped `getByTestId` finds both copies and trips Playwright strict mode.
+
+## 2026-08-18 — a column DEFAULT of 0 turned a correct money rule into a silent under-count
+
+**What happened**: the CRM Dashboard's "Annual premium" tile read $5,689 against a book whose live policies carry $20,425 of annualised premium. Four of the nine live policies contributed exactly $0 and the tile said nothing about it.
+
+**Root cause**: `summariseClient` scales an ILP premium by `ilpPremiumInclusionPercent` — the correct rule; only the protection slice is premium revenue. But `policies.ilp_premium_inclusion_percent` DEFAULTS TO 0, and so does `policyFormModel`'s blank. Every ILP saved without someone deliberately setting that field is therefore multiplied by zero. The rule was right, the default made it a data-loss switch, and nothing on screen distinguished "excluded on purpose" from "nobody filled this in".
+
+**Fix**: `lib/ilpExclusion.ts` computes what the rule dropped, and both the tile subtitle and the Portfolio Report's premium row declare it. The MATH IS UNCHANGED, deliberately — a 0 is genuinely ambiguous (a sibling ILP on the same customer carries a deliberate 50), so re-including zero-percent ILPs at 100% would inflate every book that has used the field correctly. Full provenance: [docs/06-operations/CRM_FIGURE_PROVENANCE.md](../../../../docs/06-operations/CRM_FIGURE_PROVENANCE.md).
+
+**Generalise**: a `DEFAULT 0` on a column that MULTIPLIES is a silent data-loss switch. When a scaling factor defaults to zero, "unset" and "exclude entirely" become the same stored value, and no aggregate downstream can tell them apart. Prefer a NULL default (or a NOT NULL with a real default like 100) so the two states stay distinguishable — and when they cannot be, make the total say what it left out rather than trusting the reader to notice.
+
+## 2026-08-18 — `dvh` on a page shell is the iPad bottom-scroll jump
+
+**What happened**: on iPad, scrolling to the bottom of a page made the last content shift or disappear.
+
+**Root cause**: page shells used `min-h-screen` (`100vh` — the LARGE viewport, taller than what you can see) or `min-h-dvh` (the DYNAMIC viewport, which literally resizes as the Safari toolbar collapses and expands). On a page-level min-height that is a container resize DURING a scroll gesture, and the browser re-anchors the scroll position mid-animation. `viewport-fit=cover` compounded it: with no bottom inset on `body`, the last row also sat under the home indicator.
+
+**Fix**: every page shell moved to `min-h-svh` — the SMALL viewport, the one value that does not change while you scroll — with `html, body { min-height: 100% }` painting the ground under the shortfall and `padding-bottom: env(safe-area-inset-bottom)` on `body` clearing the indicator once for every page. `dvh` remains correct for SIZING an overlay (a drawer should track the chrome); it is only wrong as a page floor. Recorded in `.claude/rules/mobile-web.md` §2.

@@ -36,14 +36,37 @@ The single most important rule: **long multi-step forms on touch go in a fullscr
 
 If the surface has more than one typeable input or is more than one screen tall, it's a form → fullscreen modal. No exceptions.
 
-### 2. Layout heights — `dvh`, never `vh`
+### 2. Layout heights — `dvh` to SIZE an overlay, `svh` to floor a PAGE, never `vh`
+
+Two different jobs, and using one for the other is the iPad scroll bug:
+
+| Job | Unit | Why |
+|---|---|---|
+| Cap an overlay to the visible area (drawer, sheet, modal) | `dvh` | It should track the chrome — a sheet must stay reachable as the URL bar moves. |
+| Floor a full-page shell so a short page still fills | `svh` | It is the SMALL viewport, measured with the browser chrome showing, and is the only one that does not change while you scroll. |
+| Anything | ~~`vh`~~ | The LARGE viewport: always taller than what you can see, so it invents phantom scroll. |
+
+**Why a page must not use `dvh` (2026-08-18).** `dvh` resizes as the iOS/iPadOS
+toolbar collapses and expands. On a page shell that is a height change DURING a
+scroll gesture: reach the bottom, the toolbar animates, the container shrinks,
+and the last rows shift or slide out of view. Reported as "scrolling to the
+bottom makes bottom content move/disappear" and fixed by moving every page
+shell to `min-h-svh`. `html, body { min-height: 100% }` in `src/index.css`
+paints the ground under the shortfall — do NOT put `dvh` back to close it.
 
 ```tsx
 // ✅ CORRECT — drawer for quick action, dvh for visible-area sizing
 <DrawerContent className="max-h-[90dvh]">…</DrawerContent>
 
+// ✅ CORRECT — page shell floor, stable across the toolbar animation
+<div className="min-h-svh bg-background">…</div>
+
 // ❌ FORBIDDEN — vh literal in any container/sheet/modal
 <div className="max-h-[90vh]">…</div>
+
+// ❌ FORBIDDEN — dvh/vh as a PAGE min-height (the iPad bottom-jump bug)
+<div className="min-h-dvh">…</div>
+<div className="min-h-screen">…</div>
 
 // ❌ FORBIDDEN — manual VV-API gymnastics. If you find yourself reaching for this, the container is wrong; switch to fullscreen modal (rule #1).
 useVisualViewportHeight();
@@ -105,10 +128,12 @@ Use `Button size="lg"` (h-12) and `Input` with `h-11` override on screens primar
 
 - ❌ Long form rendered inside a vaul `<DrawerContent>` (use fullscreen Dialog instead — rule #1)
 - ❌ `max-h-[90vh]` / `h-[80vh]` / any `vh` literal
+- ❌ `min-h-screen` / `min-h-dvh` on a page shell — use `min-h-svh` (rule #2)
 - ❌ Radix Popover/Menu Content without `max-h-[var(--radix-*-content-available-height)]` when reachable on mobile
 - ❌ Typeable input primitive without `pointer-coarse:text-[16px]`
 - ❌ `<meta viewport … maximum-scale=1>` — a11y violation
 - ❌ Bottom-pinned bar without `env(safe-area-inset-bottom)` padding on mobile screens
+      (the PAGE's own bottom inset is handled once on `body` in `src/index.css`)
 - ❌ Visual Viewport API + `--app-vvh` workarounds — symptom of wrong container choice
 
 ## References

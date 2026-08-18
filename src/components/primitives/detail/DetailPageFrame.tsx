@@ -151,7 +151,7 @@ export function DetailPageFrame({
 
   return (
     <div
-      className={cn('min-h-screen', className)}
+      className={cn('min-h-svh', className)}
       style={{ background: 'var(--page-bg, #f0e6d6)' }}
       data-testid={testId}
     >

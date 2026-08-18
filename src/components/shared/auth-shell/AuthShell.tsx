@@ -33,7 +33,7 @@ interface AuthShellProps {
 export function AuthShell({ title, subtitle, children, footer, testId }: AuthShellProps) {
   return (
     <div
-      className="min-h-dvh flex flex-col items-center justify-center bg-background px-4 py-12"
+      className="min-h-svh flex flex-col items-center justify-center bg-background px-4 py-12"
       style={{ fontFamily: 'var(--font-sans)' }}
     >
       <main className="w-full max-w-sm">
