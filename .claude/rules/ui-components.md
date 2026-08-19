@@ -25,8 +25,8 @@ import { DatePicker } from '@/components/ui/date-picker';
 <Popover><PopoverTrigger>...</PopoverTrigger><PopoverContent><Calendar ... /></PopoverContent></Popover>
 ```
 
-**Props**: `value`, `onChange`, `placeholder`, `disabled`, `className`, `fromYear` (default 2020), `toYear` (default 2030), `disabledDate?: (d: Date) => boolean` (added 2026-04-27), `format?: 'short' | 'long'` (added 2026-05-29)
-**Features**: Month/year dropdown selectors, Today/Clear buttons, auto-close on select. **Default display is `dd/mm/yy` app-wide (2026-05-29)** — pass `format="long"` only where a spelled-out `dd MMM yyyy` is explicitly wanted. **Single mode is typeable (2026-05-29)** — type `dd/mm/yy` (numbers) directly OR click the calendar icon; typed text commits on blur/Enter, reverts if invalid.
+**Props**: `value`, `onChange`, `placeholder`, `disabled`, `className`, `fromYear` / `toYear` (default: SG year −100 … +50, relative — **was** a hardcoded 2020–2030, which could reach no birth year; fixed 2026-08-19), `disabledDate?: (d: Date) => boolean` (added 2026-04-27), `format?: 'short' | 'long'` (added 2026-05-29)
+**Features**: Month/year dropdown selectors, Today/Clear buttons, auto-close on select. **Default display is `dd/mm/yy` app-wide (2026-05-29)** — pass `format="long"` only where a spelled-out `dd MMM yyyy` is explicitly wanted. **Single mode is typeable (2026-05-29)** — type `dd/mm/yy` (numbers) directly OR click the calendar icon; typed text commits on blur/Enter, reverts if invalid. **Two-digit years pivot on `toYear` (2026-08-19)**: `86` reads as 1986 on a date-of-birth field and as 2086 only where the window reaches that far. The focus buffer always seeds the 4-digit year, so a focus/blur cannot silently shift the century.
 **Location**: `src/components/primitives/form/DatePicker.tsx`
 
 ### SearchableMultiSelect (combobox / picker — MANDATORY for new code)

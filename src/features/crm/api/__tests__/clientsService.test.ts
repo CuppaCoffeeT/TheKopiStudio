@@ -153,6 +153,16 @@ describe('updateClient', () => {
     expect(payload.name).toBe('Tan Mei Ling');
   });
 
+  it('strips every tool-owned tax_* / srs_* column too', () => {
+    // The client form does not render these, so saving a phone number must not
+    // be able to blank the customer's saved SRS balance.
+    const payload = buildClientUpdate(input, 'user-1') as Record<string, unknown>;
+    const owned = Object.keys(payload).filter(
+      (key) => key.startsWith('tax_') || key.startsWith('srs_'),
+    );
+    expect(owned).toEqual([]);
+  });
+
   it('sends the stripped payload and throws when RLS matches no row', async () => {
     const updateOk = createBuilder({ data: { id: 'client-1' } });
     from.enqueue(updateOk);

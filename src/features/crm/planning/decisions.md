@@ -185,3 +185,40 @@ deviates — the faithful-port rule above still holds.
 **What did NOT move, and why that matters**: the customer FETCH. `ToolCustomerBar` is presentational in the shared lane; `crm/components/ToolCustomerBar` wraps it with `useOwnClientOptions`, `profiler` wraps it with its own hook. Moving the fetch would have put the customer record in a shared lane — the move the 2026-07-28 entry above rejected, for reasons that still hold.
 **Two API changes made during the move**: `ToolPageHeader` takes a generic `action` slot instead of a hard-wired `customerId`/`onBack` pair (this frame still passes exactly the same "Back to customer" button); `ToolPanel` gained `labelClassName`, `style` and `tabIndex` for the profiler's DISC-tinted report panels. Nothing rendered by the three planning tools changed — verified by `tests/workflows/crm/tool-routes.spec.ts`.
 **Impact**: 12 import lines across `components/{legacy,srs,tax}` and `pages/`, plus `PlanningToolFrame`. If a fourth planning tool arrives, it imports the barrel, not a sibling folder.
+
+## 2026-08-19 — Tax + SRS now PERSIST, onto `clients` columns
+
+**Decision**: the tax calculator and the SRS planner write their figures back to
+the customer, through an explicit Save button. The values live as `tax_*` and
+`srs_*` columns on `public.clients` — not in a per-run snapshot table — and are
+what the tools pre-fill from on the next visit.
+
+**Why**: this REVERSES the previous position ("Tax + SRS are NOT persisted —
+conversation aids"), at the advisor's request. The reasoning that overturned it:
+what these tools collect are customer FACTS — an SRS balance, a drawdown age,
+which reliefs this person can claim — of exactly the same kind as `cpf_oa` or
+`annual_income`. Re-typing them at every review is how they go stale, and a
+tool that forgets is a tool that gets used once. Columns rather than a run table
+because the tools need the CURRENT position to pre-fill, and the history of who
+changed what and when is already kept, once, in `customer_activity`.
+
+**Impact**:
+- 21 new columns + 2 jsonb (relief state; custom drawdown periods). The two
+  lists stay jsonb because 19 reliefs × 3 fields would be 57 columns nothing
+  queries individually, and would pin the relief catalogue — which changes every
+  Budget — into the schema.
+- `clientToRow` does NOT write them, and `buildClientUpdate` strips them
+  defensively. The tools own their columns, exactly as the bank-history
+  recompute owns `total_bank_balance`. Saving a phone number must not be able to
+  blank a customer's SRS balance.
+- Save is EXPLICIT and gated on `isOwn`, mirroring the Legacy Map. A manager
+  reading another advisor's customer sees the read-only line and no button;
+  `planningProfileService` promotes the resulting 0-row RLS update to a thrown
+  error rather than a success toast.
+- Three pieces of UI copy had to change, because all three promised the
+  opposite: the two `ToolNote`s (`tax-not-saved` / `srs-not-saved`, now
+  `tax-save-scope` / `srs-rules`) and `ToolCustomerBar`'s "edit anything here
+  without changing it", now "edits stay here until you save."
+- `age` and `grossIncome` are deliberately NOT duplicated: they are
+  `date_of_birth` and `annual_income`. Saving writes `annual_income`; it never
+  writes back a date of birth.

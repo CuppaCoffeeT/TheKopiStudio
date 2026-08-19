@@ -8,9 +8,50 @@
  * itself stays about validation and submission.
  */
 
-import type { CrmClient, CrmClientInput } from '../../../types';
+import type {
+  CrmClient,
+  CrmClientInput,
+  CrmClientSrsProfile,
+  CrmClientTaxProfile,
+} from '../../../types';
 
 export const RISK_PROFILES = ['Conservative', 'Moderate', 'Aggressive'] as const;
+
+/**
+ * The two tool-owned sub-models, never saved.
+ *
+ * They sit on the client model so the tools can pre-fill from the record, but
+ * the modal does not render them and `clientToRow` does not write them — the
+ * tax calculator and the SRS planner own their own columns. A blank here is
+ * "this customer has never saved that tool", which is what makes the tool open
+ * on its statutory defaults.
+ */
+export const EMPTY_TAX_PROFILE: CrmClientTaxProfile = {
+  employmentType: '',
+  otherIncome: '',
+  donations: '',
+  useFedr: false,
+  fedrRate: '',
+  reliefs: null,
+  savedAt: '',
+};
+
+export const EMPTY_SRS_PROFILE: CrmClientSrsProfile = {
+  currentBalance: '',
+  contributionThisYear: '',
+  annualContribution: '',
+  growthRate: '',
+  contributeUntilAge: '',
+  withdrawalAge: '',
+  strategy: '',
+  balanceOverride: '',
+  startAge: '',
+  withdrawalYears: '',
+  withdrawalGrowth: '',
+  otherIncome: '',
+  periods: null,
+  savedAt: '',
+};
 
 /**
  * A blank client. Every key of `CrmClientInput` must appear — TypeScript
@@ -46,6 +87,8 @@ export const EMPTY_CLIENT: CrmClientInput = {
   futureIncomeStep3: '',
   futureIncomeStartAge3: '',
   futureIncomeEndAge3: '',
+  tax: EMPTY_TAX_PROFILE,
+  srs: EMPTY_SRS_PROFILE,
 };
 
 /** Strip the id so an existing client can seed the form. */

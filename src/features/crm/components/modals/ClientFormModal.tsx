@@ -125,6 +125,7 @@ export function ClientFormModal({ open, onOpenChange, client }: ClientFormModalP
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <DateField
           label="Date of birth"
+          variant="birth"
           value={form.dateOfBirth}
           onChange={(v) => set({ dateOfBirth: v })}
           testId="crm-client-dob-input"

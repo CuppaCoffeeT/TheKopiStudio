@@ -19,14 +19,11 @@
 
 import { useMemo, useState } from 'react';
 import type { CrmClient } from '../../types';
-import { seedAge } from '../lib/customerSeed';
 import { num, rate } from '../lib/fields';
 import { milestoneRows } from '../lib/srsMilestones';
-import {
-  projectContributions,
-  SRS_CAP_CITIZEN,
-  SRS_WITHDRAWAL_WINDOW_YEARS,
-} from '../lib/srs';
+import { projectContributions } from '../lib/srs';
+import { srsSeedValues, type PeriodFields } from '../lib/srsSeed';
+export type { PeriodFields };
 import { buildJourney } from '../lib/srsJourney';
 import {
   customWithdrawals,
@@ -38,38 +35,29 @@ import { useSrsAges } from './useSrsAges';
 
 export type WithdrawalStrategy = 'equal' | 'custom';
 
-/** One custom period's raw form values. */
-export interface PeriodFields {
-  amount: string;
-  years: string;
-}
-
-const EMPTY_PERIODS: PeriodFields[] = [
-  { amount: '60000', years: '5' },
-  { amount: '0', years: '0' },
-  { amount: '0', years: '0' },
-];
-
 export function useSrsPlanner(customer: CrmClient, refYear: number) {
-  const [currentAge, setCurrentAge] = useState(() => String(seedAge(customer.dateOfBirth, refYear)));
-  const [annualIncome, setAnnualIncome] = useState(() => customer.annualIncome || '');
-  const [contributionThisYear, setContributionThisYear] = useState(String(SRS_CAP_CITIZEN));
-  const [currentBalance, setCurrentBalance] = useState('0');
-  const [growthRate, setGrowthRate] = useState('4');
-  const [annualContribution, setAnnualContribution] = useState(String(SRS_CAP_CITIZEN));
+  // Seeds live in lib/srsSeed.ts — "last saved, else the statutory default".
+  const init = srsSeedValues(customer, refYear);
+
+  const [currentAge, setCurrentAge] = useState(init.currentAge);
+  const [annualIncome, setAnnualIncome] = useState(init.annualIncome);
+  const [contributionThisYear, setContributionThisYear] = useState(init.contributionThisYear);
+  const [currentBalance, setCurrentBalance] = useState(init.currentBalance);
+  const [growthRate, setGrowthRate] = useState(init.growthRate);
+  const [annualContribution, setAnnualContribution] = useState(init.annualContribution);
 
   // The three ages and the constraints between them — see `useSrsAges`.
   const {
     withdrawalAge, startAge, contributeUntilAge,
     setWithdrawalAge, setStartAge, setContributeUntilAge,
-  } = useSrsAges();
+  } = useSrsAges(init);
 
-  const [strategy, setStrategy] = useState<WithdrawalStrategy>('equal');
-  const [balanceOverride, setBalanceOverride] = useState('');
-  const [withdrawalYears, setWithdrawalYears] = useState(String(SRS_WITHDRAWAL_WINDOW_YEARS));
-  const [withdrawalGrowth, setWithdrawalGrowth] = useState('3');
-  const [otherIncome, setOtherIncome] = useState('0');
-  const [periods, setPeriods] = useState<PeriodFields[]>(EMPTY_PERIODS);
+  const [strategy, setStrategy] = useState<WithdrawalStrategy>(init.strategy);
+  const [balanceOverride, setBalanceOverride] = useState(init.balanceOverride);
+  const [withdrawalYears, setWithdrawalYears] = useState(init.withdrawalYears);
+  const [withdrawalGrowth, setWithdrawalGrowth] = useState(init.withdrawalGrowth);
+  const [otherIncome, setOtherIncome] = useState(init.otherIncome);
+  const [periods, setPeriods] = useState<PeriodFields[]>(init.periods);
 
   const setPeriod = (index: number, field: keyof PeriodFields, value: string) => {
     setPeriods((current) =>
@@ -184,5 +172,27 @@ export function useSrsPlanner(customer: CrmClient, refYear: number) {
     milestones,
     plan,
     journey,
+    /**
+     * Everything the Save button sends. Built here, not in the page: the page
+     * never sees the individual strings, and a field added to the hook would
+     * otherwise silently stop being saved.
+     */
+    saveInput: {
+      annualIncome,
+      currentBalance,
+      contributionThisYear,
+      annualContribution,
+      growthRate,
+      contributeUntilAge,
+      withdrawalAge,
+      strategy,
+      balanceOverride,
+      startAge,
+      withdrawalYears,
+      withdrawalGrowth,
+      otherIncome,
+      // Coerced here so the column stores numbers, not the form's strings.
+      periods: periods.map((p) => ({ amount: num(p.amount), years: num(p.years) })),
+    },
   };
 }

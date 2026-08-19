@@ -2,6 +2,9 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import { chooseSelectMenuOption } from './selectMenu';
 import { selectStatusTab } from './statusTabs';
 
+/** Mirrors MONTHS_SHORT in src/components/primitives/form/DatePicker.helpers.ts. */
+const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 /**
  * ClientsPage — POM for the CRM module: the /clients list, the client detail
  * page (Overview · Policies · Activity · Bank history tabs) and the four
@@ -382,7 +385,7 @@ export class ClientsPage {
     if (input.email !== undefined) await this.fillText('crm-client-email-input', input.email);
     if (input.phone !== undefined) await this.fillText('crm-client-phone-input', input.phone);
     if (input.dateOfBirth !== undefined) {
-      await this.fillDateField('crm-client-dob-input', input.dateOfBirth);
+      await this.fillDateField('crm-client-dob-input', input.dateOfBirth, 'long');
     }
     if (input.occupation !== undefined) {
       await this.fillText('crm-client-occupation-input', input.occupation);
@@ -588,14 +591,22 @@ export class ClientsPage {
   /**
    * Type an ISO date into a single-mode DatePicker trigger input (dd/mm/yyyy),
    * commit with Enter (also closes the calendar) and verify the committed
-   * dd/mm/yy display — an invalid parse would silently revert.
+   * display — an invalid parse would silently revert.
+   *
+   * `long` fields (date of birth) echo "15 Mar 1986"; the rest echo dd/mm/yy.
    */
-  private async fillDateField(testId: string, iso: string): Promise<void> {
+  private async fillDateField(
+    testId: string,
+    iso: string,
+    display: 'short' | 'long' = 'short',
+  ): Promise<void> {
     const [y, m, d] = iso.split('-');
     const input = this.page.getByTestId(testId);
     await input.fill(`${d}/${m}/${y}`);
     await input.press('Enter');
-    await expect(input).toHaveValue(`${d}/${m}/${y.slice(2)}`);
+    const expected =
+      display === 'long' ? `${d} ${MONTHS_SHORT[Number(m) - 1]} ${y}` : `${d}/${m}/${y.slice(2)}`;
+    await expect(input).toHaveValue(expected);
   }
 
   /**

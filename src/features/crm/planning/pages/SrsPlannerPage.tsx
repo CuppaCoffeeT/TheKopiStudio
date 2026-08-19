@@ -14,7 +14,9 @@
  * the tax paid on the way out.
  *
  * State and derivation live in `useSrsPlanner`. Pre-filled from the customer's
- * date of birth and annual income. Nothing is persisted.
+ * date of birth, annual income and — since 2026-08-19 — whatever they last
+ * saved here. Save is EXPLICIT: nothing is written until the button is clicked,
+ * so the planner stays a scratch pad until the advisor says otherwise.
  */
 
 import { currentRefYear } from '../../lib/finance';
@@ -27,12 +29,22 @@ import { SrsProjectionPanel } from '../components/srs/SrsProjectionPanel';
 import { SrsSchedulePanel } from '../components/srs/SrsSchedulePanel';
 import { SrsWithdrawalsPanel } from '../components/srs/SrsWithdrawalsPanel';
 import { ToolNote, ToolStatGrid } from '@/components/primitives/tools';
+import { ToolSaveBar } from '../components/ToolSaveBar';
+import { useSaveSrsProfile } from '../hooks/usePlanningProfile';
 import { money, percent } from '../lib/format';
 import { SRS_WITHDRAWAL_WINDOW_YEARS } from '../lib/srs';
 
-function SrsPlanner({ customer, named }: { customer: CrmClient; named: boolean }) {
+interface SrsPlannerProps {
+  customer: CrmClient;
+  customerId: string | null;
+  isOwn: boolean;
+  ownerId: string | null;
+}
+
+function SrsPlanner({ customer, customerId, isOwn, ownerId }: SrsPlannerProps) {
   const model = useSrsPlanner(customer, currentRefYear());
   const { contribution, withdrawal, numbers, projection, milestones, plan, journey } = model;
+  const save = useSaveSrsProfile(customerId, ownerId);
 
   return (
     <div className="flex flex-col gap-[22px]">
@@ -109,12 +121,24 @@ function SrsPlanner({ customer, named }: { customer: CrmClient; named: boolean }
         startAge={numbers.startAge}
       />
 
-      <ToolNote testId="srs-not-saved">
+      <ToolSaveBar
+        testId="srs-save"
+        customerName={customer.name}
+        customerId={customerId}
+        isOwn={isOwn}
+        savedAt={customer.srs.savedAt}
+        saving={save.isPending}
+        onSave={() => save.mutate(model.saveInput)}
+        label="Save to customer"
+        blankHint="Nothing is saved until you pick a customer — until then this is a scratch pad."
+      />
+
+      <ToolNote testId="srs-rules">
         Withdrawals may begin at the statutory retirement age locked in by the first
         contribution — 62, 63 or 64. Contributions, and their relief, may continue past that
         age right up until the first withdrawal. Half of each withdrawal is chargeable, and
         the {SRS_WITHDRAWAL_WINDOW_YEARS}-year penalty-free window opens on the first
-        withdrawal, not on that birthday. Nothing here is saved{named ? ` to ${customer.name}’s record` : ''}.
+        withdrawal, not on that birthday.
       </ToolNote>
     </div>
   );
@@ -130,9 +154,16 @@ export default function SrsPlannerPage() {
       activityTool="srs-planner"
       blankHint="No customer chosen — the planner starts blank. Pick one to pre-fill age and income."
     >
-      {/* Keyed on the customer — `useSrsPlanner` seeds its state once. */}
-      {(customer, customerId) => (
-        <SrsPlanner key={customerId ?? 'blank'} customer={customer} named={Boolean(customerId)} />
+      {/* Keyed on the customer — `useSrsPlanner` seeds its state once, now
+          including whatever that customer last saved here. */}
+      {(customer, customerId, isOwn, ownerId) => (
+        <SrsPlanner
+          key={customerId ?? 'blank'}
+          customer={customer}
+          customerId={customerId}
+          isOwn={isOwn}
+          ownerId={ownerId}
+        />
       )}
     </PlanningToolFrame>
   );

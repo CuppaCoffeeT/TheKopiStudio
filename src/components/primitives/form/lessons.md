@@ -1,6 +1,6 @@
 # Lessons — src/components/primitives/form
 
-Last Updated: 2026-05-29
+Last Updated: 2026-08-19 SGT
 
 ## 2026-05-29 — DatePicker in a modal: inline clips, body-portal can't be clicked — fix is collision-aware inline
 
@@ -22,3 +22,40 @@ So: inline = clickable but clips; body-portal = escapes clip but unclickable. Ne
 **Fix pattern (use one, never both)**: EITHER (a) checkbox is presentational — `labelClassName="pointer-events-none"` + `readOnly tabIndex={-1} aria-hidden`, and the ROW owns the toggle AND the a11y contract: `role="checkbox"` + `aria-checked` + `tabIndex={0}` + Enter/Space `onKeyDown` + focus ring; OR (b) the checkbox owns the toggle (`onCheckedChange`) and the row is NOT clickable. Never have both the row onClick and a live checkbox handler.
 **Separately**: "checkbox doesn't save" on auto-save cards (project detail) was a DIFFERENT root cause — `useAutoSaveForm` dropping programmatic `setValue` events (see src/hooks/lessons.md 2026-05-28). Two distinct bugs with the same symptom; check which applies.
 **Candidate systemic fix**: consider a primitive `<ToggleRow>` (or a documented row-checkbox composition) so callers stop re-deriving this and tripping the double-fire each time.
+
+## 2026-08-19 — The year dropdown could not reach a single birth year
+
+**What happened**: opening the date-of-birth picker showed a year list running
+2020–2028. There was no way to select 1986. Worse, the field read `28/01/01`,
+which cannot be told apart from 1901.
+
+**Root cause**: THREE things, each harmless alone. (1) `DatePicker` defaulted
+`fromYear = 2020, toYear = 2030` — hardcoded, so every `DateField` in the app
+inherited an eleven-year window, and the list would have gone stale on its own
+in 2031. (2) `parseTypedDate` did `if (year < 100) year += 2000`, so a typed
+`86` was always 2086 and never 1986. (3) `handleInputFocus` seeded the editable
+buffer with the 2-digit year via `formatSlashed(value, short)` — so merely
+focusing and blurring a 1986 date of birth round-tripped it to 2086 without the
+advisor touching a key.
+
+Symptom detail worth keeping: once the real year sits outside `[fromYear,
+toYear]`, the native `<select value={year}>` has no matching `<option>`, so the
+list opens on 2020 while the visible chip still prints the true year. That
+mismatch is what made it look like the picker had "jumped to 2020".
+
+**Fix**: bounds are now relative to the SG year (`−100 … +50`) and never
+hardcoded; `parseTypedDate` takes the field's own `toYear` and pivots a 2-digit
+year to 19xx when 20xx would overshoot it; the focus buffer always seeds the
+4-digit year. `DateField` gained `variant="birth"`, which narrows the window to
+the last 120 years, blocks future days and switches the display to `dd MMM
+yyyy` so a date of birth is never ambiguous on screen. Locked by
+`__tests__/datePickerHelpers.test.ts`.
+
+**Supersedes** the "Not fixed here" note in
+`src/features/crm/planning/lessons.md` (2026-07-28) — the century inference the
+seedAge clamp was working around is now fixed at the source. The clamp stays:
+it guards the column's history, not the picker.
+
+**Lesson**: a default that encodes a literal year is a bug with a delivery
+date. And a "display format" that also seeds the EDIT buffer is not a display
+format — it is a parser input, and it will round-trip.

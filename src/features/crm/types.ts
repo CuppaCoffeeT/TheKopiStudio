@@ -56,6 +56,10 @@ export interface CashValueProjection {
   value: string;
 }
 
+// Tool-owned sub-models — ownership rule in `clientPlanningTypes.ts`.
+import type { CrmClientSrsProfile, CrmClientTaxProfile } from './clientPlanningTypes';
+export type * from './clientPlanningTypes';
+
 /** Client model. `totalBankBalance`/`lastReviewDate` are READ-ONLY derivations
  *  (bank-history recompute owns the columns; `clientToRow` never writes them). */
 export interface CrmClient {
@@ -94,6 +98,9 @@ export interface CrmClient {
   futureIncomeStep3: string;
   futureIncomeStartAge3: string;
   futureIncomeEndAge3: string;
+  // Tool-owned, READ-ONLY here (2026-08-19) — see `clientPlanningTypes.ts`.
+  tax: CrmClientTaxProfile;
+  srs: CrmClientSrsProfile;
 }
 
 /** Client form payload (ADD reads `totalBankBalance` to seed the initial bank-history row). */

@@ -118,6 +118,27 @@ export type Database = {
           phone: string | null
           review_frequency: string | null
           risk_profile: string | null
+          srs_annual_contribution: number | null
+          srs_balance_override: number | null
+          srs_contribute_until_age: number | null
+          srs_contribution_this_year: number | null
+          srs_current_balance: number | null
+          srs_growth_rate: number | null
+          srs_saved_at: string | null
+          srs_withdrawal_age: number | null
+          srs_withdrawal_growth: number | null
+          srs_withdrawal_other_income: number | null
+          srs_withdrawal_periods: Json | null
+          srs_withdrawal_start_age: number | null
+          srs_withdrawal_strategy: string | null
+          srs_withdrawal_years: number | null
+          tax_donations: number | null
+          tax_employment_type: string | null
+          tax_fedr_rate: number | null
+          tax_other_income: number | null
+          tax_reliefs: Json | null
+          tax_saved_at: string | null
+          tax_use_fedr: boolean
           total_bank_balance: number | null
           updated_at: string
           updated_by: string | null
@@ -155,6 +176,27 @@ export type Database = {
           phone?: string | null
           review_frequency?: string | null
           risk_profile?: string | null
+          srs_annual_contribution?: number | null
+          srs_balance_override?: number | null
+          srs_contribute_until_age?: number | null
+          srs_contribution_this_year?: number | null
+          srs_current_balance?: number | null
+          srs_growth_rate?: number | null
+          srs_saved_at?: string | null
+          srs_withdrawal_age?: number | null
+          srs_withdrawal_growth?: number | null
+          srs_withdrawal_other_income?: number | null
+          srs_withdrawal_periods?: Json | null
+          srs_withdrawal_start_age?: number | null
+          srs_withdrawal_strategy?: string | null
+          srs_withdrawal_years?: number | null
+          tax_donations?: number | null
+          tax_employment_type?: string | null
+          tax_fedr_rate?: number | null
+          tax_other_income?: number | null
+          tax_reliefs?: Json | null
+          tax_saved_at?: string | null
+          tax_use_fedr?: boolean
           total_bank_balance?: number | null
           updated_at?: string
           updated_by?: string | null
@@ -192,6 +234,27 @@ export type Database = {
           phone?: string | null
           review_frequency?: string | null
           risk_profile?: string | null
+          srs_annual_contribution?: number | null
+          srs_balance_override?: number | null
+          srs_contribute_until_age?: number | null
+          srs_contribution_this_year?: number | null
+          srs_current_balance?: number | null
+          srs_growth_rate?: number | null
+          srs_saved_at?: string | null
+          srs_withdrawal_age?: number | null
+          srs_withdrawal_growth?: number | null
+          srs_withdrawal_other_income?: number | null
+          srs_withdrawal_periods?: Json | null
+          srs_withdrawal_start_age?: number | null
+          srs_withdrawal_strategy?: string | null
+          srs_withdrawal_years?: number | null
+          tax_donations?: number | null
+          tax_employment_type?: string | null
+          tax_fedr_rate?: number | null
+          tax_other_income?: number | null
+          tax_reliefs?: Json | null
+          tax_saved_at?: string | null
+          tax_use_fedr?: boolean
           total_bank_balance?: number | null
           updated_at?: string
           updated_by?: string | null

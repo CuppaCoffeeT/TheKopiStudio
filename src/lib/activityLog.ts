@@ -29,6 +29,8 @@ export type ActivityType =
   | 'profile_updated'
   | 'info_updated'
   | 'tool_opened'
+  /** A tool wrote its figures back onto the customer (tax calculator, SRS planner). */
+  | 'tool_saved'
   | 'report_generated'
   | 'policy_changed'
   | 'balance_updated';

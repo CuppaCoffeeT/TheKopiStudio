@@ -22,14 +22,28 @@ import { useState } from 'react';
 import { num } from '../lib/fields';
 import { SRS_DEFAULT_WITHDRAWAL_AGE } from '../lib/srs';
 
-export function useSrsAges() {
-  const [withdrawalAge, setWithdrawalAgeState] = useState(String(SRS_DEFAULT_WITHDRAWAL_AGE));
-  const [startAge, setStartAgeState] = useState(String(SRS_DEFAULT_WITHDRAWAL_AGE));
-  // One year short of the first withdrawal — contributing in the year money
-  // comes out is not allowed, so the default is the latest legal answer.
-  const [contributeUntilAge, setContributeUntilAge] = useState(
-    String(SRS_DEFAULT_WITHDRAWAL_AGE - 1),
-  );
+/** Starting values, from the customer's last saved plan. See `lib/srsSeed.ts`. */
+export interface SrsAgeSeed {
+  withdrawalAge: string;
+  startAge: string;
+  contributeUntilAge: string;
+}
+
+/**
+ * Defaults for a customer who has never saved the planner. `contributeUntilAge`
+ * is one year short of the first withdrawal — contributing in the year money
+ * comes out is not allowed, so this is the latest legal answer.
+ */
+export const DEFAULT_SRS_AGES: SrsAgeSeed = {
+  withdrawalAge: String(SRS_DEFAULT_WITHDRAWAL_AGE),
+  startAge: String(SRS_DEFAULT_WITHDRAWAL_AGE),
+  contributeUntilAge: String(SRS_DEFAULT_WITHDRAWAL_AGE - 1),
+};
+
+export function useSrsAges(seed: SrsAgeSeed = DEFAULT_SRS_AGES) {
+  const [withdrawalAge, setWithdrawalAgeState] = useState(seed.withdrawalAge);
+  const [startAge, setStartAgeState] = useState(seed.startAge);
+  const [contributeUntilAge, setContributeUntilAge] = useState(seed.contributeUntilAge);
 
   /**
    * Contributions must stop before the first withdrawal, so raising the start

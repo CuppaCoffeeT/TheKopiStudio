@@ -41,12 +41,37 @@ export function formatSlashed(d: Date | null | undefined, short = false): string
 }
 
 /**
+ * Widest sensible year window for a picker that wasn't told one.
+ *
+ * Was a hardcoded 2020–2030, which made the year dropdown unable to reach any
+ * birth year (see the 2026-08-19 lesson) and, once the real year left the
+ * window, left the `<select>` with no matching option at all. Now relative to
+ * the SG year so it can't go stale: a century back for dates of birth, half a
+ * century forward for policy end dates.
+ */
+export const DEFAULT_YEARS_BACK = 100;
+export const DEFAULT_YEARS_FORWARD = 50;
+
+/**
+ * Resolve a 2-digit year to a full year, pivoting on `maxYear`.
+ *
+ * `yy` first reads as 20yy; if that lands past the picker's own upper bound it
+ * reads as 19yy instead. So a DOB field (upper bound = today) turns `86` into
+ * 1986, while a policy field (upper bound decades out) keeps `30` as 2030.
+ */
+export function resolveTwoDigitYear(yy: number, maxYear: number): number {
+  const asTwentyFirst = 2000 + yy;
+  return asTwentyFirst > maxYear ? 1900 + yy : asTwentyFirst;
+}
+
+/**
  * Parse a user-typed date string into a Date (local, midnight) or null.
  * Accepts dd/mm/yyyy with `/ - .` separators, plus bare digit runs
- * (ddmmyyyy · ddmmyy). 2-digit years map to 20yy. Rejects impossible
- * dates (e.g. 31/02/2026) via a round-trip check.
+ * (ddmmyyyy · ddmmyy). 2-digit years pivot on `maxYear` (see
+ * `resolveTwoDigitYear`). Rejects impossible dates (e.g. 31/02/2026) via a
+ * round-trip check.
  */
-export function parseTypedDate(input: string): Date | null {
+export function parseTypedDate(input: string, maxYear = 2000 + DEFAULT_YEARS_FORWARD): Date | null {
   const s = input.trim();
   if (!s) return null;
 
@@ -56,6 +81,8 @@ export function parseTypedDate(input: string): Date | null {
     day = Number(m[1]);
     month = Number(m[2]);
     year = Number(m[3]);
+    // A 1- or 2-digit group is a short year; 3-4 digits are already absolute.
+    if (m[3].length <= 2) year = resolveTwoDigitYear(year, maxYear);
   } else {
     const digits = s.replace(/\D/g, '');
     if (digits.length === 8) {
@@ -65,13 +92,13 @@ export function parseTypedDate(input: string): Date | null {
     } else if (digits.length === 6) {
       day = Number(digits.slice(0, 2));
       month = Number(digits.slice(2, 4));
-      year = 2000 + Number(digits.slice(4, 6));
+      year = resolveTwoDigitYear(Number(digits.slice(4, 6)), maxYear);
     } else {
       return null;
     }
   }
 
-  if (year < 100) year += 2000;
+  if (year < 100) year = resolveTwoDigitYear(year, maxYear);
   if (month < 1 || month > 12 || day < 1 || day > 31) return null;
 
   const d = new Date(year, month - 1, day);

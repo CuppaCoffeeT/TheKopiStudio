@@ -28,7 +28,10 @@
 import { useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';
+import { getSingaporeYear } from '@/utils/timezoneUtils';
 import {
+  DEFAULT_YEARS_BACK,
+  DEFAULT_YEARS_FORWARD,
   formatDisplay,
   formatSlashed,
   parseTypedDate,
@@ -94,8 +97,10 @@ export function DatePicker({
   placeholder,
   format = 'short',
   className,
-  fromYear = 2020,
-  toYear = 2030,
+  // Relative to the SG year, not hardcoded — a fixed 2020–2030 window could
+  // reach no birth year at all, and would have gone stale on its own in 2031.
+  fromYear = getSingaporeYear() - DEFAULT_YEARS_BACK,
+  toYear = getSingaporeYear() + DEFAULT_YEARS_FORWARD,
   disabledDate,
   triggerTestId,
   todayTestId,
@@ -141,17 +146,29 @@ export function DatePicker({
     if (rootRef.current) {
       setInsideDialog(rootRef.current.closest('[role="dialog"]') !== null);
     }
+    // Land on the SELECTED date, not on today. `viewDate` is seeded once at
+    // mount, and a DatePicker inside a modal mounts before the form has its
+    // value — so a customer born in 1986 opened the calendar on this month,
+    // decades from the date being edited. Re-homed on each open (not while
+    // open, which would fight the advisor's own month navigation).
+    if (!open) {
+      const target = mode === 'range' ? rangeValue?.start : value;
+      if (target) setViewDate(target);
+    }
     setOpen(true);
   };
 
   const handleInputFocus = () => {
-    setTyped(formatSlashed(value, short));
+    // Always seed the EDIT buffer with the 4-digit year, even when the resting
+    // display is dd/mm/yy. Seeding `86` and re-parsing it is how a 1986 date of
+    // birth used to come back as 2086 on a focus/blur that changed nothing.
+    setTyped(formatSlashed(value, false));
     openCalendar();
   };
 
   const handleInputChange = (s: string) => {
     setTyped(s);
-    const d = parseTypedDate(s);
+    const d = parseTypedDate(s, toYear);
     if (d) setViewDate(d); // live-preview the month; commit on blur/Enter
   };
 
@@ -163,7 +180,7 @@ export function DatePicker({
       if (value) onChange?.(null);
       return;
     }
-    const d = parseTypedDate(raw);
+    const d = parseTypedDate(raw, toYear);
     if (d) {
       const nd = startOfDay(d);
       if (!sameDay(nd, value ?? null)) onChange?.(nd);

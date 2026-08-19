@@ -125,15 +125,28 @@ export async function createClient(input: CrmClientInput, userId: string): Promi
   return data;
 }
 
+/** Owned by the bank-history recompute, never by the client form. */
+const DERIVED_COLUMNS = ['total_bank_balance', 'last_review_date'] as const;
+
 /**
- * Build the UPDATE payload: mapped columns + `updated_by` stamp, with the
- * derived columns defensively stripped even if mapping ever drifts —
- * `total_bank_balance` / `last_review_date` belong to the recompute alone.
+ * Build the UPDATE payload: mapped columns + `updated_by` stamp, with every
+ * column owned by something else defensively stripped even if mapping ever
+ * drifts. Saving the client form must not be able to blank a customer's SRS
+ * balance just because the modal never rendered a field for it.
+ *
+ * The `tax_`/`srs_` prefixes are matched rather than listed: the planning tools
+ * own that whole family (planning/api/planningProfileService.ts), and a column added
+ * there should be excluded here the moment it exists, not the next time someone
+ * remembers to extend a list.
  */
 export function buildClientUpdate(input: CrmClientInput, userId: string): ClientRowUpdate {
   const row: ClientRowUpdate = { ...clientToRow(input), updated_by: userId };
-  delete row.total_bank_balance;
-  delete row.last_review_date;
+  for (const column of DERIVED_COLUMNS) delete row[column];
+  for (const column of Object.keys(row)) {
+    if (column.startsWith('tax_') || column.startsWith('srs_')) {
+      delete row[column as keyof ClientRowUpdate];
+    }
+  }
   return row;
 }
 

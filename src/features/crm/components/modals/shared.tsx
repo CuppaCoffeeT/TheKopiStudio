@@ -8,7 +8,7 @@
  */
 
 import type { ReactNode } from 'react';
-import { DatePicker, Field, Input } from '@/components/primitives/form';
+import { Field, Input } from '@/components/primitives/form';
 import {
   SelectMenu,
   SelectMenuContent,
@@ -17,7 +17,6 @@ import {
   SelectMenuValue,
 } from '@/components/primitives/overlays/SelectMenu';
 import { cn } from '@/lib/utils';
-import { dateStringToDate, dateToDateString } from './dateStrings';
 
 /** Kebab-case a select option value into its data-testid suffix. */
 function optionTestId(prefix: string, value: string): string {
@@ -119,25 +118,9 @@ export function SelectField({
   );
 }
 
-interface DateFieldProps extends BaseFieldProps {
-  value: string;
-  onChange: (next: string) => void;
-}
-
-/** DatePicker (SG calendar) wrapped in a Field shell — value stays 'YYYY-MM-DD'. */
-export function DateField({ label, testId, required, error, hint, disabled, value, onChange }: DateFieldProps) {
-  return (
-    <Field label={label} required={required} error={error} hint={hint}>
-      <DatePicker
-        value={dateStringToDate(value)}
-        onChange={(d) => onChange(dateToDateString(d))}
-        error={!!error}
-        disabled={disabled}
-        triggerTestId={testId}
-      />
-    </Field>
-  );
-}
+// DateField lives in ./DateField.tsx — it is the only field here that has to
+// configure the picker itself (the `birth` variant).
+export { DateField } from './DateField';
 
 interface ModalSectionProps {
   title: string;

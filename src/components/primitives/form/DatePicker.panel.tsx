@@ -85,12 +85,14 @@ export function CalendarPanel({
         <div className="flex-1 flex justify-center gap-1.5">
           <MonoDropdown
             label={MONTHS_SHORT[month]}
+            name="Month"
             value={month}
             options={MONTHS_FULL.map((m, i) => ({ label: m, value: i }))}
             onChange={(v) => setViewDate(new Date(year, v as number, 1))}
           />
           <MonoDropdown
             label={String(year)}
+            name="Year"
             value={year}
             options={years.map((y) => ({ label: String(y), value: y }))}
             onChange={(v) => setViewDate(new Date(v as number, month, 1))}

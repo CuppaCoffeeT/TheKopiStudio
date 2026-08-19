@@ -67,7 +67,10 @@ export function ToolCustomerBar({
   isError = false,
   onRetry,
   blankHint,
-  chosenHint = 'Pre-filled from their record — edit anything here without changing it.',
+  // Was "…edit anything here without changing it", which stopped being true on
+  // 2026-08-19 when the tax calculator and the SRS planner gained a Save.
+  // Editing still changes nothing on its own; the promise now names what does.
+  chosenHint = 'Pre-filled from their record — edits stay here until you save.',
   testId = 'tool-customer-bar',
 }: ToolCustomerBarProps) {
   return (

@@ -1,6 +1,6 @@
 # Planning — Lessons
 
-**Last Updated**: 2026-07-28 SGT
+**Last Updated**: 2026-08-19 SGT
 
 ## 2026-07-28 — A future date of birth opened the tax calculator on age −60
 
@@ -45,3 +45,26 @@ because the generated file is valid TypeScript that simply has no importers.
 
 **Lesson**: a codegen script that writes to an unimported path fails silently
 forever. When touching one, grep for an importer of its output.
+
+## 2026-08-19 — The DatePicker century inference is fixed at the source
+
+**What happened**: nothing new broke. This closes the "**Not fixed here**" item
+left open by the 2026-07-28 entry above.
+
+**Root cause**: recorded in full at
+`src/components/primitives/form/lessons.md` (2026-08-19) — three composing
+defects in the shared picker: a hardcoded 2020–2030 year window, a parser that
+added 2000 to every two-digit year, and a focus handler that re-seeded the edit
+buffer with the two-digit year (so a focus/blur alone could shift the century).
+
+**Fix**: bounds are now relative to the SG year; the two-digit pivot keys off
+the field's own `toYear`; the date-of-birth field uses `variant="birth"` —
+a 120-year window, no future days, and a spelled-out `dd MMM yyyy` display.
+Verified against prod: no `clients` row currently holds a future
+`date_of_birth`, so no data repair was needed.
+
+**Supersedes** the "Not fixed here" paragraph of the 2026-07-28 entry.
+`seedAge`'s clamp is deliberately KEPT — see the updated header in
+`lib/customerSeed.ts`. The picker being correct today says nothing about the
+rows written before today, which is the whole point of validating at the
+boundary.

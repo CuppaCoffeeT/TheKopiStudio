@@ -14,8 +14,14 @@
  *
  * `ageFromDOB` is golden-locked by the CRM report's oracle tests and is NOT the
  * place to fix this — a nonsense age is a nonsense INPUT, and inputs are
- * validated at the boundary. The century-inference quirk in `DatePicker` is a
- * separate shared-primitive concern and is left alone deliberately.
+ * validated at the boundary.
+ *
+ * UPDATE 2026-08-19: the `DatePicker` century inference IS now fixed — a
+ * two-digit year pivots on the field's own upper bound, and the date-of-birth
+ * field spells the year out. This clamp STAYS regardless. It guards the
+ * COLUMN's history, not the picker: `date_of_birth` has years of rows written
+ * by older builds, and "the input is validated now" was never the same claim
+ * as "every value already in the column is sane".
  */
 
 import { ageFromDOB } from '../../lib/finance';

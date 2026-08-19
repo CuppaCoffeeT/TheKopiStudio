@@ -62,8 +62,15 @@ interface PlanningToolFrameProps {
    * `BLANK_CUSTOMER` when none is chosen and the tool allows it. `customerId`
    * is null in the blank case, which is how a tool tells the two apart.
    * `isOwn` is false when a manager is reading another advisor's customer.
+   * `ownerId` is the customer's `user_id` — what a tool that WRITES must stamp,
+   * since RLS checks the owner and never the viewer.
    */
-  children: (customer: CrmClient, customerId: string | null, isOwn: boolean) => ReactNode;
+  children: (
+    customer: CrmClient,
+    customerId: string | null,
+    isOwn: boolean,
+    ownerId: string | null,
+  ) => ReactNode;
 }
 
 export function PlanningToolFrame({
@@ -176,7 +183,12 @@ export function PlanningToolFrame({
 
         {!loading && !failed && !notFound && (model || !requiresCustomer) && (
           <div data-testid={testId}>
-            {children(model ?? BLANK_CUSTOMER, model ? customerId : null, model ? isOwn : true)}
+            {children(
+              model ?? BLANK_CUSTOMER,
+              model ? customerId : null,
+              model ? isOwn : true,
+              model ? (row?.user_id ?? null) : null,
+            )}
           </div>
         )}
     </ToolPageShell>
