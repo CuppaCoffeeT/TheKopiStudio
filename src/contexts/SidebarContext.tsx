@@ -10,7 +10,9 @@
  * - **The "Others" group** is rendered twice — once in the rail, once in
  *   `AppNavDrawer` — from the same `AppSidebarNav`. Local state would let the
  *   two copies disagree the moment both are mounted (below lg the rail is
- *   `hidden`, not unmounted).
+ *   `hidden`, not unmounted). Note this is the CATCH-ALL group only: since
+ *   2026-08-19 the tools sit in their own always-open band above it, so this
+ *   flag no longer governs whether a tool is reachable.
  *
  * Both persist to localStorage: a navigation preference the advisor set once
  * should survive a reload, the same way the theme does. Reads are wrapped
@@ -45,7 +47,7 @@ interface SidebarState {
   /** True while the advisor has collapsed the rail away on >= lg. */
   railHidden: boolean;
   toggleRail: () => void;
-  /** True while the "Others" tool group is expanded. */
+  /** True while the "Others" catch-all group is expanded. */
   othersOpen: boolean;
   toggleOthers: () => void;
   /** Opens the group without toggling — used when a route inside it is active. */

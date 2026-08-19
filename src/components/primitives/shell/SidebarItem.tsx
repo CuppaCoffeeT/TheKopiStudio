@@ -1,10 +1,10 @@
 /**
  * SidebarItem — one navigation row, and the class tokens the rail is built from.
  *
- * Split out of `AppSidebarNav` so the nav's three consumers (the nav itself,
- * the "Others" disclosure, and any future band) share ONE definition of what a
- * rail row looks like. Two copies of these class strings would drift the first
- * time a state is retuned.
+ * Split out of `AppSidebarNav` so the nav's consumers (the nav itself, the
+ * "Tools" band, the "Others" disclosure, and any future band) share ONE
+ * definition of what a rail row looks like. Two copies of these class strings
+ * would drift the first time a state is retuned.
  *
  * Colour note: idle items are `--fg-muted` `#7D6B5B`, which clears AA on card
  * cream (4.72) and FAILS on page cream (4.12). Both homes paint card cream
@@ -38,6 +38,22 @@ export const IDLE = cn(
   'border-l-transparent text-muted-foreground',
   'hover:bg-[color:var(--surface-subtle)] hover:text-[color:var(--brown-text)]',
   'active:bg-[color:var(--tint-pressed)]',
+);
+
+/**
+ * A band heading — "Tools", "Others". `BAND_TEXT` is the type alone, for the
+ * "Others" button, which needs `ITEM_BASE` + `IDLE` around it; `BAND_LABEL` is
+ * the whole box, for the "Tools" heading, which is a static label rather than a
+ * control. Both keep the item box's left edge so a heading and its rows align.
+ * No touch floor on the label — it is not a target (.claude/rules/mobile-web.md
+ * §5). `--fg-muted` at 10px clears AA on the card cream this list is painted on
+ * (4.72) — the same measurement the row colours above are held to.
+ */
+export const BAND_TEXT = 'text-[10px] font-semibold uppercase tracking-[0.14em]';
+
+export const BAND_LABEL = cn(
+  'flex items-center border-l-2 border-l-transparent px-[22px] py-[9px] text-muted-foreground',
+  BAND_TEXT,
 );
 
 export const ACTIVE =

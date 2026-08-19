@@ -2,7 +2,7 @@
 
 Insurance CRM (SHIPPED): customers/policies/activity/bank + dashboards + reports. Routes `/dashboard`, `/crm`, `/clients` (+`/:id`, `/:id/report`), `/tools/*`, `/crm-reports`. Read docs/03-features/crm/CRM_MODULE.md + lib/decisions.md first.
 
-**IA (2026-08-18, tools are places):** the rail leads with Overview + Customers, collapses every tool into an "Others" disclosure, and pins Account Settings to the bottom. Each tool owns a top-level `/tools/*` route and asks "which customer?" INSIDE itself (`?customer=<id>`, `ToolCustomerBar`) — clearable back to a blank scratch pad. The old `/clients/:id/<tool>` URLs redirect. `lib/customerJourney` is still the ONE ruleset every surface reads for chain state — change it there, never per-page.
+**IA (2026-08-18, tools are places; rail shape revised 2026-08-19):** the rail leads with Overview + Customers, lists every tool under an always-open "Tools" heading below them, keeps an "Others" disclosure for modules no band claimed, and pins Account Settings to the bottom. Each tool owns a top-level `/tools/*` route and asks "which customer?" INSIDE itself (`?customer=<id>`, `ToolCustomerBar`) — clearable back to a blank scratch pad. The old `/clients/:id/<tool>` URLs redirect. `lib/customerJourney` is still the ONE ruleset every surface reads for chain state — change it there, never per-page.
 
 **Superseded (2026-07-28 → 2026-08-18):** "tools are launched FROM a customer, never from nav", and the Overview shortcut row that softened it. Both are gone: a shortcut that opens a modal before the page is a gate, and an advisor often has no customer yet. The record's own `CustomerToolLauncher` remains — it is the other direction of the same trip.
 

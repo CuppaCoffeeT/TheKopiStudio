@@ -11,7 +11,7 @@
  * WHAT WAS REMOVED (2026-08-18): `StartProfilerBand` and the tool-shortcut row
  * (TOOLS on a page about PEOPLE), and `QueueStatStrip` — four figures counting
  * the rows printed directly beneath them. Tools now live in the rail's
- * "Others" group, reachable from anywhere rather than only here.
+ * "Tools" band, reachable from anywhere rather than only here.
  *
  * PRIVACY: customer names are masked by default (`MaskContext`); the eye lives
  * in the app chrome, not per page. Band titles, reasons and the waiting count

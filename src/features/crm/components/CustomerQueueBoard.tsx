@@ -23,8 +23,8 @@
  * WHAT WAS REMOVED (2026-08-18): `QueueStatStrip`, the four figures that sat
  * above these bands, and the `belowStats` tool-shortcut slot. The figures
  * counted the same rows printed directly underneath them — an advisor read "3
- * reviews due", then read the three names. The tools moved to the sidebar's
- * "Others" group, where they are reachable from every page rather than only
+ * reviews due", then read the three names. The tools moved to the sidebar’s
+ * "Tools" band, where they are reachable from every page rather than only
  * this one.
  */
 

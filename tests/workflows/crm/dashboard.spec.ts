@@ -565,32 +565,44 @@ test.describe('advisor shell — sidebar rail navigation', () => {
     await expect(overview).toBeVisible();
     await expect(clients).toBeVisible();
 
-    // Everything else the advisor holds is COLLAPSED behind "Others"
-    // (2026-08-18) — reachable in one click, but not competing with the two
-    // destinations. Closed, it must hold no focusable link at all.
+    // The tools sit under a "Tools" heading, LISTED and never collapsed
+    // (2026-08-19, superseding the 2026-08-18 shape that hid them inside
+    // "Others"). No click should be needed to read what the toolbox holds.
     const nav = rail.getByRole('navigation', { name: 'Primary' });
-    const othersToggle = rail.getByTestId('app-sidebar-others-toggle');
-    await expect(othersToggle).toBeVisible();
 
     // Scope to the nav landmark, NOT the whole rail — the wordmark above it is
     // also a link and would shift every index by one.
     const labels = await nav.getByRole('link').allInnerTexts();
     expect(labels.slice(0, 2)).toEqual(['Overview', 'Customers']);
 
-    if ((await othersToggle.getAttribute('aria-expanded')) === 'true') {
-      await othersToggle.click();
-    }
-    await expect(othersToggle).toHaveAttribute('aria-expanded', 'false');
-    // Account Settings is pinned OUTSIDE the group, so it survives the collapse
-    // — that is the point of pinning it.
-    await expect(nav.getByRole('link', { name: 'Prospect Profiler', exact: true })).toHaveCount(0);
-
-    await othersToggle.click();
-    await expect(othersToggle).toHaveAttribute('aria-expanded', 'true');
+    // The heading is a real group label, not decoration — an AT user gets the
+    // same grouping the eye does.
+    const toolsGroup = nav.getByRole('group', { name: 'Tools' });
+    await expect(toolsGroup).toBeVisible({ timeout: 30_000 });
     await expect(
-      nav.getByRole('link', { name: 'Tax calculator', exact: true }),
-    ).toBeVisible({ timeout: 30_000 });
-    await expect(nav.getByRole('link', { name: 'Client Report', exact: true })).toBeVisible();
+      toolsGroup.getByRole('link', { name: 'Tax calculator', exact: true }),
+    ).toBeVisible();
+    await expect(toolsGroup.getByRole('link', { name: 'Client Report', exact: true })).toBeVisible();
+    await expect(
+      toolsGroup.getByRole('link', { name: 'Prospect Profiler', exact: true }),
+    ).toBeVisible();
+
+    // "Others" survives only as the catch-all for modules no band above claimed,
+    // and renders nothing when that set is empty — so its presence depends on
+    // what this advisor is granted. When it IS there it must still collapse,
+    // and collapsed it must leave no focusable link behind.
+    const othersToggle = rail.getByTestId('app-sidebar-others-toggle');
+    if ((await othersToggle.count()) > 0) {
+      if ((await othersToggle.getAttribute('aria-expanded')) === 'true') {
+        await othersToggle.click();
+      }
+      await expect(othersToggle).toHaveAttribute('aria-expanded', 'false');
+      // Collapsing the leftovers must never take a TOOL with it — that is the
+      // regression this pins.
+      await expect(
+        toolsGroup.getByRole('link', { name: 'Tax calculator', exact: true }),
+      ).toBeVisible();
+    }
 
     // Account Settings sits last, whatever the group is doing.
     const withGroup = await nav.getByRole('link').allInnerTexts();
