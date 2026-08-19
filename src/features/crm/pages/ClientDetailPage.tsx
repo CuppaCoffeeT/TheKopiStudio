@@ -2,21 +2,18 @@
  * ClientDetailPage — one customer's record (DETAIL archetype, route
  * /clients/:id — shares modulePath '/clients' with the list).
  *
- * This is the home of the customer-centred IA (Kopi Studio Directions turn 3a):
- * the six tools are launched from here, off `CustomerToolLauncher`, because
- * a tool always acts on a specific customer. Before that launcher existed the
- * chain was invisible from the record, and `/clients/:id/report` had no entry
- * point anywhere in the app.
+ * `CustomerToolLauncher` launches the six tools from here — the customer-first
+ * direction of the trip, kept when the tools also became places of their own at
+ * `/tools/*` (2026-08-18). Before it existed the chain was invisible from the
+ * record and the report had no entry point anywhere in the app.
  *
- * DetailPageFrame + TabNav over four tabs (Overview · Policies ·
- * Interactions · Bank history); `useClientDetail` fetches the client row and
- * the three child collections in parallel on detail(id) sub-keys. Header meta
- * carries risk profile, review frequency and the follow-up badge (earliest
- * future interaction follow-up, else next review — lib/followUps). Edit
- * opens ClientFormModal in edit mode; Delete is a confirm → soft delete →
- * navigate back (inside the mutation hook). A client owned by another
- * advisor (manager/super_admin read-everything) renders fully read-only —
- * every mutation affordance hidden, profiler's ReadOnlyHint pattern.
+ * DetailPageFrame + TabNav over four tabs (Overview · Policies · Activity ·
+ * Bank history); `useClientDetail` fetches the client row and its child
+ * collections in parallel on detail(id) sub-keys, and `useCustomerActivity`
+ * adds the merged automatic+manual timeline. Header meta carries risk profile,
+ * review frequency and the follow-up badge (lib/followUps). Edit opens
+ * ClientFormModal; Delete is a confirm → soft delete → navigate back. Another
+ * advisor's customer renders fully read-only.
  */
 
 import { useMemo, useState } from 'react';
@@ -28,7 +25,7 @@ import { ErrorState } from '@/components/primitives/shell/ErrorState';
 import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
 import { NoResultsState } from '@/components/primitives/shell/NoResultsState';
 import { useAuth } from '@/contexts/AuthContext';
-import { CUSTOMER_PARAM } from '@/lib/toolRoutes';
+import { toolHref, toolRouteByKey } from '@/lib/toolRoutes';
 import { getCurrentSingaporeTime } from '@/utils/timezoneUtils';
 import { resolveClientFollowUp } from '../lib/followUps';
 import { clientFromRow } from '../lib/clientMapping';
@@ -111,14 +108,7 @@ export default function ClientDetailPage() {
               `Risk: ${model.riskProfile}`,
               `Review: ${model.reviewFrequency}`,
               ...(followUp?.badge
-                ? [
-                    <FollowUpBadge
-                      key="follow-up"
-                      date={followUp.date}
-                      refDate={refDate}
-                      testId="clients-detail-follow-up-badge"
-                    />,
-                  ]
+                ? [<FollowUpBadge key="follow-up" date={followUp.date} refDate={refDate} testId="clients-detail-follow-up-badge" />]
                 : []),
             ]
           : undefined
@@ -163,9 +153,10 @@ export default function ClientDetailPage() {
             onOpenProfile={(resultId) => navigate(`/profiler-results/${resultId}`)}
             onEditInformation={() => setEditOpen(true)}
             onOpenReport={() => navigate(`/clients/${id}/report`)}
-            onOpenTax={() => navigate(`/tools/tax-calculator?${CUSTOMER_PARAM}=${id}`)}
-            onOpenSrs={() => navigate(`/tools/srs?${CUSTOMER_PARAM}=${id}`)}
-            onOpenLegacy={() => navigate(`/tools/legacy-planner?${CUSTOMER_PARAM}=${id}`)}
+            // Straight at the new routes, not through the redirect.
+            onOpenTax={() => navigate(toolHref(toolRouteByKey('tax'), id))}
+            onOpenSrs={() => navigate(toolHref(toolRouteByKey('srs'), id))}
+            onOpenLegacy={() => navigate(toolHref(toolRouteByKey('legacy'), id))}
           />
           <OverviewTab client={model} linkedResults={linkedResults} />
         </>
@@ -174,12 +165,7 @@ export default function ClientDetailPage() {
         <PoliciesTab clientId={id} readOnly={!isOwn} policies={policies} />
       )}
       {model && id && tab === 'activity' && (
-        <ActivityTab
-          clientId={id}
-          readOnly={!isOwn}
-          activity={activity}
-          interactions={interactions}
-        />
+        <ActivityTab clientId={id} readOnly={!isOwn} activity={activity} interactions={interactions} />
       )}
       {model && id && tab === 'bank' && (
         <BankHistoryTab clientId={id} readOnly={!isOwn} client={model} bankHistory={bankHistory} />

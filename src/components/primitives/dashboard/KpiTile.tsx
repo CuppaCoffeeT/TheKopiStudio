@@ -38,13 +38,10 @@ interface KpiTileProps {
   compact?: boolean;
   /** Disable count-up animation (e.g. SSR / fast refresh). */
   animate?: boolean;
-  /**
-   * Hide the figure behind the privacy run, keeping the label and subtitle
-   * readable. A prop rather than a masked STRING passed as `value` because the
-   * tile owns its formatting, its count-up and its tabular alignment — a caller
-   * that hands it "******" loses all three, and the next caller formats the
-   * asterisks differently.
-   */
+  /** Hide the figure behind the privacy run; label + subtitle stay readable.
+   *  A prop, not a masked STRING as `value`: the tile owns its formatting,
+   *  count-up and tabular alignment, and a caller passing "******" loses all
+   *  three. */
   masked?: boolean;
   /** Optional sparkline slot — usually <AreaChart> from charts primitives. */
   sparkline?: ReactNode;
@@ -168,8 +165,7 @@ export const KpiTile = forwardRef<HTMLDivElement, KpiTileProps>(function KpiTile
             {prefix}
           </span>
         )}
-        {/* The currency prefix goes too: "$******" still says "this is money
-            and there is some", which is most of what the eye is hiding. */}
+        {/* The prefix goes too: "$******" still says "this is money". */}
         {masked ? (
           <span style={{ color: 'var(--fg-dim)', letterSpacing: '0.08em' }}>******</span>
         ) : animate ? (

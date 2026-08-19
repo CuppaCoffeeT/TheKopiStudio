@@ -1,32 +1,24 @@
 /**
  * PlanningToolFrame — the shell every planning tool renders inside.
  *
- * ROUTE SHAPE CHANGED 2026-08-18. The tools used to be sub-routes of a customer
- * (`/clients/:id/tax-calculator`) and read `useParams().id`, which made them
- * unreachable from navigation without first answering "which customer?" in a
- * modal. They are now top-level `/tools/*` routes and read `?customer=<id>`,
- * with `ToolCustomerBar` asking that question INSIDE the page — optional,
- * changeable, and clearable back to a blank tool. The old customer sub-routes
- * redirect here (see `src/App.tsx`), so links and bookmarks keep working.
+ * ROUTE SHAPE CHANGED 2026-08-18: the tools moved from `/clients/:id/<tool>` to
+ * top-level `/tools/*` and read `?customer=<id>`, with `ToolCustomerBar` asking
+ * "which customer?" INSIDE the page — optional, changeable, clearable. The old
+ * sub-routes redirect (src/App.tsx). Reasoning: planning/decisions.md.
  *
- * A tool therefore has TWO valid states, and both are first class:
+ * A tool has TWO valid states, both first class:
  *
- * - **Customer chosen** — the record loads and `children` receives the real
- *   model. Same behaviour as before.
- * - **No customer** — `children` receives a BLANK model, so a calculator opens
- *   as a scratch pad. Tools that cannot mean anything without a customer set
- *   `requiresCustomer` and get a prompt instead of a blank form; the Legacy Map
- *   is the only one, because its plan is PERSISTED against a customer row and
- *   there is nowhere to save a plan for nobody.
+ * - **Customer chosen** — the record loads; `children` gets the real model.
+ * - **No customer** — `children` gets a BLANK model, so a calculator opens as a
+ *   scratch pad. A tool whose output is PERSISTED sets `requiresCustomer` and
+ *   gets a prompt instead; the Legacy Map is the only one, because there is
+ *   nowhere to save a plan for nobody.
  *
  * Loading / error / not-found stay here so the tools remain pure calculators.
- * `children` is only called once the page has something coherent to render.
  */
 
 import type { ReactNode } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/primitives/shell/Button';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ErrorState } from '@/components/primitives/shell/ErrorState';
 import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
 import { NoResultsState } from '@/components/primitives/shell/NoResultsState';
@@ -38,6 +30,7 @@ import { useLogToolOpen } from '../../hooks/useLogToolOpen';
 import { clientFromRow } from '../../lib/clientMapping';
 import { EMPTY_CLIENT } from '../../components/modals/client/clientFormModel';
 import { ToolCustomerBar } from '../../components/ToolCustomerBar';
+import { PlanningToolHeader } from './PlanningToolHeader';
 import type { CrmClient } from '../../types';
 
 /** The scratch-pad model. Reuses the form's blank so a newly added client
@@ -120,48 +113,14 @@ export function PlanningToolFrame({
   return (
     <div className="bg-background px-4 py-6 sm:px-10 sm:py-[34px]">
       <div className="mx-auto max-w-5xl">
-        <nav className="mb-3 text-[12px] text-[color:var(--fg-dim)]" aria-label="Breadcrumb">
-          <Link to="/dashboard" className="hover:text-[color:var(--brown-text)]">
-            Overview
-          </Link>
-          <span className="mx-1.5">/</span>
-          <span className="text-foreground">{title}</span>
-        </nav>
-
-        <div className="mb-8 flex items-end justify-between gap-4 border-b border-border pb-5">
-          <div className="min-w-0">
-            <h1
-              className="m-0 text-[38px] leading-[1.1] tracking-[-0.018em] text-foreground"
-              style={{ fontFamily: 'var(--font-pixel)' }}
-            >
-              <span
-                className="mr-2 text-[20px] text-[color:var(--brand-brown)]"
-                aria-hidden="true"
-              >
-                {index}
-              </span>
-              {title}
-            </h1>
-            <p className="m-0 mt-1.5 text-[12.5px] leading-[1.6] text-[color:var(--fg-dim)]">
-              {description}
-            </p>
-          </div>
-
-          {/* Only offered once there is a customer to go back TO. Reached from
-              navigation with no customer, this button pointed at `/clients`
-              and read as "Back" to a page you were never on. */}
-          {model && customerId && (
-            <Button
-              variant="outline"
-              className="flex-none pointer-coarse:min-h-11"
-              leadingIcon={<ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />}
-              onClick={() => navigate(`/clients/${customerId}`)}
-              data-testid={`${testId}-back`}
-            >
-              Back to customer
-            </Button>
-          )}
-        </div>
+        <PlanningToolHeader
+          title={title}
+          description={description}
+          index={index}
+          testId={testId}
+          customerId={model ? customerId : null}
+          onBack={(next) => navigate(`/clients/${next}`)}
+        />
 
         <ToolCustomerBar
           value={customerId}

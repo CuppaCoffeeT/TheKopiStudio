@@ -8,28 +8,19 @@
  * most-urgent-first (reviews coming up → unfinished work → no contact in 14
  * days), closed by the queue rule.
  *
- * WHAT WAS REMOVED (2026-08-18): `StartProfilerBand` and the tool-shortcut row,
- * both of which put TOOLS on a page that is about PEOPLE, and `QueueStatStrip`,
- * four figures that counted the rows printed immediately beneath them. Every
- * tool now lives in the sidebar's collapsible "Others" group, reachable from
- * anywhere instead of only from here. What is left is a greeting, a quote, and
- * the list of who needs the advisor today.
+ * WHAT WAS REMOVED (2026-08-18): `StartProfilerBand` and the tool-shortcut row
+ * (TOOLS on a page about PEOPLE), and `QueueStatStrip` — four figures counting
+ * the rows printed directly beneath them. Tools now live in the rail's
+ * "Others" group, reachable from anywhere rather than only here.
  *
- * PRIVACY: customer names on this page are masked by default (`MaskContext` +
- * `SensitiveName`). The eye that reveals them lives in the app chrome — the
- * rail footer above lg, the mobile bar below it — NOT on this page: it governs
- * every masked surface, so a per-page copy would be one of several controls for
- * one switch. The queue's own copy — band titles, reasons, counts of waiting
- * customers — is NOT masked; it says how much work there is, not whose.
+ * PRIVACY: customer names are masked by default (`MaskContext`); the eye lives
+ * in the app chrome, not per page. Band titles, reasons and the waiting count
+ * are NOT masked — they say how much work there is, not whose.
  *
- * WHAT THIS REPLACED (2026-07-28): a "Latest additions" feed over two index KPI
- * cards. That page was a *record inventory* — newest-first rows with no notion
- * of whether anything needed doing — which is exactly the tool-shaped IA the
- * customer-centred direction retires. Its four modules had NO other adopter
- * (`/crm` builds its own four-figure row from `KpiTile`), so they were deleted
- * rather than left orphaned: `useLatestAdditions`, `LatestAdditionsTable`,
- * `OverviewKpiRow`, `lib/latestAdditions`. The `KpiIndexCard` PRIMITIVE they
- * used survives in `primitives/dashboard` for the next adopter.
+ * WHAT THIS REPLACED (2026-07-28): a "Latest additions" record-inventory
+ * feed over two index KPI cards, and the four modules that served only it
+ * (`useLatestAdditions`, `LatestAdditionsTable`, `OverviewKpiRow`,
+ * `lib/latestAdditions`). The `KpiIndexCard` primitive survives.
  *
  * Every figure and row is live data derived by ONE ruleset
  * (`lib/customerJourney` + `lib/customerAttention`) shared with the Customers list and the customer
@@ -76,12 +67,11 @@ import { quoteForDate } from '@/lib/dailyQuote';
 import { getSingaporeGreeting } from '@/utils/dashboardHelpers';
 import { getLocalDateString } from '@/utils/timezoneUtils';
 import { CustomerQueueBoard } from '../components/CustomerQueueBoard';
-import type { QueueRowAction } from '../components/CustomerQueueSection';
 import { AddCustomerChoiceModal } from '../components/modals/AddCustomerChoiceModal';
 import { ClientFormModal } from '../components/modals/ClientFormModal';
 import { useCustomerQueue } from '../hooks/useCustomerQueue';
-import { PROFILER_PATH, profilerHrefFor } from '../lib/profilerEntry';
-import type { QueueCustomer } from '../api/customerQueueService';
+import { useQueueRowAction } from '../hooks/useQueueRowAction';
+import { PROFILER_PATH } from '../lib/profilerEntry';
 
 const CLIENTS_PATH = '/clients';
 
@@ -111,29 +101,7 @@ export default function DashboardHomePage() {
   const queueQuery = useCustomerQueue(hasClients);
   const queue = queueQuery.data;
 
-  /**
-   * The single action each queue row offers: whatever the customer's chain says
-   * comes next, falling back to opening the record. Resolved here rather than
-   * inside the section component so the routing decision stays on the page that
-   * owns the router.
-   */
-  const resolveAction = (customer: QueueCustomer): QueueRowAction => {
-    const open = { label: 'Open', onClick: () => navigate(`/clients/${customer.id}`) };
-    if (customer.journey.nextStep === 'profiler' && canProfile) {
-      // Carry BOTH halves of the entry contract: the name so the advisor
-      // never retypes it, and the id so the saved profile lands ON this
-      // customer. Name-only sent the advisor back to a row that still said
-      // "never profiled" after they had just profiled them.
-      return {
-        label: 'Start profiler',
-        onClick: () => navigate(profilerHrefFor(customer)),
-      };
-    }
-    if (customer.journey.nextStep === 'info') {
-      return { label: 'Complete info', onClick: () => navigate(`/clients/${customer.id}`) };
-    }
-    return open;
-  };
+  const resolveAction = useQueueRowAction();
 
   const handleChoice = (choice: 'profiler' | 'empty') => {
     setChoiceOpen(false);

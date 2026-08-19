@@ -35,66 +35,9 @@ import { Button } from '@/components/primitives/shell/Button';
 import { Card, CardDescription, CardTitle } from '@/components/primitives/shell/Card';
 import { ErrorState } from '@/components/primitives/shell/ErrorState';
 import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
-import { KpiTile } from '@/components/primitives/dashboard/KpiTile';
 import { useMask } from '@/contexts/MaskContext';
-import { describeIlpExclusion } from '../lib/ilpExclusion';
+import { CrmKpiGrid } from '../components/CrmKpiGrid';
 import { useDashboardStats } from '../hooks/useDashboardStats';
-import type { CrmDashboardStats } from '../types';
-
-function KpiGrid({
-  stats,
-  masked,
-  onClientsClick,
-}: {
-  stats: CrmDashboardStats;
-  masked: boolean;
-  onClientsClick: () => void;
-}) {
-  return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <KpiTile
-        label="Total clients"
-        value={stats.totalClients}
-        icon={Users}
-        subtitle="Clients in your book"
-        masked={masked}
-        onClick={onClientsClick}
-        testId="crm-kpi-total-clients"
-      />
-      <KpiTile
-        label="Active policies"
-        value={stats.activePolicies}
-        icon={ShieldCheck}
-        subtitle="Policies with Active status"
-        masked={masked}
-        testId="crm-kpi-active-policies"
-      />
-      <KpiTile
-        label="Annual premium"
-        value={stats.totalAnnualPremium}
-        prefix="$"
-        icon={Wallet}
-        // The subtitle NAMES what the figure left out when the ILP rule
-        // dropped something (lib/ilpExclusion). Silence there is what makes a
-        // correct total read as a wrong one.
-        subtitle={
-          stats.excludedIlp.count > 0
-            ? `Annualised across the book · ${describeIlpExclusion(stats.excludedIlp)}`
-            : 'Annualised across the book'
-        }
-        masked={masked}
-        testId="crm-kpi-annual-premium"
-      />
-      <KpiTile
-        label="Upcoming follow-ups"
-        value={stats.upcomingFollowUps}
-        icon={CalendarClock}
-        subtitle="Scheduled after today"
-        testId="crm-kpi-upcoming-follow-ups"
-      />
-    </div>
-  );
-}
 
 /** Empty book — the import has not landed yet, or the advisor is starting fresh. */
 function EmptyBookCard({ onAddClick }: { onAddClick: () => void }) {
@@ -191,7 +134,7 @@ export default function CrmDashboardPage() {
 
       {stats && (
         <div className="space-y-6">
-          <KpiGrid stats={stats} masked={masked} onClientsClick={goToClients} />
+          <CrmKpiGrid stats={stats} masked={masked} onClientsClick={goToClients} />
           {stats.totalClients === 0 ? (
             <EmptyBookCard onAddClick={goToClients} />
           ) : (

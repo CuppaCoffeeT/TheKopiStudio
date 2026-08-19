@@ -1,19 +1,15 @@
 /**
  * /tools/tax-calculator — Singapore resident income tax, YA 2025/2026.
  *
- * Tool 04. Opens with or without a customer: pick one in the bar at the top and
- * age pre-fills from their date of birth and gross income from their annual
- * income, so an advisor sitting with someone can go straight to the reliefs.
- * With nobody chosen it is a blank calculator, which is what a walk-in or a
- * what-if actually needs.
+ * Tool 04. Opens with OR without a customer: pick one in the bar at the top and
+ * age + gross income pre-fill from their record; with nobody chosen it is a
+ * blank calculator, which is what a walk-in or a what-if needs.
  *
- * Every figure on the page comes from a single `assessTax` call — the relief
- * rows, the summary ladder and the headline all read the same result object,
- * so a row can never disagree with the total beside it.
+ * Every figure comes from a single `assessTax` call — the relief rows, the
+ * summary ladder and the headline all read the same result object, so a row can
+ * never disagree with the total beside it.
  *
- * Nothing here is persisted. The tool is a conversation aid: change the inputs
- * freely, and the customer's record is untouched. That is stated on the page
- * so nobody expects a Save button that does not exist.
+ * Nothing here is persisted; the page says so, since there is no Save button.
  */
 
 import { useMemo, useState } from 'react';
@@ -194,8 +190,7 @@ export default function TaxCalculatorPage() {
       activityTool="tax-calculator"
       blankHint="No customer chosen — the calculator starts blank. Pick one to pre-fill age and income."
     >
-      {/* Keyed on the customer so switching re-seeds the inputs: every field
-          here is `useState`-initialised, and an initialiser does not re-run. */}
+      {/* Keyed on the customer so switching re-seeds `useState` initialisers. */}
       {(customer, customerId) => (
         <TaxCalculator key={customerId ?? 'blank'} customer={customer} named={Boolean(customerId)} />
       )}

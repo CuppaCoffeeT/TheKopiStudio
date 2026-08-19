@@ -1,37 +1,20 @@
 /**
- * ClientReportPage — printable per-client financial report.
+ * ClientReportPage — resolves the customer, then hands off to `ReportCanvas`.
  *
- * TWO ROUTES, one component (2026-08-18):
- *   `/clients/:id/report`             — from the customer record, as before.
- *   `/tools/client-report?customer=…` — from navigation, with the customer
- *                                       picker at the top of the page.
- * The customer resolves from whichever the URL carries, so the report itself is
- * written once. Reached with no customer at all, the page is the picker and
- * nothing else — there is no report to print for nobody.
+ * TWO ROUTES, one component (2026-08-18): `/clients/:id/report` from the
+ * record, `/tools/client-report?customer=…` from navigation with the picker at
+ * the top. The customer resolves from whichever the URL carries. Reached with
+ * no customer at all, the page IS the picker — there is no report for nobody.
  *
- * NO COMPLETENESS GATE (2026-08-18). The report used to be unreachable until
- * the profiler and the customer information were both marked done. It now
- * generates from whatever is on file at any stage: blank fields print `NIL`
- * (`lib/reportCompleteness`), and `ReportMissingInfo` heads the document with a
- * named list of what is missing and which tool fills it. A report that says
- * what it does not know is more useful at a first meeting than no report.
+ * NO COMPLETENESS GATE (2026-08-18): it generates at any stage, prints `NIL`
+ * for blanks and heads the document with what is missing. NEVER MASKED — this
+ * IS the client-facing artifact. Both decisions: lib/decisions.md.
  *
- * NEVER MASKED. This page ignores the privacy eye (`MaskContext`) on purpose —
- * it IS the client-facing artifact, and a printed PDF of asterisks is not a
- * report.
- *
- * PRINT-FIRST CONTRACT (lib/report-print.css): this page is a dedicated
- * report canvas, NOT a DetailPageFrame — the `.report-canvas` is locked to
- * white/dark-ink on screen AND print (the dark-mode pairing rule is waived
- * for report pages by design; the screen preview IS the printed artifact).
- * The top action bar is `.no-print`; `.report-print-root` scopes printing to
- * the report alone; PDF stays window.print().
- *
- * ALL client/policy money math comes from lib (summariseClient · heroTotals ·
- * assessRetirementReadiness · section components' lib calls) — this page only
- * wires lib outputs into sections. Section render conditions are the legacy
- * ClientReportModal.jsx ones (cash value / hospitalization / ILP sections
- * appear only when matching policies exist).
+ * PRINT-FIRST CONTRACT (lib/report-print.css): a dedicated report canvas, NOT
+ * a DetailPageFrame — `.report-canvas` is locked to white/dark-ink on screen
+ * AND print (the screen preview IS the printed artifact). The action bar and
+ * the picker are `.no-print`; `.report-print-root` scopes printing to the
+ * report alone; PDF stays window.print().
  */
 
 import { useMemo } from 'react';
@@ -43,27 +26,13 @@ import { Card } from '@/components/primitives/shell/Card';
 import { ErrorState } from '@/components/primitives/shell/ErrorState';
 import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
 import { NoResultsState } from '@/components/primitives/shell/NoResultsState';
-import { ageFromDOB, currentRefYear, summariseClient, toFloat } from '../lib/finance';
-import { assessRetirementReadiness, heroTotals } from '../lib/financeReport';
 import { clientFromRow } from '../lib/clientMapping';
+import { buildReportModel } from '../lib/reportModel';
 import { reportGaps } from '../lib/reportCompleteness';
 import { useClientDetail } from '../hooks/useClientDetail';
 import { useLogToolOpen } from '../hooks/useLogToolOpen';
 import { ToolCustomerBar } from '../components/ToolCustomerBar';
-import { ReportMissingInfo } from '../components/report/ReportMissingInfo';
-import { ReportCashValue } from '../components/report/ReportCashValue';
-import { ReportClientProfile } from '../components/report/ReportClientProfile';
-import { ReportCoverageAnalysis } from '../components/report/ReportCoverageAnalysis';
-import { ReportCoverageGaps } from '../components/report/ReportCoverageGaps';
-import { ReportCpfProjection } from '../components/report/ReportCpfProjection';
-import { ReportDisclaimer } from '../components/report/ReportDisclaimer';
-import { ReportHealthSnapshot } from '../components/report/ReportHealthSnapshot';
-import { ReportHero } from '../components/report/ReportHero';
-import { ReportHospitalization } from '../components/report/ReportHospitalization';
-import { ReportIlpAnalysis } from '../components/report/ReportIlpAnalysis';
-import { ReportInteractionHistory } from '../components/report/ReportInteractionHistory';
-import { ReportPolicyPortfolio } from '../components/report/ReportPolicyPortfolio';
-import { ReportRetirementProjection } from '../components/report/ReportRetirementProjection';
+import { ReportCanvas } from '../components/report/ReportCanvas';
 import '../lib/report-print.css';
 
 export default function ClientReportPage() {
@@ -115,41 +84,14 @@ export default function ClientReportPage() {
     Boolean(id) &&
     (client.isError || policies.isError || interactions.isError || bankHistory.isError);
 
-  const refYear = currentRefYear();
-  const currentAge = model ? ageFromDOB(model.dateOfBirth || null, refYear) : 0;
-  // ClientReportModal.jsx:65 — age math only (money math lives in lib).
-  const yearsTo55 = Math.max(0, 55 - currentAge);
-
-  const summary = model
-    ? summariseClient({ annualIncome: model.annualIncome, policies: policyList })
-    : null;
-  const hero = model
-    ? heroTotals(
-        {
-          dateOfBirth: model.dateOfBirth || null,
-          totalBankBalance: model.totalBankBalance,
-          policies: policyList,
-        },
-        refYear,
-      )
-    : null;
-  const readiness = model
-    ? assessRetirementReadiness(
-        {
-          dob: model.dateOfBirth || null,
-          yearsTo55,
-          cpfOA: toFloat(model.cpfOA),
-          cpfSA: toFloat(model.cpfSA),
-          cpfMA: toFloat(model.cpfMA),
-        },
-        refYear,
-      )
-    : null;
-
-  // Legacy section conditions (ClientReportModal.jsx:25-27).
-  const cashValuePolicies = policyList.filter((p) => p.hasCashValue);
-  const hospitalPolicies = policyList.filter((p) => p.isHospitalization);
-  const investmentPolicies = policyList.filter((p) => p.isInvestmentLinked);
+  // Every figure the canvas prints, derived in one pure call (lib/reportModel).
+  const derived = useMemo(
+    () => (model ? buildReportModel(model, policyList) : null),
+    // `policies.data` identity is stable per fetch (React Query structural
+    // sharing), so this recomputes only when the record or the policies change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [model, policies.data],
+  );
 
   /**
    * What the record could not supply — printed above the hero, never hidden.
@@ -224,47 +166,15 @@ export default function ClientReportPage() {
           </Card>
         )}
 
-        {model && summary && hero && readiness && (
-          <article className="report-canvas" data-testid="report-canvas">
-            <ReportMissingInfo gaps={gaps} />
-            <ReportHero
-              name={model.name}
-              policyCount={policyList.length}
-              summary={summary}
-              hero={hero}
-            />
-            <ReportHealthSnapshot
-              summary={summary}
-              policies={policyList}
-              cpfAchievementPct={readiness.cpfAchievementPct}
-            />
-            <ReportClientProfile
-              client={model}
-              currentAge={currentAge}
-              yearsToRetirement={hero.yearsToRetirement}
-              income={summary.income}
-            />
-            <ReportCoverageAnalysis summary={summary} yearsToRetirement={hero.yearsToRetirement} />
-            {cashValuePolicies.length > 0 && <ReportCashValue policies={cashValuePolicies} />}
-            {hospitalPolicies.length > 0 && <ReportHospitalization policies={hospitalPolicies} />}
-            {investmentPolicies.length > 0 && <ReportIlpAnalysis policies={investmentPolicies} />}
-            {/* Sections [8]/[9] self-guard (CPF balance / bank-or-ILP). */}
-            <ReportCpfProjection client={model} currentAge={currentAge} refYear={refYear} />
-            <ReportRetirementProjection
-              client={model}
-              policies={policyList}
-              bankHistory={bankList}
-              income={summary.income}
-              refYear={refYear}
-            />
-            <ReportPolicyPortfolio policies={policyList} />
-            <ReportCoverageGaps summary={summary} yearsToRetirement={hero.yearsToRetirement} />
-            <ReportInteractionHistory interactions={interactionList} />
-            <ReportDisclaimer
-              currentAge={currentAge}
-              yearsToRetirement={hero.yearsToRetirement}
-            />
-          </article>
+        {model && derived && (
+          <ReportCanvas
+            client={model}
+            policies={policyList}
+            interactions={interactionList}
+            bankHistory={bankList}
+            gaps={gaps}
+            {...derived}
+          />
         )}
       </div>
     </div>

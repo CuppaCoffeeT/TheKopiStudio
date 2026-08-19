@@ -111,9 +111,8 @@ export function riskLabel(client: CrmClient, state: RowState): string {
 /**
  * Last-contact cell, badged terracotta once the customer has gone quiet.
  *
- * A lowercase BUILDER, not a component: this file's job is the row model, and
- * exporting one component beside the helpers trips `react-refresh/only-export-
- * components` on every other export in the file.
+ * A lowercase BUILDER, not a component: exporting one component beside these
+ * helpers trips `react-refresh/only-export-components` on every other export.
  */
 export function contactCell(client: CrmClient, state: RowState): ReactNode {
   if (state.isQuiet) {
@@ -151,23 +150,20 @@ export function buildCustomerRow(
     {
       key: 'name',
       grow: 2,
+      // Name + contact are masked by the privacy eye — what a shoulder cannot
+      // read is WHO, not that there is a row here.
       content: (
         <span className="flex min-w-0 flex-col">
-          {/* Masked by the privacy eye. The row stays clickable and its
-              position stays stable — what a shoulder cannot read is WHO. */}
           <span className="truncate font-medium">
             <SensitiveName value={client.name} />
           </span>
-          {/* --fg-dim for the same bare-row reason as ContactCell above:
-              `DataRowCells` makes this step for its own `muted` cells, but
-              content passed INTO a cell has to make it itself. */}
+          {/* --fg-dim for the bare-row reason ContactCell gives below: content
+              passed INTO a cell must make that step itself. "No contact on
+              file" is a STATUS, not a detail — never masked. */}
           <span className="truncate text-[11.5px] text-[color:var(--fg-dim)]">
-            {client.email || client.phone ? (
-              <SensitiveText value={client.email || client.phone} />
-            ) : (
-              // Not masked: "no contact on file" is a STATUS, not a detail.
-              'No contact on file'
-            )}
+            {client.email || client.phone
+              ? <SensitiveText value={client.email || client.phone} />
+              : 'No contact on file'}
           </span>
         </span>
       ),
@@ -186,19 +182,13 @@ export function buildCustomerRow(
     {
       key: 'risk',
       width: 124,
-      content: (
-        <Badge variant="outline" data-testid={`clients-risk-chip-${client.id}`}>
-          {riskLabel(client, state)}
-        </Badge>
-      ),
+      content: <Badge variant="outline" data-testid={`clients-risk-chip-${client.id}`}>{riskLabel(client, state)}</Badge>,
     },
     { key: 'added', width: 104, content: <DateCell value={client.createdDate || null} /> },
     {
       key: 'progress',
       width: 168,
-      content: (
-        <JourneyChecklist journey={state.journey} testId={`clients-progress-${client.id}`} />
-      ),
+      content: <JourneyChecklist journey={state.journey} testId={`clients-progress-${client.id}`} />,
     },
     { key: 'contact', width: 140, content: contactCell(client, state) },
   );

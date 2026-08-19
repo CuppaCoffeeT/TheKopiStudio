@@ -13,68 +13,23 @@
  * from "opened a calculator" would reset that clock without anyone having
  * spoken. The button is quiet because it is now the exception, not the routine.
  *
- * TWO KINDS OF ROW, and only one is editable:
- *
- * - **Manual** (`interactions`) — keeps the old Edit / Delete row actions and
- *   their exact testids. A human typed it, so a human can correct it, and the
- *   E2E cleanup path (`ClientsPage.deleteAllChildRows('interactions')`) still
- *   finds what it needs.
- * - **Automatic** (`customer_activity`) — no actions at all. The table carries
- *   no UPDATE or DELETE policy; an audit trail the audited party can rewrite is
- *   not one, and offering a control RLS would refuse is worse than offering
- *   none.
- *
- * An edit entry expands to its field-level diff — `Annual income: $4,500 →
- * $5,000` — which is the difference between a log that says the tool ran and
- * one that says what it did.
- *
- * Names inside entries are NOT masked here: you are already looking at this
- * customer's record, so the eye has nothing left to protect on this page.
+ * This file owns the query, the header affordance and the two modals;
+ * `ActivityRow` owns what one entry looks like and the manual-vs-automatic rule
+ * that decides whether it offers any controls at all.
  */
 
 import { useState } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { DestructiveConfirmDialog } from '@/components/primitives/detail/DestructiveConfirmDialog';
-import { Badge, type BadgeTone } from '@/components/primitives/shell/Badge';
 import { Button } from '@/components/primitives/shell/Button';
-import { formatDisplayDateLong, formatDisplayDateTimeLong } from '@/utils/timezoneUtils';
+import { formatDisplayDateLong } from '@/utils/timezoneUtils';
 import { useSoftDeleteInteraction } from '../../hooks/useInteractionMutations';
-import {
-  ACTIVITY_TOOL_LABEL,
-  formatChange,
-  type CustomerActivityEntry,
-} from '../../lib/customerActivity';
+import type { CustomerActivityEntry } from '../../lib/customerActivity';
 import type { CrmInteraction } from '../../types';
 import { InteractionFormModal } from '../modals/InteractionFormModal';
+import { ActivityRow } from './ActivityRow';
 import { ListSection } from './ListSection';
-import { RowActions } from './RowActions';
-
-/** Tone per activity kind. Manual contacts keep the interaction-type tones. */
-const TYPE_TONES: Record<string, BadgeTone> = {
-  customer_created: 'neutral',
-  profile_created: 'success',
-  profile_updated: 'success',
-  info_updated: 'info',
-  tool_opened: 'neutral',
-  report_generated: 'accent',
-  policy_changed: 'warning',
-  balance_updated: 'warning',
-  contact_logged: 'info',
-};
-
-/** The word printed on an entry's badge. */
-function badgeLabel(entry: CustomerActivityEntry): string {
-  if (entry.manual) return entry.summary;
-  if (entry.tool) return ACTIVITY_TOOL_LABEL[entry.tool] ?? entry.tool;
-  return entry.type === 'info_updated' ? 'Information' : 'Record';
-}
-
-/** The headline line of an entry. */
-function entryTitle(entry: CustomerActivityEntry): string {
-  if (!entry.manual) return entry.summary;
-  return entry.notes?.trim() ? entry.notes : 'Contact logged';
-}
 
 interface ActivityTabProps {
   clientId: string;
@@ -135,72 +90,20 @@ export function ActivityTab({ clientId, readOnly, activity, interactions }: Acti
         }
         testId="clients-activity"
       >
-        {rows.map((entry) => {
-          const interaction = entry.manual ? interactionById.get(entry.id) : undefined;
-          return (
-            <li
-              key={`${entry.manual ? 'manual' : 'auto'}-${entry.id}`}
-              data-testid={
-                entry.manual
-                  ? `clients-interaction-row-${entry.id}`
-                  : `clients-activity-row-${entry.id}`
-              }
-              className="flex flex-col gap-1.5 px-5 py-4 sm:flex-row sm:items-start sm:gap-4"
-            >
-              <span className="w-[136px] flex-none text-[11.5px] text-[color:var(--fg-dim)]">
-                {entry.manual && entry.loggedDate
-                  ? formatDisplayDateLong(entry.loggedDate)
-                  : formatDisplayDateTimeLong(entry.occurredAt)}
-              </span>
-
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Badge tone={TYPE_TONES[entry.type] ?? 'neutral'}>{badgeLabel(entry)}</Badge>
-                  <span className="text-[13px] text-foreground">{entryTitle(entry)}</span>
-                  {/* Only manual rows. See the docblock: the automatic table
-                      carries no UPDATE/DELETE policy, so a control here would
-                      be one RLS refuses. */}
-                  {!readOnly && interaction && (
-                    <RowActions
-                      onEdit={() => {
-                        setEditing(interaction);
-                        setFormOpen(true);
-                      }}
-                      onDelete={() => setDeleting(interaction)}
-                      editLabel={`Edit ${interaction.type} contact`}
-                      deleteLabel={`Delete ${interaction.type} contact`}
-                      editTestId={`clients-interaction-edit-btn-${interaction.id}`}
-                      deleteTestId={`clients-interaction-delete-btn-${interaction.id}`}
-                    />
-                  )}
-                </div>
-
-                {entry.changes.length > 0 && (
-                  <ul
-                    className="m-0 mt-1.5 list-none space-y-0.5 p-0"
-                    data-testid={`clients-activity-changes-${entry.id}`}
-                  >
-                    {entry.changes.map((change) => (
-                      <li
-                        key={change.field}
-                        className="text-[12px] leading-[1.6] text-[color:var(--fg-dim)]"
-                      >
-                        <span className="text-muted-foreground">{change.label}:</span>{' '}
-                        {formatChange(change)}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-
-                {entry.actorName && (
-                  <p className="m-0 mt-1 text-[11.5px] text-[color:var(--fg-dim)]">
-                    by {entry.actorName}
-                  </p>
-                )}
-              </div>
-            </li>
-          );
-        })}
+        {rows.map((entry) => (
+          <ActivityRow
+            key={`${entry.manual ? 'manual' : 'auto'}-${entry.id}`}
+            entry={entry}
+            // Read-only viewers get no model, so `ActivityRow` renders no
+            // controls — the same switch that hides them for automatic rows.
+            interaction={readOnly || !entry.manual ? undefined : interactionById.get(entry.id)}
+            onEdit={(interaction) => {
+              setEditing(interaction);
+              setFormOpen(true);
+            }}
+            onDelete={setDeleting}
+          />
+        ))}
       </ListSection>
 
       {!readOnly && (
