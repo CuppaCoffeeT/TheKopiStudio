@@ -49,7 +49,7 @@
  */
 
 import { Link } from 'react-router-dom';
-import { PanelLeft, PanelLeftClose } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSidebarState } from '@/contexts/SidebarContext';
 import { cn } from '@/lib/utils';
@@ -65,9 +65,10 @@ import { Wordmark } from './Wordmark';
 const SIDEBAR_WIDTH_CLASS = 'w-[200px]';
 export const SIDEBAR_OFFSET_CLASS = 'lg:pl-[200px]';
 
-/** Chrome-button box shared by the rail's collapse control and the floating
- *  re-open control, so the two read as one affordance in two positions. */
-const CHROME_BUTTON = cn(
+/** The rail's own collapse control. Quiet — it sits ON the rail's card cream
+ *  with nothing behind it, so it needs no border; the floating twin in
+ *  `AppChromeControls` does, because content scrolls under that one. */
+const RAIL_BUTTON = cn(
   'inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground',
   'hover:bg-[color:var(--surface-subtle)] hover:text-[color:var(--brown-text)]',
   'pointer-coarse:min-h-11 pointer-coarse:min-w-11',
@@ -82,31 +83,10 @@ export function AppSidebar() {
   // redirects — an empty rail reads as "you have no modules".
   if (loading || !user) return null;
 
-  /**
-   * Collapsed: the rail unmounts and leaves one floating control behind. It has
-   * to be `lg:` too — below that breakpoint the rail was never showing and the
-   * mobile bar's own menu button already owns this job, so a second floating
-   * hamburger would sit on top of the page for no reason.
-   */
-  if (railHidden) {
-    return (
-      <button
-        type="button"
-        onClick={toggleRail}
-        aria-label="Show navigation"
-        aria-expanded={false}
-        data-testid="app-sidebar-show"
-        className={cn(
-          'no-print print:hidden',
-          'fixed left-3 top-3 z-40 hidden lg:inline-flex',
-          'border border-sidebar-border bg-sidebar shadow-sm',
-          CHROME_BUTTON,
-        )}
-      >
-        <PanelLeft className="h-4 w-4" aria-hidden="true" />
-      </button>
-    );
-  }
+  // Collapsed: the rail unmounts entirely. The hamburger that brings it back
+  // lives in `AppChromeControls`, NOT here — a control that only exists inside
+  // the thing it reopens cannot reopen it.
+  if (railHidden) return null;
 
   return (
     <aside
@@ -131,17 +111,17 @@ export function AppSidebar() {
 
         {/* Hide the rail. iPad landscape and every desktop width get this; iPad
             portrait and phones are below `lg`, where `AppHeaderMobileBar`'s
-            menu button already opens `AppNavDrawer` — the behaviour the brief
-            asks to keep unchanged there. */}
+            menu button already opens `AppNavDrawer`. Same `Menu` glyph as the
+            floating twin, so one hamburger toggles the nav in both states. */}
         <button
           type="button"
           onClick={toggleRail}
           aria-label="Hide navigation"
           aria-expanded
           data-testid="app-sidebar-hide"
-          className={cn('-mr-1.5 flex-none', CHROME_BUTTON)}
+          className={cn('-mr-1.5 flex-none', RAIL_BUTTON)}
         >
-          <PanelLeftClose className="h-4 w-4" aria-hidden="true" />
+          <Menu className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
 

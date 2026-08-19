@@ -11,11 +11,10 @@
  * `ViewAsSelector` are the same primitives the retired masthead used, wired by
  * the same connector hooks through `useDashboardChrome`.
  *
- * `PrivacyToggle` joined them 2026-08-18. It is ONE switch governing every
- * masked surface (the Overview queue, the Customers list, the CRM figures), so
- * it belongs with the other account-level controls rather than repeated once
- * per page — five eyes for one boolean is how a user learns not to trust any
- * of them.
+ * The privacy eye briefly lived here (2026-08-18) and moved OUT again the next
+ * day: collapsing the rail took the eye with it, leaving a masked page with no
+ * way to unmask. It now sits in `AppChromeControls`, which the rail cannot
+ * take down with it.
  *
  * Placement: overlays open with `side="right"`. They are 256–320px wide against
  * a 200px rail, so the header's `bottom` placement would be collision-shoved
@@ -29,7 +28,6 @@
 import { useDashboardChrome } from '@/hooks/useDashboardChrome';
 import { AppHeaderUserMenu } from './AppHeaderUserMenu';
 import { NotificationsBell } from './NotificationsBell';
-import { PrivacyToggle } from './PrivacyToggle';
 import { ViewAsSelector } from './ViewAsSelector';
 
 export function AppSidebarFooter() {
@@ -55,7 +53,6 @@ export function AppSidebarFooter() {
       <div className="flex items-center gap-1 pl-1 pointer-coarse:[&_button]:min-h-11 pointer-coarse:[&_button]:min-w-11">
         <NotificationsBell {...chrome.notifications} side="right" align="end" />
         <ViewAsSelector {...chrome.viewAs} side="right" align="end" />
-        <PrivacyToggle testId="privacy-toggle-rail" />
       </div>
     </div>
   );

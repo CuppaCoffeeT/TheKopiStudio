@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import GlobalCommandPalette from '@/components/shared/app-shell/GlobalCommandPalette';
 import { AppSidebar, LoadingSpinner, SIDEBAR_OFFSET_CLASS } from '@/components/primitives/shell';
+import { AppChromeControls } from '@/components/primitives/shell/AppChromeControls';
 import { SidebarProvider, useSidebarState } from '@/contexts/SidebarContext';
 import { MaskProvider } from '@/contexts/MaskContext';
 import { cn } from '@/lib/utils';
@@ -36,6 +37,9 @@ const Shell: React.FC = () => {
           renders it itself), not here, so a page that composes no frame and no
           bar of its own ships with zero navigation on a phone. */}
       <AppSidebar />
+      {/* The nav hamburger + the privacy eye, in fixed corners. Outside the
+          rail on purpose — collapsing the rail used to hide the eye too. */}
+      <AppChromeControls />
       <div className={cn(!railHidden && SIDEBAR_OFFSET_CLASS, 'print:pl-0!')}>
         {/* Single Suspense boundary for any lazy-loaded protected route pages. */}
         <Suspense

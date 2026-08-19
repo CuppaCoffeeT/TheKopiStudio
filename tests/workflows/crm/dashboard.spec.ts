@@ -64,8 +64,8 @@
  * home-add-customer-btn), AddCustomerChoiceModal
  * (crm-add-customer-choice-modal, crm-add-customer-choice-empty),
  * ClientFormModal (crm-client-form-modal, crm-client-cancel-btn) and
- * AppSidebar (app-sidebar, app-sidebar-others-toggle, app-sidebar-hide,
- * app-sidebar-show).
+ * AppSidebar (app-sidebar, app-sidebar-others-toggle, app-sidebar-hide) and
+ * AppChromeControls (app-sidebar-show, privacy-toggle-chrome).
  *
  * Run: npx playwright test tests/workflows/crm/dashboard.spec.ts \
  *        --config=playwright.parallel.config.ts
@@ -596,13 +596,25 @@ test.describe('advisor shell — sidebar rail navigation', () => {
     const withGroup = await nav.getByRole('link').allInnerTexts();
     expect(withGroup[withGroup.length - 1]).toBe('Account Settings');
 
-    // The rail hides and comes back, leaving exactly one control behind.
+    // The rail hides and comes back, leaving its hamburger behind.
+    const eye = page.getByTestId('privacy-toggle-chrome');
+    await expect(eye).toBeVisible();
+
     await rail.getByTestId('app-sidebar-hide').click();
     await expect(rail).toHaveCount(0);
     const show = page.getByTestId('app-sidebar-show');
     await expect(show).toBeVisible({ timeout: 30_000 });
+
+    // THE REGRESSION THIS PINS (2026-08-19): the privacy eye used to live in
+    // the rail footer, so collapsing the rail took the eye with it and left a
+    // masked page with no way to unmask. Both controls are chrome now, and
+    // neither may depend on the other being open.
+    await expect(eye).toBeVisible();
+    await expect(eye).toHaveAttribute('aria-pressed', /true|false/);
+
     await show.click();
     await expect(page.getByTestId('app-sidebar')).toBeVisible({ timeout: 30_000 });
+    await expect(eye).toBeVisible();
 
     // NavLink stamps aria-current="page" on the matched item ONLY — that is the
     // active marker the 2px brown left border renders from.
