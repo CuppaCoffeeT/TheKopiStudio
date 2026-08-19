@@ -1,43 +1,27 @@
 /**
- * ToolCustomerBar — "who is this for?", asked INSIDE the tool.
+ * ToolCustomerBar (CRM) — the customer picker for tools that read `public.clients`:
+ * the tax calculator, the SRS planner, the Legacy Map and the client report.
  *
- * WHAT THIS REPLACED (2026-08-18): `ToolCustomerPickerModal`, a dialog that
- * stood between the advisor and the tool. Choosing a tool from navigation
- * opened a modal asking for a customer, and only then did the tool appear. That
- * inverted the real order of the work twice over — the advisor often has no
- * customer yet (a walk-in, a what-if), and even when they do, being stopped by
- * a dialog before seeing the page is a gate, not an aid.
- *
- * Now the tool opens immediately and this bar sits at the top of it. Picking a
- * customer writes `?customer=<id>` and the page re-seeds from their record;
- * clearing it returns the tool to a blank, independent scratch pad. The URL is
- * the state, so a filled-in tool is a shareable, bookmarkable link and the
- * browser Back button steps between customers.
+ * The MARKUP lives in `@/components/primitives/tools` (hoisted 2026-08-19 so
+ * the profiler, a feature workspace barred from importing `crm`, could open
+ * with the same bar). This file is the CRM half: the own-book query and
+ * nothing else.
  *
  * SCOPE: the advisor's OWN customers only — `useOwnClientOptions` filters on
  * `user_id` rather than leaning on RLS, which would put the whole firm's book
  * in a manager's dropdown (lib/lessons.md 2026-08-13: RLS answers *may I read
- * this row*, never *is this row mine*).
+ * this row*, never *is this row mine*). That boundary is the reason the fetch
+ * did NOT move to the shared lane with the markup — each tool family draws it
+ * for itself.
  *
- * `SearchableMultiSelect` in single-select mode is the mandated picker
- * (.claude/rules/ui-components.md). It is NOT inside a Dialog here, so the
- * Portal caveat that applies in modals does not arise.
- *
- * CLEARING gets its own real `<button>` rather than relying on the primitive's
- * inline X. That X is a `<span aria-hidden>` inside the trigger — fine as a
- * mouse shortcut, but not reachable by keyboard and not announced at all, and
- * "put this tool back to blank" is a first-class action here, not a shortcut.
- * (The primitive's own affordance is left alone; fixing it is a shared-component
- * change with its own blast radius.)
+ * Behaviour, testids and copy are unchanged from the single-file version; see
+ * the primitive's header for why the bar replaced `ToolCustomerPickerModal`
+ * and why Clear gets its own real button.
  */
 
-import { X } from "lucide-react";
-import {
-  SearchableMultiSelect,
-  type SMSOption,
-} from "@/components/primitives/overlays";
-import { Button } from "@/components/primitives/shell/Button";
-import { useOwnClientOptions } from "../hooks/useOwnClientOptions";
+import { ToolCustomerBar as ToolCustomerBarView } from '@/components/primitives/tools';
+import type { SMSOption } from '@/components/primitives/overlays';
+import { useOwnClientOptions } from '../hooks/useOwnClientOptions';
 
 interface ToolCustomerBarProps {
   /** Currently chosen customer id, or null for the blank tool. */
@@ -55,14 +39,9 @@ export function ToolCustomerBar({
   value,
   onChange,
   blankHint,
-  testId = "tool-customer-bar",
+  testId = 'tool-customer-bar',
 }: ToolCustomerBarProps) {
-  const {
-    data: customers,
-    isLoading,
-    isError,
-    refetch,
-  } = useOwnClientOptions(true);
+  const { data: customers, isLoading, isError, refetch } = useOwnClientOptions(true);
 
   const options: SMSOption[] = (customers ?? []).map((customer) => ({
     value: customer.id,
@@ -70,68 +49,15 @@ export function ToolCustomerBar({
   }));
 
   return (
-    <div
-      data-testid={testId}
-      className="mb-7 rounded-xl border border-border bg-card px-4 py-3.5 sm:px-5"
-    >
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex min-w-0 items-end gap-2 sm:max-w-[520px] sm:flex-1">
-          <div className="min-w-0 flex-1">
-            <SearchableMultiSelect
-              label="Customer"
-              options={options}
-              value={value}
-              onValueChange={onChange}
-              clearable
-              searchable
-              disabled={isLoading || isError}
-              placeholder={
-                isLoading
-                  ? "Loading your customers…"
-                  : isError
-                    ? "Customers could not be loaded"
-                    : options.length === 0
-                      ? "No customers in your book yet"
-                      : "Search your customers…"
-              }
-              triggerTestId={`${testId}-select`}
-              optionTestIdPrefix={`${testId}-option`}
-            />
-          </div>
-          {value && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex-none pointer-coarse:min-h-11"
-              leadingIcon={<X className="h-3.5 w-3.5" aria-hidden="true" />}
-              onClick={() => onChange(null)}
-              data-testid={`${testId}-clear`}
-            >
-              Clear
-            </Button>
-          )}
-        </div>
-
-        <p className="m-0 text-[12px] leading-[1.6] text-[color:var(--fg-dim)] sm:max-w-[46%] sm:text-right">
-          {isError ? (
-            <>
-              Your customer list didn&rsquo;t load.{" "}
-              <button
-                type="button"
-                onClick={() => void refetch()}
-                className="underline underline-offset-2 hover:text-[color:var(--brown-text)]"
-              >
-                Try again
-              </button>
-              .
-            </>
-          ) : value ? (
-            "Pre-filled from their record — edit anything here without changing it."
-          ) : (
-            blankHint
-          )}
-        </p>
-      </div>
-    </div>
+    <ToolCustomerBarView
+      value={value}
+      onChange={onChange}
+      options={options}
+      isLoading={isLoading}
+      isError={isError}
+      onRetry={() => void refetch()}
+      blankHint={blankHint}
+      testId={testId}
+    />
   );
 }

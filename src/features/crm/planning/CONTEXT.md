@@ -27,8 +27,8 @@ Launched from `../components/detail/CustomerToolLauncher`, never from the nav ra
 - `api/legacyPlansService.ts` + `hooks/useLegacyPlanStore.ts` — load / upsert
 - `lib/format.ts` — whole-dollar money + percent (pure; kept out of the component file)
 - `lib/fields.ts` — `num` / `rate`: form-string → number at the lib boundary, blank reads as 0 (never `NaN`)
-- `components/PlanningToolFrame.tsx` — loads the customer, breadcrumb, loading/error/not-found
-- `components/PlanningAtoms.tsx` — `ToolPanel` · `ToolStatGrid` · `SummaryRow` · `ToolSelect` · `ToolNote`
+- `components/PlanningToolFrame.tsx` — loads the customer, wires the customer bar, loading/error/not-found. Composes `ToolPageShell` + `ToolPageHeader` from the shared lane; it keeps only the STATE
+- The chrome itself moved to **`@/components/primitives/tools`** (2026-08-19) — `ToolPanel` · `ToolStatGrid` · `SummaryRow` · `ToolSelect` · `ToolNote` · `ToolPageShell` · `ToolPageHeader` · `ToolCustomerBar` (presentational). `PlanningAtoms.tsx` and `PlanningToolHeader.tsx` are gone; the profiler is tool 01 of the same set and may not import from `crm`. See [tools/CONTEXT.md](../../../components/primitives/tools/CONTEXT.md)
 
 ## Constraints
 

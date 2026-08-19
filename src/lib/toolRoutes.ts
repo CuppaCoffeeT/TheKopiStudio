@@ -48,7 +48,10 @@ export const TOOL_ROUTES: readonly ToolRoute[] = [
     label: 'Prospect Profiler',
     path: '/profiler',
     module: PROFILER_MODULE,
-    description: 'Runs the risk profile and saves the result onto the customer’s record.',
+    // Was "Runs the risk profile…" until 2026-08-19. This tool reads how a
+    // prospect COMMUNICATES (DISC × MBTI); it has never scored risk appetite,
+    // and the line now sits under the page title where the mistake is public.
+    description: 'The DISC × MBTI communication read, filed on the customer’s record.',
   },
   {
     key: 'tax',

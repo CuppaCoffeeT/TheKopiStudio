@@ -14,7 +14,7 @@
  * there is no accumulation left to show.
  */
 
-import { ToolPanel } from '../PlanningAtoms';
+import { ToolPanel } from '@/components/primitives/tools';
 import { money, percent } from '../../lib/format';
 import type { ContributionYear } from '../../lib/srs';
 

@@ -1,13 +1,15 @@
 # Profiler — Feature Memory
 
-DISC × MBTI profiling (shipped): public wizard `/profiler` (TOOL, anonymous-friendly, outside DashboardLayout) + `/profiler-results` LIST + `/:id` DETAIL + convert-to-client bridge. One folder, two module rows (`lib/decisions.md`).
+DISC × MBTI profiling (shipped): public wizard `/profiler` (TOOL 01, anonymous-friendly, outside DashboardLayout) + `/profiler-results` LIST + `/:id` DETAIL + convert-to-client bridge. One folder, two module rows (`lib/decisions.md`).
+
+**Two front doors on one route (2026-08-19).** Signed in → the shared tool shell (`@/components/primitives/tools`): `ToolPageHeader` "01 Prospect Profiler" + `ToolCustomerBar`, exactly as tools 04–06 open. Anonymous → `IntakeHero` + `WizardTopBar`, unchanged. The shell shows on the INTAKE screen only; in flow the sticky progress rail is the chrome.
 
 ## Map
 
 - `pages/` — ProfilerWizardPage (7 steps + report + auto-save) · ResultsListPage (URL pagination, ilike search) · ResultDetailPage (own-row notes/delete/convert)
 - `lib/` — decisions.md · content.ts → content/* (frozen copy) · scoring.ts (exact calcPf/occNudge) · export.ts · print.css · labels.ts · meeting.ts
-- `api/` — resultsService · convertService (the clients bridge: findClientByName dedupe + resolveLinkableClientId + INSERT clients → UPDATE results.client_id; ConvertLinkError carries client id)
-- `hooks/` — useWizardState/Controller (owns the `?prospect=` + `?customerId=` entry contract) · savePayload · useSaveResult (re-resolves the link before insert) · useResultsList/Detail/Mutations · useConvertResult (auto/link/create + keyed retry)
+- `api/` — resultsService · convertService (the clients bridge: findClientByName dedupe + resolveLinkableClientId + INSERT clients → UPDATE results.client_id; ConvertLinkError carries client id) · customerOptionsService (own-book id+name for the picker — twin of crm's, sharing its query KEY but not its code)
+- `hooks/` — useWizardState/Controller (owns the `?prospect=` + `?customerId=` entry contract, and now WRITES it via `chooseCustomer`) · savePayload · useSaveResult (re-resolves the link before insert) · useResultsList/Detail/Mutations · useConvertResult (auto/link/create + keyed retry) · useOwnCustomerOptions (the picker's own-book list)
 - `components/` — wizard/ · detail/ (StoredResultReport · ConvertResultModal · DuplicateCustomerModal · ResultDetailActions: Convert↔View client)
 
 ## Hard constraints

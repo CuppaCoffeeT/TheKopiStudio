@@ -9,7 +9,7 @@
 import { useNavigate } from 'react-router-dom';
 import { FileText, Sheet, NotebookPen, UserRound } from 'lucide-react';
 import { Button } from '@/components/primitives/shell/Button';
-import { Card } from '@/components/primitives/shell/Card';
+import { ToolPanel } from '@/components/primitives/tools';
 
 export type SaveState = 'saving' | 'saved' | 'skipped' | 'error';
 
@@ -66,9 +66,14 @@ export function ResultActions({ onPdf, onCsv, onOpenNotes, isAuthenticated, save
       )}
 
       {showLoginCta && (
-        // Border-only accent — `bg-accent/10` replaced Card's bg-card (twMerge)
-        // and composited over the page cream, taking the 13px body to 3.68:1.
-        <Card className="border-accent/40" data-testid="result-login-cta">
+        // Border-only accent — `bg-accent/10` replaced the panel's bg-card
+        // (twMerge) and composited over the page cream, taking the 13px body to
+        // 3.68:1.
+        <ToolPanel
+          label="Keep your results"
+          className="border-accent/40"
+          testId="result-login-cta"
+        >
           <div className="flex flex-col items-start gap-2">
             <p className="m-0 text-[13px] leading-6 text-muted-foreground">
               This profile was saved anonymously. Log in to keep your results and view your history.
@@ -83,7 +88,7 @@ export function ResultActions({ onPdf, onCsv, onOpenNotes, isAuthenticated, save
               Log in to keep your results
             </Button>
           </div>
-        </Card>
+        </ToolPanel>
       )}
 
       <Button

@@ -2,11 +2,11 @@
 
 **Before building anything new, grep here.** Canonical matrix: [DESIGN_CATALOG.md](../../../docs/99-refactor/_system/DESIGN_CATALOG.md).
 
-**152 `.tsx` files across 8 groups** — counted from the filesystem on 2026-07-27. Reproduce with:
+**164 `.tsx` files across 9 groups** — counted from the filesystem on 2026-08-19. Reproduce with:
 
 ```sh
-find src/components/primitives -name '*.tsx' | wc -l          # total
-for d in charts dashboard detail form overlays shell ui; do    # per group
+find src/components/primitives -name '*.tsx' | wc -l                 # total
+for d in charts dashboard detail form overlays shell tools ui; do    # per group
   printf '%-10s %s\n' "$d" "$(find src/components/primitives/$d -name '*.tsx' | wc -l)"
 done
 ```
@@ -49,6 +49,7 @@ Promotion + registration history: [CHANGELOG.md](./CHANGELOG.md).
 | **[form/](./form/)** | 22 | `@/components/primitives/form` | Input · Textarea · Select · Checkbox · Radio · RadioGroup · Switch · DatePicker (+ .trigger/.panel/.dropdown splits) · TimePicker (+ .trigger/.panel splits) · FileUpload · Field · Label · Progress · RichTextEditor · Stepper · EmailComposeForm · StarredMultiSelect |
 | **[ui/](./ui/)** | 17 | `@/components/primitives/ui` | DataTable · DataRow · TableHeader · SortIcon · TableCheckbox · Pagination · PageBtn · MobileListCard · EditableListCard · StatusTabs · ListPageFrame · EmailThreadRow · internal splits (not barrel-exported): DataTableRows · DataTableStates · DataRowCells · ListPageHeader · ListPageTable |
 | **[charts/](./charts/)** | 8 | `@/components/primitives/charts` | ChartShell · AreaChart · BarChart · HBarChart · ChartTooltip · ChartLoading · ChartError · LegendRow |
+| **[tools/](./tools/)** | 4 | `@/components/primitives/tools` | The chrome behind every numbered tool in `src/lib/toolRoutes` — ToolPageShell · ToolPageHeader · ToolCustomerBar (presentational) · ToolAtoms (exports ToolPanel · ToolStatGrid · SummaryRow · ToolSelect · ToolNote). See [tools/CONTEXT.md](./tools/CONTEXT.md) |
 
 ## Adoption tracker
 

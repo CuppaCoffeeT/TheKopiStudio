@@ -7,11 +7,10 @@
  */
 
 import { Copy } from 'lucide-react';
-import { Card } from '@/components/primitives/shell/Card';
+import { ToolPanel } from '@/components/primitives/tools';
 import { IconButton } from '@/components/primitives/IconButton';
 import { showError, showSuccess } from '@/utils/toastHelper';
 import type { DiscLetter, DiscProfile, PlaybookCategoryKey } from '../../../types';
-import { Eyebrow } from '../WizardAtoms';
 
 const CATEGORY_ORDER: readonly PlaybookCategoryKey[] = [
   'engage',
@@ -36,12 +35,15 @@ interface PlaybookSectionProps {
 }
 
 export function PlaybookSection({ primary, profile }: PlaybookSectionProps) {
-  // Border-only accent — `bg-accent/5` replaced Card's bg-card (twMerge) and
-  // composited over the page cream, taking the eyebrow + intro to 3.90:1.
+  // Border-only accent — `bg-accent/5` replaced the panel's bg-card (twMerge) and
+  // composited over the page cream, taking the label + intro to 3.90:1.
   // On card cream the intro reads 4.72:1.
   return (
-    <Card className="border-accent/30" data-testid="result-playbook">
-      <Eyebrow>Communication Playbook — DISC-{primary}</Eyebrow>
+    <ToolPanel
+      label={`Communication Playbook — DISC-${primary}`}
+      className="border-accent/30"
+      testId="result-playbook"
+    >
       <p className="m-0 mb-3.5 text-[12px] leading-6 text-muted-foreground">
         Ready-to-use statements. Replace [Name], [Day], [detail] with real info. Tap the copy icon
         to copy a statement.
@@ -100,6 +102,6 @@ export function PlaybookSection({ primary, profile }: PlaybookSectionProps) {
           );
         })}
       </div>
-    </Card>
+    </ToolPanel>
   );
 }

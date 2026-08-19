@@ -9,6 +9,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/primitives/shell/Button';
+import { ToolNote } from '@/components/primitives/tools';
 import { PR } from '../../../lib/content';
 import type { ProfileResult } from '../../../lib/scoring';
 import type { IntakeInfo } from '../../../hooks/useWizardState';
@@ -97,6 +98,14 @@ export function ResultReport({
       <FollowUpCard profile={p} />
       <PlaybookSection primary={profile.pri} profile={p} />
       <NotesCard notes={notes} />
+
+      {/* The tools' closing caveat line. Printed as well as shown: the PDF is
+          what gets forwarded, and it is the copy most likely to be read as a
+          verdict on a person rather than a read of one conversation. */}
+      <ToolNote testId="result-caveat">
+        This is a read, not a verdict — it reflects eight answers and what you observed in one
+        meeting. Expect it to shift as you learn more.
+      </ToolNote>
 
       <Button
         size="lg"

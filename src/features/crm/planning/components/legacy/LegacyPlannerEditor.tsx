@@ -20,7 +20,7 @@ import { Button } from '@/components/primitives/shell/Button';
 import { formatDisplayDateTimeLong } from '@/utils/timezoneUtils';
 import { currentRefYear } from '../../../lib/finance';
 import type { CrmClient } from '../../../types';
-import { ToolNote, ToolStatGrid } from '../PlanningAtoms';
+import { ToolNote, ToolStatGrid } from '@/components/primitives/tools';
 import { useSaveLegacyPlan } from '../../hooks/useLegacyPlanStore';
 import { seedAge } from '../../lib/customerSeed';
 import { money } from '../../lib/format';

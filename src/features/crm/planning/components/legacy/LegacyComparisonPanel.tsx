@@ -9,7 +9,7 @@
  * the reason to write a will, and it should be the first thing the eye finds.
  */
 
-import { SummaryRow, ToolPanel } from '../PlanningAtoms';
+import { SummaryRow, ToolPanel } from '@/components/primitives/tools';
 import { money } from '../../lib/format';
 import type { EstateTotals } from '../../lib/legacy';
 import type { IsaResult, PlanningGap } from '../../lib/legacyIsa';

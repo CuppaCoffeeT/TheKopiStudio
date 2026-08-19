@@ -6,7 +6,7 @@
  * disagree with the relief rows beside it.
  */
 
-import { SummaryRow, ToolNote, ToolPanel } from '../PlanningAtoms';
+import { SummaryRow, ToolNote, ToolPanel } from '@/components/primitives/tools';
 import { money, moneyNegative } from '../../lib/format';
 import { RELIEF_CAP } from '../../lib/singaporeTax';
 import type { TaxAssessment } from '../../lib/taxAssessment';

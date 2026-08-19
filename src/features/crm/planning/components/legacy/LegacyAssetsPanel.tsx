@@ -14,7 +14,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { Input } from '@/components/primitives/form';
 import { Badge } from '@/components/primitives/shell/Badge';
 import { Button } from '@/components/primitives/shell/Button';
-import { ToolPanel, ToolSelect } from '../PlanningAtoms';
+import { ToolPanel, ToolSelect } from '@/components/primitives/tools';
 import { ASSET_TYPES, assetTypeFor, isNominated, type Asset, type LegacyPlan } from '../../lib/legacy';
 
 /**

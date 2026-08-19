@@ -8,7 +8,7 @@
  */
 
 import { Field, Input, Switch } from '@/components/primitives/form';
-import { ToolPanel, ToolSelect } from '../PlanningAtoms';
+import { ToolPanel, ToolSelect } from '@/components/primitives/tools';
 import { money } from '../../lib/format';
 import type { EmploymentType } from '../../lib/taxAssessment';
 

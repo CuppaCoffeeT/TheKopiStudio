@@ -178,3 +178,10 @@ nothing, because `projectContributions` refuses to contribute in or after the
 withdrawal year regardless.
 **Impact**: presentation only. No formula, constant or rounding decision
 deviates — the faithful-port rule above still holds.
+
+## 2026-08-19 — The tool chrome left this folder (hoisted to a shared lane)
+**Decision**: `PlanningAtoms.tsx` and `PlanningToolHeader.tsx` are deleted. Their contents live in `@/components/primitives/tools` — `ToolPanel` · `ToolStatGrid` · `SummaryRow` · `ToolSelect` · `ToolNote` · `ToolPageShell` · `ToolPageHeader` · `ToolCustomerBar`. `PlanningToolFrame` stays here and keeps only the STATE (which customer, loading, error, blank-vs-chosen), composing the shared shell and header.
+**Why**: the Prospect Profiler is tool 01 in `src/lib/toolRoutes` and renders in the same nav band as 04–06, but it is a separate feature workspace and `no-cross-feature-imports` bars it from reading `crm`. Sharing the chrome was the only way to make one rail lead to one visual language.
+**What did NOT move, and why that matters**: the customer FETCH. `ToolCustomerBar` is presentational in the shared lane; `crm/components/ToolCustomerBar` wraps it with `useOwnClientOptions`, `profiler` wraps it with its own hook. Moving the fetch would have put the customer record in a shared lane — the move the 2026-07-28 entry above rejected, for reasons that still hold.
+**Two API changes made during the move**: `ToolPageHeader` takes a generic `action` slot instead of a hard-wired `customerId`/`onBack` pair (this frame still passes exactly the same "Back to customer" button); `ToolPanel` gained `labelClassName`, `style` and `tabIndex` for the profiler's DISC-tinted report panels. Nothing rendered by the three planning tools changed — verified by `tests/workflows/crm/tool-routes.spec.ts`.
+**Impact**: 12 import lines across `components/{legacy,srs,tax}` and `pages/`, plus `PlanningToolFrame`. If a fourth planning tool arrives, it imports the barrel, not a sibling folder.

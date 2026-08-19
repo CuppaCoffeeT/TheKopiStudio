@@ -26,7 +26,7 @@ import { SrsJourneyPanel } from '../components/srs/SrsJourneyPanel';
 import { SrsProjectionPanel } from '../components/srs/SrsProjectionPanel';
 import { SrsSchedulePanel } from '../components/srs/SrsSchedulePanel';
 import { SrsWithdrawalsPanel } from '../components/srs/SrsWithdrawalsPanel';
-import { ToolNote, ToolStatGrid } from '../components/PlanningAtoms';
+import { ToolNote, ToolStatGrid } from '@/components/primitives/tools';
 import { money, percent } from '../lib/format';
 import { SRS_WITHDRAWAL_WINDOW_YEARS } from '../lib/srs';
 

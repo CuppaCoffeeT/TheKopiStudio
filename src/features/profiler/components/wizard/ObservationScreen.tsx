@@ -3,10 +3,15 @@
  * observation group. Zero validation — ticking is optional. Toggling mirrors
  * legacy `tgNV`: an id ticked then unticked persists as `false` in the map
  * (and saves that way), while the counter counts TRUE only.
+ *
+ * The tick list sits in a `ToolPanel` (2026-08-19, tool-shell alignment) —
+ * the same atom holding the tax tool's relief rows, and the panel label the 2a
+ * spec actually specifies. It replaced a `Card padding="p-2"`, whose tighter
+ * padding existed only because the label lived outside it.
  */
 
-import { Card } from '@/components/primitives/shell/Card';
 import { Checkbox } from '@/components/primitives/form';
+import { ToolPanel } from '@/components/primitives/tools';
 import { cn } from '@/lib/utils';
 import { NVG, PR } from '../../lib/content';
 import { DiscBadge } from './WizardAtoms';
@@ -67,7 +72,8 @@ export function ObservationScreen({ groupIndex, nv, onToggle }: ObservationScree
           : `${tickedCount} signal${tickedCount !== 1 ? 's' : ''} ticked`}
       </p>
 
-      <Card padding="p-2" className="flex flex-col gap-1.5">
+      <ToolPanel label="Observed signals">
+        <div className="flex flex-col gap-1.5">
         {group.items.map((item) => {
           const ticked = Boolean(nv[item.id]);
           return (
@@ -106,7 +112,8 @@ export function ObservationScreen({ groupIndex, nv, onToggle }: ObservationScree
             </div>
           );
         })}
-      </Card>
+        </div>
+      </ToolPanel>
     </div>
   );
 }

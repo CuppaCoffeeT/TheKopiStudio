@@ -19,6 +19,9 @@
 
 import type { ReactNode } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/primitives/shell/Button';
+import { ToolPageHeader, ToolPageShell } from '@/components/primitives/tools';
 import { ErrorState } from '@/components/primitives/shell/ErrorState';
 import { LoadingSkeleton } from '@/components/primitives/shell/LoadingSkeleton';
 import { NoResultsState } from '@/components/primitives/shell/NoResultsState';
@@ -30,7 +33,6 @@ import { useLogToolOpen } from '../../hooks/useLogToolOpen';
 import { clientFromRow } from '../../lib/clientMapping';
 import { EMPTY_CLIENT } from '../../components/modals/client/clientFormModel';
 import { ToolCustomerBar } from '../../components/ToolCustomerBar';
-import { PlanningToolHeader } from './PlanningToolHeader';
 import type { CrmClient } from '../../types';
 
 /** The scratch-pad model. Reuses the form's blank so a newly added client
@@ -111,15 +113,28 @@ export function PlanningToolFrame({
   const notFound = Boolean(customerId) && !client.isLoading && !client.isError && !model;
 
   return (
-    <div className="bg-background px-4 py-6 sm:px-10 sm:py-[34px]">
-      <div className="mx-auto max-w-5xl">
-        <PlanningToolHeader
+    <ToolPageShell>
+      <ToolPageHeader
           title={title}
           description={description}
           index={index}
           testId={testId}
-          customerId={model ? customerId : null}
-          onBack={(next) => navigate(`/clients/${next}`)}
+          /* "Back to customer" only renders once there IS a customer to go back
+             to. Reached from navigation with none, the button used to point at
+             `/clients` and read as "Back" to a page you had never been on. */
+          action={
+            model && customerId ? (
+              <Button
+                variant="outline"
+                className="flex-none pointer-coarse:min-h-11"
+                leadingIcon={<ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />}
+                onClick={() => navigate(`/clients/${customerId}`)}
+                data-testid={`${testId}-back`}
+              >
+                Back to customer
+              </Button>
+            ) : null
+          }
         />
 
         <ToolCustomerBar
@@ -164,7 +179,6 @@ export function PlanningToolFrame({
             {children(model ?? BLANK_CUSTOMER, model ? customerId : null, model ? isOwn : true)}
           </div>
         )}
-      </div>
-    </div>
+    </ToolPageShell>
   );
 }

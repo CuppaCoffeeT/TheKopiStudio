@@ -10,7 +10,7 @@
  * No maths here; `buildJourney` produces every figure.
  */
 
-import { SummaryRow, ToolPanel } from '../PlanningAtoms';
+import { SummaryRow, ToolPanel } from '@/components/primitives/tools';
 import { money, percent } from '../../lib/format';
 import type { SrsJourney } from '../../lib/srsJourney';
 

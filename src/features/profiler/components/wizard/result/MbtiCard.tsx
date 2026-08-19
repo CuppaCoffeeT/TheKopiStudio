@@ -5,15 +5,13 @@
  * 50% bar — exact legacy zero-state.
  */
 
-import { Card } from '@/components/primitives/shell/Card';
+import { ToolPanel } from '@/components/primitives/tools';
 import { MBTI_DIMENSIONS } from '../../../lib/labels';
 import type { MbtiSignals } from '../../../lib/scoring';
-import { Eyebrow } from '../WizardAtoms';
 
 export function MbtiCard({ signals }: { signals: MbtiSignals }) {
   return (
-    <Card data-testid="result-mbti-card">
-      <Eyebrow>MBTI Result</Eyebrow>
+    <ToolPanel label="MBTI Result" testId="result-mbti-card">
       <div className="flex flex-col gap-2.5">
         {MBTI_DIMENSIONS.map((dim) => {
           const sa = signals[dim.a];
@@ -71,6 +69,6 @@ export function MbtiCard({ signals }: { signals: MbtiSignals }) {
           );
         })}
       </div>
-    </Card>
+    </ToolPanel>
   );
 }

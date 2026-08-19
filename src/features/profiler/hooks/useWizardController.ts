@@ -18,6 +18,11 @@
  * `results.client_id` alone, so a name-only entry produced a profile that
  * left the customer reading "never profiled" for good. Both are read here,
  * not in the page, because the save payload is assembled here.
+ *
+ * Since 2026-08-19 the same pair is also WRITTEN here, by `chooseCustomer` —
+ * the intake screen's `ToolCustomerBar` (tool-shell alignment, decisions.md).
+ * Arriving from the CRM and picking from the bar now produce the identical URL,
+ * so there is one entry contract rather than one per doorway.
  */
 
 import { useEffect, useRef, useState } from 'react';
@@ -40,7 +45,7 @@ export function useWizardController() {
   const { user, profile: authProfile } = useAuth();
   const wizard = useWizardState();
   const save = useSaveResult();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [saveState, setSaveState] = useState<SaveState>('saving');
   const [exitConfirmOpen, setExitConfirmOpen] = useState(false);
@@ -67,6 +72,31 @@ export function useWizardController() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  /**
+   * The intake screen's customer picker. Writes the SAME pair the CRM entry
+   * link writes (`profilerEntry.profilerHrefFor`) so the two doorways cannot
+   * drift: the id links the save, the name fills the field.
+   *
+   * Picking OVERWRITES a typed name — you chose a record, so the record wins.
+   * Clearing does not: it drops the link and leaves the text alone, because
+   * "not linked to a record" and "erase what I typed" are different intents,
+   * and only one of them is what the Clear button offers.
+   */
+  const chooseCustomer = (next: { id: string; name: string } | null) => {
+    const updated = new URLSearchParams(searchParams);
+    if (next) {
+      updated.set('customerId', next.id);
+      updated.set('prospect', next.name);
+      wizard.setIntake({ ...wizard.intake, name: next.name });
+    } else {
+      updated.delete('customerId');
+      updated.delete('prospect');
+    }
+    // `replace: true` — picking a customer is not a place you navigate back to,
+    // and the wizard's Back button already means "previous step".
+    setSearchParams(updated, { replace: true });
+  };
 
   const { screen } = wizard;
   const info = effectiveIntake(wizard.intake);
@@ -169,6 +199,8 @@ export function useWizardController() {
     screen,
     inFlow,
     isQuestionScreen,
+    customerId,
+    chooseCustomer,
     subtitle,
     nextDisabled,
     saveState,

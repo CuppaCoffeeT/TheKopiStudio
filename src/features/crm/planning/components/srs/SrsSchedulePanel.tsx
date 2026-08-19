@@ -13,7 +13,7 @@
  * unconditionally.
  */
 
-import { ToolPanel } from '../PlanningAtoms';
+import { ToolPanel } from '@/components/primitives/tools';
 import { money } from '../../lib/format';
 import type { WithdrawalPlan } from '../../lib/srsWithdrawals';
 

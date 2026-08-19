@@ -9,7 +9,7 @@
  * never to the raw brand sage or terracotta.
  */
 
-import { Card } from '@/components/primitives/shell/Card';
+import { ToolPanel } from '@/components/primitives/tools';
 import type { DiscProfile } from '../../../types';
 
 function ItemList({ items, tone }: { items: readonly string[]; tone: 'do' | 'avoid' }) {
@@ -34,24 +34,24 @@ function ItemList({ items, tone }: { items: readonly string[]; tone: 'do' | 'avo
 export function DoAvoidGrid({ profile }: { profile: DiscProfile }) {
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2" data-testid="result-do-avoid-grid">
-      <Card className="border-[color:var(--status-accepted-border)]">
-        <div
-          className="mb-2.5 uppercase text-[color:var(--sage-text)]"
-          style={{ fontFamily: 'var(--font-sans)', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.12em' }}
-        >
-          ✓ Do This
-        </div>
+      {/* The two labels keep their semantic hue via `labelClassName` — this is
+          the pair the panel label's muted default would flatten into one. Both
+          sit on flat card cream, so the AA-safe text variants are the right
+          ones (`--sage-text` / `--negative-text`), not the on-tint siblings. */}
+      <ToolPanel
+        label="✓ Do This"
+        labelClassName="text-[color:var(--sage-text)]"
+        className="border-[color:var(--status-accepted-border)]"
+      >
         <ItemList items={profile.dos} tone="do" />
-      </Card>
-      <Card className="border-[color:var(--status-rejected-border)]">
-        <div
-          className="mb-2.5 uppercase text-[color:var(--negative-text)]"
-          style={{ fontFamily: 'var(--font-sans)', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.12em' }}
-        >
-          ✕ Avoid
-        </div>
+      </ToolPanel>
+      <ToolPanel
+        label="✕ Avoid"
+        labelClassName="text-[color:var(--negative-text)]"
+        className="border-[color:var(--status-rejected-border)]"
+      >
         <ItemList items={profile.dnts} tone="avoid" />
-      </Card>
+      </ToolPanel>
     </div>
   );
 }

@@ -23,7 +23,7 @@ import {
   ToolPanel,
   ToolSelect,
   ToolStatGrid,
-} from '../components/PlanningAtoms';
+} from '@/components/primitives/tools';
 import { seedAge } from '../lib/customerSeed';
 import { money, moneyNegative, percent } from '../lib/format';
 import { ReliefRow } from '../components/ReliefRow';

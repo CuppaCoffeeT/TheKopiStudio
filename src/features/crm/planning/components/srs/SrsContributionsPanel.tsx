@@ -16,7 +16,7 @@
  */
 
 import { Field, Input } from '@/components/primitives/form';
-import { SummaryRow, ToolPanel, ToolSelect } from '../PlanningAtoms';
+import { SummaryRow, ToolPanel, ToolSelect } from '@/components/primitives/tools';
 import { money, percent } from '../../lib/format';
 import { SRS_CAP_CITIZEN, SRS_STATUTORY_AGES, type ContributionProjection } from '../../lib/srs';
 

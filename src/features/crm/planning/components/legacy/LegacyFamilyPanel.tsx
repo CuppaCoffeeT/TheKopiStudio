@@ -11,7 +11,7 @@
 import { Plus, Trash2 } from 'lucide-react';
 import { Field, Input } from '@/components/primitives/form';
 import { Button } from '@/components/primitives/shell/Button';
-import { ToolPanel, ToolSelect } from '../PlanningAtoms';
+import { ToolPanel, ToolSelect } from '@/components/primitives/tools';
 import {
   GENERATION_LABEL,
   RELATIONSHIPS,
