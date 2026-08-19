@@ -2,7 +2,7 @@
 
 Append-only. Newest at the bottom. Format authority: [DECISIONS_LESSONS_PATTERN.md](/Volumes/YourVolume/META_FOLDER_STRUCTURE/DECISIONS_LESSONS_PATTERN.md).
 
-Last Updated: 2026-08-17 (count list rows only after the table mounts — see the 2026-08-17 entry)
+Last Updated: 2026-08-19 (a busy port serves ANOTHER app's login page — see the 2026-08-19 entry)
 
 ---
 
@@ -205,3 +205,72 @@ fails loudly — a no-op teardown and a vacuous assertion both look like success
 counting, then poll for the specific row. Generally: any assertion or teardown
 whose "nothing here" branch is benign must first prove the data HAD a chance to
 arrive, or the benign branch becomes the branch that always runs.
+
+## 2026-08-19 — the dev server on port 8080 was a DIFFERENT app, and auth "failed" three times
+
+**What happened**: every `auth.setup` role failed with an identical, contentless
+`page.waitForURL` timeout. The screenshot showed a login form — for **JL Cable
+Detection**, a different project of the user's, whose dev server already held
+port 8080.
+
+**Root cause**: `playwright.config.ts` sets `webServer.url` to
+`http://localhost:${E2E_PORT}` with the default `reuseExistingServer`. Playwright
+probes the URL, gets a 200 from whatever is listening, and adopts it. It has no
+way to know the app answering is not this app. The credentials were then typed
+into a stranger's login form, which of course never navigated away.
+
+**Fix**: `E2E_PORT=<free port> npx playwright test …`. The config already
+supports it, exactly for parallel worktrees — the comment on line 5 says so.
+
+**Generalise**: three identical opaque auth timeouts mean "look at the
+screenshot", not "the credentials are wrong". Any local suite that reuses an
+existing server can silently test the wrong application, and every downstream
+failure will point at your own code. Check WHAT is on the port before believing
+a login failure.
+
+## 2026-08-19 — long single-test journeys fail at a different step each run
+
+**What happened**: `clients-advisor.spec` (one test covering create → bank
+recompute → policies → follow-up → dashboard → rename → cleanup) failed twice
+with unrelated symptoms — once at the Activity tab, once at the create modal,
+which had frozen on "Saving…". The page snapshot for the second run showed the
+app sitting on **the sign-in page**.
+
+**Root cause**: the session outlived its token. The journey holds the
+advisor-book lock for up to 660s and the whole run took ~1.5h wall clock; when
+the token expires mid-test the in-flight mutation never settles and the shell
+redirects, so the failure lands wherever the clock happened to run out. The
+non-determinism is the tell: run 1 got PAST create to the tab step, run 2 hung
+AT create, on identical code.
+
+**Fix (diagnostic, not a code change)**: confirm the suspect step in a SHORT
+spec before believing a long journey. Client creation through the very same
+`crm-client-form-modal` is exercised by `ToolRoutesPage.seedCustomer` in
+`tool-routes.spec`, which passes in ~40s — that is what established the create
+path was fine and the journey was flaky.
+
+**Generalise**: a mega-journey is a poor oracle for "did my change break X".
+When it fails, reach for the shortest spec that touches the same step. And if a
+long journey fails at a DIFFERENT place on each run, suspect the environment
+(session, lock, clock) before the diff.
+
+## 2026-08-19 — E2E residue accumulated in the LIVE book when journeys died before cleanup
+
+**What happened**: the shared prod book went from 3 live customers to 19. Every
+extra row was an `E2E-*` customer owned by the e2e advisor, left behind by
+tests that failed before their `finally`.
+
+**Root cause**: cleanup is in-test (`finally` / `afterAll`). A test killed by a
+timeout, a closed browser context or an outer run-level timeout never reaches
+it. Nothing else sweeps.
+
+**Fix**: soft-delete the residue, filtered on BOTH `name like 'E2E-%'` AND
+`user_id = <e2e advisor>`, cascading to policies / interactions / bank history /
+customer_activity. Soft delete, never hard — it is reversible and it is what the
+app itself does.
+
+**Generalise**: any suite that seeds a LIVE shared database needs an
+out-of-band sweep, because in-test cleanup cannot run when the test is the thing
+that died. Until one exists, check `select count(*) from clients where not
+is_deleted` before and after a local run — residue silently breaks the next
+run's "empty book" assertions.
