@@ -14,8 +14,6 @@ import { describe, expect, it } from 'vitest';
 import { grossTax } from '../singaporeTax';
 import {
   forcedPayoutAge,
-  milestoneAges,
-  milestoneRows,
   projectContributions,
   SRS_DEFAULT_WITHDRAWAL_AGE,
   SRS_EXEMPT_FRACTION,
@@ -28,6 +26,7 @@ import {
   customWithdrawals,
   equalWithdrawals,
 } from '../srsSchedules';
+import { milestoneAges, milestoneRows } from '../srsMilestones';
 import { planWithdrawals } from '../srsWithdrawals';
 import { buildJourney } from '../srsJourney';
 

@@ -11,11 +11,13 @@ Launched from `../components/detail/CustomerToolLauncher`, never from the nav ra
 - `lib/singaporeTax.ts` — the YA 2025/26 band ladder + auto reliefs. **Shared**: the SRS tool prices withdrawals with it, so the two tools can never quote different tax for the same income.
 - `lib/taxReliefs.ts` — the 19-relief CATALOGUE (declarative; adding a relief is one entry)
 - `lib/taxAssessment.ts` — `assessTax`, the single entry point the tax page calls
-- `lib/srs.ts` — statutory constants + `taxOnSlice` + `projectContributions` (paying in, all the way to the PLANNED first withdrawal) + the milestone rows
+- `lib/srs.ts` — statutory constants + `taxOnSlice` + `projectContributions` (paying in, all the way to the PLANNED first withdrawal)
+- `lib/srsMilestones.ts` — which projected years earn a table row (presentation arithmetic, no scheme rules)
 - `lib/srsSchedules.ts` — drawdown SHAPES: `equalWithdrawals` (level annuity) · `customWithdrawals` (3 legs) · `annualTaxFreeCeiling`
 - `lib/srsWithdrawals.ts` — drawdown PRICING: `planWithdrawals` (taking out)
 - `lib/srsJourney.ts` — `buildJourney`: both ends netted into the lifetime tax benefit
 - `hooks/useSrsPlanner.ts` — the tool's sixteen form fields and the three-stage derivation (project → plan → journey)
+- `hooks/useSrsAges.ts` — the three ages (earliest · planned · contribute-until) and the clamps binding them
 - `lib/legacy.ts` — estate model: asset types, nominations, totals, projection
 - `lib/legacyIsa.ts` — Intestate Succession Act 1967 s.7 ladder
 - `lib/useLegacyPlan.ts` — Legacy Map state + referential integrity on delete
@@ -24,6 +26,7 @@ Launched from `../components/detail/CustomerToolLauncher`, never from the nav ra
 - `lib/useLegacyPlan.ts` — editing state, referential integrity, dirty tracking
 - `api/legacyPlansService.ts` + `hooks/useLegacyPlanStore.ts` — load / upsert
 - `lib/format.ts` — whole-dollar money + percent (pure; kept out of the component file)
+- `lib/fields.ts` — `num` / `rate`: form-string → number at the lib boundary, blank reads as 0 (never `NaN`)
 - `components/PlanningToolFrame.tsx` — loads the customer, breadcrumb, loading/error/not-found
 - `components/PlanningAtoms.tsx` — `ToolPanel` · `ToolStatGrid` · `SummaryRow` · `ToolSelect` · `ToolNote`
 

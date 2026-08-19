@@ -25,7 +25,9 @@
  *   age, not to the statutory one.
  *
  * Tax comes from `singaporeTax` — the same ladder the tax calculator uses, so
- * the two tools can never quote different numbers for the same income.
+ * the two tools can never quote different numbers for the same income. Which
+ * of the projected years earn a table row is `srsMilestones`' problem, not
+ * this file's.
  */
 
 import { grossTax } from './singaporeTax';
@@ -176,33 +178,4 @@ export function projectContributions(input: ContributionProjectionInput): Contri
     lifetimeTaxSaved,
     totalContributed,
   };
-}
-
-/**
- * The ages the projection table shows — today, every fifth birthday after it,
- * and the first-withdrawal age itself. A 45-year run of rows tells an advisor
- * nothing; five or six milestones tell the story.
- */
-export function milestoneAges(currentAge: number, startAge: number): number[] {
-  const ages = [currentAge];
-  for (let age = Math.ceil(currentAge / 5) * 5; age < startAge; age += 5) {
-    if (age > currentAge) ages.push(age);
-  }
-  if (!ages.includes(startAge)) ages.push(startAge);
-  return ages;
-}
-
-/**
- * The projected years reduced to the milestone rows.
- *
- * The current age never appears — the projection starts at the year AFTER it,
- * which is what the reference table shows and what the balance column means.
- */
-export function milestoneRows(
-  projection: ContributionProjection,
-  currentAge: number,
-  startAge: number,
-): ContributionYear[] {
-  const wanted = new Set(milestoneAges(currentAge, startAge));
-  return projection.years.filter((year) => wanted.has(year.age));
 }

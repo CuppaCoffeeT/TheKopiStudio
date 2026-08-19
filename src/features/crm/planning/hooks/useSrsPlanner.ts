@@ -11,18 +11,20 @@
  * Contribute more and the drawdown problem gets harder, not easier, which only
  * shows if the stages stay wired together.
  *
- * Everything is a string because everything is an `<input>`; the coercion to
- * numbers happens once, here, at the boundary of the pure lib functions.
+ * Everything is a string because everything is an `<input>`; `lib/fields`
+ * coerces at the boundary of the pure lib functions. The three ages and the
+ * constraints between them live in `useSrsAges` — they are the only stateful
+ * logic here; the rest is a `useMemo` over pure functions.
  */
 
 import { useMemo, useState } from 'react';
 import type { CrmClient } from '../../types';
 import { seedAge } from '../lib/customerSeed';
+import { num, rate } from '../lib/fields';
+import { milestoneRows } from '../lib/srsMilestones';
 import {
-  milestoneRows,
   projectContributions,
   SRS_CAP_CITIZEN,
-  SRS_DEFAULT_WITHDRAWAL_AGE,
   SRS_WITHDRAWAL_WINDOW_YEARS,
 } from '../lib/srs';
 import { buildJourney } from '../lib/srsJourney';
@@ -32,6 +34,7 @@ import {
   MAX_WITHDRAWAL_PERIODS,
 } from '../lib/srsSchedules';
 import { planWithdrawals } from '../lib/srsWithdrawals';
+import { useSrsAges } from './useSrsAges';
 
 export type WithdrawalStrategy = 'equal' | 'custom';
 
@@ -40,9 +43,6 @@ export interface PeriodFields {
   amount: string;
   years: string;
 }
-
-const num = (value: string) => Number(value) || 0;
-const rate = (value: string) => num(value) / 100;
 
 const EMPTY_PERIODS: PeriodFields[] = [
   { amount: '60000', years: '5' },
@@ -57,13 +57,12 @@ export function useSrsPlanner(customer: CrmClient, refYear: number) {
   const [currentBalance, setCurrentBalance] = useState('0');
   const [growthRate, setGrowthRate] = useState('4');
   const [annualContribution, setAnnualContribution] = useState(String(SRS_CAP_CITIZEN));
-  // One year short of the first withdrawal — contributing in the year money
-  // comes out is not allowed, so the default is the latest legal answer.
-  const [contributeUntilAge, setContributeUntilAge] = useState(
-    String(SRS_DEFAULT_WITHDRAWAL_AGE - 1),
-  );
-  const [withdrawalAge, setWithdrawalAgeState] = useState(String(SRS_DEFAULT_WITHDRAWAL_AGE));
-  const [startAge, setStartAgeState] = useState(String(SRS_DEFAULT_WITHDRAWAL_AGE));
+
+  // The three ages and the constraints between them — see `useSrsAges`.
+  const {
+    withdrawalAge, startAge, contributeUntilAge,
+    setWithdrawalAge, setStartAge, setContributeUntilAge,
+  } = useSrsAges();
 
   const [strategy, setStrategy] = useState<WithdrawalStrategy>('equal');
   const [balanceOverride, setBalanceOverride] = useState('');
@@ -71,41 +70,6 @@ export function useSrsPlanner(customer: CrmClient, refYear: number) {
   const [withdrawalGrowth, setWithdrawalGrowth] = useState('3');
   const [otherIncome, setOtherIncome] = useState('0');
   const [periods, setPeriods] = useState<PeriodFields[]>(EMPTY_PERIODS);
-
-  /**
-   * Contributions must stop before the first withdrawal, so raising the start
-   * age is free but lowering it drags the contribution cut-off down with it.
-   *
-   * Only fires for a start age at or past the locked-in one. The reference
-   * clamps on every keystroke, which eats the field while a two-digit age is
-   * half typed ("6" would push the cut-off to 5); ignoring implausible values
-   * costs nothing, since `projectContributions` refuses to contribute in or
-   * after the withdrawal year regardless.
-   */
-  const clampContributeUntil = (firstWithdrawalAge: number, floor: number) => {
-    if (firstWithdrawalAge < floor) return;
-    setContributeUntilAge((current) =>
-      num(current) > firstWithdrawalAge - 1 ? String(firstWithdrawalAge - 1) : current,
-    );
-  };
-
-  /**
-   * Changing the statutory age drags the start age up with it — you cannot
-   * begin drawing before your own locked-in age. Done on the event, not in an
-   * effect: an effect would fight the advisor's own edits to the start age.
-   */
-  const setWithdrawalAge = (next: string) => {
-    setWithdrawalAgeState(next);
-    const floor = num(next);
-    const first = Math.max(num(startAge), floor);
-    if (first !== num(startAge)) setStartAgeState(String(first));
-    clampContributeUntil(first, floor);
-  };
-
-  const setStartAge = (next: string) => {
-    setStartAgeState(next);
-    clampContributeUntil(num(next), num(withdrawalAge));
-  };
 
   const setPeriod = (index: number, field: keyof PeriodFields, value: string) => {
     setPeriods((current) =>
