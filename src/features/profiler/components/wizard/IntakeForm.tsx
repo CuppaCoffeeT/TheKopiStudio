@@ -4,7 +4,7 @@
  * (`effectiveIntake`); meeting defaults to '1'. Age and occupation optional.
  */
 
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Card } from '@/components/primitives/shell/Card';
 import { Button } from '@/components/primitives/shell/Button';
 import { PageDescription } from '@/components/primitives/shell/PageDescription';
@@ -32,14 +32,32 @@ export function IntakeForm({ intake, onChange, onStart }: IntakeFormProps) {
 
   const prospectRef = useRef<HTMLInputElement>(null);
   const howRef = useRef<HTMLDivElement>(null);
+  const [howHighlighted, setHowHighlighted] = useState(false);
+  const highlightTimer = useRef<number>();
+  useEffect(() => () => window.clearTimeout(highlightTimer.current), []);
   const scrollBehavior = (): ScrollBehavior =>
     window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
   const focusProspect = () => {
     prospectRef.current?.scrollIntoView({ behavior: scrollBehavior(), block: 'center' });
     prospectRef.current?.focus({ preventScroll: true });
   };
+  // The How-it-works card sits at the BOTTOM of a short page, so
+  // `scrollIntoView` alone is a near-no-op: on a 900px viewport the whole
+  // document only has ~330px of scroll room, and on anything taller there is
+  // none at all — the card can never reach the top and the button reads as
+  // dead. So the scroll is a nicety, not the payload: focus + a held outline are
+  // what actually answer the click, and they fire whether or not the page
+  // moved. Ring utilities can't be used for the highlight: Card pins
+  // `shadow-[var(--card-shadow-rest)]` and that token is `none`, which makes
+  // Tailwind v4's composed box-shadow list invalid — the ring never paints.
+  // Outline is independent of box-shadow (and is what index.css already uses
+  // for focus). Timer is cleared on unmount and on re-click.
   const showHowItWorks = () => {
     howRef.current?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
+    howRef.current?.focus({ preventScroll: true });
+    setHowHighlighted(true);
+    window.clearTimeout(highlightTimer.current);
+    highlightTimer.current = window.setTimeout(() => setHowHighlighted(false), 1600);
   };
 
   return (
@@ -171,7 +189,15 @@ export function IntakeForm({ intake, onChange, onStart }: IntakeFormProps) {
           (cn is twMerge, so it replaced Card's bg-card), which both inverted the
           raised-card ladder and dropped this block's copy to 3.68–4.06:1. On
           card cream the list reads 4.72:1 and the eyebrow 5.21:1. */}
-      <Card ref={howRef} className="border-accent/30 motion-rise motion-rise-4 scroll-mt-24">
+      <Card
+        ref={howRef}
+        tabIndex={-1}
+        className={`border-accent/30 motion-rise motion-rise-4 scroll-mt-24 ${
+          howHighlighted
+            ? '[outline:2px_solid_hsl(var(--ring))] [outline-offset:3px]'
+            : '[outline:none]'
+        }`}
+      >
         <Eyebrow className="text-[color:var(--brown-text)]">How it works</Eyebrow>
         <ol className="m-0 list-decimal pl-4 text-[13px] leading-7 text-muted-foreground">
           <li>Answer 8 questions you can weave into any conversation</li>
