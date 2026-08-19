@@ -138,11 +138,18 @@ export interface BankFormInput {
  */
 export type ClientDetailTab = 'overview' | 'policies' | 'interactions' | 'bank';
 
-const DETAIL_TABS: Record<ClientDetailTab, { label: RegExp; content: string }> = {
-  overview: { label: /^Overview/, content: 'clients-detail-overview' },
-  policies: { label: /^Policies/, content: 'clients-policies' },
-  interactions: { label: /^Activity/, content: 'clients-activity' },
-  bank: { label: /^Bank history/, content: 'clients-bank' },
+/**
+ * `testId` is explicit rather than derived from the key: the third tab's key is
+ * still `interactions` (it names the CHILD LIST the specs seed and clean up)
+ * while the tab itself became "Activity" in 2026-08-18. Deriving
+ * `clients-detail-tab-${key}` silently pointed at a testid that no longer
+ * exists and cost a 15s timeout to diagnose.
+ */
+const DETAIL_TABS: Record<ClientDetailTab, { label: RegExp; content: string; testId: string }> = {
+  overview: { label: /^Overview/, content: 'clients-detail-overview', testId: 'clients-detail-tab-overview' },
+  policies: { label: /^Policies/, content: 'clients-policies', testId: 'clients-detail-tab-policies' },
+  interactions: { label: /^Activity/, content: 'clients-activity', testId: 'clients-detail-tab-activity' },
+  bank: { label: /^Bank history/, content: 'clients-bank', testId: 'clients-detail-tab-bank' },
 };
 
 /** Child-list testid families on the detail tabs (rows / row actions / confirm dialogs). */
@@ -270,7 +277,7 @@ export class ClientsPage {
    */
   async switchTab(tab: ClientDetailTab): Promise<void> {
     const cfg = DETAIL_TABS[tab];
-    await selectStatusTab(this.page, this.page.getByTestId(`clients-detail-tab-${tab}`), (popover) =>
+    await selectStatusTab(this.page, this.page.getByTestId(cfg.testId), (popover) =>
       popover.getByRole('tab', { name: cfg.label }),
     );
     await this.page.getByTestId(cfg.content).waitFor({ state: 'visible', timeout: 30_000 });

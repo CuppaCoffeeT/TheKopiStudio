@@ -25,8 +25,17 @@ interface SensitiveProps {
   reveal?: boolean;
 }
 
-/** Masked runs are tabular so a row of them doesn't jitter as values change. */
-const MASKED_CLASS = 'tabular-nums tracking-[0.12em] text-muted-foreground';
+/**
+ * Masked runs are tabular so a row of them doesn't jitter as values change.
+ *
+ * `--fg-dim` (#5D4F3F), NOT `text-muted-foreground` (#7D6B5B). The first draft
+ * used muted and axe caught 14 colour-contrast violations on the Customers
+ * list: muted measures 4.72 on CARD cream and only **4.12 on the PAGE cream**,
+ * where these table rows actually sit — the exact failure
+ * `.claude/rules/light-theme.md` records under "Open item — muted on page".
+ * A masked value is still text a person has to read.
+ */
+const MASKED_CLASS = 'tabular-nums tracking-[0.12em] text-[color:var(--fg-dim)]';
 
 /** A person's name: `Sky Tan` → `Sk***`. */
 export function SensitiveName({
