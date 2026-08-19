@@ -3,10 +3,13 @@
  * priced. Split from `srsWithdrawals` along the seam the tool draws on screen:
  * this file decides the series, that one prices it.
  *
- * Three shapes, all from the reference tool:
+ * Two shapes, both from the reference tool:
  *   `equalWithdrawals`  — one level payment that exactly exhausts the balance
  *   `customWithdrawals` — up to three advisor-defined periods (amount × years)
- *   `deferBalance`      — the growth earned by NOT starting at the statutory age
+ *
+ * There is no deferral shape. Deferring the first withdrawal is not part of the
+ * drawdown at all — the years before it belong to accumulation, and
+ * `projectContributions` now runs through them. See `srs.ts`.
  */
 
 import { SRS_EXEMPT_FRACTION, SRS_WITHDRAWAL_WINDOW_YEARS } from './srs';
@@ -71,34 +74,6 @@ export function customWithdrawals(periods: WithdrawalPeriod[]): number[] {
 /** No plan may run past the statutory window, however it was built. */
 export function capToWindow(amounts: number[]): number[] {
   return amounts.slice(0, SRS_WITHDRAWAL_WINDOW_YEARS);
-}
-
-export interface DeferralResult {
-  /** Balance once the deferred years have compounded. */
-  balance: number;
-  /** What those years earned — the whole argument for delaying. */
-  growth: number;
-}
-
-/**
- * Compound the balance across the years between the statutory age and the age
- * the customer actually starts drawing. Deferring is free growth AND it shifts
- * the 10-year window later, which is the tool's most under-used lever.
- */
-export function deferBalance(
-  balance: number,
-  growthRate: number,
-  years: number,
-): DeferralResult {
-  let current = balance;
-  let growth = 0;
-  const span = Math.max(0, Math.floor(years));
-  for (let year = 0; year < span; year += 1) {
-    const earned = current * growthRate;
-    current += earned;
-    growth += earned;
-  }
-  return { balance: current, growth };
 }
 
 /**

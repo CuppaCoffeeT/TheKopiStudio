@@ -1,6 +1,6 @@
 # Planning — Decisions
 
-**Last Updated**: 2026-08-13 SGT
+**Last Updated**: 2026-08-19 SGT
 
 ## 2026-07-28 — One `planning` folder, INSIDE crm, not three sibling features
 
@@ -139,3 +139,42 @@ another advisor's customer, and `legacy_plans_select` would then hide it from
 the advisor who owns the customer. RLS is doing its job; the constraint we
 actually want ("only the customer's advisor plans for them") is one the schema
 does not express, so the UI expresses it.
+
+## 2026-08-19 — SRS: accumulation runs to the PLANNED first withdrawal
+
+**Decision**: `projectContributions` now takes `startAge` — the age the customer
+plans to take their first withdrawal — and runs to it, instead of stopping at
+the statutory age. `deferBalance` is deleted; the years between the two ages are
+ordinary accumulation years. Contributions continue through them
+(`age <= contributeUntilAge && age < startAge`), so `contributeUntilAge` may sit
+above the statutory age.
+**Why**: ported from `srs tool (5).html`, the advisor's own update to the
+reference this tool was rebuilt from on 2026-08-13. Two things were wrong with
+the split: the deferred years compounded at the DRAWDOWN rate rather than the
+accumulation rate, and contributing through them was unrepresentable — even
+though relief legally runs right up to the first withdrawal. Deferring is the
+tool's most under-used lever and it was being under-priced.
+**Impact**: quoted balances rise for any deferred plan (two effects: the higher
+growth rate on those years, and any contributions now made in them).
+`balanceAtWithdrawalAge` → `balanceAtFirstWithdrawal`; `SrsJourney.deferralGrowth`
+is gone, `deferralYears` stays. The journey panel reports "years past the
+earliest age" instead of a deferral-growth figure, since that growth is no
+longer separable from the projection.
+**Supersedes**: the deferral half of _2026-08-13 — SRS: the withdrawal age is a
+customer PROPERTY, not a constant_. The rest of that entry stands: the age is
+still an input, and `forcedPayoutAge(startAge)` still moves the window.
+
+## 2026-08-19 — Two UI deviations from the v5 SRS reference
+
+**Decision**: the "planned first withdrawal" field moves to the PAYING-IN panel
+(matching the reference, which moved it to the Contribution tab), and the
+contribution cut-off is clamped to `startAge - 1` only when the start age is at
+or past the locked-in one — not on every keystroke as the reference does.
+**Why**: the field ends accumulation, so it belongs with the inputs that drive
+it. The narrowed clamp is because the reference's `parseInt(...) || srsAge`
+re-clamps mid-typing: a half-typed "6" pushes the cut-off to 5 and the advisor
+has to retype a field they never touched. Ignoring implausible values costs
+nothing, because `projectContributions` refuses to contribute in or after the
+withdrawal year regardless.
+**Impact**: presentation only. No formula, constant or rounding decision
+deviates — the faithful-port rule above still holds.

@@ -19,6 +19,10 @@
  *   balance keeps compounding. Anything still in the account when the window
  *   shuts is deemed withdrawn in one lump and taxed in that year, which is the
  *   whole point of spreading withdrawals out.
+ * - Contributions may continue — and keep attracting relief — right up until
+ *   the first withdrawal, even past the penalty-free age. They must stop once
+ *   it is taken. Accumulation therefore runs to the PLANNED FIRST WITHDRAWAL
+ *   age, not to the statutory one.
  *
  * Tax comes from `singaporeTax` — the same ladder the tax calculator uses, so
  * the two tools can never quote different numbers for the same income.
@@ -78,9 +82,17 @@ export interface ContributionProjectionInput {
   growthRate: number;
   /** Contribution made in each FUTURE year, until `contributeUntilAge`. */
   annualContribution: number;
+  /**
+   * Last age a contribution is made. May sit past the penalty-free age —
+   * relief runs until the first withdrawal — but never at or past `startAge`.
+   */
   contributeUntilAge: number;
-  /** The customer's locked-in penalty-free age — where the projection stops. */
-  withdrawalAge: number;
+  /**
+   * Age the FIRST withdrawal is planned for — the statutory age, or later.
+   * Accumulation runs to here, so deferring compounds the pot for longer AND
+   * buys more years of relief. This is where the projection stops.
+   */
+  startAge: number;
 }
 
 export interface ContributionYear {
@@ -101,15 +113,21 @@ export interface ContributionProjection {
   effectiveRateBefore: number;
   effectiveRateAfter: number;
   years: ContributionYear[];
-  /** Projected balance at the customer's withdrawal age. */
-  balanceAtWithdrawalAge: number;
+  /** Projected balance at the age the first withdrawal is planned for. */
+  balanceAtFirstWithdrawal: number;
   /** This year's saving plus every future year's. */
   lifetimeTaxSaved: number;
   totalContributed: number;
 }
 
 /**
- * Grow the balance to the customer's withdrawal age.
+ * Grow the balance to the age the first withdrawal is planned for.
+ *
+ * NOT to the statutory age. Any years between the two belong to the SAME
+ * accumulation — they compound at the contribution growth rate, and they may
+ * still carry contributions (and their relief), because nothing has come out
+ * yet. Splitting them into a separate deferral step, as this once did, priced
+ * them at the drawdown rate and made contributing through them unrepresentable.
  *
  * Order within a year is growth-then-contribution, matching the reference:
  * `balance = balance + balance*rate + contribution`. A contribution made during
@@ -121,16 +139,18 @@ export function projectContributions(input: ContributionProjectionInput): Contri
   const taxWithSrs = grossTax(Math.max(input.annualIncome - input.contributionThisYear, 0));
   const taxSavedThisYear = taxWithoutSrs - taxWithSrs;
 
-  const yearsToWithdrawal = Math.max(0, input.withdrawalAge - input.currentAge);
+  const yearsToFirstWithdrawal = Math.max(0, input.startAge - input.currentAge);
   let balance = input.currentBalance;
   let lifetimeTaxSaved = taxSavedThisYear;
   let cumulativeTaxSaved = 0;
   let totalContributed = input.currentBalance + input.contributionThisYear;
   const years: ContributionYear[] = [];
 
-  for (let year = 1; year <= yearsToWithdrawal; year += 1) {
+  for (let year = 1; year <= yearsToFirstWithdrawal; year += 1) {
     const age = input.currentAge + year;
-    const contributing = age <= input.contributeUntilAge;
+    // The withdrawal year itself never contributes — taking money out closes
+    // the door, whatever `contributeUntilAge` says.
+    const contributing = age <= input.contributeUntilAge && age < input.startAge;
     const contribution = contributing ? input.annualContribution : 0;
     const growth = balance * input.growthRate;
     balance = balance + growth + contribution;
@@ -152,7 +172,7 @@ export function projectContributions(input: ContributionProjectionInput): Contri
     effectiveRateBefore: input.annualIncome > 0 ? (taxWithoutSrs / input.annualIncome) * 100 : 0,
     effectiveRateAfter: input.annualIncome > 0 ? (taxWithSrs / input.annualIncome) * 100 : 0,
     years,
-    balanceAtWithdrawalAge: balance,
+    balanceAtFirstWithdrawal: balance,
     lifetimeTaxSaved,
     totalContributed,
   };
@@ -160,15 +180,15 @@ export function projectContributions(input: ContributionProjectionInput): Contri
 
 /**
  * The ages the projection table shows — today, every fifth birthday after it,
- * and the withdrawal age itself. A 45-year run of rows tells an advisor
+ * and the first-withdrawal age itself. A 45-year run of rows tells an advisor
  * nothing; five or six milestones tell the story.
  */
-export function milestoneAges(currentAge: number, withdrawalAge: number): number[] {
+export function milestoneAges(currentAge: number, startAge: number): number[] {
   const ages = [currentAge];
-  for (let age = Math.ceil(currentAge / 5) * 5; age < withdrawalAge; age += 5) {
+  for (let age = Math.ceil(currentAge / 5) * 5; age < startAge; age += 5) {
     if (age > currentAge) ages.push(age);
   }
-  if (!ages.includes(withdrawalAge)) ages.push(withdrawalAge);
+  if (!ages.includes(startAge)) ages.push(startAge);
   return ages;
 }
 
@@ -181,8 +201,8 @@ export function milestoneAges(currentAge: number, withdrawalAge: number): number
 export function milestoneRows(
   projection: ContributionProjection,
   currentAge: number,
-  withdrawalAge: number,
+  startAge: number,
 ): ContributionYear[] {
-  const wanted = new Set(milestoneAges(currentAge, withdrawalAge));
+  const wanted = new Set(milestoneAges(currentAge, startAge));
   return projection.years.filter((year) => wanted.has(year.age));
 }

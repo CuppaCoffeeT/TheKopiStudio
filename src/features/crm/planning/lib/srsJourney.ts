@@ -21,12 +21,14 @@ export interface SrsJourneyInput {
   currentAge: number;
   /** The customer's locked-in statutory age. */
   withdrawalAge: number;
-  /** Age they actually start drawing — the statutory age, or later. */
+  /**
+   * Age they actually start drawing — the statutory age, or later. The
+   * projection already runs to here, so there is no separate deferral figure
+   * to fold in; the extra years are simply part of the balance.
+   */
   startAge: number;
   projection: ContributionProjection;
   plan: WithdrawalPlan;
-  /** Growth earned by deferring, from `deferBalance`. */
-  deferralGrowth: number;
   otherIncome: number;
 }
 
@@ -35,9 +37,9 @@ export interface SrsJourney {
   totalContributions: number;
   investmentReturns: number;
   returnPercent: number;
-  balanceAtWithdrawalAge: number;
+  balanceAtFirstWithdrawal: number;
+  /** Years the first withdrawal is pushed past the statutory age. */
   deferralYears: number;
-  deferralGrowth: number;
   lifetimeTaxSaved: number;
   /** Drawdown */
   totalWithdrawn: number;
@@ -59,7 +61,7 @@ export function buildJourney(input: SrsJourneyInput): SrsJourney {
   const { projection, plan } = input;
 
   const deferralYears = Math.max(0, input.startAge - input.withdrawalAge);
-  const investmentReturns = projection.balanceAtWithdrawalAge - projection.totalContributed;
+  const investmentReturns = projection.balanceAtFirstWithdrawal - projection.totalContributed;
   const totalTaxPaid = plan.totalTax + plan.forcedPayoutTax;
   const annualCeiling = annualTaxFreeCeiling(input.otherIncome);
 
@@ -70,9 +72,8 @@ export function buildJourney(input: SrsJourneyInput): SrsJourney {
       projection.totalContributed > 0
         ? (investmentReturns / projection.totalContributed) * 100
         : 0,
-    balanceAtWithdrawalAge: projection.balanceAtWithdrawalAge,
+    balanceAtFirstWithdrawal: projection.balanceAtFirstWithdrawal,
     deferralYears,
-    deferralGrowth: input.deferralGrowth,
     lifetimeTaxSaved: projection.lifetimeTaxSaved,
     totalWithdrawn: plan.totalWithdrawn,
     taxOnWithdrawals: plan.totalTax,

@@ -1,14 +1,15 @@
 /**
  * WF — SRS planner (tool 05).
  *
- * The tool was rebuilt against the advisor's newer reference: the withdrawal
- * age is now the customer's own locked-in 62/63/64, the 10-year window is
- * counted from the FIRST withdrawal (so deferring moves it), the level draw
- * replaced the rising one, and the journey panel nets both ends.
+ * The tool tracks the advisor's own reference: the withdrawal age is the
+ * customer's locked-in 62/63/64, the 10-year window is counted from the FIRST
+ * withdrawal (so deferring moves it), the level draw replaced the rising one,
+ * and the journey panel nets both ends.
  *
- * This spec covers the wiring those changes introduced — the chain from the
- * projection through the deferral into the drawdown — because a broken link
- * there produces a page that still renders, with quietly wrong numbers.
+ * Since the 2026-08-19 update the PLANNED first withdrawal drives accumulation
+ * too — it sits on the paying-in side, contributions run until it, and there is
+ * no separate deferral step. This spec covers that chain, because a broken link
+ * in it produces a page that still renders, with quietly wrong numbers.
  */
 import { expect, test, type Page } from '@playwright/test';
 import { ClientsPage } from '../../pom/ClientsPage';
@@ -40,18 +41,38 @@ test.describe('SRS planner', () => {
     await expect(page.getByTestId('srs-net-benefit')).toBeVisible();
   });
 
-  test('deferring the start age grows the balance and moves the window', async ({ page }) => {
+  test('deferring the first withdrawal grows the balance and moves the window', async ({ page }) => {
     await openSrsPlanner(page);
 
-    // No deferral at first — the row only appears once there is growth to show.
-    await expect(page.getByTestId('srs-deferral-growth')).toHaveCount(0);
+    const projected = page.getByTestId('srs-projected-balance');
+    const before = await projected.textContent();
+    // No deferral at first — the row only appears once the start age is past
+    // the locked-in one.
+    await expect(page.getByTestId('srs-deferral-years')).toHaveCount(0);
 
+    // The start age lives on the PAYING-IN side now: it ends accumulation, so
+    // pushing it out has to move the projected balance, not just the drawdown.
     await page.getByTestId('srs-start-age').fill('67');
-    await expect(page.getByTestId('srs-deferral-growth')).toBeVisible();
+    await expect(projected).not.toHaveText(before ?? '');
+    await expect(page.getByTestId('srs-deferral-years')).toBeVisible();
 
     // The window now shuts at 76, not 72 — it is counted from the first
-    // withdrawal, which is the rule the rebuild exists to encode.
+    // withdrawal, which is the rule the tool exists to encode.
     await expect(page.getByTestId('srs-journey')).toContainText('76');
+  });
+
+  test('contributions cannot outlast the first withdrawal', async ({ page }) => {
+    await openSrsPlanner(page);
+
+    // Relief runs until the first dollar comes out, so the cut-off may sit
+    // past the locked-in age — but never at or after the withdrawal itself.
+    await page.getByTestId('srs-start-age').fill('67');
+    await page.getByTestId('srs-until').fill('66');
+    await expect(page.getByTestId('srs-until')).toHaveValue('66');
+
+    // Pulling the start age back in front of it drags the cut-off down.
+    await page.getByTestId('srs-start-age').fill('64');
+    await expect(page.getByTestId('srs-until')).toHaveValue('63');
   });
 
   test('the custom strategy swaps the year picker for three legs', async ({ page }) => {

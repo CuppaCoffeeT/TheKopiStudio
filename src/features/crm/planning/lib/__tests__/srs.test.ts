@@ -6,7 +6,8 @@
  *
  * The window is counted from the FIRST withdrawal, not from the statutory age.
  * Deferring is therefore a lever, not a rounding detail, and it gets its own
- * cases below.
+ * cases below — including the two things it buys: more compounding AND more
+ * years of relief, because contributions run until the first withdrawal.
  */
 import { describe, expect, it } from 'vitest';
 
@@ -25,7 +26,6 @@ import {
 import {
   annualTaxFreeCeiling,
   customWithdrawals,
-  deferBalance,
   equalWithdrawals,
 } from '../srsSchedules';
 import { planWithdrawals } from '../srsWithdrawals';
@@ -73,7 +73,7 @@ describe('projectContributions', () => {
     growthRate: 0,
     annualContribution: 0,
     contributeUntilAge: 0,
-    withdrawalAge: 63,
+    startAge: 63,
   };
 
   it('values this year’s contribution at the marginal rate', () => {
@@ -85,41 +85,74 @@ describe('projectContributions', () => {
     expect(p.taxSavedThisYear).toBeGreaterThan(0);
   });
 
-  it('runs to the customer’s own withdrawal age and no further', () => {
+  it('runs to the planned first withdrawal and no further', () => {
     const p = projectContributions({ ...base, currentAge: 60 });
     expect(p.years).toHaveLength(3);
     expect(p.years.at(-1)?.age).toBe(63);
   });
 
-  it('stops at 62 for someone whose age was locked in earlier', () => {
-    const p = projectContributions({ ...base, currentAge: 60, withdrawalAge: 62 });
+  it('stops at 62 for someone drawing at their earlier locked-in age', () => {
+    const p = projectContributions({ ...base, currentAge: 60, startAge: 62 });
     expect(p.years).toHaveLength(2);
     expect(p.years.at(-1)?.age).toBe(62);
   });
 
-  it('runs a year longer for someone locked in at 64', () => {
-    const p = projectContributions({ ...base, currentAge: 60, withdrawalAge: 64 });
-    expect(p.years).toHaveLength(4);
-    expect(p.years.at(-1)?.age).toBe(64);
+  it('runs PAST the statutory age when the first withdrawal is deferred', () => {
+    // The point of the rebuild: the years between the locked-in age and the
+    // first withdrawal belong to accumulation, not to a separate deferral step.
+    const p = projectContributions({ ...base, currentAge: 60, startAge: 67 });
+    expect(p.years).toHaveLength(7);
+    expect(p.years.at(-1)?.age).toBe(67);
   });
 
-  it('produces no projection years for someone already at their age', () => {
+  it('produces no projection years for someone already at their start age', () => {
     const p = projectContributions({ ...base, currentAge: 63 });
     expect(p.years).toHaveLength(0);
-    expect(p.balanceAtWithdrawalAge).toBe(0);
+    expect(p.balanceAtFirstWithdrawal).toBe(0);
   });
 
   it('compounds growth then adds the contribution', () => {
     const p = projectContributions({
       ...base,
       currentAge: 62,
+      startAge: 64,
       currentBalance: 100_000,
       growthRate: 0.1,
       annualContribution: 10_000,
       contributeUntilAge: 70,
     });
-    // One year: 100,000 + 10,000 growth + 10,000 contribution.
-    expect(p.balanceAtWithdrawalAge).toBeCloseTo(120_000, 6);
+    // Age 63: 100,000 + 10,000 growth + 10,000 contribution = 120,000
+    // Age 64: 120,000 + 12,000 growth + 0 (the withdrawal year) = 132,000
+    expect(p.years[0].balance).toBeCloseTo(120_000, 6);
+    expect(p.balanceAtFirstWithdrawal).toBeCloseTo(132_000, 6);
+  });
+
+  it('keeps contributing past the statutory age, right up to the withdrawal', () => {
+    // Locked in at 63 but drawing at 67: 62–66 all contribute, because relief
+    // runs until the first dollar comes out. This was unrepresentable before.
+    const p = projectContributions({
+      ...base,
+      currentAge: 61,
+      startAge: 67,
+      annualContribution: 10_000,
+      contributeUntilAge: 70,
+    });
+    expect(p.years.filter((y) => y.contribution > 0).map((y) => y.age)).toEqual([
+      62, 63, 64, 65, 66,
+    ]);
+  });
+
+  it('never contributes in the year the first withdrawal is taken', () => {
+    const p = projectContributions({
+      ...base,
+      currentAge: 61,
+      startAge: 65,
+      annualContribution: 10_000,
+      contributeUntilAge: 90,
+    });
+    expect(p.years.at(-1)?.age).toBe(65);
+    expect(p.years.at(-1)?.contribution).toBe(0);
+    expect(p.years.at(-1)?.taxSaved).toBe(0);
   });
 
   it('stops contributing after contributeUntilAge but keeps growing', () => {
@@ -135,7 +168,7 @@ describe('projectContributions', () => {
     // Age 63: 120,000 + 12,000 + 0        = 132,000 (past the cut-off)
     expect(p.years[0].contribution).toBe(10_000);
     expect(p.years[1].contribution).toBe(0);
-    expect(p.balanceAtWithdrawalAge).toBeCloseTo(132_000, 6);
+    expect(p.balanceAtFirstWithdrawal).toBeCloseTo(132_000, 6);
   });
 
   it('counts a tax saving only in the years it actually contributes', () => {
@@ -157,7 +190,8 @@ describe('projectContributions', () => {
       contributeUntilAge: 70,
     });
     const perYear = p.years[0].taxSaved;
-    expect(p.years.at(-1)?.cumulativeTaxSaved).toBeCloseTo(perYear * 3, 6);
+    // 61 and 62 contribute; 63 is the withdrawal year and cannot.
+    expect(p.years.at(-1)?.cumulativeTaxSaved).toBeCloseTo(perYear * 2, 6);
     // The cumulative column covers FUTURE years only — this year's saving is
     // the headline stat and would be double-counted in the table.
     expect(p.lifetimeTaxSaved).toBeCloseTo(
@@ -168,11 +202,11 @@ describe('projectContributions', () => {
 });
 
 describe('milestones', () => {
-  it('takes today, every fifth birthday, then the withdrawal age', () => {
+  it('takes today, every fifth birthday, then the first-withdrawal age', () => {
     expect(milestoneAges(40, 63)).toEqual([40, 45, 50, 55, 60, 63]);
   });
 
-  it('never repeats the withdrawal age when it is already a multiple of five', () => {
+  it('never repeats the start age when it is already a multiple of five', () => {
     const ages = milestoneAges(41, 65);
     expect(ages.filter((age) => age === 65)).toHaveLength(1);
   });
@@ -186,7 +220,7 @@ describe('milestones', () => {
       growthRate: 0.04,
       annualContribution: 0,
       contributeUntilAge: 0,
-      withdrawalAge: 63,
+      startAge: 63,
     });
     const rows = milestoneRows(projection, 40, 63);
     expect(rows.map((row) => row.age)).toEqual([45, 50, 55, 60, 63]);
@@ -245,18 +279,6 @@ describe('customWithdrawals', () => {
       startAge: 63,
     });
     expect(plan.schedule).toHaveLength(SRS_WITHDRAWAL_WINDOW_YEARS);
-  });
-});
-
-describe('deferBalance', () => {
-  it('is a no-op when the customer starts at their own age', () => {
-    expect(deferBalance(100_000, 0.05, 0)).toEqual({ balance: 100_000, growth: 0 });
-  });
-
-  it('compounds the deferred years and reports what they earned', () => {
-    const { balance, growth } = deferBalance(100_000, 0.1, 2);
-    expect(balance).toBeCloseTo(121_000, 6);
-    expect(growth).toBeCloseTo(21_000, 6);
   });
 });
 
@@ -404,38 +426,38 @@ describe('planWithdrawals', () => {
 });
 
 describe('buildJourney', () => {
-  const projection = projectContributions({
+  const projectionInput = {
     currentAge: 40,
     annualIncome: 120_000,
     contributionThisYear: 15_300,
     currentBalance: 30_000,
     growthRate: 0.04,
     annualContribution: 15_300,
-    contributeUntilAge: 63,
-    withdrawalAge: 63,
-  });
+    contributeUntilAge: 62,
+    startAge: 63,
+  };
+  const projection = projectContributions(projectionInput);
 
-  function journeyFor(amounts: number[], deferralGrowth = 0, startAge = 63) {
+  function journeyFor(amounts: number[]) {
     const plan = planWithdrawals({
-      startingBalance: projection.balanceAtWithdrawalAge + deferralGrowth,
+      startingBalance: projection.balanceAtFirstWithdrawal,
       growthRate: 0.03,
       otherIncome: 0,
       amounts,
-      startAge,
+      startAge: 63,
     });
     return buildJourney({
       currentAge: 40,
       withdrawalAge: 63,
-      startAge,
+      startAge: 63,
       projection,
       plan,
-      deferralGrowth,
       otherIncome: 0,
     });
   }
 
   it('nets tax saved contributing against tax paid withdrawing', () => {
-    const journey = journeyFor(equalWithdrawals(projection.balanceAtWithdrawalAge, 0.03, 10));
+    const journey = journeyFor(equalWithdrawals(projection.balanceAtFirstWithdrawal, 0.03, 10));
     expect(journey.netTaxBenefit).toBeCloseTo(
       journey.lifetimeTaxSaved - journey.totalTaxPaid,
       6,
@@ -444,9 +466,9 @@ describe('buildJourney', () => {
   });
 
   it('separates contributions from the returns they earned', () => {
-    const journey = journeyFor(equalWithdrawals(projection.balanceAtWithdrawalAge, 0.03, 10));
+    const journey = journeyFor(equalWithdrawals(projection.balanceAtFirstWithdrawal, 0.03, 10));
     expect(journey.totalContributions + journey.investmentReturns).toBeCloseTo(
-      journey.balanceAtWithdrawalAge,
+      journey.balanceAtFirstWithdrawal,
       6,
     );
     expect(journey.returnPercent).toBeGreaterThan(0);
@@ -465,15 +487,44 @@ describe('buildJourney', () => {
   });
 
   it('reports the ceiling and how far over it the plan draws', () => {
-    const journey = journeyFor(equalWithdrawals(projection.balanceAtWithdrawalAge, 0.03, 10));
+    const journey = journeyFor(equalWithdrawals(projection.balanceAtFirstWithdrawal, 0.03, 10));
     expect(journey.annualCeiling).toBe(40_000);
     expect(journey.overCeilingBy).toBeCloseTo(journey.averagePerYear - 40_000, 6);
   });
 
   it('counts deferred years and moves the window close with them', () => {
-    const journey = journeyFor([10_000], 25_000, 67);
+    const deferred = projectContributions({ ...projectionInput, startAge: 67 });
+    const plan = planWithdrawals({
+      startingBalance: deferred.balanceAtFirstWithdrawal,
+      growthRate: 0.03,
+      otherIncome: 0,
+      amounts: [10_000],
+      startAge: 67,
+    });
+    const journey = buildJourney({
+      currentAge: 40,
+      withdrawalAge: 63,
+      startAge: 67,
+      projection: deferred,
+      plan,
+      otherIncome: 0,
+    });
     expect(journey.deferralYears).toBe(4);
-    expect(journey.deferralGrowth).toBe(25_000);
     expect(journey.windowEndsAt).toBe(76);
+  });
+
+  it('prices the deferred years INSIDE the projection, not as a bolt-on', () => {
+    // Deferring is worth more than four years of compounding on its own: with
+    // the contribution cut-off above the statutory age it also buys four more
+    // years of contributions and their relief.
+    const deferred = projectContributions({
+      ...projectionInput,
+      contributeUntilAge: 66,
+      startAge: 67,
+    });
+    expect(deferred.balanceAtFirstWithdrawal).toBeGreaterThan(
+      projection.balanceAtFirstWithdrawal,
+    );
+    expect(deferred.lifetimeTaxSaved).toBeGreaterThan(projection.lifetimeTaxSaved);
   });
 });

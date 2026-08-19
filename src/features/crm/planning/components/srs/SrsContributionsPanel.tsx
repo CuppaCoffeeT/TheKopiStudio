@@ -4,9 +4,15 @@
  * Fully controlled; `useSrsPlanner` owns the state and the
  * `projectContributions` call, so this file has no maths at all.
  *
- * The withdrawal age is an INPUT, not a constant: it is locked in at the
- * statutory retirement age that applied when the customer made their FIRST
- * contribution, so two customers of the same age can have different ones.
+ * THREE ages, and they are not the same age:
+ *  - EARLIEST withdrawal age — locked in at the statutory retirement age that
+ *    applied when the customer made their FIRST contribution, so two customers
+ *    of the same age can have different ones. An input, never a constant.
+ *  - PLANNED first withdrawal — that age or later. It ends accumulation and
+ *    opens the 10-year window, so it lives on this side of the tool, not the
+ *    drawdown side where it used to sit.
+ *  - CONTRIBUTE UNTIL — relief keeps running right up to the first withdrawal,
+ *    even past the earliest age, so this may legitimately sit above it.
  */
 
 import { Field, Input } from '@/components/primitives/form';
@@ -17,13 +23,14 @@ import { SRS_CAP_CITIZEN, SRS_STATUTORY_AGES, type ContributionProjection } from
 interface Values {
   currentAge: string; annualIncome: string; contributionThisYear: string;
   currentBalance: string; growthRate: string; annualContribution: string;
-  contributeUntilAge: string; withdrawalAge: string;
+  contributeUntilAge: string; withdrawalAge: string; startAge: string;
 }
 interface Setters {
   setCurrentAge: (v: string) => void; setAnnualIncome: (v: string) => void;
   setContributionThisYear: (v: string) => void; setCurrentBalance: (v: string) => void;
   setGrowthRate: (v: string) => void; setAnnualContribution: (v: string) => void;
   setContributeUntilAge: (v: string) => void; setWithdrawalAge: (v: string) => void;
+  setStartAge: (v: string) => void;
 }
 
 /**
@@ -40,8 +47,8 @@ const AGE_HINTS: Record<number, string> = {
 export function SrsContributionsPanel({
   values, setters, projection,
 }: { values: Values; setters: Setters; projection: ContributionProjection }) {
-  const { currentAge, annualIncome, contributionThisYear, currentBalance, growthRate, annualContribution, contributeUntilAge, withdrawalAge } = values;
-  const { setCurrentAge, setAnnualIncome, setContributionThisYear, setCurrentBalance, setGrowthRate, setAnnualContribution, setContributeUntilAge, setWithdrawalAge } = setters;
+  const { currentAge, annualIncome, contributionThisYear, currentBalance, growthRate, annualContribution, contributeUntilAge, withdrawalAge, startAge } = values;
+  const { setCurrentAge, setAnnualIncome, setContributionThisYear, setCurrentBalance, setGrowthRate, setAnnualContribution, setContributeUntilAge, setWithdrawalAge, setStartAge } = setters;
 
   return (
 <ToolPanel label="Paying in" testId="srs-contributions">
@@ -76,13 +83,8 @@ export function SrsContributionsPanel({
         onChange={(e) => setAnnualContribution(e.target.value)}
         className="pointer-coarse:text-[16px]" data-testid="srs-annual" />
     </Field>
-    <Field label="Contribute until age" hint="Contributions must stop once withdrawals start">
-      <Input type="number" min={18} max={75} value={contributeUntilAge}
-        onChange={(e) => setContributeUntilAge(e.target.value)}
-        className="pointer-coarse:text-[16px]" data-testid="srs-until" />
-    </Field>
     <Field
-      label="Withdrawal age"
+      label="Earliest withdrawal age"
       hint="Set by the date of the first contribution — it never moves afterwards"
     >
       <ToolSelect
@@ -96,6 +98,22 @@ export function SrsContributionsPanel({
         testId="srs-withdrawal-age"
       />
     </Field>
+    <Field
+      label="Planned first withdrawal"
+      hint={`${withdrawalAge} or later — this is what opens the 10-year window`}
+    >
+      <Input type="number" min={Number(withdrawalAge)} max={80} value={startAge}
+        onChange={(e) => setStartAge(e.target.value)}
+        className="pointer-coarse:text-[16px]" data-testid="srs-start-age" />
+    </Field>
+    <Field
+      label="Contribute until age"
+      hint="Relief runs until the first withdrawal — even past the earliest age"
+    >
+      <Input type="number" min={18} max={Math.max(18, Number(startAge) - 1)} value={contributeUntilAge}
+        onChange={(e) => setContributeUntilAge(e.target.value)}
+        className="pointer-coarse:text-[16px]" data-testid="srs-until" />
+    </Field>
   </div>
 
   <div className="mt-4 border-t border-[color:var(--border-soft)] pt-3">
@@ -107,8 +125,8 @@ export function SrsContributionsPanel({
     />
     <SummaryRow label="Total contributed" value={money(projection.totalContributed)} />
     <SummaryRow
-      label={`Balance at ${withdrawalAge}`}
-      value={money(projection.balanceAtWithdrawalAge)}
+      label={`Balance at ${startAge}`}
+      value={money(projection.balanceAtFirstWithdrawal)}
       total
       testId="srs-projected-balance"
     />

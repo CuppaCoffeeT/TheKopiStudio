@@ -31,18 +31,22 @@ export function SrsJourneyPanel({
   <div className="grid grid-cols-1 gap-x-[22px] gap-y-2 lg:grid-cols-2">
     <div>
       <h3 className="m-0 mb-1 text-[12px] font-semibold text-foreground">
-        Paying in · age {currentAge}–{withdrawalAge}
+        Paying in · age {currentAge}–{startAge}
       </h3>
       <SummaryRow label="Total contributions" value={money(journey.totalContributions)} />
       <SummaryRow
         label="Investment returns"
         value={`${money(journey.investmentReturns)} (${percent(journey.returnPercent)})`}
       />
-      <SummaryRow label={`Balance at ${withdrawalAge}`} value={money(journey.balanceAtWithdrawalAge)} />
+      <SummaryRow
+        label={`Balance at ${startAge}`}
+        value={money(journey.balanceAtFirstWithdrawal)}
+      />
       {journey.deferralYears > 0 && (
         <SummaryRow
-          label={`Growth from waiting to ${startAge}`}
-          value={money(journey.deferralGrowth)}
+          label={`Years past the earliest age (${withdrawalAge})`}
+          value={String(journey.deferralYears)}
+          testId="srs-deferral-years"
         />
       )}
       <SummaryRow
@@ -101,13 +105,13 @@ export function SrsJourneyPanel({
   >
     <li>
       {positive
-        ? `${money(journey.totalContributions)} contributed grows to ${money(journey.balanceAtWithdrawalAge)} by ${withdrawalAge} — a ${percent(journey.returnPercent)} gain — and nets ${money(journey.netTaxBenefit)} of tax either side.`
+        ? `${money(journey.totalContributions)} contributed grows to ${money(journey.balanceAtFirstWithdrawal)} by ${startAge} — a ${percent(journey.returnPercent)} gain — and nets ${money(journey.netTaxBenefit)} of tax either side.`
         : `This plan hands back ${money(Math.abs(journey.netTaxBenefit))} more than it saves. Draw over more years, or contribute less, before the window forces the balance out.`}
     </li>
     <li>
       {journey.deferralYears > 0
-        ? `Waiting until ${startAge} earned an extra ${money(journey.deferralGrowth)} tax-free, and moved the window's close to ${journey.windowEndsAt}.`
-        : `Starting later than ${withdrawalAge} is still open — the 10-year window only opens on the first dollar out, so the balance keeps compounding until then.`}
+        ? `Starting at ${startAge} rather than ${withdrawalAge} gave the pot ${journey.deferralYears} more year${journey.deferralYears === 1 ? '' : 's'} to compound, and moved the window's close to ${journey.windowEndsAt}.`
+        : `Starting later than ${withdrawalAge} is still open — and contributions keep earning relief until the first withdrawal, because the 10-year window only opens on the first dollar out.`}
     </li>
     <li>
       {journey.remainingBalance > 0

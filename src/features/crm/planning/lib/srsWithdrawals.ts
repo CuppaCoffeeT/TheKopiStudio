@@ -15,7 +15,7 @@ import { forcedPayoutAge, SRS_EXEMPT_FRACTION, taxOnSlice } from './srs';
 import { capToWindow, SRS_ZERO_RATE_BAND } from './srsSchedules';
 
 export interface WithdrawalPlanInput {
-  /** Balance at the first withdrawal — after any deferral growth. */
+  /** Balance at the first withdrawal, straight from the projection. */
   startingBalance: number;
   /** Return still earned on the un-withdrawn balance, as a fraction. */
   growthRate: number;

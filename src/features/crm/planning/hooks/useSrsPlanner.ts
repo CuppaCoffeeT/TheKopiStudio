@@ -1,14 +1,15 @@
 /**
- * All SRS planner state, and the four derived models the panels render.
+ * All SRS planner state, and the three derived models the panels render.
  *
  * The page used to own this. It stopped fitting once the tool grew a locked-in
- * statutory age, a deferral, and two drawdown strategies — sixteen pieces of
- * form state and a four-stage derivation is a model, not a page.
+ * statutory age, a planned start age, and two drawdown strategies — sixteen
+ * pieces of form state and a multi-stage derivation is a model, not a page.
  *
- * THE CHAIN IS THE POINT. Contributions feed the balance at the statutory age;
- * deferring compounds it further; the drawdown starts from THAT; and the
- * journey reconciles both ends. Contribute more and the drawdown problem gets
- * harder, not easier — which only shows if the stages stay wired together.
+ * THE CHAIN IS THE POINT. Contributions run all the way to the PLANNED FIRST
+ * WITHDRAWAL — deferring buys both compounding and more years of relief — the
+ * drawdown starts from that balance, and the journey reconciles both ends.
+ * Contribute more and the drawdown problem gets harder, not easier, which only
+ * shows if the stages stay wired together.
  *
  * Everything is a string because everything is an `<input>`; the coercion to
  * numbers happens once, here, at the boundary of the pure lib functions.
@@ -27,7 +28,6 @@ import {
 import { buildJourney } from '../lib/srsJourney';
 import {
   customWithdrawals,
-  deferBalance,
   equalWithdrawals,
   MAX_WITHDRAWAL_PERIODS,
 } from '../lib/srsSchedules';
@@ -57,16 +57,37 @@ export function useSrsPlanner(customer: CrmClient, refYear: number) {
   const [currentBalance, setCurrentBalance] = useState('0');
   const [growthRate, setGrowthRate] = useState('4');
   const [annualContribution, setAnnualContribution] = useState(String(SRS_CAP_CITIZEN));
-  const [contributeUntilAge, setContributeUntilAge] = useState(String(SRS_DEFAULT_WITHDRAWAL_AGE));
+  // One year short of the first withdrawal — contributing in the year money
+  // comes out is not allowed, so the default is the latest legal answer.
+  const [contributeUntilAge, setContributeUntilAge] = useState(
+    String(SRS_DEFAULT_WITHDRAWAL_AGE - 1),
+  );
   const [withdrawalAge, setWithdrawalAgeState] = useState(String(SRS_DEFAULT_WITHDRAWAL_AGE));
+  const [startAge, setStartAgeState] = useState(String(SRS_DEFAULT_WITHDRAWAL_AGE));
 
   const [strategy, setStrategy] = useState<WithdrawalStrategy>('equal');
   const [balanceOverride, setBalanceOverride] = useState('');
-  const [startAge, setStartAge] = useState(String(SRS_DEFAULT_WITHDRAWAL_AGE));
   const [withdrawalYears, setWithdrawalYears] = useState(String(SRS_WITHDRAWAL_WINDOW_YEARS));
   const [withdrawalGrowth, setWithdrawalGrowth] = useState('3');
   const [otherIncome, setOtherIncome] = useState('0');
   const [periods, setPeriods] = useState<PeriodFields[]>(EMPTY_PERIODS);
+
+  /**
+   * Contributions must stop before the first withdrawal, so raising the start
+   * age is free but lowering it drags the contribution cut-off down with it.
+   *
+   * Only fires for a start age at or past the locked-in one. The reference
+   * clamps on every keystroke, which eats the field while a two-digit age is
+   * half typed ("6" would push the cut-off to 5); ignoring implausible values
+   * costs nothing, since `projectContributions` refuses to contribute in or
+   * after the withdrawal year regardless.
+   */
+  const clampContributeUntil = (firstWithdrawalAge: number, floor: number) => {
+    if (firstWithdrawalAge < floor) return;
+    setContributeUntilAge((current) =>
+      num(current) > firstWithdrawalAge - 1 ? String(firstWithdrawalAge - 1) : current,
+    );
+  };
 
   /**
    * Changing the statutory age drags the start age up with it — you cannot
@@ -75,7 +96,15 @@ export function useSrsPlanner(customer: CrmClient, refYear: number) {
    */
   const setWithdrawalAge = (next: string) => {
     setWithdrawalAgeState(next);
-    if (Number(startAge) < Number(next)) setStartAge(next);
+    const floor = num(next);
+    const first = Math.max(num(startAge), floor);
+    if (first !== num(startAge)) setStartAgeState(String(first));
+    clampContributeUntil(first, floor);
+  };
+
+  const setStartAge = (next: string) => {
+    setStartAgeState(next);
+    clampContributeUntil(num(next), num(withdrawalAge));
   };
 
   const setPeriod = (index: number, field: keyof PeriodFields, value: string) => {
@@ -94,7 +123,7 @@ export function useSrsPlanner(customer: CrmClient, refYear: number) {
         growthRate: rate(growthRate),
         annualContribution: num(annualContribution),
         contributeUntilAge: num(contributeUntilAge),
-        withdrawalAge: num(withdrawalAge),
+        startAge: num(startAge),
       }),
     [
       currentAge,
@@ -104,29 +133,20 @@ export function useSrsPlanner(customer: CrmClient, refYear: number) {
       growthRate,
       annualContribution,
       contributeUntilAge,
-      withdrawalAge,
+      startAge,
     ],
   );
 
   const milestones = useMemo(
-    () => milestoneRows(projection, num(currentAge), num(withdrawalAge)),
-    [projection, currentAge, withdrawalAge],
+    () => milestoneRows(projection, num(currentAge), num(startAge)),
+    [projection, currentAge, startAge],
   );
 
   // The drawdown starts from the projection unless the advisor overrides it —
-  // the link between the two halves is the tool's whole argument.
-  const balanceAtStatutoryAge =
-    balanceOverride.trim() === '' ? projection.balanceAtWithdrawalAge : num(balanceOverride);
-
-  const deferral = useMemo(
-    () =>
-      deferBalance(
-        balanceAtStatutoryAge,
-        rate(withdrawalGrowth),
-        num(startAge) - num(withdrawalAge),
-      ),
-    [balanceAtStatutoryAge, withdrawalGrowth, startAge, withdrawalAge],
-  );
+  // the link between the two halves is the tool's whole argument. Both are the
+  // balance at the FIRST WITHDRAWAL; nothing is compounded between them.
+  const balanceAtFirstWithdrawal =
+    balanceOverride.trim() === '' ? projection.balanceAtFirstWithdrawal : num(balanceOverride);
 
   const plan = useMemo(() => {
     const growth = rate(withdrawalGrowth);
@@ -135,15 +155,23 @@ export function useSrsPlanner(customer: CrmClient, refYear: number) {
         ? customWithdrawals(
             periods.map((period) => ({ amount: num(period.amount), years: num(period.years) })),
           )
-        : equalWithdrawals(deferral.balance, growth, Math.max(1, num(withdrawalYears)));
+        : equalWithdrawals(balanceAtFirstWithdrawal, growth, Math.max(1, num(withdrawalYears)));
     return planWithdrawals({
-      startingBalance: deferral.balance,
+      startingBalance: balanceAtFirstWithdrawal,
       growthRate: growth,
       otherIncome: num(otherIncome),
       amounts,
       startAge: num(startAge),
     });
-  }, [deferral.balance, withdrawalGrowth, otherIncome, withdrawalYears, strategy, periods, startAge]);
+  }, [
+    balanceAtFirstWithdrawal,
+    withdrawalGrowth,
+    otherIncome,
+    withdrawalYears,
+    strategy,
+    periods,
+    startAge,
+  ]);
 
   const journey = useMemo(
     () =>
@@ -153,26 +181,28 @@ export function useSrsPlanner(customer: CrmClient, refYear: number) {
         startAge: num(startAge),
         projection,
         plan,
-        deferralGrowth: deferral.growth,
         otherIncome: num(otherIncome),
       }),
-    [currentAge, withdrawalAge, startAge, projection, plan, deferral.growth, otherIncome],
+    [currentAge, withdrawalAge, startAge, projection, plan, otherIncome],
   );
+
+  /** Last age a contribution is actually made, after the start-age cut-off. */
+  const lastContributionAge = Math.min(num(contributeUntilAge), num(startAge) - 1);
 
   return {
     contribution: {
       values: {
         currentAge, annualIncome, contributionThisYear, currentBalance,
-        growthRate, annualContribution, contributeUntilAge, withdrawalAge,
+        growthRate, annualContribution, contributeUntilAge, withdrawalAge, startAge,
       },
       setters: {
         setCurrentAge, setAnnualIncome, setContributionThisYear, setCurrentBalance,
-        setGrowthRate, setAnnualContribution, setContributeUntilAge, setWithdrawalAge,
+        setGrowthRate, setAnnualContribution, setContributeUntilAge, setWithdrawalAge, setStartAge,
       },
     },
     withdrawal: {
-      values: { balanceOverride, startAge, withdrawalYears, withdrawalGrowth, otherIncome, strategy, periods },
-      setters: { setBalanceOverride, setStartAge, setWithdrawalYears, setWithdrawalGrowth, setOtherIncome, setStrategy, setPeriod },
+      values: { balanceOverride, withdrawalYears, withdrawalGrowth, otherIncome, strategy, periods },
+      setters: { setBalanceOverride, setWithdrawalYears, setWithdrawalGrowth, setOtherIncome, setStrategy, setPeriod },
     },
     numbers: {
       currentAge: num(currentAge),
@@ -181,11 +211,13 @@ export function useSrsPlanner(customer: CrmClient, refYear: number) {
       otherIncome: num(otherIncome),
       growthRate: num(growthRate),
       contributionThisYear: num(contributionThisYear),
+      lastContributionAge,
+      /** Years the pot compounds untouched after the last contribution. */
+      idleYears: Math.max(0, num(startAge) - 1 - num(contributeUntilAge)),
       periodCount: MAX_WITHDRAWAL_PERIODS,
     },
     projection,
     milestones,
-    deferral,
     plan,
     journey,
   };

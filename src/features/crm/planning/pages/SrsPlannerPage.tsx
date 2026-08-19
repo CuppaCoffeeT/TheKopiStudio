@@ -2,15 +2,16 @@
  * /clients/:id/srs — Supplementary Retirement Scheme planner.
  *
  * Tool 05 in the customer chain. Two halves, matching the reference tool:
- * paying IN (what it saves now, what it grows to by the customer's locked-in
- * withdrawal age) and taking OUT (how much of each withdrawal escapes tax, and
- * what the 10-year window costs if the plan does not empty the account).
+ * paying IN (what it saves now, what it grows to by the age the customer plans
+ * to take their first withdrawal) and taking OUT (how much of each withdrawal
+ * escapes tax, and what the 10-year window costs if the plan does not empty the
+ * account).
  *
- * The halves are CHAINED — the drawdown starts from the projected balance,
- * compounded through any deferred years, unless the advisor overrides it. That
- * link is the tool's whole argument: contribute more, and the drawdown problem
- * gets harder, not easier. The journey panel closes the loop by netting the
- * tax saved on the way in against the tax paid on the way out.
+ * The halves are CHAINED — the drawdown starts from the projected balance
+ * unless the advisor overrides it. That link is the tool's whole argument:
+ * contribute more, and the drawdown problem gets harder, not easier. The
+ * journey panel closes the loop by netting the tax saved on the way in against
+ * the tax paid on the way out.
  *
  * State and derivation live in `useSrsPlanner`. Pre-filled from the customer's
  * date of birth and annual income. Nothing is persisted.
@@ -31,7 +32,7 @@ import { SRS_WITHDRAWAL_WINDOW_YEARS } from '../lib/srs';
 
 function SrsPlanner({ customer, named }: { customer: CrmClient; named: boolean }) {
   const model = useSrsPlanner(customer, currentRefYear());
-  const { contribution, withdrawal, numbers, projection, milestones, deferral, plan, journey } = model;
+  const { contribution, withdrawal, numbers, projection, milestones, plan, journey } = model;
 
   return (
     <div className="flex flex-col gap-[22px]">
@@ -46,8 +47,8 @@ function SrsPlanner({ customer, named }: { customer: CrmClient; named: boolean }
             testId: 'srs-stat-saved',
           },
           {
-            label: `Balance at ${numbers.withdrawalAge}`,
-            value: money(projection.balanceAtWithdrawalAge),
+            label: `Balance at ${numbers.startAge}`,
+            value: money(projection.balanceAtFirstWithdrawal),
             hint: `${percent(numbers.growthRate)} growth`,
             testId: 'srs-stat-balance',
           },
@@ -76,9 +77,8 @@ function SrsPlanner({ customer, named }: { customer: CrmClient; named: boolean }
         />
 
         <SrsWithdrawalsPanel
-          projectedBalance={projection.balanceAtWithdrawalAge}
-          withdrawalAge={numbers.withdrawalAge}
-          deferral={deferral}
+          projectedBalance={projection.balanceAtFirstWithdrawal}
+          startAge={numbers.startAge}
           values={withdrawal.values}
           setters={withdrawal.setters}
           plan={plan}
@@ -88,7 +88,9 @@ function SrsPlanner({ customer, named }: { customer: CrmClient; named: boolean }
       <SrsProjectionPanel
         rows={milestones}
         currentAge={numbers.currentAge}
-        contributeUntilAge={contribution.values.contributeUntilAge}
+        lastContributionAge={numbers.lastContributionAge}
+        idleYears={numbers.idleYears}
+        startAge={numbers.startAge}
         annualContribution={contribution.values.annualContribution}
         growthRate={numbers.growthRate}
       />
@@ -109,9 +111,10 @@ function SrsPlanner({ customer, named }: { customer: CrmClient; named: boolean }
 
       <ToolNote testId="srs-not-saved">
         Withdrawals may begin at the statutory retirement age locked in by the first
-        contribution — 62, 63 or 64. Half of each withdrawal is chargeable, and the{' '}
-        {SRS_WITHDRAWAL_WINDOW_YEARS}-year penalty-free window opens on the first withdrawal,
-        not on that birthday. Nothing here is saved{named ? ` to ${customer.name}’s record` : ''}.
+        contribution — 62, 63 or 64. Contributions, and their relief, may continue past that
+        age right up until the first withdrawal. Half of each withdrawal is chargeable, and
+        the {SRS_WITHDRAWAL_WINDOW_YEARS}-year penalty-free window opens on the first
+        withdrawal, not on that birthday. Nothing here is saved{named ? ` to ${customer.name}’s record` : ''}.
       </ToolNote>
     </div>
   );
