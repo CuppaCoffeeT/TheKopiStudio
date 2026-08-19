@@ -24,9 +24,11 @@ stayed in each feature.
 | `ToolPageShell.tsx` | Page surface + measure. `wide` (`max-w-5xl`) for the two-column tools, `reading` (`max-w-[42rem]`) for the profiler wizard |
 | `ToolPageHeader.tsx` | Breadcrumb → brown index numeral → serif 38px title → description → one optional `action` slot |
 | `ToolCustomerBar.tsx` | "Who is this for?", asked inside the tool. **Presentational** — takes options, returns a choice, fetches nothing |
-| `ToolAtoms.tsx` | `ToolPanel` · `ToolStatGrid` · `SummaryRow` · `ToolSelect` · `ToolNote` |
+| `ToolPanel.tsx` | The cream panel with the 2a uppercase tracked label. Forwards its ref |
+| `ToolFigures.tsx` | `ToolStatGrid` (headline tiles) · `SummaryRow` (one line of a summary ladder) |
+| `ToolSelect.tsx` | `ToolSelect` (the tools' dropdown) · `ToolNote` (the quiet caveat line) |
 
-Import through the barrel: `@/components/primitives/tools`.
+**Import through the barrel**, never a deep path: `@/components/primitives/tools`. That is what let the original `ToolAtoms.tsx` split into these three when it crossed the 200-LOC ceiling without touching one call site — keep it that way.
 
 ## Before working here
 
