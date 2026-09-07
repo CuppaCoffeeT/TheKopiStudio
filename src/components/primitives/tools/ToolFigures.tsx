@@ -38,20 +38,30 @@ export function ToolStatGrid({ stats, testId }: { stats: ToolStat[]; testId?: st
       data-testid={testId}
     >
       {stats.map((stat) => (
-        <div key={stat.label} className="bg-card px-[18px] py-4" data-testid={stat.testId}>
+        // DOM order is dt → dd → dd, which is the only order a <dl> group may
+        // have (axe `definition-list`: a dd before its dt, or a stray <p> in
+        // the group, both fail wcag2aa). The FIGURE still reads first on
+        // screen because flex `order` puts the value above its label; the
+        // hint is a second <dd> — a term's secondary description, which is
+        // exactly what it is.
+        <div
+          key={stat.label}
+          className="flex flex-col bg-card px-[18px] py-4"
+          data-testid={stat.testId}
+        >
+          <dt className="order-2 mt-1.5 text-[12px] font-medium leading-tight text-foreground">
+            {stat.label}
+          </dt>
           <dd
-            className={cn('m-0 text-[26px] leading-none', STAT_TONE[stat.tone ?? 'neutral'])}
+            className={cn('order-1 m-0 text-[26px] leading-none', STAT_TONE[stat.tone ?? 'neutral'])}
             style={{ fontFamily: 'var(--font-pixel)' }}
           >
             {stat.value}
           </dd>
-          <dt className="mt-1.5 text-[12px] font-medium leading-tight text-foreground">
-            {stat.label}
-          </dt>
           {stat.hint && (
-            <p className="m-0 mt-0.5 text-[11.5px] leading-tight text-muted-foreground">
+            <dd className="order-3 m-0 mt-0.5 text-[11.5px] leading-tight text-muted-foreground">
               {stat.hint}
-            </p>
+            </dd>
           )}
         </div>
       ))}

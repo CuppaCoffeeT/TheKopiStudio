@@ -75,6 +75,7 @@ import { mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import { test, expect, type Page } from '@playwright/test';
+import { revealMaskedValues } from '../../fixtures/privacy';
 import { authFileFor } from '../../fixtures/roleAuth';
 import { ClientsPage } from '../../pom/ClientsPage';
 
@@ -265,6 +266,10 @@ test.describe('advisor /crm dashboard — empty book', () => {
     test.setTimeout(240_000);
 
     await test.step("sweep 'E2E-' residue out of the advisor's book (UI soft-delete)", async () => {
+      // Masked, the list prints names as "E2***" — which hides the very
+      // marker the sweep refuses to delete without, and the KPI tiles below
+      // print no digits, so "reads 0" would pass on an unread tile.
+      await revealMaskedValues(page);
       await sweepAdvisorResidue(new ClientsPage(page), page);
     });
 

@@ -2,7 +2,7 @@
 
 Append-only. Newest at the bottom. Format authority: [DECISIONS_LESSONS_PATTERN.md](/Volumes/YourVolume/META_FOLDER_STRUCTURE/DECISIONS_LESSONS_PATTERN.md).
 
-Last Updated: 2026-08-19 (a busy port serves ANOTHER app's login page — see the 2026-08-19 entry)
+Last Updated: 2026-09-07 (fill() appends into a focus-rewritten input; the Activity tab is never empty; a masked run reads zeros — see the 2026-09-07 entries)
 
 ---
 
@@ -274,3 +274,22 @@ out-of-band sweep, because in-test cleanup cannot run when the test is the thing
 that died. Until one exists, check `select count(*) from clients where not
 is_deleted` before and after a local run — residue silently breaks the next
 run's "empty book" assertions.
+
+## 2026-09-07 — `fill()` appended the typed date to the one already there
+**What happened**: every pre-filled date field (bank record, interaction) reverted to today after `fillDateField`; `clients-advisor`, `client-report` and `access-a11y` all went red at their first dated form. A BLANK date (the add-form date of birth) kept passing.
+**Root cause**: `DatePicker.handleInputFocus` (2026-08-19) re-seeds a pre-filled input with the 4-digit year, and Playwright's `fill()` runs `select()` BEFORE `focus()` — the programmatic value change collapsed the selection, so the typed date was appended ("19/08/202620/08/2026"), parsed as nothing, and the field reverted.
+**Fix**: `ClientsPage.fillDateField` focuses first as its own step, waits for the value to settle, then fills — an already-focused input gets no second focus event.
+**Generalise**: `fill()` is not "select-all + type" when a focus handler rewrites the value. Any input that re-formats itself on focus needs focus → settle → fill, or the test types into a value it never saw.
+
+## 2026-09-07 — The Activity tab is never empty for a customer that exists
+**What happened**: `deleteAllChildRows('interactions')` timed out 30s in every cleanup, then failed `clients-activity-empty` visible; the residue that left behind is what the dashboard sweep tripped on next.
+**Root cause**: the tab (2026-08-18) merges manual `interactions` with AUTOMATIC `customer_activity` rows — creating the customer writes the first one, and that table has no DELETE policy. The POM waited on manual rows OR the empty state; with only automatic rows on screen neither ever matched.
+**Fix**: `CHILD_LISTS.interactions.autoRowPrefix` — automatic rows count as settled, and the tab is clean when no MANUAL row remains, not when it is empty.
+**Generalise**: when a list gains rows the test did not create, "empty" stops being the cleanup oracle. Assert on what the test owns.
+
+## 2026-09-07 — A masked run reads "E2***" and zeros, and calls that the book
+**What happened**: the dashboard residue sweep refused to delete a row whose text was `E2***` — its own marker, masked — and the advisor journey's KPI baseline would have read 0 on three masked tiles.
+**Root cause**: `MaskContext` defaults to MASKED and remembers the choice in localStorage; a fresh Playwright context has none, so every spec starts masked. Masking landed 2026-08-18, after the last green run, and no spec that reads values had run since.
+**Fix**: `tests/fixtures/privacy.ts` → `revealMaskedValues(page)` before the first `goto` of any spec that asserts on names or figures. Render-only specs stay masked on purpose (that is the first-visit state, and the masked-contrast fix is only exercised masked).
+**Generalise**: a persisted UI default is part of the fixture. When one changes, every spec that reads the screen inherits it silently.
+

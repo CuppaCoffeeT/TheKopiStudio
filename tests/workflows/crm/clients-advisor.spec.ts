@@ -44,6 +44,7 @@ import { mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import { test, expect, type Locator, type Page } from '@playwright/test';
+import { revealMaskedValues } from '../../fixtures/privacy';
 import { authFileFor } from '../../fixtures/roleAuth';
 import { ClientsPage } from '../../pom/ClientsPage';
 
@@ -279,6 +280,11 @@ test.describe('clients — advisor full CRM journey', () => {
     let baseline: DashboardStats = { clients: 0, policies: 0, premium: 0, followUps: 0 };
     let seedRowId = '';
 
+    // Three of the four KPI tiles are masked by default (CrmKpiGrid), and a
+    // masked tile reads as 0 — baseline and delta alike. Reveal before the
+    // first navigation; the afterEach safety net shares this page.
+    await revealMaskedValues(page);
+
     await test.step('dashboard KPI baseline (pre-create)', async () => {
       await page.goto('/crm');
       baseline = await readDashboardStats(page);
@@ -444,7 +450,12 @@ test.describe('clients — advisor full CRM journey', () => {
       await expect(successToast(page, 'Interaction logged')).toBeVisible({ timeout: 20_000 });
 
       await expect(crm.childRows('interactions')).toHaveCount(1, { timeout: 30_000 });
-      await expect(crm.childRows('interactions').first()).toContainText('Follow-up');
+      // The Activity row (2026-08-18) prints the contact TYPE as its badge and
+      // the note as its headline. The follow-up date it carries surfaces on
+      // the header badge — asserted next — not on the row.
+      const contactRow = crm.childRows('interactions').first();
+      await expect(contactRow).toContainText('Meeting');
+      await expect(contactRow).toContainText('follow-up scheduled');
       // ≤7 days out → the urgent (amber) tone replaces the blue next-review badge.
       await expect(crm.followUpBadge).toHaveAttribute('data-tone', 'warning', { timeout: 15_000 });
       await expect(crm.followUpBadge).toHaveText(/\d+ days/);

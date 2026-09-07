@@ -14,7 +14,7 @@ Workflow-driven Playwright suite + supporting POM, runners, and fixtures. The W0
 | `workflows/` | One subfolder per module — `*.spec.ts` files driving real user flows (144 rows in WORKFLOW_LEDGER) |
 | `pom/` | Page Object Models — `LoginPage`, `QuotationCreatePage`, `responsiveTabs` helper |
 | `runners/` | Multi-tool runners — `agentTick`, `nasChecks`, `supabaseChecks`, `quotationChecks`, etc. |
-| `fixtures/` | Shared test data — `testUsers.ts` (the three role accounts: advisor · manager · super_admin) · `roleAuth.ts` (`authFileFor` + `loginAs`) · `advisorBookLock.ts` |
+| `fixtures/` | Shared test data — `testUsers.ts` (the three role accounts: advisor · manager · super_admin) · `roleAuth.ts` (`authFileFor` + `loginAs`) · `advisorBookLock.ts` · `privacy.ts` (`revealMaskedValues` — specs start MASKED; call before reading names or figures) |
 | `setup/` | Pre-suite provisioning run by CI, **not** by Playwright — `seed-auth-users.mjs` creates the three accounts in the ephemeral local Supabase |
 | `_explore-failures/` | Capture from `/explore-module` runs (do not commit broken flows here) |
 

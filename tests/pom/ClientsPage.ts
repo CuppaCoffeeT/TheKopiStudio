@@ -155,8 +155,22 @@ const DETAIL_TABS: Record<ClientDetailTab, { label: RegExp; content: string; tes
   bank: { label: /^Bank history/, content: 'clients-bank', testId: 'clients-detail-tab-bank' },
 };
 
+interface ChildListConfig {
+  section: string;
+  rowPrefix: string;
+  editPrefix: string;
+  deletePrefix: string;
+  dialog: string;
+  /**
+   * Rows the section holds that no spec created and none can delete —
+   * `customer_activity` carries no DELETE policy. Cleanup treats the tab as
+   * settled when these render, and as clean when no `rowPrefix` row remains.
+   */
+  autoRowPrefix?: string;
+}
+
 /** Child-list testid families on the detail tabs (rows / row actions / confirm dialogs). */
-const CHILD_LISTS = {
+const CHILD_LISTS: Record<'policies' | 'interactions' | 'bank', ChildListConfig> = {
   policies: {
     section: 'clients-policies',
     rowPrefix: 'clients-policy-row-',
@@ -172,6 +186,7 @@ const CHILD_LISTS = {
     editPrefix: 'clients-interaction-edit-btn-',
     deletePrefix: 'clients-interaction-delete-btn-',
     dialog: 'clients-interaction-delete-dialog',
+    autoRowPrefix: 'clients-activity-row-',
   },
   bank: {
     section: 'clients-bank',
@@ -180,7 +195,7 @@ const CHILD_LISTS = {
     deletePrefix: 'clients-bank-delete-btn-',
     dialog: 'clients-bank-delete-dialog',
   },
-} as const;
+};
 
 export type ClientChildList = keyof typeof CHILD_LISTS;
 
@@ -344,15 +359,24 @@ export class ClientsPage {
 
   /**
    * Soft-delete every row of one child tab through the UI (row delete →
-   * confirm), then assert the tab's empty state. Idempotent — an already-empty
-   * tab just asserts the empty state.
+   * confirm), then assert the tab is clean. Idempotent — an already-clean tab
+   * just asserts.
+   *
+   * "Clean" differs per tab. Policies and Bank history end on their empty
+   * state. The Activity tab also holds AUTOMATIC rows (`autoRowPrefix`) that
+   * the customer's own creation wrote and that nobody can delete, so it is
+   * clean when no MANUAL row remains — its empty state never shows for a
+   * customer that has ever existed. Waiting on manual rows OR the empty state
+   * alone hung every cleanup for 30s (2026-08-19).
    */
   async deleteAllChildRows(kind: ClientChildList): Promise<void> {
     const cfg = CHILD_LISTS[kind];
     await this.switchTab(kind);
     // Let the list settle into rows or the empty state (never act on the skeleton).
+    const settled = [`[data-testid^="${cfg.rowPrefix}"]`, `[data-testid="${cfg.section}-empty"]`];
+    if (cfg.autoRowPrefix) settled.push(`[data-testid^="${cfg.autoRowPrefix}"]`);
     await this.page
-      .locator(`[data-testid^="${cfg.rowPrefix}"], [data-testid="${cfg.section}-empty"]`)
+      .locator(settled.join(', '))
       .first()
       .waitFor({ state: 'visible', timeout: 30_000 });
     const rows = this.childRows(kind);
@@ -364,7 +388,11 @@ export class ClientsPage {
         .getByTestId(`${cfg.rowPrefix}${id}`)
         .waitFor({ state: 'detached', timeout: 20_000 });
     }
-    await expect(this.page.getByTestId(`${cfg.section}-empty`)).toBeVisible({ timeout: 15_000 });
+    if (cfg.autoRowPrefix) {
+      await expect(rows).toHaveCount(0, { timeout: 15_000 });
+    } else {
+      await expect(this.page.getByTestId(`${cfg.section}-empty`)).toBeVisible({ timeout: 15_000 });
+    }
   }
 
   /** Soft-delete the client via the detail dialog; lands back on /clients. */
@@ -602,6 +630,15 @@ export class ClientsPage {
   ): Promise<void> {
     const [y, m, d] = iso.split('-');
     const input = this.page.getByTestId(testId);
+    // Focus FIRST, as its own step, and let the value settle. The picker
+    // re-seeds a pre-filled input with the 4-digit year on focus
+    // (DatePicker.handleInputFocus, 2026-08-19) — and Playwright's fill()
+    // selects the text BEFORE it focuses, so that programmatic rewrite
+    // collapsed the selection and the typed date was APPENDED to the seed
+    // ("19/08/202620/08/2026"), which parses as nothing and reverts. A blank
+    // field (add-form date of birth) never showed it: '' re-seeds as ''.
+    await input.focus();
+    await expect(input).toHaveValue(/^$|^\d{2}\/\d{2}\/\d{4}$/);
     await input.fill(`${d}/${m}/${y}`);
     await input.press('Enter');
     const expected =
