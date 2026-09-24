@@ -2,7 +2,7 @@
 
 The shell, header, customer bar and panel atoms behind every numbered tool in
 [`src/lib/toolRoutes.ts`](../../../lib/toolRoutes.ts): **01 Prospect Profiler ·
-04 Tax calculator · 05 SRS planner · 06 Legacy Map**, plus the Client Report.
+04 Tax calculator · 05 SRS planner · 06 Legacy Map · 07 Shield comparison**, plus the Client Report.
 
 ## Why this group exists (2026-08-19)
 

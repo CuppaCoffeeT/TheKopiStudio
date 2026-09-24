@@ -15,6 +15,7 @@ import NotFound from "@/pages/NotFound";
 import RouteError from "@/pages/RouteError";
 
 import { CustomerToolRedirect } from "@/components/shared/app-shell/CustomerToolRedirect";
+import { SidebarProvider } from "@/contexts/SidebarContext";
 import { ThemeProvider } from "@/lib/design/ThemeProvider";
 import { TooltipProvider, Toaster } from "@/components/primitives/overlays";
 import { LoadingSpinner } from "@/components/primitives/shell";
@@ -39,6 +40,7 @@ const PortfolioReportPage = lazy(() => import("@/features/crm/pages/PortfolioRep
 const TaxCalculatorPage = lazy(() => import("@/features/crm/planning/pages/TaxCalculatorPage"));
 const SrsPlannerPage = lazy(() => import("@/features/crm/planning/pages/SrsPlannerPage"));
 const LegacyPlannerPage = lazy(() => import("@/features/crm/planning/pages/LegacyPlannerPage"));
+const ShieldComparisonPage = lazy(() => import("@/features/crm/planning/pages/ShieldComparisonPage"));
 
 /** Same fallback DashboardLayout uses — for lazy routes outside its Suspense. */
 const suspenseFallback = (
@@ -96,12 +98,17 @@ function App() {
     },
     {
       // PUBLIC wizard — outside DashboardLayout, no ProtectedRoute (anonymous
-      // visitors run profiles). Needs its own Suspense boundary.
+      // visitors run profiles). Needs its own Suspense boundary, and its own
+      // SidebarProvider: it renders `AppSidebar` for signed-in advisors, and
+      // without a provider the rail fell back to "Others" forced open with
+      // inert toggles — the only tool whose rail disagreed with the others.
       path: "/profiler",
       element: (
-        <Suspense fallback={suspenseFallback}>
-          <ProfilerWizardPage />
-        </Suspense>
+        <SidebarProvider>
+          <Suspense fallback={suspenseFallback}>
+            <ProfilerWizardPage />
+          </Suspense>
+        </SidebarProvider>
       ),
       errorElement: <RouteError />,
     },
@@ -195,6 +202,14 @@ function App() {
           element: (
             <ProtectedRoute modulePath="/clients">
               <LegacyPlannerPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/tools/shield-comparison",
+          element: (
+            <ProtectedRoute modulePath="/clients">
+              <ShieldComparisonPage />
             </ProtectedRoute>
           ),
         },

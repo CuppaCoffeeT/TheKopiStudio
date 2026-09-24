@@ -1,8 +1,8 @@
 # Planning — CRM Sub-Workspace Memory
 
-Three customer-scoped advisory tools ported from the advisor's own HTML prototypes: **Tax calculator** (04), **SRS planner** (05), **Legacy Map** (06). Routes are sub-routes of a customer — `/clients/:id/tax-calculator` · `/srs` · `/legacy-planner` — sharing modulePath `/clients` (the `/clients/:id/report` precedent), so they need **no module rows**.
+Four advisory tools ported from the advisor's own HTML prototypes: **Tax calculator** (04), **SRS planner** (05), **Legacy Map** (06), **Shield comparison** (07, `/tools/shield-comparison`, added 2026-09-24). Routes are top-level `/tools/*` (since 2026-08-18; the old `/clients/:id/<tool>` sub-routes redirect) and read `?customer=<id>`, sharing modulePath `/clients`, so they need **no module rows**. The list lives in `src/lib/toolRoutes.ts`.
 
-Launched from `../components/detail/CustomerToolLauncher`, never from the nav rail: under the customer-centred IA a tool always acts on a specific customer.
+Launched from the rail's TOOLS band (every tool) and from `../components/detail/CustomerToolLauncher` (04–06, pre-filled with that customer). Each asks for the customer inside itself via `ToolCustomerBar`.
 
 **Lives INSIDE `features/crm/` on purpose.** These are customer surfaces: they read the customer record, share its modulePath, and are sub-routes of it. `.dependency-cruiser` enforces that feature workspaces are islands, and a sibling `features/planning/` importing `crm`'s types, mapping and `useClientDetail` was exactly the violation that rule exists to catch. The dependency direction is the boundary — see `decisions.md`.
 
@@ -25,7 +25,12 @@ Launched from `../components/detail/CustomerToolLauncher`, never from the nav ra
 - `lib/legacyPlanSchema.ts` — total parser for the stored JSONB + `SCHEMA_VERSION`
 - `lib/useLegacyPlan.ts` — editing state, referential integrity, dirty tracking
 - `api/legacyPlansService.ts` + `hooks/useLegacyPlanStore.ts` — load / upsert
-- `lib/format.ts` — whole-dollar money + percent (pure; kept out of the component file)
+- `lib/format.ts` — whole-dollar money + percent, plus `moneyCents` for quoted premiums (pure; kept out of the component file)
+- `lib/shieldRates.ts` — Shield premium tables (data only, age next birthday, index 0 = age 1)
+- `lib/shieldPremium.ts` — `shieldPremium(age)` (Medisave vs cash split) · `ageNextBirthday` · `clampShieldAge`
+- `lib/shieldClaims.ts` + `lib/shieldScenarios.ts` — claim arithmetic + the sheet's worked scenarios and copy
+- `lib/shieldFit.ts` · `lib/shieldBenefits.ts` — fit-finder questions/scoring · the 53-row benefit table
+- `components/shield/` — one component per tab; `ShieldAtoms` (insurer marks, scenario card) + `shieldTableClasses`
 - `lib/fields.ts` — `num` / `rate`: form-string → number at the lib boundary, blank reads as 0 (never `NaN`)
 - `components/PlanningToolFrame.tsx` — loads the customer, wires the customer bar, loading/error/not-found. Composes `ToolPageShell` + `ToolPageHeader` from the shared lane; it keeps only the STATE
 - The chrome itself moved to **`@/components/primitives/tools`** (2026-08-19) — `ToolPanel` · `ToolStatGrid` · `SummaryRow` · `ToolSelect` · `ToolNote` · `ToolPageShell` · `ToolPageHeader` · `ToolCustomerBar` (presentational). `PlanningAtoms.tsx` and `PlanningToolHeader.tsx` are gone; the profiler is tool 01 of the same set and may not import from `crm`. See [tools/CONTEXT.md](../../../components/primitives/tools/CONTEXT.md)
@@ -38,7 +43,7 @@ Launched from `../components/detail/CustomerToolLauncher`, never from the nav ra
 - **Faithful port, not "improved" maths.** Where the reference rounds or caps, so do we. A corrected figure that disagrees with the advisor's own spreadsheet is worse than a faithfully ported one. Record any deviation here.
 - **Seed at the boundary, never in shared math.** `ageFromDOB` is golden-locked by the CRM report oracle; nonsense inputs are clamped in `customerSeed.ts`. See `lessons.md` — a future DOB shipped a −60 age into the tax calculator.
 - **`ToolSelect`, never the native `Select`** — `no-restricted-imports` bans it app-wide.
-- **All three tools persist** (Tax + SRS since 2026-08-19; see decisions.md for why the earlier "conversation aids only" position was reversed). Tax + SRS write `tax_*` / `srs_*` columns on `public.clients` via `api/planningProfileService.ts`, behind an EXPLICIT Save gated on `isOwn`; the **Legacy Map** writes `public.legacy_plans` (one JSONB doc per customer). Nothing is written until Save is clicked, so editing a tool still changes nothing on its own.
+- **Tax, SRS and Legacy persist; Shield does not** (it quotes published rate tables, not customer data). Tax + SRS since 2026-08-19; see decisions.md for why the earlier "conversation aids only" position was reversed). Tax + SRS write `tax_*` / `srs_*` columns on `public.clients` via `api/planningProfileService.ts`, behind an EXPLICIT Save gated on `isOwn`; the **Legacy Map** writes `public.legacy_plans` (one JSONB doc per customer). Nothing is written until Save is clicked, so editing a tool still changes nothing on its own.
 - **Legacy Map: no re-seed effect, ever.** The editor mounts only after the stored plan settles and seeds from a `useState` initialiser. `ClientFormModal` shipped the opposite (an `[open, client]` effect that re-fired on a background refetch and clobbered in-flight edits) — see `ClientDetailPage`'s note.
 - **Saving is gated on customer ownership.** `legacy_plans_insert` only checks `auth.uid() = user_id`, so a manager saving against another advisor's customer would create a row the owning advisor could never read. The page hides Save when `isOwn` is false.
 - **`parseLegacyPlan` is total.** Stored JSONB is untyped and can be old; nothing it returns may throw, and a partly-readable doc yields its readable part.

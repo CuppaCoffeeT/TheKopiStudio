@@ -19,10 +19,11 @@
  * at a route that no longer exists.
  *
  * `module` is the module path the viewer must hold for the tool to be offered
- * (.claude/rules/module-access.md — never a role string). The three planning
- * tools and the client report read `public.clients`, so they ride on the
- * `/clients` grant exactly as their old sub-routes did; the profiler has its
- * own module because the public wizard is a module of its own.
+ * (.claude/rules/module-access.md — never a role string). The planning tools
+ * and the client report read `public.clients`, so they ride on the `/clients`
+ * grant exactly as their old sub-routes did (the Shield comparison, added
+ * 2026-09-24, rides it too — it opens on a customer's age); the profiler has
+ * its own module because the public wizard is a module of its own.
  */
 
 /** Query param carrying the chosen customer on every standalone tool route. */
@@ -32,7 +33,7 @@ export const CLIENTS_MODULE = '/clients';
 export const PROFILER_MODULE = '/profiler';
 
 export interface ToolRoute {
-  key: 'profiler' | 'tax' | 'srs' | 'legacy' | 'report';
+  key: 'profiler' | 'tax' | 'srs' | 'legacy' | 'shield' | 'report';
   /** One name per tool, app-wide — the rail, the record launcher and the page
    *  title all read this. */
   label: string;
@@ -75,6 +76,14 @@ export const TOOL_ROUTES: readonly ToolRoute[] = [
     module: CLIENTS_MODULE,
     description:
       'Who inherits under the plan, against what the Intestate Succession Act would do instead.',
+  },
+  {
+    key: 'shield',
+    label: 'Shield comparison',
+    path: '/tools/shield-comparison',
+    module: CLIENTS_MODULE,
+    description:
+      'Singlife against Income on the private tier — premiums by age, claims, cancer cover and fit.',
   },
   {
     key: 'report',

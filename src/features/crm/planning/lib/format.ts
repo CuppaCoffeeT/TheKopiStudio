@@ -16,6 +16,12 @@ export function money(amount: number): string {
   return `$${Math.round(amount).toLocaleString('en-SG')}`;
 }
 
+/** Dollars AND cents — "$1,234.50". For quoted premiums, which are exact
+ *  contract figures rather than projections (the Shield comparison). */
+export function moneyCents(amount: number): string {
+  return `$${amount.toLocaleString('en-SG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
 /** Whole dollars with an explicit minus for deductions — "−$1,234". */
 export function moneyNegative(amount: number): string {
   return `−$${Math.round(Math.abs(amount)).toLocaleString('en-SG')}`;

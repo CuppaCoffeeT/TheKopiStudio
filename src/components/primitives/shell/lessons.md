@@ -1,6 +1,6 @@
 # Lessons — src/components/primitives/shell
 
-Last Updated: 2026-08-19
+Last Updated: 2026-09-24
 
 ## 2026-08-19 — `ring-*` utilities cannot paint on `Card` — use `outline`
 
@@ -27,3 +27,9 @@ Playwright strict mode — the same duplication, spotted for tests but not for A
 **Fix**: `useId()` per instance for both the "Others" panel and the new Tools band
 heading. Any id inside `AppSidebarNav` or its children must be generated, never
 literal — and the `toggleTestId` prop stays, since a testid must be stable.
+
+## 2026-09-24 — `AppSidebar` outside `DashboardLayout` silently gets the inert fallback
+
+**What happened**: on `/profiler` the rail's "Others" group was always open and its toggle did nothing; on every other tool it was collapsed. Reported as "Others pops down only on Prospect Profiler".
+**Root cause**: `/profiler` is a public route outside `DashboardLayout`, but renders `<AppSidebar />` for signed-in advisors. `SidebarProvider` lived only in `DashboardLayout`, so `useSidebarState()` returned its no-provider fallback — `othersOpen: true`, every toggle a no-op, `railHidden` stuck false.
+**Fix**: the `/profiler` route element is wrapped in `SidebarProvider` (`src/App.tsx`), and the page's content offset now follows `railHidden`. Any future page that mounts `AppSidebar` outside `DashboardLayout` must bring its own `SidebarProvider` — the fallback exists for bare test mounts, not for real pages.

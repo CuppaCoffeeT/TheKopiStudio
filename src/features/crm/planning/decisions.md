@@ -1,6 +1,6 @@
 # Planning — Decisions
 
-**Last Updated**: 2026-08-19 SGT
+**Last Updated**: 2026-09-24 SGT
 
 ## 2026-07-28 — One `planning` folder, INSIDE crm, not three sibling features
 
@@ -222,3 +222,9 @@ changed what and when is already kept, once, in `customer_activity`.
 - `age` and `grossIncome` are deliberately NOT duplicated: they are
   `date_of_birth` and `annual_income`. Saving writes `annual_income`; it never
   writes back a date of birth.
+
+## 2026-09-24 — Shield comparison (tool 07): a React port, not an embedded HTML page
+
+**Decision**: the advisor's standalone `shield-comparison.html` (Singlife Shield Plan 1 + Health Plus Private vs Enhanced IncomeShield Preferred + Optima Care) is ported into this folder as tool 07 at `/tools/shield-comparison`, on `PlanningToolFrame`, riding the `/clients` grant. It is NOT iframed from `public/`.
+**Why**: an iframe would ship a second palette (the sheet's own cream/red), no rail, no customer bar and no LOC/lint/test gates — the "two visual languages" problem `primitives/tools` was hoisted to end. Arithmetic is a faithful port, golden-locked against the sheet's own `calc`/`claim`/`cancerCalc` output in `lib/__tests__/shield.test.ts`; copy is extracted verbatim.
+**Impact**: opens blank at the sheet's age 36, or at the chosen customer's age NEXT birthday (`ageNextBirthday`, SGT today injected). Nothing persists — the figures are published rate tables, not customer data. When the insurers re-price, replace `lib/shieldRates.ts` wholesale and re-derive the golden values from the new sheet.

@@ -42,7 +42,8 @@ export type ActivityTool =
   | 'srs-planner'
   | 'legacy-map'
   | 'client-report'
-  | 'portfolio-report';
+  | 'portfolio-report'
+  | 'shield-comparison';
 
 /** One field that changed, ready to print. */
 export interface ActivityChange {

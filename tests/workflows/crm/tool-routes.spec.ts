@@ -49,6 +49,7 @@ import { ToolRoutesPage } from '../../pom/ToolRoutesPage';
 const BLANK_TOOLS = [
   { path: '/tools/tax-calculator', testId: 'tax-calculator', title: 'Tax calculator' },
   { path: '/tools/srs', testId: 'srs-planner', title: 'SRS planner' },
+  { path: '/tools/shield-comparison', testId: 'shield-comparison', title: 'Shield comparison' },
 ] as const;
 
 /** Old customer sub-route → the standalone route it now redirects to. */

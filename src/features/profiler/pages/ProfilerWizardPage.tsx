@@ -41,6 +41,7 @@
  */
 
 import { cn } from '@/lib/utils';
+import { useSidebarState } from '@/contexts/SidebarContext';
 import { AppSidebar, SIDEBAR_OFFSET_CLASS } from '@/components/primitives/shell';
 import { SEO } from '@/components/primitives/shell/SEO';
 import { ToolPageShell } from '@/components/primitives/tools';
@@ -65,6 +66,8 @@ export default function ProfilerWizardPage() {
   // the shell; anonymous visitors keep the rail-free public flow. The route
   // itself stays public — this is chrome, not access control.
   const authed = Boolean(c.user);
+  // Same offset rule as `DashboardLayout`: drop the 200px when the rail is hidden.
+  const { railHidden } = useSidebarState();
 
   // The tool shell is the signed-in advisor's front door, and only at intake —
   // see the header note. Mounting `WizardToolHeader` conditionally is also what
@@ -92,7 +95,7 @@ export default function ProfilerWizardPage() {
     <div className="min-h-svh bg-background">
       <SEO title="Prospect Profiler" description="Run a DISC × MBTI prospect profile" />
       {authed && <AppSidebar />}
-      <div className={cn(authed && [SIDEBAR_OFFSET_CLASS, 'print:pl-0!'])}>
+      <div className={cn(authed && [!railHidden && SIDEBAR_OFFSET_CLASS, 'print:pl-0!'])}>
       <WizardStickyHeader
         subtitle={c.subtitle}
         isAuthenticated={authed}
