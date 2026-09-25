@@ -12,6 +12,7 @@
 
 import { ageFromDOB, currentRefYear, summariseClient, toFloat } from './finance';
 import { assessRetirementReadiness, heroTotals } from './financeReport';
+import { deathCoverPolicies } from './protectionStructure';
 import type { CrmClient, CrmPolicy } from '../types';
 
 export interface ReportModel {
@@ -31,7 +32,9 @@ export function buildReportModel(client: CrmClient, policies: CrmPolicy[]): Repo
   return {
     refYear,
     currentAge,
-    summary: summariseClient({ annualIncome: client.annualIncome, policies }),
+    // v42: Personal Accident's death benefit is NOT death cover (accident-only);
+    // it is shown on its own. Identity for a book with no PA policy.
+    summary: summariseClient({ annualIncome: client.annualIncome, policies: deathCoverPolicies(policies) }),
     hero: heroTotals(
       {
         dateOfBirth: client.dateOfBirth || null,

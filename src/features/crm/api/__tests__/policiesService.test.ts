@@ -61,6 +61,8 @@ const input = {
   integratedShieldCPF: '',
   integratedShieldCash: '',
   riderCash: '',
+  surrenderValue: '',
+  ciAccelerated: true,
 } satisfies CrmPolicyInput;
 
 let from: FromQueue;

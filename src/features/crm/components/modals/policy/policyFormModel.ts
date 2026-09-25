@@ -14,6 +14,7 @@ export const POLICY_TYPES = [
   'Whole Life',
   'Term Life',
   'Investment-Linked Policy',
+  'Personal Accident',
   'Hospitalization',
 ] as const;
 
@@ -65,6 +66,8 @@ export const EMPTY_POLICY: CrmPolicyInput = {
   integratedShieldCPF: '',
   integratedShieldCash: '',
   riderCash: '',
+  surrenderValue: '',
+  ciAccelerated: true,
 };
 
 /** One editable projection row — both halves stay free-typed strings. */

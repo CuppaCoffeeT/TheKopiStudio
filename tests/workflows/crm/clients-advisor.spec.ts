@@ -14,7 +14,7 @@
  * (earlier-dated) record to 9999 → derived total STAYS $7,000.00 (latest-by-
  * date wins — the corrected legacy drift bug) → Policies: Life Insurance
  * (premium 200 Monthly, death 500000, one-shot TPD copy, cash value with two
- * projection rows) + Hospitalization (premium/coverage forced 0, IS fields) →
+ * projection rows) + Hospitalization (coverage forced 0, premium = IS fields) →
  * Interactions: follow-up in 3 days flips the header badge from blue (next
  * review +30d) to AMBER → /crm dashboard KPIs = baseline + (1 client, 2 active
  * policies, $2,400 annualised premium = 200×12, 1 follow-up) → list search →
@@ -405,7 +405,7 @@ test.describe('clients — advisor full CRM journey', () => {
       await expect(lifeRow).toContainText('TPD $500K');
     });
 
-    await test.step('add Hospitalization policy (premium/coverage forced 0; Integrated Shield fields)', async () => {
+    await test.step('add Hospitalization policy (coverage forced 0; premium from Integrated Shield fields)', async () => {
       await crm.policiesAddButton.click();
       await expect(crm.policyModal).toBeVisible();
       const hospitalPolicyNumber = `E2E-POL-HOSP-${suffix}`;
@@ -422,7 +422,7 @@ test.describe('clients — advisor full CRM journey', () => {
         },
       });
       // The type switch swapped premium/coverage out for the amber fieldset —
-      // both are force-set to '0' and no longer rendered as inputs.
+      // coverage is force-set to '0'; the premium now lives in the Shield fields.
       await expect(page.getByTestId('crm-policy-hospital-section')).toBeVisible();
       await expect(page.getByTestId('crm-policy-premium-input')).toHaveCount(0);
       await expect(page.getByTestId('crm-policy-coverage-input')).toHaveCount(0);
@@ -432,7 +432,9 @@ test.describe('clients — advisor full CRM journey', () => {
       await expect(crm.childRows('policies')).toHaveCount(2, { timeout: 30_000 });
       const hospitalRow = crm.childRows('policies').filter({ hasText: hospitalPolicyNumber });
       await expect(hospitalRow).toContainText('Hospitalization');
-      await expect(hospitalRow).toContainText('$0.00 / Annual'); // forced-zero premium
+      // v42: CPF 300 + cash 150 + rider 50, always annual, with the Medisave/cash split.
+      await expect(hospitalRow).toContainText('$500.00 / Annual');
+      await expect(hospitalRow).toContainText('Medisave $300.00 · Cash $200.00');
       await expect(hospitalRow).toContainText('Public - Class A');
     });
 

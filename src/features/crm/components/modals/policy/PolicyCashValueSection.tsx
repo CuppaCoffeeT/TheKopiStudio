@@ -15,6 +15,8 @@ import type { ProjectionRow } from './policyFormModel';
 interface PolicyCashValueSectionProps {
   currentCashValue: string;
   onCurrentCashValueChange: (next: string) => void;
+  surrenderValue: string;
+  onSurrenderValueChange: (next: string) => void;
   rows: ProjectionRow[];
   onRowsChange: (next: ProjectionRow[]) => void;
 }
@@ -22,6 +24,8 @@ interface PolicyCashValueSectionProps {
 export function PolicyCashValueSection({
   currentCashValue,
   onCurrentCashValueChange,
+  surrenderValue,
+  onSurrenderValueChange,
   rows,
   onRowsChange,
 }: PolicyCashValueSectionProps) {
@@ -30,13 +34,24 @@ export function PolicyCashValueSection({
 
   return (
     <ModalSection title="Cash value" testId="crm-policy-cash-value-section">
-      <TextField
-        label="Current cash value (S$)"
-        type="number"
-        value={currentCashValue}
-        onChange={onCurrentCashValueChange}
-        testId="crm-policy-current-cash-input"
-      />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <TextField
+          label="Current cash value (S$)"
+          type="number"
+          value={currentCashValue}
+          onChange={onCurrentCashValueChange}
+          testId="crm-policy-current-cash-input"
+        />
+        <TextField
+          label="Surrender value today (S$)"
+          type="number"
+          value={surrenderValue}
+          onChange={onSurrenderValueChange}
+          placeholder="Actual cash-out amount"
+          hint="What the client would actually receive if they cashed out today, after charges. Often lower than cash value in early years."
+          testId="crm-policy-surrender-input"
+        />
+      </div>
       <Field label="Projected values by age" hint="Rows missing an age or value are dropped on save.">
         <div className="grid gap-2">
           {rows.map((row, index) => (

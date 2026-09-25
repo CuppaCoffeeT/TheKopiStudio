@@ -33,6 +33,7 @@ const CLIENT_ROW = {
   future_income_step1: 120000, future_income_start_age1: 39, future_income_end_age1: 50,
   future_income_step2: 80000, future_income_start_age2: 51, future_income_end_age2: 60,
   future_income_step3: null, future_income_start_age3: null, future_income_end_age3: null,
+  avg_annual_income_to_55: 90000, cpf_housing_monthly: 1200, cpf_housing_end_age: 52,
   ...AUDIT,
 } as ClientRow;
 
@@ -60,6 +61,7 @@ describe('client mapping', () => {
       future_income_step1: 120000, future_income_start_age1: 39, future_income_end_age1: 50,
       future_income_step2: 80000, future_income_start_age2: 51, future_income_end_age2: 60,
       future_income_step3: null, future_income_start_age3: null, future_income_end_age3: null,
+      avg_annual_income_to_55: 90000, cpf_housing_monthly: 1200, cpf_housing_end_age: 52,
     });
   });
 
@@ -104,7 +106,7 @@ const POLICY_ROW = {
   investment_allocation: '70/30 equity', illustrated_value_age_55: 180000,
   illustrated_value_age_65: 320000, ilp_premium_inclusion_percent: 50,
   is_hospitalization: false, hospital_type: 'Private', integrated_shield_cpf: 0,
-  integrated_shield_cash: 0, rider_cash: 0, ...AUDIT,
+  integrated_shield_cash: 0, rider_cash: 0, surrender_value: 9500, ci_accelerated: false, ...AUDIT,
 } as PolicyRow;
 
 const PROJECTION_ROWS = [
@@ -134,6 +136,15 @@ describe('policy mapping', () => {
     expect(bare.ilpPremiumInclusionPercent).toBe('0');
   });
 
+  it('v42: NULL ci_accelerated reads accelerated; NULL surrender stays blank and writes back NULL', () => {
+    const bare = policyFromRow({ ...POLICY_ROW, ci_accelerated: null, surrender_value: null } as PolicyRow, []);
+    expect(bare.ciAccelerated).toBe(true);
+    expect(bare.surrenderValue).toBe('');
+    const payload = policyToRow(bare);
+    expect(payload.ci_accelerated).toBe(true);
+    expect(payload.surrender_value).toBeNull();
+  });
+
   it('round-trips row → model → write payload for every written column', () => {
     const payload = policyToRow(policyFromRow(POLICY_ROW, PROJECTION_ROWS));
     expect(payload).toEqual({
@@ -146,7 +157,7 @@ describe('policy mapping', () => {
       investment_allocation: '70/30 equity', illustrated_value_age_55: 180000,
       illustrated_value_age_65: 320000, ilp_premium_inclusion_percent: 50,
       is_hospitalization: false, hospital_type: 'Private', integrated_shield_cpf: 0,
-      integrated_shield_cash: 0, rider_cash: 0,
+      integrated_shield_cash: 0, rider_cash: 0, surrender_value: 9500, ci_accelerated: false,
     });
   });
 

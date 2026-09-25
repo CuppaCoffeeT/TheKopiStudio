@@ -1,6 +1,6 @@
 # Lessons — src/features/crm
 
-Last Updated: 2026-08-18
+Last Updated: 2026-09-25
 
 ## 2026-07-14 — getCurrentSingaporeTime() is browser-local; SGT display strings need an explicit timeZone
 
@@ -77,3 +77,9 @@ Last Updated: 2026-08-18
 **Root cause**: page shells used `min-h-screen` (`100vh` — the LARGE viewport, taller than what you can see) or `min-h-dvh` (the DYNAMIC viewport, which literally resizes as the Safari toolbar collapses and expands). On a page-level min-height that is a container resize DURING a scroll gesture, and the browser re-anchors the scroll position mid-animation. `viewport-fit=cover` compounded it: with no bottom inset on `body`, the last row also sat under the home indicator.
 
 **Fix**: every page shell moved to `min-h-svh` — the SMALL viewport, the one value that does not change while you scroll — with `html, body { min-height: 100% }` painting the ground under the shortfall and `padding-bottom: env(safe-area-inset-bottom)` on `body` clearing the indicator once for every page. `dvh` remains correct for SIZING an overlay (a drawer should track the chrome); it is only wrong as a page floor. Recorded in `.claude/rules/mobile-web.md` §2.
+
+## 2026-09-25 — `npx tsc --noEmit -p .` checks nothing
+
+**What happened**: during the v42 port the "typecheck" step passed silently with type errors present in the CRM test fixtures.
+**Root cause**: the root `tsconfig.json` is a solution file (`"files": []` + `references`); `tsc -p .` without `--build` compiles zero files and exits 0.
+**Fix**: typecheck with `npx tsc --noEmit -p tsconfig.app.json`. Separately: a fresh worktree has no `.env`, so `api/__tests__/dashboardService.test.ts` dies at import (`supabaseUrl is required`) — env noise, not a regression; it passes with any dummy `VITE_SUPABASE_URL`.

@@ -76,6 +76,10 @@ export function policyFromRow(row: PolicyRow, projectionRows: readonly Projected
     integratedShieldCPF: numStr(row.integrated_shield_cpf),
     integratedShieldCash: numStr(row.integrated_shield_cash),
     riderCash: numStr(row.rider_cash),
+    // v42. NULL surrender = not recorded (kept blank, unlike the '' → 0 policy
+    // numerics); NULL ci_accelerated reads as accelerated, the reference default.
+    surrenderValue: numStr(row.surrender_value),
+    ciAccelerated: row.ci_accelerated !== false,
   };
 }
 
@@ -109,6 +113,8 @@ export function policyToRow(data: CrmPolicyInput) {
     integrated_shield_cpf: toNum(data.integratedShieldCPF) ?? 0,
     integrated_shield_cash: toNum(data.integratedShieldCash) ?? 0,
     rider_cash: toNum(data.riderCash) ?? 0,
+    surrender_value: toNum(data.surrenderValue),
+    ci_accelerated: data.ciAccelerated !== false,
   };
 }
 

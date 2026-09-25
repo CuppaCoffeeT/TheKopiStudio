@@ -67,7 +67,7 @@ export function ReportRetirementProjection({
     },
     {
       id: 'total',
-      label: 'Total retirement sum',
+      label: 'Total savings & investments',
       value: money(hero.totalRetirementValue),
       note: 'Combined at age 65',
     },
@@ -78,7 +78,12 @@ export function ReportRetirementProjection({
       className="report-section report-page-break"
       data-testid="report-retirement-projection"
     >
-      <h2>Combined retirement projection (age 65)</h2>
+      {/* v42 rename: this pot EXCLUDES CPF, which has its own section above. */}
+      <h2>Savings &amp; investments at age 65</h2>
+      <p className="text-[12px] text-[color:var(--fg-dim)]">
+        Your ILP policies, bank savings and personal investments combined. Your CPF is shown in the
+        section above and is <strong>not</strong> included in these figures.
+      </p>
 
       <div className="report-card-grid">
         {cards.map((card) => (

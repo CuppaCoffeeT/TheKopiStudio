@@ -15,15 +15,13 @@
  *   projectCPFTo55WithFutureContributions
  *                             "...and what if they keep earning?"
  *
- * With NO income steps defined the two agree exactly (see the corpus), so the
- * report can call this one unconditionally and a customer with nothing filled
- * in projects precisely as they do today. That equivalence is asserted, not
- * assumed.
+ * With NO income (no steps, no average) and NO housing loan the two agree
+ * exactly (see the corpus), so the report can call this one unconditionally
+ * and a customer with nothing filled in projects precisely as before.
  *
- * THE GAP IT CLOSES: without contributions a 35-year-old and a 54-year-old with
- * identical balances project identically — the twenty years of contributions
- * the younger one will actually make simply do not exist. That is wrong by a
- * wide margin and it is the headline reason the reference CRM models income.
+ * v42 (2026-09-25) adds the single-figure average income (see
+ * `incomeSteps.incomeForAge`) and the OA housing-loan drain — housing is paid
+ * from OA only, so leaving it out over-states OA at 55.
  *
  * Rates are the reference's own (official 2026 CPF data). Kept verbatim: a
  * "corrected" rate that disagrees with the advisor's spreadsheet costs more
@@ -45,6 +43,10 @@ export interface CpfWithContributionsInput {
   currentAge: number;
   /** Empty ⇒ identical output to the golden `projectCPFTo55`. */
   incomeSteps: readonly IncomeStep[];
+  /** v42 simple option — used only when `incomeSteps` is empty. */
+  avgIncomeTo55?: number;
+  /** v42: monthly OA housing draw; `endAge` null ⇒ pays until 55. */
+  housing?: { monthly: number; endAge: number | null };
   /**
    * Medisave ceiling. Defaults to the Basic Healthcare Sum; pass `Infinity` to
    * run the no-overflow counterfactual `saBoostFromOverflow` is measured
@@ -73,6 +75,8 @@ export interface CpfWithContributionsProjection {
   /** Of that, the part routed to OA / SA (raw, pre-interest). */
   totalContributedToOA: number;
   totalContributedToSA: number;
+  /** OA actually drained by the housing loan (capped at what OA held). */
+  totalHousingDeducted: number;
   /** Years actually simulated — 0 for someone already 55 or older. */
   yearsProjected: number;
 }
@@ -82,6 +86,7 @@ export interface CpfWithContributionsProjection {
  *
  * Per-year order, matching the reference exactly:
  *   1. add this year's contribution, split by the age's allocation
+ *   1b. deduct the housing loan from OA (never below 0) while age < end age
  *   2. grow OA and MA
  *   3. clip MA at the BHS, spilling the excess into SA
  *   4. grow SA
@@ -103,12 +108,15 @@ export function projectCPFTo55WithFutureContributions(
   let totalFutureContributions = 0;
   let totalContributedToOA = 0;
   let totalContributedToSA = 0;
+  let totalHousingDeducted = 0;
+  const housingMonthly = input.housing?.monthly ?? 0;
+  const housingEndAge = input.housing?.endAge ?? 55;
 
   for (let year = 0; year < yearsTo55; year += 1) {
     const age = input.currentAge + year;
 
     // 1. Contribution for this year, if the customer is still earning.
-    const annualIncome = incomeForAge(input.incomeSteps, age);
+    const annualIncome = incomeForAge(input.incomeSteps, age, input.avgIncomeTo55 ?? 0);
     if (annualIncome > 0 && age < 55) {
       const monthly = Math.min(annualIncome / 12, MONTHLY_SALARY_CAP);
       const contribution = monthly * cpfContributionRate(age) * 12;
@@ -125,6 +133,13 @@ export function projectCPFTo55WithFutureContributions(
       const toOA = contribution * allocation.oa;
       oa += toOA;
       totalContributedToOA += toOA;
+    }
+
+    // 1b. Housing loan, paid from OA only.
+    if (housingMonthly > 0 && age < housingEndAge) {
+      const deduction = Math.min(housingMonthly * 12, oa);
+      oa -= deduction;
+      totalHousingDeducted += deduction;
     }
 
     // 2. Interest on OA and MA.
@@ -161,6 +176,7 @@ export function projectCPFTo55WithFutureContributions(
     totalFutureContributions,
     totalContributedToOA,
     totalContributedToSA,
+    totalHousingDeducted,
     yearsProjected: yearsTo55,
   };
 }

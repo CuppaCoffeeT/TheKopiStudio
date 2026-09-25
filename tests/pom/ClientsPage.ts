@@ -83,7 +83,7 @@ export interface PolicyHospitalInput {
 }
 
 export interface PolicyFormInput {
-  /** Picking 'Hospitalization' one-way forces premium/coverage to '0' and swaps in the amber section. */
+  /** Picking 'Hospitalization' one-way forces coverage to '0' and swaps in the amber section (premium = IS fields). */
   type?: string;
   provider?: string;
   policyNumber?: string;

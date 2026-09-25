@@ -1,7 +1,8 @@
 /**
  * Hospitalization fieldset (amber, legacy parity): ward class + integrated
- * shield premium portions. Premium/coverage are force-set to '0' by the
- * type switch in PolicyFormModal — the cash portions live here instead.
+ * shield premium portions. Coverage is force-set to '0' by the type switch in
+ * PolicyFormModal; the premium lives HERE (CPF + cash + rider — v42), which is
+ * what the policy card and the health snapshot read.
  */
 
 import type { CrmPolicyInput } from '../../../types';

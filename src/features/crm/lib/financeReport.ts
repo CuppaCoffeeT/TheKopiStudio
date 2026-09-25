@@ -108,14 +108,23 @@ export interface PremiumSplit { protectionPremiums: number; investmentPremiums: 
  * ClientReportModal.jsx:51-59 — protection vs investment premium split by TYPE
  * substring ('investment' / 'ilp' / 'endowment'). Deliberately IGNORES both
  * `ilpPremiumInclusionPercent` and `isInvestmentLinked` — preserved legacy
- * HealthSnapshot inconsistency (decisions.md "premium split").
+ * HealthSnapshot inconsistency (decisions.md "premium split"). v42 adds the
+ * Shield branch (cash portion only); a book without Shield plans is unchanged.
  */
-export function splitPremiums(policies: SummaryPolicyInput[]): PremiumSplit {
+export function splitPremiums(
+  policies: (SummaryPolicyInput & HospitalShieldPolicyInput & { isHospitalization?: boolean | null })[],
+): PremiumSplit {
   let protectionPremiums = 0;
   let investmentPremiums = 0;
   for (const p of policies) {
-    const prem = annualisePremium(p);
     const t = (p.type || '').toLowerCase();
+    // v42: a Shield plan's premium lives in its own fields, and only the CASH
+    // part (IS cash + rider) is paid from take-home pay — Medisave is CPF.
+    if (p.isHospitalization || t.includes('hospitalization')) {
+      protectionPremiums += hospitalShieldPremiums(p).cashOutlay;
+      continue;
+    }
+    const prem = annualisePremium(p);
     if (t.includes('investment') || t.includes('ilp') || t.includes('endowment')) {
       investmentPremiums += prem;
     } else {
@@ -164,6 +173,8 @@ export interface HospitalShieldPremiums {
   shieldTotal: number;
   /** ClientReportModal.jsx:337 — bold Total row (CPF + cash + rider). */
   totalAnnual: number;
+  /** v42 — what take-home pay funds (cash + rider); the CPF part is Medisave. */
+  cashOutlay: number;
 }
 
 /**
@@ -174,7 +185,9 @@ export function hospitalShieldPremiums(policy: HospitalShieldPolicyInput): Hospi
   const cpf = toFloat(policy.integratedShieldCPF);
   const cash = toFloat(policy.integratedShieldCash);
   const rider = toFloat(policy.riderCash);
-  return { cpf, cash, rider, shieldTotal: cpf + cash, totalAnnual: cpf + cash + rider };
+  return {
+    cpf, cash, rider, shieldTotal: cpf + cash, totalAnnual: cpf + cash + rider, cashOutlay: cash + rider,
+  };
 }
 
 // Sections [8]/[9] residual math (cpfCurrentTotal, raShortfall,

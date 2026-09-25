@@ -90,6 +90,27 @@ export function ClientFinancialSection({ isEdit, value, set }: ClientSectionProp
           testId="crm-client-cpf-ma-input"
         />
       </div>
+      {/* v42: housing is paid from OA only — leaving it out over-inflates the
+          OA projection and CPF LIFE (lib/cpfContributions). */}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <TextField
+          label="Monthly housing loan from OA (S$)"
+          type="number"
+          value={value.cpfHousingMonthly}
+          onChange={(v) => set({ cpfHousingMonthly: v })}
+          placeholder="e.g. 1200 (blank if none)"
+          testId="crm-client-cpf-housing-input"
+        />
+        <TextField
+          label="Housing loan paid off by age"
+          type="number"
+          value={value.cpfHousingEndAge}
+          onChange={(v) => set({ cpfHousingEndAge: v })}
+          placeholder="e.g. 55"
+          hint="Blank = pays until 55. Keeps the OA projection realistic."
+          testId="crm-client-cpf-housing-end-input"
+        />
+      </div>
     </ModalSection>
   );
 }

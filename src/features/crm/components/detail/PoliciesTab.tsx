@@ -13,13 +13,12 @@ import { Plus } from 'lucide-react';
 import { DestructiveConfirmDialog } from '@/components/primitives/detail/DestructiveConfirmDialog';
 import { Badge, type BadgeTone } from '@/components/primitives/shell/Badge';
 import { Button } from '@/components/primitives/shell/Button';
-import { formatCurrency } from '@/utils/currencyHelper';
-import { formatCoverage } from '../../lib/finance';
 import { useSoftDeletePolicy } from '../../hooks/usePolicyMutations';
 import type { CrmPolicy } from '../../types';
 import { PolicyFormModal } from '../modals/PolicyFormModal';
 import { ListSection } from './ListSection';
 import { RowActions } from './RowActions';
+import { coverageSummary, premiumSummary } from './policySummary';
 
 const STATUS_TONES: Record<string, BadgeTone> = {
   active: 'success',
@@ -31,17 +30,6 @@ const STATUS_TONES: Record<string, BadgeTone> = {
 };
 
 const statusTone = (status: string): BadgeTone => STATUS_TONES[status.toLowerCase()] ?? 'neutral';
-
-/** Hospitalization plans show their ward class; everything else the coverage tiers. */
-function coverageSummary(policy: CrmPolicy): string {
-  if (policy.isHospitalization) return policy.hospitalType || '—';
-  const parts: string[] = [];
-  if (Number(policy.coverageAmount) > 0) parts.push(`Death ${formatCoverage(Number(policy.coverageAmount))}`);
-  if (Number(policy.tpdCoverage) > 0) parts.push(`TPD ${formatCoverage(Number(policy.tpdCoverage))}`);
-  if (Number(policy.criticalIllnessCoverage) > 0) parts.push(`CI ${formatCoverage(Number(policy.criticalIllnessCoverage))}`);
-  if (Number(policy.earlyCriticalIllnessCoverage) > 0) parts.push(`ECI ${formatCoverage(Number(policy.earlyCriticalIllnessCoverage))}`);
-  return parts.length > 0 ? parts.join(' · ') : 'No coverage recorded';
-}
 
 interface PoliciesTabProps {
   clientId: string;
@@ -95,7 +83,9 @@ export function PoliciesTab({ clientId, readOnly, policies }: PoliciesTabProps) 
         }
         testId="clients-policies"
       >
-        {rows.map((policy) => (
+        {rows.map((policy) => {
+          const premium = premiumSummary(policy);
+          return (
           <li
             key={policy.id}
             className="flex flex-col gap-1.5 px-5 py-4"
@@ -138,12 +128,14 @@ export function PoliciesTab({ clientId, readOnly, policies }: PoliciesTabProps) 
             </div>
             <div className="flex flex-wrap gap-x-5 gap-y-1 text-[12.5px] text-muted-foreground">
               <span>
-                Premium {formatCurrency(Number(policy.premium) || 0)} / {policy.frequency}
+                {premium.line}
+                {premium.detail && <span className="block text-[11.5px]">{premium.detail}</span>}
               </span>
               <span>{coverageSummary(policy)}</span>
             </div>
           </li>
-        ))}
+          );
+        })}
       </ListSection>
 
       {!readOnly && (

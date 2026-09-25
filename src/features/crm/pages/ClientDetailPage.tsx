@@ -101,7 +101,6 @@ export default function ClientDetailPage() {
         { label: model?.name ?? 'Customer' },
       ]}
       title={model?.name ?? 'Customer record'}
-      recordId={id ? id.slice(0, 8) : undefined}
       meta={
         model
           ? [

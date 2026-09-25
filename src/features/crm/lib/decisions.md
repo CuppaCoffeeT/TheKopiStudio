@@ -541,3 +541,43 @@ failure mode, not the fix.
 setting a real percent on those four policies corrects the figures with no
 deploy. Provenance and the reconciliation run:
 [docs/06-operations/CRM_FIGURE_PROVENANCE.md](../../../../docs/06-operations/CRM_FIGURE_PROVENANCE.md).
+
+## 2026-09-25 — Ported the advisor's `insurance_crm_v42.html` (from `(36)`)
+
+**Decision**: every functional change between the two prototypes is ported; the
+restyle (the prototype adopted Kopi colours) is not, since the app has its own
+theme. Five new nullable columns (migration `20260925135318`): `clients.
+cpf_housing_monthly / cpf_housing_end_age / avg_annual_income_to_55`, `policies.
+surrender_value / ci_accelerated` (DEFAULT true). New pure modules
+`lib/protectionStructure` (PA, accelerated CI, liquidity) and `lib/cpfBuildUp`
+(record → CPF plan, OA/SA waterfall); report sections reordered to v42's order.
+**Why / judgement calls** (v42 preferred for new behaviour, per the port brief):
+- **PA leaves death cover in the CLIENT REPORT only.** `reportModel` passes
+  `deathCoverPolicies(policies)` to the golden `summariseClient` (PA death benefit
+  zeroed; CI/ECI untouched, exactly v42). The dashboard tile and `/crm-reports`
+  still sum PA — v42 did not touch its Reports tab either. Identity with no PA
+  policy, so every golden vector still replays.
+- **Hospitalization no longer zeroes the premium** (supersedes the "one-way
+  forces premium/coverage '0'" parity note in CRM_MODULE.md). `splitPremiums`
+  gains a Shield branch — only IS cash + rider count as protection — which
+  amends the 2026-06-11 "premium split" quirk for Shield plans only; ILP /
+  endowment handling is unchanged. v42's second Shield change (the "Premium to
+  income (protection only)" coverage row) has no counterpart: our [4] ports the
+  JSX app's row, which reads `summariseClient.totalAnnualPremium`.
+- **Average income is a fallback only when NO tier survives
+  `incomeStepsFromClient`.** v42 counts a tier with income but no ages as
+  "defined", which zeroes all contributions; ours falls back to the average.
+- **`liquidity` "built" is `account value || cash value` on NUMBERS**, not
+  strings: our policy numerics store blank as 0, so v42's string `||` would hide
+  a real cash value behind `'0'`.
+- **The waterfall's SA "Medisave overflow" line uses our derived
+  `saBoostFromOverflow`** (counterfactual run), not v42's own estimate; interest
+  is derived from the other lines so the column always reconciles.
+- **Not ported**: v42's sample-data edits; "Universal Life" (already a scope
+  cut); Priority Action Items (still cut, 2026-06-12).
+**Impact / open item**: the RA panel + CPF LIFE payout still read the golden
+no-contribution projection (`assessRetirementReadiness`), so neither future
+contributions (pre-existing, since 2026-07-28) nor the new housing drain move
+them. v42's helper copy says housing affects CPF LIFE; wiring the RA panel to
+`projectCPFTo55WithFutureContributions` is a deliberate book-wide figure change
+and was left for an explicit decision.

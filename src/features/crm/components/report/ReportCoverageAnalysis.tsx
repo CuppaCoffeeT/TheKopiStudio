@@ -11,6 +11,10 @@
  * LITERAL 1.025 general inflation, CI/ECI at LITERAL 1.06 with the additive
  * un-inflated gap term — preserved legacy quirks, do NOT "fix").
  * Only Math.round(...).toLocaleString() display formatting happens here.
+ *
+ * v42: `summary.totalCoverage` arrives EXCLUDING Personal Accident (see
+ * lib/reportModel); the PA / accelerated-CI / contributing-policies blocks
+ * follow the table via ReportProtectionStructure.
  */
 
 import type { ClientSummary } from '../../lib/finance';
@@ -19,10 +23,13 @@ import {
   coverageCostAt65Death,
   coverageCostAt65ECI,
 } from '../../lib/financeReport';
+import type { CrmPolicy } from '../../types';
+import { ReportProtectionStructure } from './ReportProtectionStructure';
 
 interface ReportCoverageAnalysisProps {
   summary: ClientSummary;
   yearsToRetirement: number;
+  policies: CrmPolicy[];
 }
 
 const money = (value: number): string => `$${Math.round(value).toLocaleString()}`;
@@ -30,6 +37,7 @@ const money = (value: number): string => `$${Math.round(value).toLocaleString()}
 export function ReportCoverageAnalysis({
   summary,
   yearsToRetirement,
+  policies,
 }: ReportCoverageAnalysisProps) {
   const rows = [
     {
@@ -96,6 +104,7 @@ export function ReportCoverageAnalysis({
           ))}
         </tbody>
       </table>
+      <ReportProtectionStructure policies={policies} />
     </section>
   );
 }

@@ -1,5 +1,10 @@
 /**
- * ReportCanvas — the printed artifact itself: the 14 sections, in order.
+ * ReportCanvas — the printed artifact itself: the sections, in order.
+ *
+ * ORDER follows the advisor's v42 reference (2026-09-25): protection first
+ * (coverage → hospitalization → gaps), then value (cash value → ILP → what can
+ * be accessed today), then retirement (CPF → savings at 65), then the policy
+ * list and history.
  *
  * Split from `ClientReportPage` at the seam that was already there. The page
  * resolves the customer (from `/clients/:id/report` OR
@@ -28,6 +33,7 @@ import { ReportHero } from './ReportHero';
 import { ReportHospitalization } from './ReportHospitalization';
 import { ReportIlpAnalysis } from './ReportIlpAnalysis';
 import { ReportInteractionHistory } from './ReportInteractionHistory';
+import { ReportLiquidity } from './ReportLiquidity';
 import { ReportMissingInfo } from './ReportMissingInfo';
 import { ReportPolicyPortfolio } from './ReportPolicyPortfolio';
 import { ReportRetirementProjection } from './ReportRetirementProjection';
@@ -87,10 +93,17 @@ export function ReportCanvas({
         yearsToRetirement={hero.yearsToRetirement}
         income={summary.income}
       />
-      <ReportCoverageAnalysis summary={summary} yearsToRetirement={hero.yearsToRetirement} />
-      {cashValuePolicies.length > 0 && <ReportCashValue policies={cashValuePolicies} />}
+      <ReportCoverageAnalysis
+        summary={summary}
+        yearsToRetirement={hero.yearsToRetirement}
+        policies={policies}
+      />
       {hospitalPolicies.length > 0 && <ReportHospitalization policies={hospitalPolicies} />}
+      <ReportCoverageGaps summary={summary} yearsToRetirement={hero.yearsToRetirement} />
+      {cashValuePolicies.length > 0 && <ReportCashValue policies={cashValuePolicies} />}
       {investmentPolicies.length > 0 && <ReportIlpAnalysis policies={investmentPolicies} />}
+      {/* Self-guards: only when a policy records a surrender value. */}
+      <ReportLiquidity policies={policies} />
       {/* Sections [8]/[9] self-guard (CPF balance / bank-or-ILP). */}
       <ReportCpfProjection client={client} currentAge={currentAge} refYear={refYear} />
       <ReportRetirementProjection
@@ -101,7 +114,6 @@ export function ReportCanvas({
         refYear={refYear}
       />
       <ReportPolicyPortfolio policies={policies} />
-      <ReportCoverageGaps summary={summary} yearsToRetirement={hero.yearsToRetirement} />
       <ReportInteractionHistory interactions={interactions} />
       <ReportDisclaimer currentAge={currentAge} yearsToRetirement={hero.yearsToRetirement} />
     </article>

@@ -7,6 +7,7 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { CrmClientInput } from '../../types';
+import { EMPTY_SRS_PROFILE, EMPTY_TAX_PROFILE } from '../../components/modals/client/clientFormModel';
 import {
   buildClientUpdate,
   createClient,
@@ -58,6 +59,11 @@ const input: CrmClientInput = {
   futureIncomeStep3: '',
   futureIncomeStartAge3: '',
   futureIncomeEndAge3: '',
+  avgAnnualIncomeTo55: '',
+  cpfHousingMonthly: '',
+  cpfHousingEndAge: '',
+  tax: EMPTY_TAX_PROFILE,
+  srs: EMPTY_SRS_PROFILE,
 };
 
 let from: FromQueue;

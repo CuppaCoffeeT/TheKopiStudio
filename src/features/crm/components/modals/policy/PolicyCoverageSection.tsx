@@ -2,7 +2,8 @@
  * Coverage fieldset (non-hospitalization): death benefit, TPD with the
  * one-shot "same as death" copy — checking copies the CURRENT death benefit
  * once (NOT reactive to later edits); unchecking keeps the copied value
- * (legacy parity) — plus CI / ECI amounts with notes.
+ * (legacy parity) — plus CI / ECI amounts with notes and (v42) whether the CI
+ * is accelerated, which the report uses to avoid double-counting death + CI.
  */
 
 import { Checkbox } from '@/components/primitives/form';
@@ -62,6 +63,12 @@ export function PolicyCoverageSection({ value, set, coverageError }: PolicyCover
           testId="crm-policy-ci-notes-input"
         />
       </div>
+      <Checkbox
+        label="Accelerated — CI payout reduces the death benefit (most common in Singapore). Untick only for standalone CI that pays on top of death cover."
+        checked={value.ciAccelerated}
+        onCheckedChange={(checked) => set({ ciAccelerated: checked })}
+        data-testid="crm-policy-ci-accelerated-checkbox"
+      />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <TextField
           label="Early critical illness (S$)"

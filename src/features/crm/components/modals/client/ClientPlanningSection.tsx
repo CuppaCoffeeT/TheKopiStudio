@@ -124,11 +124,25 @@ export function ClientPlanningSection({ value, set }: ClientPlanningSectionProps
 
       <div className="mt-1">
         <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--fg-dim)]">
-          Expected future income
+          Future income for CPF projection
         </span>
         <p className="m-0 mb-2 mt-1 text-[11.5px] leading-[1.5] text-[color:var(--fg-dim)]">
-          Up to three life stages. Ages include both ends; a gap between stages counts as a
-          career break with no contributions.
+          Needed to grow SA and Medisave into the future. Use the simple single figure, or the
+          detailed life-stage tiers for more precision.
+        </p>
+        {/* v42 "simple option (recommended)" — used only when no tier is filled. */}
+        <TextField
+          label="Simple: estimated average annual income till 55 (S$)"
+          type="number"
+          value={value.avgAnnualIncomeTo55}
+          onChange={(v) => set({ avgAnnualIncomeTo55: v })}
+          placeholder="e.g. 90000"
+          hint="One reasonable average is enough for a payout estimate; re-anchor to actual CPF balances at each review."
+          testId="crm-client-avg-income-input"
+        />
+        <p className="m-0 mb-2 mt-3 text-[11.5px] leading-[1.5] text-[color:var(--fg-dim)]">
+          Detailed: up to three life stages — these override the simple figure when filled. Ages
+          include both ends; a gap between stages counts as a career break with no contributions.
         </p>
         <div className="flex flex-col gap-2">
           <IncomeStepRow

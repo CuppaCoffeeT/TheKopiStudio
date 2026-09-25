@@ -64,13 +64,15 @@ describe('hospitalShieldPremiums — ClientReportModal.jsx:301-303,324-326,337',
         integratedShieldCash: '120',
         riderCash: '380',
       }),
-    ).toEqual({ cpf, cash, rider, shieldTotal: cpf + cash, totalAnnual: cpf + cash + rider });
+    ).toEqual({
+      cpf, cash, rider, shieldTotal: cpf + cash, totalAnnual: cpf + cash + rider, cashOutlay: cash + rider,
+    });
   });
 
   it("legacy `parseFloat(v || 0)` coercion — '' / null / undefined → 0", () => {
     expect(
       hospitalShieldPremiums({ integratedShieldCPF: '', integratedShieldCash: null }),
-    ).toEqual({ cpf: 0, cash: 0, rider: 0, shieldTotal: 0, totalAnnual: 0 });
+    ).toEqual({ cpf: 0, cash: 0, rider: 0, shieldTotal: 0, totalAnnual: 0, cashOutlay: 0 });
   });
 });
 

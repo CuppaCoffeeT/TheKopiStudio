@@ -25,6 +25,17 @@ export function PolicyIlpSection({ value, set }: PolicyIlpSectionProps) {
           testId="crm-policy-account-value-input"
         />
         <TextField
+          label="Surrender value today (S$)"
+          type="number"
+          value={value.surrenderValue}
+          onChange={(v) => set({ surrenderValue: v })}
+          placeholder="Actual cash-out amount"
+          hint="After surrender charges. Usually below account value in the early years."
+          testId="crm-policy-ilp-surrender-input"
+        />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <TextField
           label="Investment allocation"
           value={value.investmentAllocation}
           onChange={(v) => set({ investmentAllocation: v })}

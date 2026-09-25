@@ -87,6 +87,9 @@ export const EMPTY_CLIENT: CrmClientInput = {
   futureIncomeStep3: '',
   futureIncomeStartAge3: '',
   futureIncomeEndAge3: '',
+  avgAnnualIncomeTo55: '',
+  cpfHousingMonthly: '',
+  cpfHousingEndAge: '',
   tax: EMPTY_TAX_PROFILE,
   srs: EMPTY_SRS_PROFILE,
 };

@@ -1,11 +1,7 @@
 /**
- * CRM feature types — flat file (never a types/ directory).
- *
- * The feature owns the 5 CRM tables created by migration 20260611_164841
- * (clients, policies, projected_cash_values, interactions,
- * bank_balance_history) — re-export the generated DB types as the single
- * source of truth for row shapes. Domain model types (mapping, finance,
- * follow-ups) are appended below by the lib layer.
+ * CRM feature types — flat file (never a types/ directory). Re-exports the
+ * generated row types of the 5 CRM tables (migration 20260611_164841) as the
+ * single source of truth for row shapes; domain models are appended below.
  */
 
 import type { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
@@ -98,6 +94,11 @@ export interface CrmClient {
   futureIncomeStep3: string;
   futureIncomeStartAge3: string;
   futureIncomeEndAge3: string;
+  // v42: single-figure income fallback + OA housing drain (lib/cpfContributions).
+  avgAnnualIncomeTo55: string;
+  cpfHousingMonthly: string;
+  /** '' ⇒ the loan runs until 55. */
+  cpfHousingEndAge: string;
   // Tool-owned, READ-ONLY here (2026-08-19) — see `clientPlanningTypes.ts`.
   tax: CrmClientTaxProfile;
   srs: CrmClientSrsProfile;
@@ -138,6 +139,10 @@ export interface CrmPolicy {
   integratedShieldCPF: string;
   integratedShieldCash: string;
   riderCash: string;
+  /** v42: cash-out amount today, after charges ('' = not recorded). */
+  surrenderValue: string;
+  /** v42: CI draws down the death benefit (default true — lib/protectionStructure). */
+  ciAccelerated: boolean;
 }
 
 /** Policy form payload (projections persist separately via `projectionsToRows`). */
@@ -176,12 +181,7 @@ export interface CrmDashboardStats {
   totalAnnualPremium: number;
   /** Interactions with a follow-up date strictly after now (no window — parity). */
   upcomingFollowUps: number;
-  /**
-   * What `totalAnnualPremium` had to leave out: ILP policies whose
-   * premium-inclusion percent is 0 or unset contribute nothing to it. Surfaced
-   * rather than silently absorbed — see lib/ilpExclusion for why the math is
-   * not "fixed" instead.
-   */
+  /** ILPs `totalAnnualPremium` left out (0/unset inclusion %) — disclosed, see lib/ilpExclusion. */
   excludedIlp: { count: number; annualPremium: number };
 }
 

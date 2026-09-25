@@ -64,7 +64,7 @@ export function ReportRetirementEconomics({
               <tr>
                 <th scope="col">Scenario</th>
                 <th scope="col" className="num">Bank at 65</th>
-                <th scope="col" className="num">Total retirement sum</th>
+                <th scope="col" className="num">Total savings &amp; investments</th>
               </tr>
             </thead>
             <tbody>

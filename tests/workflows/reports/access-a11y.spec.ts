@@ -247,7 +247,7 @@ test.beforeAll(async ({ browser }, testInfo) => {
       await crm.submitPolicyForm();
       await expect(successToast(page, 'Policy added')).toBeVisible({ timeout: 20_000 });
 
-      // Policy 2 — Hospitalization (premium/coverage forced '0'; amber
+      // Policy 2 — Hospitalization (coverage forced '0'; amber
       // Integrated Shield fieldset) → renders report-hospitalization.
       await crm.policiesAddButton.click();
       await expect(crm.policyModal).toBeVisible();

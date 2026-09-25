@@ -1,7 +1,7 @@
 # CRM Module — Dashboard, Clients, Policies, Bank History, Reports
 
 **Created**: 2026-06-12 14:00:00 SGT
-**Last Updated**: 2026-06-12 16:30:00 SGT
+**Last Updated**: 2026-09-25 14:10:00 SGT
 **Status**: 🟢 Production
 **Priority**: 🔴 Critical
 
@@ -42,6 +42,8 @@ On top: `user_id`/`created_by` stamped on insert, `updated_by` on update; **soft
 
 **Client report** (`/clients/:id/report`) renders the legacy ClientReportModal's 13 sections in order via `components/report/*`: [1] hero (`heroTotals`: policies, coverage, UN-scaled annualised investment, projected@65, years-to-65) · [2] health snapshot (4 benchmark cards; SPECIAL premiums card with 'Underinsured') · [3] client profile · [4] coverage analysis (Cost@65: death ×1.025^y **general**-inflation literal, CI/ECI ×1.06 — preserved) · [5] cash value · [6] hospitalization · [7] ILP · [8] CPF projection (per-ACCOUNT table to 55, BHS overflow alert, RA panel: exactly one alert + CPF LIFE payout) · [9] retirement projection + economics (invested-at-6%, opportunity cost, 2.5% purchasing power, 0.75× emergency fund, risk copy) · [10] policy portfolio · [11] coverage gaps · [12] interactions · [13] disclaimer. [5]–[8] conditionally absent per legacy conditions; loading/error/not-found precede the canvas.
 
+**v42 port (2026-09-25)** — the advisor's `insurance_crm_v42.html` reordered and extended the client report: [4] coverage now EXCLUDES Personal Accident from death cover (own callout) and adds the accelerated-CI "one pot" max-claimable + contributing-policies table (`lib/protectionStructure`); hospitalization + coverage gaps follow [4]; a new "What you can access today" section (policy `surrender_value`) follows ILP; [8] CPF adds the avg-income fallback, the OA housing-loan drain and an OA/SA build-up waterfall (`lib/cpfBuildUp`); [9] is renamed "Savings & investments at age 65" (CPF excluded); policy portfolio moves to just before interactions. Detail in `lib/decisions.md` 2026-09-25.
+
 **Portfolio report** (`/crm-reports`) ports Reports.jsx as a full page: stat cards, financial summary, per-client policy tables (RAW "X/frequency" lines, legacy parity), empty-book notice. Bounded selects (`portfolioService`, limit 5000, RLS-scoped, soft-delete filtered).
 
 **Math-purity rule (DoD-enforced)**: report components do DISPLAY FORMATTING ONLY (`Math.round`/`toFixed`/`toLocaleString`); every client/policy number comes from `lib/financeReport*`, oracle-locked against expressions copied verbatim from legacy JSX (file:line cited). Sole inline arithmetic: legacy-cited year-count clamps (`yearsTo55 = max(0, 55 − age)`).
@@ -66,7 +68,7 @@ Anonymous → `/login` on every CRM route. Advisors see and mutate ONLY their ow
 
 ## 📝 Modal field parity + label divergences
 
-All four FORM modals are controlled string-state forms (profiler pattern), re-seeded on every open, field-for-field parity to the legacy port map; option lists IDENTICAL. Kept behaviors: "Client since" blank → today on add; Hospitalization type one-way forces premium/coverage '0' + amber fieldset; `tpdSameAsDeath` one-shot copy; projections save `[]` while "Has cash value" is unchecked; incomplete projection rows dropped; coercions client ''→null / policy ''→0 / followUp ''→null. **Label-only divergences** (behavior identical; design-system restyle, currency "(S$)") — e.g. "CPF Medisave ($)"→"CPF MA (S$)", "IS Plan: CPF/Cash portion ($)"→"Integrated Shield — CPF/cash (S$)". Full label map: CRM_MODULE_PRD.md port map.
+All four FORM modals are controlled string-state forms (profiler pattern), re-seeded on every open, field-for-field parity to the legacy port map; option lists IDENTICAL. Kept behaviors: "Client since" blank → today on add; Hospitalization type one-way forces coverage '0' + amber fieldset (premium no longer zeroed since v42 — the Shield fields carry it); `tpdSameAsDeath` one-shot copy; projections save `[]` while "Has cash value" is unchecked; incomplete projection rows dropped; coercions client ''→null / policy ''→0 / followUp ''→null. **Label-only divergences** (behavior identical; design-system restyle, currency "(S$)") — e.g. "CPF Medisave ($)"→"CPF MA (S$)", "IS Plan: CPF/Cash portion ($)"→"Integrated Shield — CPF/cash (S$)". Full label map: CRM_MODULE_PRD.md port map.
 
 ## 🧪 E2E summary (workflows crm + reports, @p0 @mobile)
 

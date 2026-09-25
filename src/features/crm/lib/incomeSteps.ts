@@ -22,13 +22,21 @@ export interface IncomeStep {
  * has to mean "has money in it", not "the column exists". No match means no
  * income, therefore no contribution: a gap between steps is a real career
  * break, not something to interpolate over.
+ *
+ * `avgIncomeTo55` is v42's "simple option": one average income used for every
+ * year before 55, but ONLY when no tier is defined at all — any tier overrides
+ * it, so a gap between tiers stays a career break. "Defined" means a step that
+ * survived `incomeStepsFromClient` (income AND a valid age range); v42 counts
+ * a tier with income but no ages as defined too, which would silently zero the
+ * projection — see decisions.md 2026-09-25.
  */
-export function incomeForAge(steps: readonly IncomeStep[], age: number): number {
+export function incomeForAge(steps: readonly IncomeStep[], age: number, avgIncomeTo55 = 0): number {
   for (const step of steps) {
     if (step.annualIncome > 0 && age >= step.startAge && age <= step.endAge) {
       return step.annualIncome;
     }
   }
+  if (steps.length === 0 && avgIncomeTo55 > 0 && age < 55) return avgIncomeTo55;
   return 0;
 }
 

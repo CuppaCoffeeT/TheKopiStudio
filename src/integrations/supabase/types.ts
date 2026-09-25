@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.4"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
@@ -88,6 +88,9 @@ export type Database = {
       clients: {
         Row: {
           annual_income: number | null
+          avg_annual_income_to_55: number | null
+          cpf_housing_end_age: number | null
+          cpf_housing_monthly: number | null
           cpf_ma: number | null
           cpf_oa: number | null
           cpf_sa: number | null
@@ -146,6 +149,9 @@ export type Database = {
         }
         Insert: {
           annual_income?: number | null
+          avg_annual_income_to_55?: number | null
+          cpf_housing_end_age?: number | null
+          cpf_housing_monthly?: number | null
           cpf_ma?: number | null
           cpf_oa?: number | null
           cpf_sa?: number | null
@@ -204,6 +210,9 @@ export type Database = {
         }
         Update: {
           annual_income?: number | null
+          avg_annual_income_to_55?: number | null
+          cpf_housing_end_age?: number | null
+          cpf_housing_monthly?: number | null
           cpf_ma?: number | null
           cpf_oa?: number | null
           cpf_sa?: number | null
@@ -569,6 +578,7 @@ export type Database = {
       }
       policies: {
         Row: {
+          ci_accelerated: boolean | null
           ci_notes: string | null
           client_id: string
           coverage_amount: number | null
@@ -599,6 +609,7 @@ export type Database = {
           rider_cash: number | null
           start_date: string | null
           status: string | null
+          surrender_value: number | null
           tpd_coverage: number | null
           tpd_same_as_death: boolean | null
           type: string
@@ -607,6 +618,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          ci_accelerated?: boolean | null
           ci_notes?: string | null
           client_id: string
           coverage_amount?: number | null
@@ -637,6 +649,7 @@ export type Database = {
           rider_cash?: number | null
           start_date?: string | null
           status?: string | null
+          surrender_value?: number | null
           tpd_coverage?: number | null
           tpd_same_as_death?: boolean | null
           type: string
@@ -645,6 +658,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          ci_accelerated?: boolean | null
           ci_notes?: string | null
           client_id?: string
           coverage_amount?: number | null
@@ -675,6 +689,7 @@ export type Database = {
           rider_cash?: number | null
           start_date?: string | null
           status?: string | null
+          surrender_value?: number | null
           tpd_coverage?: number | null
           tpd_same_as_death?: boolean | null
           type?: string
@@ -1158,12 +1173,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1187,11 +1202,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1212,11 +1227,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1237,11 +1252,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1254,11 +1269,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }

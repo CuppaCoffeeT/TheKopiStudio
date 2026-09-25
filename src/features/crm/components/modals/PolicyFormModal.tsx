@@ -3,8 +3,10 @@
  * legacy parity per CRM_MODULE_PRD.md port map).
  *
  * Conditional sections: selecting type 'Hospitalization' one-way forces
- * premium/coverage to '0' and swaps the coverage/cash-value/ILP fieldsets
- * for the amber hospital section; switching away leaves '0' editable.
+ * coverage to '0' (an IP's cover is its ward class, not a sum assured) and
+ * swaps the coverage/cash-value/ILP fieldsets for the amber hospital section;
+ * switching away leaves '0' editable. Since v42 the PREMIUM is left alone —
+ * Shield plans do have premiums; they live in the hospital section's fields.
  * Hidden-section SCALAR state is retained and persisted regardless of the
  * toggles (legacy parity), but projections are gated on submit exactly as
  * legacy PolicyFormModal.jsx: 'Has cash value' unchecked saves [] (clearing
@@ -75,11 +77,11 @@ export function PolicyFormModal({ open, onOpenChange, clientId, policy }: Policy
     });
   };
 
-  /** One-way Hospitalization force: premium/coverage '0' (not restored on switch-away). */
+  /** One-way Hospitalization force: coverage '0' (not restored on switch-away). */
   const handleTypeChange = (type: string) =>
     set(
       type === 'Hospitalization'
-        ? { type, isHospitalization: true, premium: '0', coverageAmount: '0' }
+        ? { type, isHospitalization: true, coverageAmount: '0' }
         : { type, isHospitalization: false }
     );
 
@@ -159,6 +161,8 @@ export function PolicyFormModal({ open, onOpenChange, clientId, policy }: Policy
             <PolicyCashValueSection
               currentCashValue={form.currentCashValue}
               onCurrentCashValueChange={(v) => set({ currentCashValue: v })}
+              surrenderValue={form.surrenderValue}
+              onSurrenderValueChange={(v) => set({ surrenderValue: v })}
               rows={rows}
               onRowsChange={setRows}
             />

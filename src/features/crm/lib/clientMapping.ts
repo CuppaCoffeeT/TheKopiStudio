@@ -57,6 +57,9 @@ export function clientFromRow(row: ClientRow): CrmClient {
     futureIncomeStep3: numStr(row.future_income_step3),
     futureIncomeStartAge3: numStr(row.future_income_start_age3),
     futureIncomeEndAge3: numStr(row.future_income_end_age3),
+    avgAnnualIncomeTo55: numStr(row.avg_annual_income_to_55),
+    cpfHousingMonthly: numStr(row.cpf_housing_monthly),
+    cpfHousingEndAge: numStr(row.cpf_housing_end_age),
     tax: {
       employmentType: row.tax_employment_type ?? '',
       otherIncome: numStr(row.tax_other_income),
@@ -146,5 +149,8 @@ export function clientToRow(data: CrmClientInput) {
     future_income_step3: toNum(data.futureIncomeStep3),
     future_income_start_age3: toNum(data.futureIncomeStartAge3),
     future_income_end_age3: toNum(data.futureIncomeEndAge3),
+    avg_annual_income_to_55: toNum(data.avgAnnualIncomeTo55),
+    cpf_housing_monthly: toNum(data.cpfHousingMonthly),
+    cpf_housing_end_age: toNum(data.cpfHousingEndAge),
   };
 }

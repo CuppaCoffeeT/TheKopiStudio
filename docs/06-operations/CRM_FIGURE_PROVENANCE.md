@@ -77,7 +77,7 @@ Two selects, both `.limit(5000)`, same RLS scope as the dashboard.
 | **Total policies** | `policies` ⋈ `clients` | `id` | `is_deleted = false` on both | Row count, all statuses |
 | **Active policies** | `policies` ⋈ `clients` | `status` | same | Count where `status = 'Active'` |
 | **Total annual premium** | `policies` ⋈ `clients` | as the dashboard tile | same | Identical call to `summariseClient` — the two surfaces cannot disagree |
-| **Total coverage** | `policies` ⋈ `clients` | `coverage_amount` | same | `Σ coverage_amount`, no annualisation |
+| **Total coverage** | `policies` ⋈ `clients` | `coverage_amount` | same | `Σ coverage_amount`, no annualisation. INCLUDES Personal Accident — only the CLIENT report's death cover excludes it (v42, `lib/protectionStructure`, decisions.md 2026-09-25) |
 | **Avg annual premium / client** | derived | — | — | `totalAnnualPremium / totalClients`, 0 when the book is empty |
 | **Avg coverage / client** | derived | — | — | `totalCoverage / totalClients`, 0 when the book is empty |
 | **Per-client facts** | `clients` | `name`, `email`, `phone`, `occupation`, `annual_income`, `risk_profile` | `is_deleted = false`, ordered by `name` | Renamed only — no arithmetic |

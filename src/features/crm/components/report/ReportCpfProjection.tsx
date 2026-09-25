@@ -4,8 +4,9 @@
  *
  * PER-ACCOUNT table to age 55 (NOT year-by-year): Medisave-overflow alert
  * (BHS cap + SA boost via projectCPFTo55), three at-55 gradient cards, the
- * OA/SA/MA account table with the cpfCurrentTotal row, then the RA assessment
- * panel (ReportCpfRaPanel). SELF-GUARDING — renders only when any CPF balance
+ * OA/SA/MA account table with the cpfCurrentTotal row, the v42 basis callout
+ * + OA/SA build-up waterfall (ReportCpfBuildUp), then the RA assessment panel
+ * (ReportCpfRaPanel — still on the golden no-contribution projection). SELF-GUARDING — renders only when any CPF balance
  * is > 0, so the page composes it unconditionally. Starts on a fresh printed
  * page (.report-page-break). ALL math from lib; only locale formatting here:
  * "Current" cells print UNROUNDED floats exactly like legacy, at-55 cells are
@@ -13,10 +14,11 @@
  */
 
 import { projectCPFTo55WithFutureContributions } from '../../lib/cpfContributions';
-import { incomeStepsFromClient } from '../../lib/incomeSteps';
+import { cpfPlanFromClient } from '../../lib/cpfBuildUp';
 import { BHS_2026, toFloat } from '../../lib/finance';
 import { cpfCurrentTotal } from '../../lib/financeReport';
 import type { CrmClient } from '../../types';
+import { ReportCpfBuildUp } from './ReportCpfBuildUp';
 import { ReportCpfRaPanel } from './ReportCpfRaPanel';
 
 const money = (value: number): string => `$${Math.round(value).toLocaleString()}`;
@@ -39,19 +41,11 @@ export function ReportCpfProjection({ client, currentAge, refYear }: ReportCpfPr
   // CPFProjection.jsx:8 — years-to-55 clamp (year count, not money math).
   const yearsTo55 = Math.max(0, 55 - currentAge);
 
-  // Contributions-aware since 2026-07-28. With no income steps on the record
-  // this is FLOAT-EXACTLY the legacy `projectCPFTo55` (asserted in
-  // lib/__tests__/cpfContributions.test.ts), so an un-filled customer's report
-  // is unchanged; a customer WITH steps finally has their future
-  // contributions counted instead of only their current balances growing.
-  const incomeSteps = incomeStepsFromClient(client);
-  const projection = projectCPFTo55WithFutureContributions({
-    cpfOA,
-    cpfSA,
-    cpfMA,
-    currentAge,
-    incomeSteps,
-  });
+  // Contributions-aware since 2026-07-28; v42 adds the average-income
+  // fallback and the OA housing drain. With none of them on the record this is
+  // FLOAT-EXACTLY the legacy `projectCPFTo55` (lib/__tests__/cpfContributions).
+  const plan = cpfPlanFromClient(client);
+  const projection = projectCPFTo55WithFutureContributions({ cpfOA, cpfSA, cpfMA, currentAge, ...plan });
 
   const cards = [
     {
@@ -107,19 +101,10 @@ export function ReportCpfProjection({ client, currentAge, refYear }: ReportCpfPr
       <p className="text-[12px] text-[color:var(--fg-dim)]">
         Projection based on current CPF interest rates (OA: 2.5%, SA: 4%, MA: 4%) with Medisave
         cap overflow to SA.
-        {incomeSteps.length > 0
+        {plan.incomeBasis !== 'none'
           ? ' Future CPF contributions are included, from the expected income recorded on the customer.'
           : ' Existing balances only — no future income is recorded, so no further contributions are assumed.'}
       </p>
-
-      {projection.totalFutureContributions > 0 && (
-        <div className="report-callout" data-testid="report-cpf-contributions">
-          <strong>Future contributions included.</strong> Approximately{' '}
-          {money(projection.totalFutureContributions)} of CPF contributions over the next{' '}
-          {yearsTo55} {yearsTo55 === 1 ? 'year' : 'years'}, on income capped at the $
-          {(8_000).toLocaleString()} monthly Ordinary Wage ceiling.
-        </div>
-      )}
 
       {projection.totalOverflow > 0 && (
         <div className="report-callout report-callout--warning" data-testid="report-cpf-overflow">
@@ -180,6 +165,14 @@ export function ReportCpfProjection({ client, currentAge, refYear }: ReportCpfPr
           </tr>
         </tbody>
       </table>
+
+      <ReportCpfBuildUp
+        plan={plan}
+        projection={projection}
+        cpfOA={cpfOA}
+        cpfSA={cpfSA}
+        yearsTo55={yearsTo55}
+      />
 
       <ReportCpfRaPanel
         dob={client.dateOfBirth}
