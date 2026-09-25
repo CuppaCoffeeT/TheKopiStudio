@@ -9,56 +9,31 @@
  * for every legacy row; if a row ever disagreed, the stored scalars still win
  * the headline while bars stay replay-derived.
  *
+ * The replay reads each answer's stored `d` + `mb`, never its `oi`, so it is
+ * indifferent to the v6 option reshuffle (content/questions.ts header). The v6
+ * discovery tracks come back from `raw_answers[7]` when the row has them; rows
+ * saved before v6 (or by the legacy app) get `tracks: null` and the report
+ * leaves the track sections out.
+ *
  * Rows with NULL/invalid `raw_answers` (defensive) degrade to a scalar-only
  * model: bars from stored score_d/i/s/c, zero MBTI signals, `scalarOnly` so
  * the page can swap the MBTI card for an info alert.
  */
 
-import type { Json } from '@/integrations/supabase/types';
-import type { DiscLetter, ProfilerResult, RawAnswer } from '../../types';
+import type { DiscLetter, DiscoveryTracks, ProfilerResult } from '../../types';
 import { calcProfile, type MbtiType, type ProfileResult } from '../../lib/scoring';
-
-const DISC_LETTERS: readonly DiscLetter[] = ['D', 'I', 'S', 'C'];
-
-function isDiscLetter(value: unknown): value is DiscLetter {
-  return typeof value === 'string' && (DISC_LETTERS as readonly string[]).includes(value);
-}
-
-function isRawAnswer(value: unknown): value is RawAnswer {
-  if (typeof value !== 'object' || value === null) return false;
-  const candidate = value as Partial<RawAnswer>;
-  return (
-    isDiscLetter(candidate.d) &&
-    typeof candidate.mb === 'object' &&
-    candidate.mb !== null &&
-    typeof candidate.mb.v === 'string'
-  );
-}
-
-/** Stored raw_answers parsed back to the wizard answer array; null when absent/invalid. */
-export function parseRawAnswers(rawAnswers: Json | null): Array<RawAnswer | null> | null {
-  if (!Array.isArray(rawAnswers) || rawAnswers.length === 0) return null;
-  const parsed = rawAnswers.map((entry) => (isRawAnswer(entry) ? entry : null));
-  return parsed.some(Boolean) ? parsed : null;
-}
-
-/** Ids ticked TRUE in a stored nv_observations object (FALSE entries persist by design). */
-export function trueObservationIds(nvObservations: Json | null): string[] {
-  if (
-    typeof nvObservations !== 'object' ||
-    nvObservations === null ||
-    Array.isArray(nvObservations)
-  ) {
-    return [];
-  }
-  return Object.keys(nvObservations).filter((id) => nvObservations[id] === true);
-}
+import { isDiscLetter, parseRawAnswers, trueObservationIds } from '../../lib/storedAnswers';
+import { readStoredDiscovery } from '../../lib/discovery';
 
 export interface StoredReportModel {
   /** Report-shaped profile: stored headline scalars + replayed bars/signals. */
   profile: ProfileResult;
   /** True when raw_answers could not be replayed — MBTI dims unavailable. */
   scalarOnly: boolean;
+  /** v6 discovery tracks; null for rows saved before v6. */
+  tracks: DiscoveryTracks | null;
+  /** DISC letter of the money-anchor answer (only alongside tracks). */
+  worry: DiscLetter | null;
 }
 
 export function buildStoredReportModel(row: ProfilerResult): StoredReportModel {
@@ -79,5 +54,6 @@ export function buildStoredReportModel(row: ProfilerResult): StoredReportModel {
       occUsed: replayed?.occUsed ?? row.occupation ?? '',
     },
     scalarOnly: !replayed,
+    ...readStoredDiscovery(answers),
   };
 }

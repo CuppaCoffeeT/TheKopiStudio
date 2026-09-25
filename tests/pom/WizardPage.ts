@@ -4,13 +4,15 @@ import { chooseSelectMenuOption } from './selectMenu';
 /**
  * WizardPage — POM for the PUBLIC profiling wizard at /profiler.
  *
- * Screen map (legacy `go()` port, see ProfilerWizardPage):
- *   0 intake → 1–2 question batches (Q0–3 / Q4–7) → 3–7 the five observation
- *   groups → 'R' result report. The footer Next button (`wizard-next-btn`)
- *   reads "Generate Profile →" on the last observation screen.
+ * Screen map (prototype v6 `go()` port, 2026-09-25, see ProfilerWizardPage):
+ *   0 intake → 1–2 rapport batches (Q0–3 / Q4–6) → 3–7 the five observation
+ *   groups → 8 pit stop → 9 discovery (money anchor Q7 + four tracks) →
+ *   'R' result report. The footer Next button (`wizard-next-btn`) reads
+ *   "See Quick Read →" on the last observation screen, "Continue to
+ *   Discovery →" on the pit stop and "Generate Profile →" on discovery.
  *
  * All selectors are real data-testids read from:
- *   src/features/profiler/components/wizard/{IntakeForm,QuestionScreen,ObservationScreen}.tsx
+ *   src/features/profiler/components/wizard/{IntakeForm,QuestionScreen,ObservationScreen,PitStopScreen,DiscoveryScreen}.tsx
  *   src/features/profiler/components/wizard/result/{ResultReport,ResultHero,ResultActions,ScoreCard,PlaybookSection}.tsx
  */
 
@@ -27,14 +29,19 @@ export interface WizardIntake {
 export type DiscLetter = 'D' | 'I' | 'S' | 'C';
 export type PlaybookCategory = 'engage' | 'appt' | 'followup' | 'objections' | 'close';
 
-/** Total wizard steps (2 question screens + 5 observation groups). */
-const TOTAL_QUESTIONS = 8;
+/** Rapport batches (Q0–3 / Q4–6); Q7, the money anchor, is on the discovery screen. */
+const RAPPORT_BATCHES = [[0, 1, 2, 3], [4, 5, 6]] as const;
+const MONEY_ANCHOR_QI = 7;
 const OBSERVATION_GROUPS = 5;
+const TRACKS = ['temperament', 'openness', 'horizon', 'decision'] as const;
 
 /** Group-0 observation ids (First 30 Seconds) ticked by default. */
 const DEFAULT_OBSERVATION_IDS = ['a1', 'a5', 'a9'] as const;
 
 export class WizardPage {
+  /** Option index answerAllQuestions() used — generate() answers the money anchor with it too. */
+  private optionIndex = 0;
+
   constructor(readonly page: Page) {}
 
   // ── Navigation ─────────────────────────────────────────────────────────
@@ -76,7 +83,7 @@ export class WizardPage {
     await this.page.getByTestId('wizard-questions-screen-1').waitFor({ state: 'visible', timeout: 15_000 });
   }
 
-  // ── Question screens (1–2) ─────────────────────────────────────────────
+  // ── Rapport question screens (1–2) ─────────────────────────────────────
 
   get nextButton(): Locator {
     return this.page.getByTestId('wizard-next-btn');
@@ -92,25 +99,25 @@ export class WizardPage {
   }
 
   /**
-   * Answer all 8 questions with option index 0 (or the supplied index) across
-   * the two question screens, clicking Next between them. Leaves the wizard on
-   * the FIRST observation screen.
+   * Answer the 7 rapport questions with option index 0 (or the supplied index)
+   * across the two rapport screens, clicking Next between them. Leaves the
+   * wizard on the FIRST observation screen. The 8th question (the money
+   * anchor) is answered with the same index by generate(), on the discovery
+   * screen — so raw_answers still ends up 8 × optionIndex.
    */
   async answerAllQuestions(optionIndex = 0): Promise<void> {
-    // Screen 1: questions 0–3.
-    for (let qi = 0; qi < TOTAL_QUESTIONS / 2; qi++) {
-      await this.selectOption(qi, optionIndex);
+    this.optionIndex = optionIndex;
+    for (const [i, batch] of RAPPORT_BATCHES.entries()) {
+      if (i > 0) {
+        await this.nextButton.click();
+        await this.page.getByTestId(`wizard-questions-screen-${i + 1}`).waitFor({ state: 'visible', timeout: 15_000 });
+      }
+      for (const qi of batch) {
+        await this.selectOption(qi, optionIndex);
+      }
+      // Next is gated on the whole batch — enabled proves every click registered.
+      await expect(this.nextButton).toBeEnabled();
     }
-    // Next is gated on all 4 answered — enabled proves every click registered.
-    await expect(this.nextButton).toBeEnabled();
-    await this.nextButton.click();
-    await this.page.getByTestId('wizard-questions-screen-2').waitFor({ state: 'visible', timeout: 15_000 });
-
-    // Screen 2: questions 4–7.
-    for (let qi = TOTAL_QUESTIONS / 2; qi < TOTAL_QUESTIONS; qi++) {
-      await this.selectOption(qi, optionIndex);
-    }
-    await expect(this.nextButton).toBeEnabled();
     await this.nextButton.click();
     await this.page.getByTestId('wizard-observations-screen-0').waitFor({ state: 'visible', timeout: 15_000 });
   }
@@ -145,12 +152,47 @@ export class WizardPage {
     }
   }
 
-  /** On the last observation screen the Next button reads "Generate Profile →". */
+  /**
+   * From the last observation screen: through the pit stop, answer the
+   * discovery screen (money anchor with answerAllQuestions' option index,
+   * every track with its first pole), then "Generate Profile →".
+   */
   async generate(): Promise<void> {
-    await this.page.getByTestId(`wizard-observations-screen-${OBSERVATION_GROUPS - 1}`).waitFor({ state: 'visible', timeout: 15_000 });
+    await this.toPitStop();
+    await this.toDiscovery();
+    await this.answerDiscovery();
     await expect(this.nextButton).toContainText('Generate Profile');
     await this.nextButton.click();
     await this.resultReport.waitFor({ state: 'visible', timeout: 20_000 });
+  }
+
+  // ── Pit stop (8) + discovery (9) ───────────────────────────────────────
+
+  /** Last observation screen → "See Quick Read →" → the pit stop. */
+  async toPitStop(): Promise<void> {
+    await this.page.getByTestId(`wizard-observations-screen-${OBSERVATION_GROUPS - 1}`).waitFor({ state: 'visible', timeout: 15_000 });
+    await expect(this.nextButton).toContainText('See Quick Read');
+    await this.nextButton.click();
+    await this.page.getByTestId('wizard-pitstop-screen').waitFor({ state: 'visible', timeout: 15_000 });
+  }
+
+  /** Pit stop → "Continue to Discovery →" → the discovery screen. */
+  async toDiscovery(): Promise<void> {
+    await expect(this.nextButton).toContainText('Continue to Discovery');
+    await this.nextButton.click();
+    await this.page.getByTestId('wizard-discovery-screen').waitFor({ state: 'visible', timeout: 15_000 });
+  }
+
+  /**
+   * Money anchor with answerAllQuestions' option index, every track with its
+   * first pole. Generate is gated on all five — enabled proves they registered.
+   */
+  async answerDiscovery(): Promise<void> {
+    await this.selectOption(MONEY_ANCHOR_QI, this.optionIndex);
+    for (const track of TRACKS) {
+      await this.page.getByTestId(`wizard-track-${track}-opt-0`).click();
+    }
+    await expect(this.nextButton).toBeEnabled();
   }
 
   // ── Result report ──────────────────────────────────────────────────────

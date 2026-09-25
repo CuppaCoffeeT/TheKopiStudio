@@ -15,6 +15,7 @@ import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { PR } from '../../../lib/content';
 import type { ProfileResult } from '../../../lib/scoring';
+import type { DiscoveryTracks } from '../../../types';
 
 interface ResultHeroProps {
   profile: ProfileResult;
@@ -26,6 +27,8 @@ interface ResultHeroProps {
   meetingLabel: string;
   /** Display date (en-SG, e.g. "11 Jun 2026"). */
   dateLabel: string;
+  /** v6 discovery tracks — temperament + openness join the badges (null pre-v6). */
+  tracks: DiscoveryTracks | null;
 }
 
 /**
@@ -59,6 +62,7 @@ export function ResultHero({
   occupation,
   meetingLabel,
   dateLabel,
+  tracks,
 }: ResultHeroProps) {
   const p = PR[profile.pri];
   const s = PR[profile.sec];
@@ -106,6 +110,8 @@ export function ResultHero({
           <HeroBadge>
             MBTI: {profile.mbs} · {p.mb}
           </HeroBadge>
+          {tracks && <HeroBadge>{tracks.temperament}</HeroBadge>}
+          {tracks && <HeroBadge>{tracks.openness}</HeroBadge>}
         </div>
       </div>
       {/* Card cream under the tinted band, closed by a hairline — the colour

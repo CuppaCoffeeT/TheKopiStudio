@@ -62,6 +62,26 @@ test.describe('anonymous /profiler', () => {
     await expectWcag2aaClean(page);
   });
 
+  test('pit stop + discovery screens axe wcag2aa clean @p0 @mobile', async ({ page }) => {
+    // v6 (2026-09-25) screens 8–9. Nothing saves before Generate, so no route
+    // interception is needed. Discovery is scanned ANSWERED — the selected
+    // rows' brown wash and pole badges are the new small-text grounds.
+    test.slow();
+    const wizard = new WizardPage(page);
+    await wizard.goto();
+    await wizard.fillIntake(A11Y_INTAKE);
+    await wizard.start();
+    await wizard.answerAllQuestions(0);
+    await wizard.tickObservations();
+    await wizard.advanceThroughObservations();
+    await wizard.toPitStop();
+    await expect(page.getByTestId('wizard-pitstop-leaning')).toBeVisible();
+    await expectWcag2aaClean(page);
+    await wizard.toDiscovery();
+    await wizard.answerDiscovery();
+    await expectWcag2aaClean(page);
+  });
+
   test('result screen loads + axe wcag2aa clean (save intercepted) @p0 @mobile', async ({
     page,
   }) => {

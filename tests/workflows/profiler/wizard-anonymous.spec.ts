@@ -1,6 +1,7 @@
 /**
  * Anonymous wizard journey @p0 @mobile — the PUBLIC /profiler flow with NO
- * session: intake → 8 questions → observations → generate → result report.
+ * session: intake → 7 rapport questions → observations → pit stop →
+ * discovery (money anchor + 4 tracks) → generate → result report.
  *
  * ZERO DB residue by design: the anonymous auto-save POST to
  * `**\/rest\/v1\/results*` is intercepted and fulfilled with a synthetic 201,
@@ -22,6 +23,8 @@ interface RawAnswerPayload {
   d: string;
   oi: number;
   mb: { k: string; v: string };
+  /** v6 discovery tracks — on slot 7 (the money anchor) only. */
+  tracks?: Record<string, string>;
 }
 
 /** The slice of the `public.results` insert payload this spec asserts. */
@@ -99,6 +102,9 @@ test('anonymous visitor runs the full wizard; save intercepted; exports work @p0
     await expect(wizard.occupationChip).toBeVisible(); // 'Engineer' factored in
     await expect(wizard.playbook).toBeVisible();
     await expect(wizard.playbookCategory('engage')).toBeVisible();
+    // v6 track sections render for a fresh profile.
+    await expect(page.getByTestId('result-combined-read')).toBeVisible();
+    await expect(page.getByTestId('result-game-plan')).toBeVisible();
   });
 
   await test.step('intercepted payload matches the frozen anonymous-save contract', async () => {
@@ -121,6 +127,16 @@ test('anonymous visitor runs the full wizard; save intercepted; exports work @p0
       expect(typeof answer.mb.k).toBe('string');
       expect(typeof answer.mb.v).toBe('string');
     }
+
+    // v6 discovery tracks ride the money anchor's slot (the POM picks each
+    // track's first pole); no other slot carries them.
+    expect(row.raw_answers[7].tracks).toEqual({
+      temperament: 'Anxious',
+      openness: 'Familiar',
+      horizon: 'Present',
+      decision: 'Deliberate',
+    });
+    expect(row.raw_answers.slice(0, 7).some((a) => a.tracks !== undefined)).toBe(false);
 
     // nv_observations: plain id→boolean map with our ticked ids TRUE.
     expect(Array.isArray(row.nv_observations)).toBe(false);

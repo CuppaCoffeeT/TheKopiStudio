@@ -1,7 +1,7 @@
 # Profiler Module — Wizard, Results, Account Settings, Manage Accounts
 
 **Created**: 2026-06-11 20:00:00 SGT
-**Last Updated**: 2026-06-12 16:30:00 SGT
+**Last Updated**: 2026-09-25 14:30:00 SGT
 **Status**: 🟢 Production
 **Priority**: 🔴 Critical
 
@@ -20,23 +20,23 @@ The deployed Prospect Profiler (vanilla-JS hash SPA) rebuilt as AppBase feature 
 
 ## 🧙 Wizard flow
 
-Legacy `profiler.js go()` port: screen 0 intake (advisor/prospect names default "Advisor"/"Prospect", age range, meeting '1'–'4' default '1', occupation) → screens 1–2 question batches (Next gated until all 4 answered) → screens 3–7 five optional observation groups ("Generate Profile →") → result report. Progress reads "Step n of 7"; auto-save fires at generation.
+Prototype v6 `go()` port (2026-09-25; was legacy `profiler.js`): screen 0 intake (advisor/prospect names default "Advisor"/"Prospect", age range, meeting '1'–'4' default '1', occupation) → screens 1–2 RAPPORT batches Q0–3 / Q4–6 (Next gated on the batch) → screens 3–7 five optional observation groups (last: "See Quick Read →") → 8 PIT STOP (provisional DISC from rapport + ticks + occupation, `lib/discovery.calcInterim`; not saved) → 9 DISCOVERY: the money anchor Q7 + four two-pole TRACKS (temperament Anxious/Calm, openness Familiar/Curious, horizon Present/Future, decision Deliberate/Decisive), worded for the pit stop's letter, gated on all five ("Generate Profile →") → result report. Progress reads "Step n of 9"; auto-save fires at generation. The tracks are NOT scored; the report adds Combined Read, Track 3-4 meters, Horizon & Decision, a tailored follow-up and a Meeting 2 Game Plan when a result has them.
 
 PRD-sanctioned additions vs legacy: sessionStorage draft (`profiler-wizard-draft`, restores mid-flow on refresh; cleared on generate/exit) and a duplicate-save guard (input signature over intake + answers + TRUE-ticked ids, notes excluded — identical regenerate skips the insert).
 
 ### Scoring parity guarantee
 
-`lib/scoring.ts` is an EXACT port of legacy `calcPf` + `occNudge` (profiler.js:117–142), **golden-master locked against all 8 live `public.results` rows** (`lib/__tests__/scoring.test.ts`, fixtures in `lib/__fixtures__/legacy-results.ts`): replaying each row's `raw_answers` + TRUE `nv_observations` + occupation reproduces stored `score_d/i/s/c`, `disc_primary/secondary`, `mbti`. Load-bearing quirks preserved: occNudge trailing-space tokens, `'care'` over-matching "career"/"childcare", unescaped dot in `self.employ`, stackable buckets; DISC ties D > I > S > C (encoded explicitly); MBTI ties `>=` favouring E/S/T/J. Weights: answer DISC +2 / MBTI pole +1, observation DISC +1. Question copy, option order, and observation ids are FROZEN — `oi` indexes and NvItem ids are persisted in saved rows (see `lib/decisions.md`, question-set freeze).
+`lib/scoring.ts` is an EXACT port of legacy `calcPf` + `occNudge` (profiler.js:117–142), **golden-master locked against all 8 live `public.results` rows** (`lib/__tests__/scoring.test.ts`, fixtures in `lib/__fixtures__/legacy-results.ts`): replaying each row's `raw_answers` + TRUE `nv_observations` + occupation reproduces stored `score_d/i/s/c`, `disc_primary/secondary`, `mbti`. Load-bearing quirks preserved: occNudge trailing-space tokens, `'care'` over-matching "career"/"childcare", unescaped dot in `self.employ`, stackable buckets; DISC ties D > I > S > C (encoded explicitly); MBTI ties `>=` favouring E/S/T/J. Weights: answer DISC +2 / MBTI pole +1, observation DISC +1. Observation ids are FROZEN (persisted in saved rows). Question copy and option ORDER changed once, in the v6 port — safe because each question keeps one option per DISC letter with an unchanged MBTI pole per (question, letter), and scoring/replay read each answer's stored `d` + `mb`, never `oi` (`lib/__tests__/discovery.test.ts` checks every live legacy answer; `lib/decisions.md` 2026-09-25).
 
 ### Save payload contract (legacy byte-compat)
 
-`hooks/savePayload.ts` builds the frozen legacy insert shape (unit-tested): `user_id` (uuid or NULL), `advisor_name`, `prospect_name`, `age_range`/`occupation`/`meeting` (text '1'–'4'; blank → NULL), `disc_primary/secondary`, `score_d/i/s/c`, `mbti`, `questions_answered`, `observations_count` (TRUE only), `raw_answers` (8 × `{d, mb:{k,v}, oi}`), `nv_observations` (object **including FALSE** ticked-then-unticked entries), `notes`.
+`hooks/savePayload.ts` builds the frozen legacy insert shape (unit-tested): `user_id` (uuid or NULL), `advisor_name`, `prospect_name`, `age_range`/`occupation`/`meeting` (text '1'–'4'; blank → NULL), `disc_primary/secondary`, `score_d/i/s/c`, `mbti`, `questions_answered`, `observations_count` (TRUE only), `raw_answers` (8 × `{d, mb:{k,v}, oi}`; from v6 slot 7 — the money anchor — also carries `tracks`, the four discovery reads: the table is shape-frozen, so they ride the existing JSON column), `nv_observations` (object **including FALSE** ticked-then-unticked entries), `notes`.
 
 Two save paths (`hooks/useSaveResult.ts`), dictated by the untouched legacy RLS:
 - **Authenticated**: insert with `user_id` + `.select().single()` → success toast + list invalidation.
 - **Anonymous**: `user_id` NULL, **fire-and-forget** `.insert()` with NO `.select()` (anon can insert but cannot SELECT back). Never sends a `user_id` unless authenticated.
 
-Exports: PDF = `window.print()` + `lib/print.css` (A4/12mm, `.rph` header — fixes the legacy action-buttons-print bug). CSV = `lib/export.ts`, frozen legacy columns with RFC-4180 quoting (fixes comma corruption).
+Exports: PDF = `window.print()` + `lib/print.css` (A4/12mm, `.rph` header — fixes the legacy action-buttons-print bug). CSV = `lib/export.ts`, the prototype's columns (v6 added Temperament, Openness, Horizon, Decision after MBTI; empty for pre-v6 rows) with RFC-4180 quoting (fixes comma corruption).
 
 ## 📜 Results list + detail (reconstruction)
 
@@ -75,7 +75,7 @@ Promotions via Manage Accounts must keep legacy manager visibility working: the 
 
 ## 🧪 E2E matrix (tests/workflows/profiler/, all @p0)
 
-Profiler specs across chromium-desktop + mobile-safari (latest full-suite run incl. crm + reports: **86 passed / 1 deliberate skip**): `wizard-anonymous` (full flow, save intercepted, exports) · `results-advisor` (real save → list → stored report → notes → RLS-scoped search → delete) · `results-manager` (sees ≥8 legacy rows; NULL-owner and foreign rows read-only) · `results-superadmin` (own-only until cutover) · `account-settings` · `manage-accounts` (advisor redirect negative, self-row read-only, role round-trip via role-sync) · `load-a11y` (axe wcag2aa zero critical/serious). Convert E2E lives in `tests/workflows/reports/`: `portfolio-convert` (round-trip: save → convert → comm-style card + provenance → View client → cleanup) + `access-a11y` (ConvertResultModal axe). The skip is the role round-trip on mobile-safari — DB-mutating round-trips run on ONE project to avoid racing the shared e2e row. Unit: vitest (scoring golden-master + tie/quirk corpora, CSV format, save-payload parity).
+Profiler specs across chromium-desktop + mobile-safari (latest full-suite run incl. crm + reports: **86 passed / 1 deliberate skip**): `wizard-anonymous` (full flow, save intercepted, exports) · `results-advisor` (real save → list → stored report → notes → RLS-scoped search → delete) · `results-manager` (sees ≥8 legacy rows; NULL-owner and foreign rows read-only) · `results-superadmin` (own-only until cutover) · `account-settings` · `manage-accounts` (advisor redirect negative, self-row read-only, role round-trip via role-sync) · `load-a11y` (axe wcag2aa zero critical/serious; from v6 also the pit stop + discovery screens). Convert E2E lives in `tests/workflows/reports/`: `portfolio-convert` (round-trip: save → convert → comm-style card + provenance → View client → cleanup) + `access-a11y` (ConvertResultModal axe). The skip is the role round-trip on mobile-safari — DB-mutating round-trips run on ONE project to avoid racing the shared e2e row. Unit: vitest (scoring golden-master + tie/quirk corpora, CSV format, save-payload parity, v6 discovery: answer identity across the reshuffle, interim read, track storage, derived copy).
 
 ## ⚖️ Accepted divergences from legacy
 

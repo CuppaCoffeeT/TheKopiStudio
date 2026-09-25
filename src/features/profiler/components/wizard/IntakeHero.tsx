@@ -44,8 +44,8 @@ export function IntakeHero({ onStart, onHowItWorks }: IntakeHeroProps) {
         Know how they think before you pitch.
       </PageTitle>
       <PageDescription className="mt-4 max-w-[52ch] text-[15px] leading-[1.6]">
-        Eight questions, plus the body language you can already see, build a
-        full DISC × MBTI communication profile — before the meeting ends.
+        Casual rapport questions, the body language you can already see, then
+        the money talk — a full DISC × MBTI profile before the meeting ends.
       </PageDescription>
       <div className="mt-6 flex flex-wrap items-center gap-3">
         <Button size="lg" onClick={onStart} data-testid="wizard-hero-start">

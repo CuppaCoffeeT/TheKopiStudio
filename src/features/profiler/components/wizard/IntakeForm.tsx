@@ -177,10 +177,11 @@ export function IntakeForm({ intake, onChange, onStart, showHero = true }: Intak
         }`}
       >
         <ol className="m-0 list-decimal pl-4 text-[13px] leading-7 text-muted-foreground">
-          <li>Answer 8 questions you can weave into any conversation</li>
-          <li>Tick the body language you're already seeing</li>
-          <li>Get the full DISC × MBTI communication read</li>
-          <li>Save to your CRM, or export the PDF</li>
+          {/* v6's "How it flows" (2026-09-25), plus the save step it lacks. */}
+          <li>Rapport questions — casual chit-chat — and the body language you see</li>
+          <li>A quick read at the pit stop</li>
+          <li>Discovery questions — the money talk</li>
+          <li>The full four-track profile and playbook — saved to your CRM, or export the PDF</li>
         </ol>
       </ToolPanel>
     </div>

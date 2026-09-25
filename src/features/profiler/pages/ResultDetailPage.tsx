@@ -83,7 +83,6 @@ export default function ResultDetailPage() {
         { label: row?.prospect_name ?? 'Result' },
       ]}
       title={row?.prospect_name ?? 'Profiling result'}
-      recordId={id ? id.slice(0, 8) : undefined}
       status={
         row && statusTone
           ? { tone: statusTone, label: `DISC-${row.disc_primary} · ${PR[row.disc_primary as DiscLetter].nm}` }

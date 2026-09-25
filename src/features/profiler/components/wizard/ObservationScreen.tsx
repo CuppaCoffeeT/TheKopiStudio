@@ -60,7 +60,8 @@ export function ObservationScreen({ groupIndex, nv, onToggle }: ObservationScree
         </div>
       </div>
       <p className="m-0 text-[13px] leading-5 text-[color:var(--fg-dim)]">
-        Tick everything you observed.
+        {/* v6 copy: optional ticking, said out loud. */}
+        Tick what you noticed. Skip what you did not catch — no need to force it.
       </p>
       <p
         className="m-0 text-[color:var(--brown-text)]"

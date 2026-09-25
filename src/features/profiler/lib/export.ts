@@ -1,8 +1,11 @@
 /**
  * Profiler CSV export — port of legacy `dlCSV()` (`public/js/utils.js`).
  *
- * Column ORDER and HEADER strings are frozen to the legacy format (PRD scope
- * cut: "CSV column order/headers unchanged — only comma-escaping fixed").
+ * Column ORDER and HEADER strings follow the advisor's prototype. They were
+ * frozen to the legacy format (PRD scope cut: "CSV column order/headers
+ * unchanged — only comma-escaping fixed") until prototype v6 (2026-09-25)
+ * added Temperament, Openness, Horizon and Decision after MBTI — ported as-is.
+ * Rows without discovery tracks (pre-v6 saves) leave those four empty.
  * The legacy bug where a comma inside any text field (prospect name,
  * occupation, ...) corrupted the row is fixed by quoting ALL text fields
  * RFC-4180 style; numeric fields stay bare, as legacy emitted them.
@@ -10,11 +13,14 @@
 
 import { getLocalDateString } from '@/utils/timezoneUtils';
 import { showSuccess } from '@/utils/toastHelper';
-import type { ProfilerResult } from '../types';
+import type { DiscoveryTracks, ProfilerResult } from '../types';
+import type { ProfileResult } from './scoring';
+import { parseRawAnswers } from './storedAnswers';
+import { readStoredDiscovery } from './discovery';
 
-/** Frozen legacy header row — do not reorder or rename. */
+/** Prototype v6 header row — do not reorder or rename. */
 const CSV_HEADER =
-  'Date,Advisor,Prospect,Age,Occupation,Meeting,DISC Primary,DISC Secondary,MBTI,Score D,Score I,Score S,Score C,Questions,Observations,Notes';
+  'Date,Advisor,Prospect,Age,Occupation,Meeting,DISC Primary,DISC Secondary,MBTI,Temperament,Openness,Horizon,Decision,Score D,Score I,Score S,Score C,Questions,Observations,Notes';
 
 /**
  * Flat row input for {@link buildCsv}. Works for both a fresh wizard result
@@ -34,6 +40,8 @@ export interface ProfileCsvRow {
   discPrimary: string;
   discSecondary: string;
   mbti: string;
+  /** Discovery tracks; null for a row saved before v6 (four empty cells). */
+  tracks: DiscoveryTracks | null;
   scoreD: number;
   scoreI: number;
   scoreS: number;
@@ -48,7 +56,7 @@ function quoteField(value: string): string {
   return '"' + value.replace(/"/g, '""') + '"';
 }
 
-/** Builds the two-line CSV (header + one data row) in the frozen legacy format. */
+/** Builds the two-line CSV (header + one data row) in the prototype's format. */
 export function buildCsv(row: ProfileCsvRow): string {
   const fields = [
     quoteField(row.date),
@@ -60,6 +68,10 @@ export function buildCsv(row: ProfileCsvRow): string {
     quoteField(row.discPrimary),
     quoteField(row.discSecondary),
     quoteField(row.mbti),
+    quoteField(row.tracks?.temperament ?? ''),
+    quoteField(row.tracks?.openness ?? ''),
+    quoteField(row.tracks?.horizon ?? ''),
+    quoteField(row.tracks?.decision ?? ''),
     String(row.scoreD),
     String(row.scoreI),
     String(row.scoreS),
@@ -105,6 +117,7 @@ export function downloadRowCsv(row: ProfilerResult): void {
     discPrimary: row.disc_primary,
     discSecondary: row.disc_secondary,
     mbti: row.mbti,
+    tracks: readStoredDiscovery(parseRawAnswers(row.raw_answers)).tracks,
     scoreD: row.score_d,
     scoreI: row.score_i,
     scoreS: row.score_s,
@@ -114,5 +127,38 @@ export function downloadRowCsv(row: ProfilerResult): void {
     notes: row.notes ?? '',
   });
   downloadCsv(`profile_${row.prospect_name.replace(/\s+/g, '_')}_${date}.csv`, csv);
+  showSuccess('CSV saved');
+}
+
+/** Export the wizard's freshly generated profile (legacy `dlCSV`). */
+export function downloadWizardCsv(args: {
+  /** Effective intake (name defaults already applied) — the wizard's IntakeInfo. */
+  info: { adv: string; name: string; age: string; meeting: string; occ: string };
+  profile: ProfileResult;
+  tracks: DiscoveryTracks | null;
+  notes: string;
+}): void {
+  const { info, profile, tracks, notes } = args;
+  const date = getLocalDateString(new Date());
+  const csv = buildCsv({
+    date,
+    advisor: info.adv,
+    prospect: info.name,
+    age: info.age,
+    occupation: info.occ,
+    meeting: info.meeting,
+    discPrimary: profile.pri,
+    discSecondary: profile.sec,
+    mbti: profile.mbs,
+    tracks,
+    scoreD: profile.dc.D,
+    scoreI: profile.dc.I,
+    scoreS: profile.dc.S,
+    scoreC: profile.dc.C,
+    questions: profile.qCount,
+    observations: profile.nvCount,
+    notes,
+  });
+  downloadCsv(`profile_${info.name.replace(/\s+/g, '_')}_${date}.csv`, csv);
   showSuccess('CSV saved');
 }

@@ -1,16 +1,14 @@
 /**
  * PlaybookSection — Communication Playbook (legacy `resultHTML` playbook):
  * 5 categories in frozen order engage/appt/followup/objections/close, every
- * statement copyable. No clipboard primitive exists — tap-to-copy is
- * IconButton + navigator.clipboard + showSuccess (per PRD building-blocks
- * note); promote to a primitive later if reused.
+ * statement copyable (IconButton + `copyStatement`).
  */
 
 import { Copy } from 'lucide-react';
 import { ToolPanel } from '@/components/primitives/tools';
 import { IconButton } from '@/components/primitives/IconButton';
-import { showError, showSuccess } from '@/utils/toastHelper';
 import type { DiscLetter, DiscProfile, PlaybookCategoryKey } from '../../../types';
+import { copyStatement } from './copyStatement';
 
 const CATEGORY_ORDER: readonly PlaybookCategoryKey[] = [
   'engage',
@@ -19,15 +17,6 @@ const CATEGORY_ORDER: readonly PlaybookCategoryKey[] = [
   'objections',
   'close',
 ];
-
-async function copyStatement(text: string): Promise<void> {
-  try {
-    await navigator.clipboard.writeText(text);
-    showSuccess('Copied');
-  } catch (error) {
-    showError('Copy failed', error instanceof Error ? error : undefined);
-  }
-}
 
 interface PlaybookSectionProps {
   primary: DiscLetter;

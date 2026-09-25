@@ -2,7 +2,7 @@
  * ResultSections — the small single-purpose report panels (legacy
  * `resultHTML` order): opening line, traits, conversation style + watch-for,
  * follow-up style and notes. Kept together to avoid five 30-line files;
- * each renders one section in the frozen legacy order.
+ * each renders one section; the order lives in ResultReport.
  *
  * `Card` + `Eyebrow` → `ToolPanel` (2026-08-19, tool-shell alignment): the
  * uppercase 11px `.12em` label is the treatment KOPI_2A_SPEC specifies for a
@@ -15,6 +15,7 @@
  * cream and measures 3.73–3.83:1 on the DISC tints.
  */
 
+import type { ReactNode } from 'react';
 import { ToolPanel } from '@/components/primitives/tools';
 import type { DiscProfile } from '../../../types';
 
@@ -88,12 +89,14 @@ export function StyleCard({ profile }: { profile: DiscProfile }) {
   );
 }
 
-export function FollowUpCard({ profile }: { profile: DiscProfile }) {
+/** `children`: v6's tailored follow-up (`TailoredFollowUp`), when the result has tracks. */
+export function FollowUpCard({ profile, children }: { profile: DiscProfile; children?: ReactNode }) {
   // Border-only accent — `bg-accent/10` replaced the panel's bg-card (twMerge)
   // and composited over the page cream, taking label + body to 3.68:1.
   return (
     <ToolPanel label="Follow-Up Style" className="border-accent/30" testId="result-follow-up">
       <p className="m-0 text-[13px] leading-6 text-muted-foreground">{profile.fu}</p>
+      {children}
     </ToolPanel>
   );
 }

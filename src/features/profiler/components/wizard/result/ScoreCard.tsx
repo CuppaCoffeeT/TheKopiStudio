@@ -1,7 +1,8 @@
 /**
- * ScoreCard — DISC score block (legacy `resultHTML` score card): optional
- * "Occupation factored in" chip, "{q} questions + {n} observations" label and
- * the four DISC scores.
+ * ScoreCard — DISC score block, v6's "Track 1 · DISC — how to communicate"
+ * (legacy `resultHTML` score card): optional "Occupation factored in" chip,
+ * the four DISC scores, v6's "So what" line and the "{q} questions + {n}
+ * observations" basis (the panel label until v6 renamed it).
  *
  * TWO READINGS OF ONE SET (2026-08-19, tool-shell alignment). The figures now
  * sit in a `ToolStatGrid` — the serif-numeral tiles the tax calculator heads
@@ -24,10 +25,7 @@ export function ScoreCard({ profile }: { profile: ProfileResult }) {
   const max = Math.max(profile.dc.D, profile.dc.I, profile.dc.S, profile.dc.C);
 
   return (
-    <ToolPanel
-      label={`DISC score · ${profile.qCount} questions + ${profile.nvCount} observations`}
-      testId="result-score-card"
-    >
+    <ToolPanel label="Track 1 · DISC — how to communicate" testId="result-score-card">
       {profile.occUsed && (
         <span
           // --brown-text is calibrated for the flat cream grounds (4.54 / 5.21),
@@ -88,6 +86,16 @@ export function ScoreCard({ profile }: { profile: ProfileResult }) {
           );
         })}
       </div>
+
+      {/* v6 "So what" line — the primary profile's conversation style, read
+          as the consequence of the bars above. The count line that used to be
+          this panel's label survives here as the evidence base. */}
+      <p className="m-0 mt-4 border-t border-border pt-3 text-[12.5px] leading-6 text-muted-foreground">
+        <strong className="font-semibold text-foreground">So what:</strong> {PR[profile.pri].st}
+      </p>
+      <p className="m-0 mt-1 text-[11px] text-muted-foreground" data-testid="result-score-basis">
+        Read from {profile.qCount} questions + {profile.nvCount} observations
+      </p>
     </ToolPanel>
   );
 }

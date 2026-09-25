@@ -56,7 +56,11 @@ export interface QsQuestion {
   tip: string;
   /** The question as the advisor asks it. */
   ask: string;
-  /** Exactly 4 options; the option index (`oi`) is persisted in raw_answers — order is frozen. */
+  /**
+   * Exactly 4 options, one per DISC letter. The index (`oi`) is persisted in
+   * raw_answers, but an answer's identity is (question, `d`) — the order changed
+   * once, in the v6 port (content/questions.ts header).
+   */
   opts: [QsOption, QsOption, QsOption, QsOption];
 }
 
@@ -120,12 +124,42 @@ export interface DiscProfile {
   msgs: Record<PlaybookCategoryKey, PlaybookCategory>;
 }
 
+/** The four discovery tracks (prototype v6), one binary read each. */
+export interface DiscoveryTracks {
+  temperament: 'Anxious' | 'Calm';
+  openness: 'Familiar' | 'Curious';
+  horizon: 'Present' | 'Future';
+  decision: 'Deliberate' | 'Decisive';
+}
+
+export type TrackKey = keyof DiscoveryTracks;
+export type TrackValue = DiscoveryTracks[TrackKey];
+
+/** One discovery axis: a two-pole question worded per the interim DISC voice. */
+export interface DiscoveryAxis {
+  key: TrackKey;
+  axis: string;
+  left: TrackValue;
+  right: TrackValue;
+  tip: string;
+  /** The question, worded for the pit-stop's provisional DISC letter. */
+  frames: Record<DiscLetter, string>;
+  /** Exactly 2 options: `[left pole, right pole]`. */
+  opts: readonly [{ t: string; v: TrackValue }, { t: string; v: TrackValue }];
+}
+
 /** One answered wizard question as persisted in results.raw_answers. */
 export interface RawAnswer {
   d: DiscLetter;
   mb: MbtiSignal;
-  /** Option index (0–3) within the question's opts array. */
+  /** Option index (0–3) in the question set live at save time — see content/questions.ts. */
   oi: number;
+  /**
+   * v6 discovery tracks. ONLY on slot 7 (the money anchor, answered on the same
+   * screen) and only on rows saved from 2026-09-25 — `public.results` is
+   * shape-frozen, so they ride the existing JSON column (lib/decisions.md).
+   */
+  tracks?: DiscoveryTracks;
 }
 
 /** A row of `public.results` in the legacy JSON shape (golden-master fixtures, scoring replay). */

@@ -1,33 +1,33 @@
 /**
  * useWizardState — the public profiling wizard's flow state machine.
  *
- * Screen numbering is the legacy port (`profiler.js`): 0 intake → 1–2 question
- * batches (Q 0–3 / 4–7) → 3–7 the five NV observation groups → 'R' result.
- * `TOTAL_STEPS` = 7 (2 question screens + 5 observation screens).
+ * Screen numbering follows prototype v6's `go()` (ported 2026-09-25):
+ * 0 intake → 1–2 RAPPORT batches (Q0–3 / Q4–6) → 3–7 the five NV observation
+ * groups → 8 PIT STOP (provisional DISC read) → 9 DISCOVERY (the money anchor
+ * Q7 + four tracks) → 'R' result. `TOTAL_STEPS` = 9, matching v6's
+ * "Step n of 9". Before v6 it was 7: two 4-question screens + observations.
  *
- * NEW vs legacy (PRD-sanctioned): the in-flow state (screens 1–7) persists to
- * sessionStorage so a refresh restores mid-flow progress. The draft clears on
- * generate and on explicit exit. Observation toggles mirror legacy `tgNV`:
- * an id ticked then unticked stays in the map as `false`.
+ * NEW vs legacy (PRD-sanctioned): the in-flow state (screens 1–9) persists to
+ * sessionStorage (`wizardDraft`) so a refresh restores mid-flow progress. The
+ * draft clears on generate and on explicit exit. Observation toggles mirror
+ * legacy `tgNV`: an id ticked then unticked stays in the map as `false`.
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { QS, NVG } from '../lib/content';
 import { calcProfile, type ProfileResult } from '../lib/scoring';
-import type { RawAnswer } from '../types';
+import type { DiscoveryTracks, RawAnswer, TrackKey } from '../types';
+import { clearDraft, readDraft, writeDraft, type IntakeInfo } from './wizardDraft';
 
-export const TOTAL_STEPS = 2 + NVG.length;
+export type { IntakeInfo } from './wizardDraft';
+
+/** First observation screen; observation group `g` is screen `3 + g`. */
+export const FIRST_OBSERVATION_STEP = 3;
+export const PITSTOP_STEP = FIRST_OBSERVATION_STEP + NVG.length;
+export const DISCOVERY_STEP = PITSTOP_STEP + 1;
+export const TOTAL_STEPS = DISCOVERY_STEP;
 
 export type WizardScreen = number | 'R';
-
-/** Raw intake field values; defaults are applied via {@link effectiveIntake}. */
-export interface IntakeInfo {
-  adv: string;
-  name: string;
-  age: string;
-  meeting: string;
-  occ: string;
-}
 
 export const EMPTY_INTAKE: IntakeInfo = { adv: '', name: '', age: '', meeting: '1', occ: '' };
 
@@ -46,63 +46,23 @@ export function tickedIds(nv: Record<string, boolean>): string[] {
   return Object.keys(nv).filter((id) => nv[id]);
 }
 
-interface WizardDraft {
-  screen: number;
-  intake: IntakeInfo;
-  answers: (RawAnswer | null)[];
-  nv: Record<string, boolean>;
-  notes: string;
-}
-
-const DRAFT_KEY = 'profiler-wizard-draft';
-
-function readDraft(): WizardDraft | null {
-  try {
-    const raw = sessionStorage.getItem(DRAFT_KEY);
-    if (!raw) return null;
-    const draft = JSON.parse(raw) as WizardDraft;
-    const valid =
-      typeof draft.screen === 'number' &&
-      draft.screen >= 1 &&
-      draft.screen <= TOTAL_STEPS &&
-      Array.isArray(draft.answers) &&
-      draft.answers.length === QS.length &&
-      typeof draft.intake === 'object' &&
-      draft.intake !== null;
-    return valid ? draft : null;
-  } catch {
-    return null;
-  }
-}
-
-function clearDraft(): void {
-  try {
-    sessionStorage.removeItem(DRAFT_KEY);
-  } catch {
-    /* storage unavailable — draft persistence is best-effort */
-  }
-}
+const emptyAnswers = () => new Array<RawAnswer | null>(QS.length).fill(null);
 
 export function useWizardState() {
-  const [draft] = useState(readDraft);
+  const [draft] = useState(() => readDraft(TOTAL_STEPS));
   const [screen, setScreen] = useState<WizardScreen>(draft?.screen ?? 0);
   const [intake, setIntake] = useState<IntakeInfo>(draft?.intake ?? EMPTY_INTAKE);
-  const [answers, setAnswers] = useState<(RawAnswer | null)[]>(
-    draft?.answers ?? new Array<RawAnswer | null>(QS.length).fill(null),
-  );
+  const [answers, setAnswers] = useState<(RawAnswer | null)[]>(draft?.answers ?? emptyAnswers());
   const [nv, setNv] = useState<Record<string, boolean>>(draft?.nv ?? {});
+  const [tracks, setTracks] = useState<Partial<DiscoveryTracks>>(draft?.tracks ?? {});
   const [notes, setNotes] = useState(draft?.notes ?? '');
   const [profile, setProfile] = useState<ProfileResult | null>(null);
 
   // Draft persistence — mid-flow only (intake and result screens carry no draft).
   useEffect(() => {
     if (typeof screen !== 'number' || screen < 1) return;
-    try {
-      sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ screen, intake, answers, nv, notes }));
-    } catch {
-      /* storage unavailable — draft persistence is best-effort */
-    }
-  }, [screen, intake, answers, nv, notes]);
+    writeDraft({ screen, intake, answers, nv, tracks, notes });
+  }, [screen, intake, answers, nv, tracks, notes]);
 
   // Legacy `go()` scrolled to top on every screen change.
   useEffect(() => {
@@ -114,6 +74,11 @@ export function useWizardState() {
   const selectOption = useCallback((qi: number, oi: number) => {
     const opt = QS[qi].opts[oi];
     setAnswers((prev) => prev.map((a, i) => (i === qi ? { oi, d: opt.d, mb: opt.mb } : a)));
+  }, []);
+
+  /** v6 `selDisc`: one pole per discovery track. */
+  const selectTrack = useCallback(<K extends TrackKey>(key: K, value: DiscoveryTracks[K]) => {
+    setTracks((prev) => ({ ...prev, [key]: value }));
   }, []);
 
   /** Legacy `tgNV`: untoggled ids persist as `false` in the map. */
@@ -138,26 +103,24 @@ export function useWizardState() {
     return pf;
   }, [answers, nv, intake]);
 
-  /** Explicit exit mid-flow: discard progress, keep intake fields (legacy `go(0)`). */
-  const exitToIntake = useCallback(() => {
-    setAnswers(new Array<RawAnswer | null>(QS.length).fill(null));
+  const clearProgress = useCallback(() => {
+    setAnswers(emptyAnswers());
     setNv({});
+    setTracks({});
     setNotes('');
     setProfile(null);
     setScreen(0);
     clearDraft();
   }, []);
 
+  /** Explicit exit mid-flow: discard progress, keep intake fields (legacy `go(0)`). */
+  const exitToIntake = clearProgress;
+
   /** Legacy `resetAll` ("Profile Another Prospect"): clears intake too. */
   const resetAll = useCallback(() => {
     setIntake(EMPTY_INTAKE);
-    setAnswers(new Array<RawAnswer | null>(QS.length).fill(null));
-    setNv({});
-    setNotes('');
-    setProfile(null);
-    setScreen(0);
-    clearDraft();
-  }, []);
+    clearProgress();
+  }, [clearProgress]);
 
   const isMidFlow = useMemo(
     () => answers.some(Boolean) || Object.values(nv).some(Boolean),
@@ -175,11 +138,13 @@ export function useWizardState() {
     setIntake,
     answers,
     nv,
+    tracks,
     notes,
     setNotes,
     profile,
     start,
     selectOption,
+    selectTrack,
     toggleObservation,
     next,
     back,

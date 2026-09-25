@@ -4,7 +4,10 @@
  * section markup; legacy `resultHTML` order preserved). Differences vs the
  * wizard composition: no save state / login CTA / reset (wizard-only), the
  * action row lives in the DetailPageFrame hero instead, and rows without
- * replayable raw_answers swap the MBTI card for an info alert.
+ * replayable raw_answers swap the MBTI card for an info alert. The v6 track
+ * sections (Combined Read, Track 3-4, Horizon & Decision, tailored follow-up,
+ * Meeting 2 Game Plan) render only for rows saved with discovery tracks —
+ * rows saved before 2026-09-25 or by the legacy app render exactly as before.
  *
  * The whole report carries `.print-area` (lib/print.css) so window.print()
  * emits just the report + `.rph` header, never the frame chrome.
@@ -27,10 +30,16 @@ import {
   StyleCard,
   TraitsCard,
 } from '../wizard/result/ResultSections';
+import {
+  CombinedReadCard,
+  HorizonDecisionCard,
+  TemperamentOpennessCard,
+} from '../wizard/result/TrackSections';
+import { GamePlanCard, TailoredFollowUp } from '../wizard/result/FollowUpSections';
 import { buildStoredReportModel } from './storedReportModel';
 
 export function StoredResultReport({ row }: { row: ProfilerResult }) {
-  const { profile, scalarOnly } = buildStoredReportModel(row);
+  const { profile, scalarOnly, tracks, worry } = buildStoredReportModel(row);
   const p = PR[profile.pri];
   const dateLabel = formatDisplayDateLong(row.created_at);
   const meeting = meetingLabel(row.meeting);
@@ -53,7 +62,9 @@ export function StoredResultReport({ row }: { row: ProfilerResult }) {
         occupation={row.occupation ?? ''}
         meetingLabel={meeting}
         dateLabel={dateLabel}
+        tracks={tracks}
       />
+      {tracks && <CombinedReadCard tracks={tracks} />}
 
       {scalarOnly && (
         <Alert
@@ -67,10 +78,13 @@ export function StoredResultReport({ row }: { row: ProfilerResult }) {
       <OpeningLineCard profile={p} />
       <ScoreCard profile={profile} />
       {!scalarOnly && <MbtiCard signals={profile.mb} />}
+      {tracks && <TemperamentOpennessCard tracks={tracks} />}
+      {tracks && <HorizonDecisionCard tracks={tracks} />}
       <TraitsCard profile={p} />
       <DoAvoidGrid profile={p} />
       <StyleCard profile={p} />
-      <FollowUpCard profile={p} />
+      <FollowUpCard profile={p}>{tracks && <TailoredFollowUp tracks={tracks} worry={worry} />}</FollowUpCard>
+      {tracks && <GamePlanCard tracks={tracks} worry={worry} />}
       <PlaybookSection primary={profile.pri} profile={p} />
       <NotesCard notes={row.notes ?? ''} />
     </div>

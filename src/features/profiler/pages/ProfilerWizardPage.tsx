@@ -23,13 +23,15 @@
  * rail is the page's identity, and a 38px masthead over every question screen
  * would push the answering column down seven times for nothing.
  *
- * Faithful port of the legacy flow (`profiler.js` `go()`): intake → 2 question
- * screens (Next gated on all 4 answered) → 5 optional observation screens
- * (last button "Generate Profile →") → result report with auto-save.
- * Progress reads "Step n of 7" / round(n/7*100)%. Back from the first screen
- * exits to intake (confirm when mid-flow — explicit exit clears the
- * sessionStorage draft). PRD-sanctioned additions: draft persistence and the
- * duplicate-save guard (same inputs ⇒ regenerate doesn't insert again).
+ * Port of prototype v6's flow (`go()`, 2026-09-25; was legacy `profiler.js`):
+ * intake → 2 rapport screens (Q0–3 / Q4–6, Next gated on the batch) → 5
+ * optional observation screens (last button "See Quick Read →") → pit stop
+ * (provisional DISC) → discovery (money anchor + 4 tracks, "Generate
+ * Profile →") → result report with auto-save. Progress reads "Step n of 9".
+ * Back from the first screen exits to intake (confirm when mid-flow — explicit
+ * exit clears the sessionStorage draft). PRD-sanctioned additions: draft
+ * persistence and the duplicate-save guard (same inputs ⇒ no second insert).
+ * The step → screen mapping lives in `WizardFlowScreens`.
  *
  * All handlers/derived state live in useWizardController — this file is
  * composition only.
@@ -49,19 +51,18 @@ import { WizardBottomBar } from '../components/wizard/WizardBottomBar';
 import { Modal, ModalGhostAction, ModalPrimaryAction } from '@/components/primitives/overlays/Modal';
 import { formatDisplayDateLong } from '@/utils/timezoneUtils';
 import { meetingLabel } from '../lib/meeting';
-import { TOTAL_STEPS } from '../hooks/useWizardState';
-import { QUESTION_BATCHES, useWizardController } from '../hooks/useWizardController';
+import { MONEY_ANCHOR_QI } from '../lib/content';
+import { useWizardController } from '../hooks/useWizardController';
 import { WizardStickyHeader } from '../components/wizard/WizardStickyHeader';
 import { WizardToolHeader } from '../components/wizard/WizardToolHeader';
 import { IntakeForm } from '../components/wizard/IntakeForm';
-import { QuestionScreen } from '../components/wizard/QuestionScreen';
-import { ObservationScreen } from '../components/wizard/ObservationScreen';
+import { WizardFlowScreens } from '../components/wizard/WizardFlowScreens';
 import { ResultReport } from '../components/wizard/result/ResultReport';
 import '../lib/print.css';
 
 export default function ProfilerWizardPage() {
   const c = useWizardController();
-  const { wizard, info, screen, inFlow, isQuestionScreen } = c;
+  const { wizard, info, screen, inFlow } = c;
   // Signed-in advisors get the app rail (≥ lg) so the wizard reads as part of
   // the shell; anonymous visitors keep the rail-free public flow. The route
   // itself stays public — this is chrome, not access control.
@@ -77,19 +78,8 @@ export default function ProfilerWizardPage() {
 
   // The CRM entry contract (?prospect= + ?customerId=) lives in
   // `useCustomerLink`, composed by the controller — it owns both the intake
-  // seed and the id the save payload carries.
-
-  // Live count for the disabled-Next explanation on question screens.
-  //
-  // `!== null`, NOT `!== undefined` (fixed 2026-08-19). `useWizardState` seeds
-  // `answers` with `new Array(8).fill(null)`, so every slot is defined from the
-  // first render and the old test counted all four before a single option was
-  // picked: the bar read "All 4 answered" beside a disabled Next, and the
-  // aria-live region announced it. `isBatchComplete` has always used `!== null`,
-  // which is why only the hint was wrong and the gating was right.
-  const answeredInBatch = isQuestionScreen
-    ? QUESTION_BATCHES[(screen as number) - 1].filter((qi) => wizard.answers[qi] !== null).length
-    : 0;
+  // seed and the id the save payload carries. The disabled-Next hint
+  // (`progressHint`) is derived there too.
 
   return (
     <div className="min-h-svh bg-background">
@@ -119,24 +109,24 @@ export default function ProfilerWizardPage() {
             showHero={!authed}
           />
         )}
-        {isQuestionScreen && (
-          <QuestionScreen
-            batch={QUESTION_BATCHES[(screen as number) - 1]}
-            batchNumber={screen as 1 | 2}
+        {inFlow && (
+          <WizardFlowScreens
+            step={screen as number}
+            prospectName={info.name}
             answers={wizard.answers}
             onSelect={wizard.selectOption}
-          />
-        )}
-        {inFlow && (screen as number) >= 3 && (
-          <ObservationScreen
-            groupIndex={(screen as number) - 3}
             nv={wizard.nv}
             onToggle={wizard.toggleObservation}
+            interim={c.interim}
+            tracks={wizard.tracks}
+            onSelectTrack={wizard.selectTrack}
           />
         )}
         {screen === 'R' && wizard.profile && (
           <ResultReport
             profile={wizard.profile}
+            tracks={c.completeTracks}
+            worry={wizard.answers[MONEY_ANCHOR_QI]?.d ?? null}
             intake={info}
             meetingLabel={meetingLabel(info.meeting)}
             dateLabel={formatDisplayDateLong(new Date())}
@@ -154,11 +144,11 @@ export default function ProfilerWizardPage() {
 
       {inFlow && (
         <WizardBottomBar
-          isLastStep={screen === TOTAL_STEPS}
+          step={screen as number}
           nextDisabled={c.nextDisabled}
           onBack={c.handleBack}
           onNext={c.handleNext}
-          answeredInBatch={isQuestionScreen ? answeredInBatch : null}
+          progressHint={c.progressHint}
           railOffset={authed}
         />
       )}

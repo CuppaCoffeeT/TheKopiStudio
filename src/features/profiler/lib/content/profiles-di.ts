@@ -1,6 +1,8 @@
 /**
  * DISC profile content blocks D + I — verbatim port of the legacy app's
- * `public/js/data.js`. Re-assembled into `PR` in `./profiles`.
+ * `public/js/data.js`, with prototype v6's six reworded playbook statements
+ * (D objections x2 + close x3, I objections x1 — 2026-09-25, lib/decisions.md).
+ * Re-assembled into `PR` in `./profiles`.
  *
  * PARITY CONTRACT (do not edit copy without a versioning decision — see PRD):
  * - HTML entities / — escapes from the legacy source are converted to
@@ -72,8 +74,8 @@ export const PROFILE_D: DiscProfile = {
       items: [
         "WANT TO THINK: What specifically are you thinking about? Give me the one thing holding you back and let me address it directly.",
         "COMPARE FIRST: Go ahead. I am confident in what I built for you. Come back with what you find and I will match it point for point.",
-        "TOO EXPENSIVE: What is the cost of NOT having this in place if something happens? That is the real number worth thinking about.",
-        "NOT THE RIGHT TIME: There is never a perfect time — but there is a real cost to waiting. Let me show you what one year of delay looks like in figures.",
+        "TOO EXPENSIVE: Fair. Let me show you exactly what this protects and what it costs you — straight numbers, then you decide if it is worth it.",
+        "NOT THE RIGHT TIME: Fair enough. Want to see what starting now versus next year looks like side by side? Just the numbers — you pick the timeline that suits you.",
         "NEED SPOUSE: Perfect — I want to meet them too. Let us set a time when all three of us can sit down together.",
         "NOT INTERESTED: Is it the product, the timing, or something about how I presented it? I would rather know than guess.",
       ],
@@ -82,10 +84,10 @@ export const PROFILE_D: DiscProfile = {
       lbl: "Ask for the Close",
       items: [
         "Alright [Name], everything checks out. Let us get this done today — what is the best way for you to proceed?",
-        "You have seen the numbers, you know the gap. The only question left is whether you want to close it now or later.",
-        "I need one thing from you to move forward: your decision. In or out — I can work with either answer.",
+        "You have seen everything. What is still standing between you and a yes? Let us deal with that directly.",
+        "Where are you at with this — ready to move, or something still not sitting right? Either answer works for me.",
         "Based on everything we have covered, this is the right move for where you want to go. Let us lock it in.",
-        "What would it take for you to say yes today? Tell me and I will make it happen.",
+        "What would make this an easy yes for you? Tell me and I will sort it out.",
       ],
     },
   },
@@ -153,7 +155,7 @@ export const PROFILE_I: DiscProfile = {
         "TOO EXPENSIVE: It is not about the amount — it is about what it means for the people you care about. Let me show you what I mean.",
         "NOT INTERESTED: No worries at all! Can I ask — was it anything I said or just not the right time? Just want to learn.",
         "NEED SPOUSE: Yes! Bring them along next time. I love meeting the whole family — the more the merrier honestly.",
-        "ALREADY HAVE COVERAGE: Most people who say that have gaps they do not know about. Let me just do a quick check — no commitment.",
+        "ALREADY HAVE COVERAGE: That is great, honestly! Worth a quick look together to see it still fits where you are now — life moves, plans should too. No agenda, just a check.",
         "FRIEND SAID NOT WORTH IT: Your situation is different from your friend — let me show you why what I built is specifically for you.",
       ],
     },

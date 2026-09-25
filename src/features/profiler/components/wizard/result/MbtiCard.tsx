@@ -2,7 +2,9 @@
  * MbtiCard — MBTI dimension block (legacy `resultHTML` dims loop): E/I, S/N,
  * T/F, J/P in order. Winner is `sa >= sb` (ties favour the first pole), bar
  * strength is win/total. Zero-signal dimensions show "No signals yet" with a
- * 50% bar — exact legacy zero-state.
+ * 50% bar — exact legacy zero-state. v6 (2026-09-25) renamed the panel
+ * "Track 2 · MBTI — decision nuance" and dropped the "Strength: n%" line
+ * under each bar (the bar and the signal counts already say it).
  */
 
 import { ToolPanel } from '@/components/primitives/tools';
@@ -11,7 +13,7 @@ import type { MbtiSignals } from '../../../lib/scoring';
 
 export function MbtiCard({ signals }: { signals: MbtiSignals }) {
   return (
-    <ToolPanel label="MBTI Result" testId="result-mbti-card">
+    <ToolPanel label="Track 2 · MBTI — decision nuance" testId="result-mbti-card">
       <div className="flex flex-col gap-2.5">
         {MBTI_DIMENSIONS.map((dim) => {
           const sa = signals[dim.a];
@@ -40,7 +42,7 @@ export function MbtiCard({ signals }: { signals: MbtiSignals }) {
                 </span>
                 {/* 10px on the --secondary tile fill, where --fg-muted is
                     4.37:1 — the smallest type in the report takes --fg-dim
-                    (6.79:1). Same for the strength line below. */}
+                    (6.79:1). */}
                 <span className="text-[color:var(--fg-dim)]" style={{ fontSize: 10 }}>
                   vs {loseLabel}
                   {total === 0 ? '' : ` (${loseScore})`}
@@ -61,9 +63,6 @@ export function MbtiCard({ signals }: { signals: MbtiSignals }) {
                   className="h-full rounded-full bg-accent"
                   style={{ width: `${barPc}%` }}
                 />
-              </div>
-              <div className="mt-1.5 text-[color:var(--fg-dim)]" style={{ fontSize: 10 }}>
-                {total === 0 ? 'Answer questions to see this' : `Strength: ${barPc}%`}
               </div>
             </div>
           );

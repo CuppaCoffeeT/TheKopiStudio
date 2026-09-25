@@ -1,16 +1,25 @@
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/primitives/shell/Button';
+import { DISCOVERY_STEP, PITSTOP_STEP } from '../../hooks/useWizardState';
 
 interface WizardBottomBarProps {
-  /** Sticky Back/Next bar for the in-flow screens (1..TOTAL_STEPS). */
-  isLastStep: boolean;
+  /** Current in-flow step (1..TOTAL_STEPS) — decides the Next label. */
+  step: number;
   nextDisabled: boolean;
   onBack: () => void;
   onNext: () => void;
-  /** Shown on question screens only: live count for the disabled-Next hint. */
-  answeredInBatch: number | null;
+  /** Gated screens only (rapport + discovery): live count for the disabled-Next hint. */
+  progressHint: { answered: number; total: number } | null;
   /** Rail on screen (authed ≥ lg) — the fixed bar starts at its 200px edge. */
   railOffset: boolean;
+}
+
+/** v6 `go()` button labels: each hand-off names the screen it leads to. */
+function nextLabel(step: number): string {
+  if (step === DISCOVERY_STEP) return 'Generate Profile →';
+  if (step === PITSTOP_STEP) return 'Continue to Discovery →';
+  if (step === PITSTOP_STEP - 1) return 'See Quick Read →';
+  return 'Next →';
 }
 
 /**
@@ -19,11 +28,11 @@ interface WizardBottomBarProps {
  * explanation gave it logic of its own.
  */
 export function WizardBottomBar({
-  isLastStep,
+  step,
   nextDisabled,
   onBack,
   onNext,
-  answeredInBatch,
+  progressHint,
   railOffset,
 }: WizardBottomBarProps) {
   return (
@@ -35,12 +44,14 @@ export function WizardBottomBar({
     >
       {/* Disabled buttons that explain nothing are friction — say what's
           left. aria-live so screen readers hear progress too. */}
-      {answeredInBatch !== null && (
+      {progressHint !== null && (
         <p
           className="m-0 mx-auto w-full max-w-[42rem] px-4 pt-2 text-center text-[12px] text-[color:var(--fg-dim)]"
           aria-live="polite"
         >
-          {answeredInBatch < 4 ? `${answeredInBatch} of 4 answered` : 'All 4 answered'}
+          {progressHint.answered < progressHint.total
+            ? `${progressHint.answered} of ${progressHint.total} answered`
+            : `All ${progressHint.total} answered`}
         </p>
       )}
       <div className="mx-auto flex w-full max-w-[42rem] gap-2.5 px-4 py-3">
@@ -54,7 +65,7 @@ export function WizardBottomBar({
           onClick={onNext}
           data-testid="wizard-next-btn"
         >
-          {isLastStep ? 'Generate Profile →' : 'Next →'}
+          {nextLabel(step)}
         </Button>
       </div>
     </div>

@@ -9,7 +9,8 @@
  * (c) Occupation corpus — the 7 legacy regex buckets incl. every preserved
  *     quirk (trailing-space tokens, bare 'care' substring, unescaped dot in
  *     `self.employ`, bucket stacking).
- * (d) CSV — frozen legacy column order/headers; comma/quote round-trip.
+ * (d) CSV — prototype v6 column order/headers (legacy + the four discovery
+ *     tracks after MBTI); comma/quote round-trip; pre-v6 rows leave tracks empty.
  */
 import { describe, expect, it } from 'vitest';
 
@@ -238,7 +239,7 @@ describe('occupation nudge corpus', () => {
 
 // ── (d) CSV EXPORT ──
 
-describe('CSV export — frozen legacy format, fixed escaping', () => {
+describe('CSV export — prototype v6 format, fixed escaping', () => {
   const row: ProfileCsvRow = {
     date: '2026-06-11',
     advisor: 'Sky',
@@ -249,6 +250,7 @@ describe('CSV export — frozen legacy format, fixed escaping', () => {
     discPrimary: 'D',
     discSecondary: 'I',
     mbti: 'ESTJ',
+    tracks: { temperament: 'Anxious', openness: 'Curious', horizon: 'Future', decision: 'Deliberate' },
     scoreD: 10,
     scoreI: 7,
     scoreS: 3,
@@ -258,26 +260,31 @@ describe('CSV export — frozen legacy format, fixed escaping', () => {
     notes: 'Said "maybe", bring spouse',
   };
 
-  it('keeps the exact legacy column order and header strings', () => {
+  it('keeps the exact v6 column order and header strings', () => {
     const [header] = buildCsv(row).split('\n');
     expect(header).toBe(
-      'Date,Advisor,Prospect,Age,Occupation,Meeting,DISC Primary,DISC Secondary,MBTI,Score D,Score I,Score S,Score C,Questions,Observations,Notes',
+      'Date,Advisor,Prospect,Age,Occupation,Meeting,DISC Primary,DISC Secondary,MBTI,Temperament,Openness,Horizon,Decision,Score D,Score I,Score S,Score C,Questions,Observations,Notes',
     );
   });
 
   it('quotes all text fields and leaves numeric fields bare', () => {
     const [, data] = buildCsv(row).split('\n');
     expect(data).toBe(
-      '"2026-06-11","Sky","Tan, Wei Jie","26-30","Sales, Regional","1","D","I","ESTJ",10,7,3,2,8,5,"Said ""maybe"", bring spouse"',
+      '"2026-06-11","Sky","Tan, Wei Jie","26-30","Sales, Regional","1","D","I","ESTJ","Anxious","Curious","Future","Deliberate",10,7,3,2,8,5,"Said ""maybe"", bring spouse"',
     );
   });
 
   it('comma-containing text fields round-trip through a CSV parse', () => {
     const [, data] = buildCsv(row).split('\n');
     const fields = parseCsvRow(data);
-    expect(fields).toHaveLength(16);
+    expect(fields).toHaveLength(20);
     expect(fields[2]).toBe('Tan, Wei Jie');
     expect(fields[4]).toBe('Sales, Regional');
-    expect(fields[15]).toBe('Said "maybe", bring spouse');
+    expect(fields[19]).toBe('Said "maybe", bring spouse');
+  });
+
+  it('a pre-v6 row (no tracks) leaves the four track cells empty', () => {
+    const [, data] = buildCsv({ ...row, tracks: null }).split('\n');
+    expect(parseCsvRow(data).slice(9, 13)).toEqual(['', '', '', '']);
   });
 });

@@ -2,7 +2,9 @@
  * buildResultInsert — pure builder for the `public.results` insert payload.
  *
  * Shape is the FROZEN legacy contract (`home.js` `saveToDb`): meeting stays
- * text '1'–'4', `raw_answers` is the 8-slot `{d, mb:{k,v}, oi}` array as-is,
+ * text '1'–'4', `raw_answers` is the 8-slot `{d, mb:{k,v}, oi}` array as-is
+ * (from v6 the caller passes it through `lib/discovery.withTracks`, so slot 7
+ * also carries the discovery `tracks` — the one place the frozen shape had room),
  * `nv_observations` keeps FALSE entries (ids ticked then unticked persist),
  * while `observations_count` counts TRUE only (scoring already did). Blank
  * age/occupation/meeting become NULL exactly as legacy `|| null` did.
