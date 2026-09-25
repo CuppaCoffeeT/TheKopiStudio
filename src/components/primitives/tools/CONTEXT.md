@@ -2,7 +2,9 @@
 
 The shell, header, customer bar and panel atoms behind every numbered tool in
 [`src/lib/toolRoutes.ts`](../../../lib/toolRoutes.ts): **01 Prospect Profiler ·
-04 Tax calculator · 05 SRS planner · 06 Legacy Map · 07 Shield comparison**, plus the Client Report.
+04 Tax calculator · 05 SRS planner · 06 Legacy Map · 07 Shield comparison ·
+08 SAP PRO**, plus the Client Report. SAP PRO is the one numbered tool with no
+customer bar — it illustrates the advisor's own income.
 
 ## Why this group exists (2026-08-19)
 

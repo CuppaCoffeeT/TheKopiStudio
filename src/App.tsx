@@ -41,6 +41,7 @@ const TaxCalculatorPage = lazy(() => import("@/features/crm/planning/pages/TaxCa
 const SrsPlannerPage = lazy(() => import("@/features/crm/planning/pages/SrsPlannerPage"));
 const LegacyPlannerPage = lazy(() => import("@/features/crm/planning/pages/LegacyPlannerPage"));
 const ShieldComparisonPage = lazy(() => import("@/features/crm/planning/pages/ShieldComparisonPage"));
+const SapProPage = lazy(() => import("@/features/crm/planning/pages/SapProPage"));
 
 /** Same fallback DashboardLayout uses — for lazy routes outside its Suspense. */
 const suspenseFallback = (
@@ -210,6 +211,14 @@ function App() {
           element: (
             <ProtectedRoute modulePath="/clients">
               <ShieldComparisonPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/tools/sap-pro",
+          element: (
+            <ProtectedRoute modulePath="/clients">
+              <SapProPage />
             </ProtectedRoute>
           ),
         },

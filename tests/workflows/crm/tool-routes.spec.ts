@@ -12,7 +12,8 @@
  *
  *   (1) ADVISOR: a tool opens BLANK from navigation with no customer;
  *       choosing one writes `?customer=<id>` and pre-fills; clearing returns to
- *       blank; the Legacy Map — the one tool whose output is PERSISTED against
+ *       blank; SAP PRO — the advisor's OWN income — has no bar at all;
+ *       the Legacy Map — the one tool whose output is PERSISTED against
  *       a customer — asks for one instead of offering an editor with nowhere to
  *       save; the client report generates for an incomplete record rather than
  *       refusing; and every old `/clients/:id/<tool>` URL still lands where it
@@ -97,6 +98,13 @@ test.describe('advisor /tools — standalone tools with an in-page customer bar'
           // Nothing to go "back" to when you arrived from navigation.
           await expect(page.getByTestId(`${tool.testId}-back`)).toHaveCount(0);
         }
+      });
+
+      await test.step('SAP PRO has no customer bar at all — it illustrates the advisor’s own income', async () => {
+        await page.goto('/tools/sap-pro');
+        await expect(page.getByTestId('sap-pro')).toBeVisible({ timeout: 30_000 });
+        await expect(page.getByRole('heading', { level: 1 })).toContainText('SAP PRO');
+        await expect(tools.bar('sap-pro')).toHaveCount(0);
       });
 
       await test.step('the Legacy Map asks for a customer instead of offering an unsaveable editor', async () => {

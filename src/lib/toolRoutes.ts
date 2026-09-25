@@ -23,7 +23,10 @@
  * and the client report read `public.clients`, so they ride on the `/clients`
  * grant exactly as their old sub-routes did (the Shield comparison, added
  * 2026-09-24, rides it too — it opens on a customer's age); the profiler has
- * its own module because the public wizard is a module of its own.
+ * its own module because the public wizard is a module of its own. SAP PRO
+ * (added 2026-09-25) illustrates the ADVISOR's own income and reads no customer
+ * at all; it rides `/clients` only because that is the grant every advisor
+ * holds, so it is offered to exactly the people the other tools are.
  */
 
 /** Query param carrying the chosen customer on every standalone tool route. */
@@ -33,7 +36,7 @@ export const CLIENTS_MODULE = '/clients';
 export const PROFILER_MODULE = '/profiler';
 
 export interface ToolRoute {
-  key: 'profiler' | 'tax' | 'srs' | 'legacy' | 'shield' | 'report';
+  key: 'profiler' | 'tax' | 'srs' | 'legacy' | 'shield' | 'sappro' | 'report';
   /** One name per tool, app-wide — the rail, the record launcher and the page
    *  title all read this. */
   label: string;
@@ -84,6 +87,14 @@ export const TOOL_ROUTES: readonly ToolRoute[] = [
     module: CLIENTS_MODULE,
     description:
       'Singlife against Income on the private tier — premiums by age, claims, cancer cover and fit.',
+  },
+  {
+    key: 'sappro',
+    label: 'SAP PRO',
+    path: '/tools/sap-pro',
+    module: CLIENTS_MODULE,
+    description:
+      'What a new advisor could earn in the first 3 years — commission, bonuses and income support, month by month.',
   },
   {
     key: 'report',

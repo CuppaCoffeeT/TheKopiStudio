@@ -1,6 +1,6 @@
 # Planning — Decisions
 
-**Last Updated**: 2026-09-24 SGT
+**Last Updated**: 2026-09-25 SGT
 
 ## 2026-07-28 — One `planning` folder, INSIDE crm, not three sibling features
 
@@ -228,3 +228,9 @@ changed what and when is already kept, once, in `customer_activity`.
 **Decision**: the advisor's standalone `shield-comparison.html` (Singlife Shield Plan 1 + Health Plus Private vs Enhanced IncomeShield Preferred + Optima Care) is ported into this folder as tool 07 at `/tools/shield-comparison`, on `PlanningToolFrame`, riding the `/clients` grant. It is NOT iframed from `public/`.
 **Why**: an iframe would ship a second palette (the sheet's own cream/red), no rail, no customer bar and no LOC/lint/test gates — the "two visual languages" problem `primitives/tools` was hoisted to end. Arithmetic is a faithful port, golden-locked against the sheet's own `calc`/`claim`/`cancerCalc` output in `lib/__tests__/shield.test.ts`; copy is extracted verbatim.
 **Impact**: opens blank at the sheet's age 36, or at the chosen customer's age NEXT birthday (`ageNextBirthday`, SGT today injected). Nothing persists — the figures are published rate tables, not customer data. When the insurers re-price, replace `lib/shieldRates.ts` wholesale and re-derive the golden values from the new sheet.
+
+## 2026-09-25 — SAP PRO (tool 08): the advisor's own income, so no customer bar
+
+**Decision**: the advisor's standalone `income-illustrator2.html` ("What you could earn in your first 3 years" — base commission, 25% BDB, quarterly bonus, income support tiers $1k/$5k/$8k/$10k) is ported as tool 08 **SAP PRO** at `/tools/sap-pro`, riding the `/clients` grant. Unlike 04–07 it does NOT use `PlanningToolFrame`: it composes `ToolPageShell` + `ToolPageHeader` directly, with no `ToolCustomerBar`, no `?customer=`, no activity-log entry, and nothing persisted.
+**Why**: the income illustrated is the ADVISOR's (or a recruit's), not a customer's — a "Who is this for?" picker would ask a question with no right answer, and there is no record to pre-fill or log against. `/clients` is kept as the module only because it is the grant every advisor holds. Arithmetic and every computed sentence are golden-locked against the sheet's own rendered output (its script run unmodified in jsdom over nine input sets — `lib/__tests__/fixtures/sapProGolden.json`).
+**Impact**: colours map the sheet's navy→sky commission ramp onto `--chart-ramp-1..3` and its green support series onto `--brand-sage` (see `components/sappro/sapProSeries.ts`); bars stay plain flex divs as in the sheet, not recharts. When the scheme terms change, edit `lib/sapProMath.ts` / `sapProCopy.ts`, re-run the jsdom harness on the revised sheet and replace the fixture wholesale. Stays inside `crm/planning` with its siblings despite reading no customer data — one planning folder (2026-07-28), and nothing here imports crm internals.

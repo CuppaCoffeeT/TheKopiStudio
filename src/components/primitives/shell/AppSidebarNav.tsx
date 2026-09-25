@@ -8,7 +8,7 @@
  *   Customers                    ← the book
  *   TOOLS                        ← every tool, listed, never collapsed
  *     Prospect Profiler · Tax calculator · SRS planner · Legacy Map ·
- *     Shield comparison · Client Report
+ *     Shield comparison · SAP PRO · Client Report
  *   Others ▸                     ← only what no band above claimed
  *   ─────────────
  *   Account Settings             ← pinned to the bottom

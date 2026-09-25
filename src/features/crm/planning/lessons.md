@@ -1,6 +1,6 @@
 # Planning — Lessons
 
-**Last Updated**: 2026-08-19 SGT
+**Last Updated**: 2026-09-25 SGT
 
 ## 2026-07-28 — A future date of birth opened the tax calculator on age −60
 
@@ -68,3 +68,15 @@ Verified against prod: no `clients` row currently holds a future
 `lib/customerSeed.ts`. The picker being correct today says nothing about the
 rows written before today, which is the whole point of validating at the
 boundary.
+
+## 2026-09-25 — `npx tsc --noEmit -p .` type-checks nothing here
+
+**What happened**: while verifying SAP PRO, `tsc -p .` returned clean in seconds with zero output.
+**Root cause**: root `tsconfig.json` is a solution file (`"files": []` + `references`); without `-b` it compiles no sources.
+**Fix**: type-check with `npx tsc --noEmit -p tsconfig.app.json` (or `tsc -b`). A silent pass from `-p .` proves nothing.
+
+## 2026-09-25 — A DOM-scraped golden needs normalising where the browser re-serialises
+
+**What happened**: the SAP PRO golden (the sheet's script run in jsdom, rendered strings read back) failed only on bar widths — `"0.00%"` expected `"0%"`.
+**Root cause**: the sheet writes `width: 0.00%`, but `element.style.width` reads back the CSSOM-serialised `0%`; the port's string was the sheet's INPUT, the fixture held the browser's OUTPUT.
+**Fix**: compare widths as numbers (`parseFloat`) in `sapPro.test.ts`; every text node (`textContent`) is compared verbatim.
