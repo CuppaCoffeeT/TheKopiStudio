@@ -6,7 +6,7 @@
  * (BHS cap + SA boost via projectCPFTo55), three at-55 gradient cards, the
  * OA/SA/MA account table with the cpfCurrentTotal row, the v42 basis callout
  * + OA/SA build-up waterfall (ReportCpfBuildUp), then the RA assessment panel
- * (ReportCpfRaPanel — still on the golden no-contribution projection). SELF-GUARDING — renders only when any CPF balance
+ * (ReportCpfRaPanel — fed this section's projection, so housing moves CPF LIFE). SELF-GUARDING — renders only when any CPF balance
  * is > 0, so the page composes it unconditionally. Starts on a fresh printed
  * page (.report-page-break). ALL math from lib; only locale formatting here:
  * "Current" cells print UNROUNDED floats exactly like legacy, at-55 cells are
@@ -181,6 +181,7 @@ export function ReportCpfProjection({ client, currentAge, refYear }: ReportCpfPr
         cpfMA={cpfMA}
         yearsTo55={yearsTo55}
         refYear={refYear}
+        at55={projection}
       />
     </section>
   );

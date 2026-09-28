@@ -581,3 +581,8 @@ contributions (pre-existing, since 2026-07-28) nor the new housing drain move
 them. v42's helper copy says housing affects CPF LIFE; wiring the RA panel to
 `projectCPFTo55WithFutureContributions` is a deliberate book-wide figure change
 and was left for an explicit decision.
+
+## 2026-09-28 — RA panel + CPF LIFE payout read the v42 projection
+**Decision**: `assessRetirementReadiness` takes an optional `at55` (`{ oaAt55, saAt55 }`); the report model and `ReportCpfRaPanel` pass `projectCPFTo55WithFutureContributions` — the same run the CPF cards use — so future contributions AND the OA housing drain now move projected RA, FRS %, CPF LIFE payout and the health-snapshot CPF achievement.
+**Why**: user approved closing the 2026-09-25 open item; matches v42, whose RA assessment reads the card projection (`insurance_crm_v42.html` ~4121-4140).
+**Impact**: book-wide figure change for any customer with income tiers, an average income or a housing loan. Absent `at55` ⇒ the golden no-contribution run, so the golden vectors still replay exactly. **Supersedes**: 2026-09-25 open item (RA panel left on the golden projection).

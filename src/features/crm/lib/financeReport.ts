@@ -71,6 +71,8 @@ export function analyseCoverageGaps(input: CoverageGapInput): CoverageGapAnalysi
 
 export interface RetirementReadinessInput {
   dob: string | null; yearsTo55: number; cpfOA: number; cpfSA: number; cpfMA: number;
+  /** Contribution/housing-aware balances at 55 (v42). Absent ⇒ golden no-contribution run. */
+  at55?: { oaAt55: number; saAt55: number };
 }
 export interface RetirementReadiness {
   projectedRA: number; remainingOA: number; meetsFRS: boolean; meetsBRS: boolean;
@@ -86,7 +88,7 @@ export function assessRetirementReadiness(
   input: RetirementReadinessInput,
   refYear: number,
 ): RetirementReadiness {
-  const { oaAt55, saAt55 } = projectCPFTo55({
+  const { oaAt55, saAt55 } = input.at55 ?? projectCPFTo55({
     cpfOA: input.cpfOA, cpfSA: input.cpfSA, cpfMA: input.cpfMA, yearsTo55: input.yearsTo55,
   });
   const sums = retirementSumsFor(input.dob, refYear);

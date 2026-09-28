@@ -25,6 +25,8 @@ interface ReportCpfRaPanelProps {
   cpfMA: number;
   yearsTo55: number;
   refYear: number;
+  /** The section's own contribution/housing-aware projection (v42) — RA + CPF LIFE read it. */
+  at55: { oaAt55: number; saAt55: number };
 }
 
 export function ReportCpfRaPanel({
@@ -34,9 +36,10 @@ export function ReportCpfRaPanel({
   cpfMA,
   yearsTo55,
   refYear,
+  at55,
 }: ReportCpfRaPanelProps) {
   const sums = retirementSumsFor(dob, refYear);
-  const ra = assessRetirementReadiness({ dob, yearsTo55, cpfOA, cpfSA, cpfMA }, refYear);
+  const ra = assessRetirementReadiness({ dob, yearsTo55, cpfOA, cpfSA, cpfMA, at55 }, refYear);
 
   // CPFProjection.jsx:173-192 — the alert ladder; exactly one branch renders
   // (meetsFRS implies meetsBRS since FRS > BRS in every cohort row).

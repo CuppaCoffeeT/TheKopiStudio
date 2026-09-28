@@ -12,6 +12,7 @@ import { BHS_2026, projectCPFTo55 } from '../finance';
 import { projectCPFTo55WithFutureContributions } from '../cpfContributions';
 import { cpfAllocation, cpfContributionRate, MONTHLY_SALARY_CAP } from '../cpfRates';
 import { cpfBuildUp, cpfPlanFromClient } from '../cpfBuildUp';
+import { assessRetirementReadiness } from '../financeReport';
 import { incomeForAge } from '../incomeSteps';
 
 function v42Oracle(o: {
@@ -127,5 +128,29 @@ describe('cpfBuildUp — the waterfall reconciles', () => {
     expect(sa.overflow).toBeGreaterThan(0);
     expect(oa.start + oa.contributions - oa.housing + oa.interest).toBeCloseTo(oa.at55, 6);
     expect(sa.start + sa.contributions + sa.overflow + sa.interest).toBeCloseTo(sa.at55, 6);
+  });
+});
+
+describe('assessRetirementReadiness — RA + CPF LIFE read the v42 projection', () => {
+  const dob = '1991-01-01';
+  const bal = { cpfOA: 62_000, cpfSA: 55_000, cpfMA: 70_000 };
+  const run = (client: Parameters<typeof cpfPlanFromClient>[0]) =>
+    projectCPFTo55WithFutureContributions({ ...bal, currentAge: 35, ...cpfPlanFromClient(client) });
+
+  it('no at55 ⇒ identical to passing the golden no-contribution run', () => {
+    const golden = projectCPFTo55({ ...bal, yearsTo55: 20 });
+    const a = assessRetirementReadiness({ dob, yearsTo55: 20, ...bal }, 2026);
+    const b = assessRetirementReadiness({ dob, yearsTo55: 20, ...bal, at55: golden }, 2026);
+    expect(b).toEqual(a);
+  });
+
+  it('the OA housing drain lowers the projected RA and the CPF LIFE payout', () => {
+    const without = assessRetirementReadiness({ dob, yearsTo55: 20, ...bal, at55: run({}) }, 2026);
+    const withHousing = assessRetirementReadiness(
+      { dob, yearsTo55: 20, ...bal, at55: run({ cpfHousingMonthly: '2500' }) },
+      2026,
+    );
+    expect(withHousing.projectedRA).toBeLessThan(without.projectedRA);
+    expect(withHousing.cpfLifeMonthlyPayout).toBeLessThan(without.cpfLifeMonthlyPayout);
   });
 });

@@ -12,6 +12,8 @@
 
 import { ageFromDOB, currentRefYear, summariseClient, toFloat } from './finance';
 import { assessRetirementReadiness, heroTotals } from './financeReport';
+import { cpfPlanFromClient } from './cpfBuildUp';
+import { projectCPFTo55WithFutureContributions } from './cpfContributions';
 import { deathCoverPolicies } from './protectionStructure';
 import type { CrmClient, CrmPolicy } from '../types';
 
@@ -28,6 +30,9 @@ export function buildReportModel(client: CrmClient, policies: CrmPolicy[]): Repo
   const refYear = currentRefYear();
   const currentAge = ageFromDOB(client.dateOfBirth || null, refYear);
   const yearsTo55 = Math.max(0, 55 - currentAge);
+  const cpf = { cpfOA: toFloat(client.cpfOA), cpfSA: toFloat(client.cpfSA), cpfMA: toFloat(client.cpfMA) };
+  // v42: RA + CPF LIFE read the SAME projection as the CPF cards (contributions + OA housing drain).
+  const at55 = projectCPFTo55WithFutureContributions({ ...cpf, currentAge, ...cpfPlanFromClient(client) });
 
   return {
     refYear,
@@ -44,13 +49,7 @@ export function buildReportModel(client: CrmClient, policies: CrmPolicy[]): Repo
       refYear,
     ),
     readiness: assessRetirementReadiness(
-      {
-        dob: client.dateOfBirth || null,
-        yearsTo55,
-        cpfOA: toFloat(client.cpfOA),
-        cpfSA: toFloat(client.cpfSA),
-        cpfMA: toFloat(client.cpfMA),
-      },
+      { dob: client.dateOfBirth || null, yearsTo55, ...cpf, at55 },
       refYear,
     ),
   };
