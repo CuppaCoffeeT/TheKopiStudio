@@ -1,6 +1,6 @@
 # Data Spine — CRM Schema, RLS, Role-Sync & Cross-Project Import — PRD
 
-**Created:** 2026-06-11 · **Last Updated:** 2026-06-11 · **Status:** 🟡 In Progress (P1-P3 ✅, P4 blocked on user key, P5 in flight) · **Priority:** P0 (blocks profiler + crm modules)
+**Created:** 2026-06-11 · **Last Updated:** 2026-10-26 · **Status:** ✅ Complete (P1-P3, P5 shipped; P4 import ABANDONED 2026-10-26) · **Priority:** P0 (blocks profiler + crm modules)
 **Work type**: module (data-spine — DB schema + privileged edge function + data migration; NO UI)
 
 🤖 Build via: `/prd-execute docs/05-implementation/active/DATA_SPINE_PRD.md`
@@ -13,10 +13,10 @@
 | P1 — CRM tables migration + capabilities + decisions ledger | ✅ | Applied 20260611_164841; advisors clean; 10/10 RLS simulations pass |
 | P2 — users-table hardening migration | ✅ | Applied 20260611_165020; escalation paths verified blocked |
 | P3 — role-sync edge function | ✅ | Deployed v1 ACTIVE, verify_jwt ON; OPTIONS 200 / no-auth 401 / anon-key 401 |
-| P4 — CRM data export + import + verification | 🟡 | Scripts authored + verified; EXECUTE blocked on `SOURCE_SUPABASE_SERVICE_ROLE_KEY` (user) |
+| P4 — CRM data export + import + verification | ⛔ Abandoned | Scripts authored + verified, never executed. 2026-10-26: source `uivdgousiyfeyrebloaz` is in no reachable account and no longer resolves; the user confirmed it is gone — import abandoned. `scripts/export-crm.mjs` / `import-crm.mjs` kept as reference. |
 | P5 — docs + index registration | ✅ | CRM_DATA_SPINE.md written; index updated; completeness findings fixed |
 
-Current phase: complete except P4 EXECUTE · Blockers: P4 EXECUTE needs the source project's service-role key (see Open Questions)
+Current phase: closed 2026-10-26 · Blockers: none (P4 abandoned — source project gone)
 
 ## 📋 Definition
 

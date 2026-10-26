@@ -1,11 +1,11 @@
 # Cutover Runbook — Prospect Profiler (merged app)
 
-**Created:** 2026-06-12 · **Last Updated:** 2026-10-26 · **Status:** 🟡 Awaiting user decisions · **Priority:** P0 (final phase)
+**Created:** 2026-06-12 · **Last Updated:** 2026-10-26 · **Status:** ✅ Closed 2026-10-26 · **Priority:** P0 (final phase)
 
 The merged app is fully built and green on `main` (4 PRDs completed — see [DOCUMENTATION_INDEX.md](../DOCUMENTATION_INDEX.md)). This runbook lists what remains, split by who acts. Nothing below is destructive until §4, which requires explicit per-step approval.
 
 ## 1. User-blocked prerequisites
-- [ ] **CRM data import key** — ⚠️ 2026-10-26: `uivdgousiyfeyrebloaz` is in **none** of the reachable Supabase accounts (sirsky631 dashboard, CLI login, MCP token) and its hostname no longer resolves (paused or deleted). Needs the account that owns it — or a decision that the old book is abandoned. Old CRM Supabase dashboard (`uivdgousiyfeyrebloaz`) → Settings → API → `service_role`; put `SOURCE_SUPABASE_SERVICE_ROLE_KEY=<key>` in `"/Users/tenshi/Documents/Projects/Insurance CRM/.env.migration"`. Then the runbook in [CRM_DATA_SPINE.md](../01-system-architecture/CRM_DATA_SPINE.md) executes: `node scripts/export-crm.mjs` → `node scripts/import-crm.mjs` → orchestrated SQL apply + verification (row parity, recomputed totals).
+- [x] ~~**CRM data import key**~~ — **ABANDONED 2026-10-26 by the user decision: the old CRM project is gone.** 2026-10-26: `uivdgousiyfeyrebloaz` is in **none** of the reachable Supabase accounts (sirsky631 dashboard, CLI login, MCP token) and its hostname no longer resolves (paused or deleted). Needs the account that owns it — or a decision that the old book is abandoned. Old CRM Supabase dashboard (`uivdgousiyfeyrebloaz`) → Settings → API → `service_role`; put `SOURCE_SUPABASE_SERVICE_ROLE_KEY=<key>` in `"/Users/tenshi/Documents/Projects/Insurance CRM/.env.migration"`. Then the runbook in [CRM_DATA_SPINE.md](../01-system-architecture/CRM_DATA_SPINE.md) executes: `node scripts/export-crm.mjs` → `node scripts/import-crm.mjs` → orchestrated SQL apply + verification (row parity, recomputed totals).
 - [x] **Production identity** — RESOLVED 2026-08-13 (verified against the live account, not planned): custom domain **`www.thekopistudio.com`**, served by Vercel project **`thekopistudio`**; the apex `thekopistudio.com` 308s to www. The old `prospect-profiler-app.vercel.app` host now 404s and that Vercel project no longer exists. `src/main.tsx` pinned the dead host until 2026-08-13, so Vercel Analytics had been silently off in production.
 
 ## 2. Deploy (additive — needs the §1 domain decision)
@@ -16,7 +16,7 @@ The merged app is fully built and green on `main` (4 PRDs completed — see [DOC
 ## 3. Verification window (both apps live, shared DB — already the steady state)
 - 2026-10-26: both old Vercel deployments are gone (projects `prospect-profiler` legacy + `insurance-crm` no longer exist in `sky-tans-projects`; `prospect-profiler.vercel.app` / `insurance-crm.vercel.app` are now unrelated third-party apps). The compat layer below therefore only serves the new app.
 - Old profiler keeps working (compat trigger + untouched legacy tables/policies — verified throughout).
-- New app serves all 8 modules. Old CRM (`uivdgousiyfeyrebloaz`) stays read-only-by-convention until its data is imported (§1).
+- New app serves all 8 modules. Old CRM (`uivdgousiyfeyrebloaz`) is gone; its import was abandoned (§1).
 
 ## 4. Destructive steps — EACH requires explicit approval (never automatic)
 Approved by the user 2026-10-26 (legacy retirement, DB hardening, repo archive, token revoke, e2e-account deletion).
@@ -26,7 +26,7 @@ Approved by the user 2026-10-26 (legacy retirement, DB hardening, repo archive, 
 - [x] **DB hardening** — DONE 2026-10-26: anon has INSERT only on `results` (was ALL); `search_path` fixed on `update_updated_at` + `update_updated_at_column`; trigger-only `handle_new_user` / `protect_user_privileges` no longer RPC-executable (`20261026154832_harden_trigger_functions`). **Leaked-password protection: NOT POSSIBLE on this plan** — Supabase rejects it on Free ("available on Pro Plans and up"); remains an advisor WARN until the org upgrades. Remaining advisor WARNs (capability helpers executable by anon/authenticated) are by design — RLS calls them as the querying role.
 - [x] **Tokens** — the `"Insurance CRM/.mcp.json"` plaintext token was already gone from that file. 5 stale Supabase access tokens revoked 2026-10-26 (`CLI Deployment` (expired), 3 old `cli_tenshi@…`, `Claude code`); kept: `TheKopiStudio` (`sbp_07d1…`, MCP) + `New wallet cc code` (`sbp_8cc1…`, the Supabase CLI keychain login).
 - [x] **3 `+e2e-` test accounts deleted** from prod 2026-10-26, after a final local run against prod (118 passed; the only red, `crm/dashboard` "empty book", timed out sweeping 314 residue clients — the residue this deletion removed). The cascade took 331 clients + their policies/history and 3 results, all test residue (no real row referenced them). Prod now holds 3 real users. **Local E2E against prod no longer works** — it signs in with those accounts; run the suite via CI (`seatbelt.yml`, ephemeral DB seeded by `tests/setup/seed-auth-users.mjs`), or re-seed them deliberately.
-- [ ] Pause/delete project `uivdgousiyfeyrebloaz` — blocked with §1 (owning account unknown).
+- [x] ~~Pause/delete project `uivdgousiyfeyrebloaz`~~ — moot: the project is gone (§1).
 
 ## Annual maintenance note
 `crm/lib/finance.ts` constants (BHS, BRS/FRS/ERS table, CPF LIFE baseline) are frozen 2026 values — review yearly; golden vectors pin refYear=2026.

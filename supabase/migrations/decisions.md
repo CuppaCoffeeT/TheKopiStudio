@@ -9,7 +9,7 @@ we extend or deviate from the sanctioned patterns in
 ## 2026-06-11 — Pattern D: owner + capability read (CRM tables)
 
 **Migration**: `20260611_164841_create_crm_tables.sql` ·
-**PRD**: [docs/05-implementation/active/DATA_SPINE_PRD.md](../../docs/05-implementation/active/DATA_SPINE_PRD.md)
+**PRD**: [docs/05-implementation/completed/DATA_SPINE_PRD.md](../../docs/05-implementation/completed/DATA_SPINE_PRD.md)
 
 **Decision**: all 5 CRM tables (`clients`, `policies`, `projected_cash_values`,
 `interactions`, `bank_balance_history`) use a fourth RLS shape — **Pattern D —

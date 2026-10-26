@@ -30,9 +30,9 @@ Layer-3 reference docs shipped with the AppBase template (01/02/03/04/06/99 cate
 
 | Doc | Status | Purpose |
 |---|---|---|
-| [active/DATA_SPINE_PRD.md](05-implementation/active/DATA_SPINE_PRD.md) | 🟡 In Progress (P4 import blocked on user key) | CRM schema + RLS Pattern D + role-sync edge fn + cross-project data import |
+| [completed/DATA_SPINE_PRD.md](05-implementation/completed/DATA_SPINE_PRD.md) | ✅ Complete 2026-10-26 (P4 import abandoned — source project gone) | CRM schema + RLS Pattern D + role-sync edge fn + cross-project data import |
 | [MERGE_PLAN_2026-06-11.md](05-implementation/MERGE_PLAN_2026-06-11.md) | 📋 Reference | Master plan: merge Prospect Profiler + Insurance CRM onto AppBase |
-| [CUTOVER_RUNBOOK.md](05-implementation/CUTOVER_RUNBOOK.md) | 🟡 Awaiting user decisions | Final-phase runbook: import key, domain/env cutover, destructive steps gated on per-step approval |
+| [CUTOVER_RUNBOOK.md](05-implementation/CUTOVER_RUNBOOK.md) | ✅ Closed 2026-10-26 | Final-phase runbook: domain/env cutover, legacy-layer retirement, hardening (CRM import abandoned) |
 
 ### Design handoffs (Layer 4 — brand + direction authority)
 

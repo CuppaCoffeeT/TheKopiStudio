@@ -13,7 +13,7 @@ This DB also served the then-deployed legacy app, so everything here was **addit
 
 ## 📚 Related Documentation
 
-- [DATA_SPINE_PRD.md](../05-implementation/active/DATA_SPINE_PRD.md) — the PRD this doc closes (research findings, phases, execution log)
+- [DATA_SPINE_PRD.md](../05-implementation/completed/DATA_SPINE_PRD.md) — the PRD this doc closes (research findings, phases, execution log)
 - [supabase/migrations/decisions.md](../../supabase/migrations/decisions.md) — dated ledger entries for Pattern D and the users hardening
 - [DATABASE_POLICY.md](./DATABASE_POLICY.md) — RLS background; final authority is `.claude/rules/rls-policy.md`
 - [MODULE_SYSTEM.md](./MODULE_SYSTEM.md) — app-layer RBAC that complements this DB layer
