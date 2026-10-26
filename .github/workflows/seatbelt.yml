@@ -102,9 +102,8 @@ jobs:
         run: supabase status -o env | sed 's/"//g' >> "$GITHUB_ENV"
       - name: Seed the three E2E auth accounts
         # Admin API, not raw SQL — see the header of the script for why, and for
-        # the three role surfaces (JWT app_metadata, public.users,
-        # public.profiles) it has to line up. Fails loudly here rather than as
-        # N opaque login timeouts.
+        # the two role surfaces (JWT app_metadata, public.users) it has to line
+        # up. Fails loudly here rather than as N opaque login timeouts.
         run: node tests/setup/seed-auth-users.mjs
         env:
           SUPABASE_URL: http://127.0.0.1:54321

@@ -7,7 +7,7 @@ paths:
 
 ## Summary
 
-All database migrations must follow strict naming conventions (`YYYYMMDD_HHMMSS_description.sql`, underscores only), reference `public.users(id)` for foreign keys (never `auth.users(id)`), and be executed exclusively through Supabase MCP — never via CLI. Supabase's `list_migrations` is the source of truth for what has been applied; compare against local files to find gaps.
+All database migrations must follow strict naming conventions (`YYYYMMDDHHMMSS_description.sql` — 14 digits, NO underscore inside the timestamp), reference `public.users(id)` for foreign keys (never `auth.users(id)`), and be executed exclusively through Supabase MCP — never via CLI. Supabase's `list_migrations` is the source of truth for what has been applied; compare against local files to find gaps.
 
 ## Detailed Patterns
 
@@ -15,9 +15,12 @@ All database migrations must follow strict naming conventions (`YYYYMMDD_HHMMSS_
 
 ```bash
 # ALWAYS get timestamp first
-date +"%Y%m%d_%H%M%S"
+date +"%Y%m%d%H%M%S"
 
-# Filename: YYYYMMDD_HHMMSS_description.sql (underscores only, NO dashes)
+# Filename: YYYYMMDDHHMMSS_description.sql (underscores between words, NO dashes)
+# The CLI reads the version as the digits before the FIRST underscore, so
+# `20260611_162101_…` collapses to version 20260611 and siblings collide —
+# see supabase/migrations/decisions.md (baseline entry).
 # Template: Follow supabase/MIGRATION_TEMPLATE.md
 ```
 

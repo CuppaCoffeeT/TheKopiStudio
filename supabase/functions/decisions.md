@@ -1,6 +1,6 @@
 # Edge Functions — Decisions
 
-**Last Updated**: 2026-06-11 SGT
+**Last Updated**: 2026-10-26 SGT
 
 Workspace-scoped per [`.claude/rules/lessons-logging.md`](../../.claude/rules/lessons-logging.md). Cross-domain entries get promoted to a parent `lessons.md`.
 
@@ -21,3 +21,8 @@ Workspace-scoped per [`.claude/rules/lessons-logging.md`](../../.claude/rules/le
 **How to apply**: any future privileged function follows the same composite — caller identity via `auth.getUser()`, authorization via service-role DB reads, mutation via service-role, partial-failure rollback reported in the response body.
 
 (Donor-template Xero/Gmail entries removed 2026-06-11 — those functions do not exist in this app.)
+
+## 2026-10-26 — role-sync v3 drops the legacy profiles mirror
+**Decision**: step 5 (mirror `role` into `public.profiles.role`) is removed; the response no longer carries `profiles_mirror`.
+**Why**: the cutover dropped `public.profiles` and `get_my_role()` (migration `20261026154319_retire_legacy_profiles`); results read-all is now `has_capability('view_all_results')`, which reads the JWT role role-sync already syncs.
+**Impact**: `public.users` + `app_metadata.role` are the only role surfaces. **Supersedes**: 2026-06-11 — role-sync v2 mirrors the role into legacy public.profiles.

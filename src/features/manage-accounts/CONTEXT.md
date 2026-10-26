@@ -1,6 +1,6 @@
 # Manage Accounts — Feature Memory
 
-Approvals + role management at `/manage-accounts` (LIST archetype). Manager + super_admin only; advisor has an explicit deny row in `role_modules`. ListPageFrame with tabs (All / Pending + alert badge), debounced search, URL-synced page/tab, per-row role SelectMenu + Approve via role-sync v2 (mirrors `profiles.role` for legacy results visibility).
+Approvals + role management at `/manage-accounts` (LIST archetype). Manager + super_admin only; advisor has an explicit deny row in `role_modules`. ListPageFrame with tabs (All / Pending + alert badge), debounced search, URL-synced page/tab, per-row role SelectMenu + Approve via role-sync (v3 — `public.users` + JWT `app_metadata.role` only; the legacy `profiles` mirror was retired with the table on 2026-10-26).
 
 ## Map
 

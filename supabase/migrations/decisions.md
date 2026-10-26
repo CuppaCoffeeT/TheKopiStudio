@@ -123,3 +123,8 @@ statement 1), and a trailing `GRANT` / `ALTER DEFAULT PRIVILEGES` block — a na
 `pg_dump` over the pooler carries no grants, and PostgREST reaches every table as
 `anon` / `authenticated` / `service_role`, which without privileges get 42501 before RLS
 is ever consulted.
+
+## 2026-10-26 — Legacy profiles retired; results on Pattern D, anonymous insert kept
+**Decision**: drop `public.profiles` + `get_my_role()`; `results.user_id` FK → `public.users`; `results` policies become `results_{cmd}` Pattern D (`view_all_results` read-all, owner-only writes). INSERT keeps an anon path, but only the shape `user_id IS NULL AND client_id IS NULL`; owned rows may only link `client_id` to the caller's own client. anon keeps INSERT only.
+**Why**: both legacy deployments are gone, so the compat layer only served this app as a drifting second copy of the role. The open INSERT was NOT legacy-only — `/profiler` is public and `useSaveResult` saves signed-out profiles with `user_id NULL` — so it was narrowed, not removed.
+**Impact**: super_admin gains results read-all (it never had it: `profiles.role` mirrored it as advisor/manager inconsistently). The 9 NULL-owner rows stay visible to read-all roles only. Backup of `profiles` at `backups/profiles-2026-10-26.json` (gitignored).

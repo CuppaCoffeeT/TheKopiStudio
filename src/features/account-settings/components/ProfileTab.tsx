@@ -97,16 +97,6 @@ export function ProfileTab() {
             {profile.createdAt ? formatDisplayDateLong(profile.createdAt) : '—'}
           </span>
         </Field>
-        {profile.legacyUsername && (
-          <Field label="Legacy username" hint="From the original profiler app — display only.">
-            <span
-              className="text-[14px] text-foreground"
-              data-testid="account-profile-legacy-username"
-            >
-              {profile.legacyUsername}
-            </span>
-          </Field>
-        )}
       </div>
 
       <div className="border-t border-border pt-5 flex flex-col gap-4">

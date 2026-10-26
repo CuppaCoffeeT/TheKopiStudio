@@ -28,8 +28,6 @@ export interface RoleSyncResponse {
   user_id: string;
   role: string;
   is_approved: boolean;
-  /** v2: legacy `public.profiles.role` mirror outcome (only on role changes). */
-  profiles_mirror?: 'ok' | 'failed';
 }
 
 async function postRoleSync(input: RoleSyncInput): Promise<RoleSyncResponse> {

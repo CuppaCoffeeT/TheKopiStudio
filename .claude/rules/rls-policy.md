@@ -7,7 +7,7 @@ paths:
 
 ## Summary
 
-Two sanctioned patterns: (1) **minimal RLS** — `USING (true)` for non-sensitive tables, security at app/module layer; (2) **capability-based RLS** — `USING ((SELECT public.<capability>()))` for operational tables where defense-in-depth is wanted. W14/W15 (2026-04-18) locked capability-based as the canonical strategy for hot operational tables; minimal RLS remains the default for everything else. **Every function call in a policy must be wrapped in `(SELECT …)`** — bare `USING (fn())` evaluates the function per-row and is a known RAM/CPU hotspot (see [supabase/lessons.md](../../supabase/lessons.md) + [supabase/migrations/decisions.md](../../supabase/migrations/decisions.md)).
+Sanctioned patterns: (1) **minimal RLS** — `USING (true)` for non-sensitive tables, security at app/module layer; (2) **capability-based RLS** — `USING ((SELECT public.<capability>()))` for operational tables where defense-in-depth is wanted. W14/W15 (2026-04-18) locked capability-based as the canonical strategy for hot operational tables; minimal RLS remains the default for everything else. **Every function call in a policy must be wrapped in `(SELECT …)`** — bare `USING (fn())` evaluates the function per-row and is a known RAM/CPU hotspot (see [supabase/lessons.md](../../supabase/lessons.md) + [supabase/migrations/decisions.md](../../supabase/migrations/decisions.md)).
 
 ## Detailed Patterns
 
@@ -55,6 +55,16 @@ CREATE POLICY "Users see own notifications"
 
 Only `notifications`. Still uses the `(SELECT …)` wrapper for the same initplan reason.
 
+### Pattern D — Owner + capability read-all (multi-advisor books)
+
+```sql
+CREATE POLICY clients_select ON public.clients FOR SELECT TO authenticated
+  USING ((SELECT auth.uid()) = user_id OR (SELECT public.has_capability('view_all_clients')));
+-- insert/update/delete: (SELECT auth.uid()) = user_id
+```
+
+The 5 CRM tables (`view_all_clients`) and `results` (`view_all_results`, since the 2026-10-26 cutover — its INSERT also admits the anonymous `/profiler` save). Spec: [CRM_DATA_SPINE.md](../../docs/01-system-architecture/CRM_DATA_SPINE.md).
+
 ### Anti-patterns
 
 ```sql
@@ -64,7 +74,7 @@ USING (is_approved_user())
 -- ❌ Hardcoded role list — bypasses the capability framework
 USING (current_setting('request.jwt.claim.user_metadata.role') = ANY (ARRAY['coordinator', 'management']))
 
--- ❌ User-specific predicate outside the notifications exception
+-- ❌ User-specific predicate outside the notifications exception / Pattern D tables
 USING (auth.uid() = created_by)
 ```
 

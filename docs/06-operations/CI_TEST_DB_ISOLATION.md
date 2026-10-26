@@ -31,6 +31,13 @@ The E2E suite no longer touches production. **Last Updated**: 2026-08-13
 
 ### Gotchas found (all of them already baked into the files above)
 
+> **2026-10-26 — legacy `profiles` retired** (migration `20261026154319_retire_legacy_profiles`).
+> The `profiles` / `get_my_role()` bullets and the `profiles.role` column below describe the
+> schema as it was; they are kept as history. Now: `results.user_id` FKs to `public.users`,
+> results read-all is `has_capability('view_all_results')` (manager + super_admin), and the seed
+> script sets **two** role surfaces (JWT `app_metadata.role` + `public.users`).
+> `results-superadmin.spec` flipped to assert the super_admin DOES see "Bee zhen", read-only.
+
 - **`pg_dump` 18 emits `\restrict`/`\unrestrict`** psql meta-commands that the local Supabase
   **psql 17** container errors on — already stripped; strip from any future re-dump too.
 - **Auth users are seeded via the admin API, not raw SQL** — `auth.users`/`auth.identities`

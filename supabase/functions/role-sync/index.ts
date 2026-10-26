@@ -12,14 +12,9 @@
 //      active, approved super_admin.
 //   4. Mutate public.users, then sync auth.users app_metadata.role via
 //      auth.admin.updateUserById (preserving existing app_metadata keys).
-//   5. v2: on role changes, mirror the role into legacy public.profiles —
-//      'advisor'/'manager' as-is, 'super_admin' → 'manager' (the profiles
-//      CHECK constraint only allows advisor|manager). The legacy app's
-//      get_my_role() reads profiles.role for manager read-all visibility on
-//      public.results, so promotions must land there too until cutover.
-//      NON-FATAL: a mirror failure is logged and reported as
-//      "profiles_mirror": "failed" in the response — public.users is NOT
-//      rolled back (profiles is the legacy table; users stays canonical).
+//   (v3, 2026-10-26: the v2 step 5 legacy public.profiles mirror is gone —
+//   the table was dropped at cutover; results read-all rides on the
+//   view_all_results capability like every other table.)
 //
 // Deployed with verify_jwt ON. The service-role key comes exclusively from
 // the auto-provisioned SUPABASE_SERVICE_ROLE_KEY secret.
@@ -278,36 +273,6 @@ serve(async (req) => {
       console.log(`✅ Auth app_metadata.role synced to '${finalRole}' for ${user_id}`)
     }
 
-    // -------------------------------------------------------------------
-    // Step 5 (v2) — mirror the role into legacy public.profiles. The legacy
-    // results policy reads profiles.role via get_my_role(), so promoted
-    // managers need the mirror to gain read-all visibility until cutover.
-    // 'super_admin' maps to 'manager' (profiles CHECK allows advisor|manager
-    // only). NON-FATAL: never roll back public.users for a mirror failure.
-    // -------------------------------------------------------------------
-    let profilesMirror: 'ok' | 'failed' | null = null
-    if (role !== undefined) {
-      const mirroredRole = finalRole === 'super_admin' ? 'manager' : finalRole
-
-      const { data: mirroredRow, error: mirrorError } = await admin
-        .from('profiles')
-        .update({ role: mirroredRole })
-        .eq('id', user_id)
-        .select('id')
-        .maybeSingle()
-
-      if (mirrorError || !mirroredRow) {
-        console.error(
-          `⚠️ profiles.role mirror to '${mirroredRole}' failed (non-fatal) for ${user_id}:`,
-          mirrorError ?? 'no profiles row matched'
-        )
-        profilesMirror = 'failed'
-      } else {
-        console.log(`✅ profiles.role mirrored to '${mirroredRole}' for ${user_id}`)
-        profilesMirror = 'ok'
-      }
-    }
-
     console.log(`✅ role-sync complete for ${user_id}`)
     return jsonResponse(
       {
@@ -315,7 +280,6 @@ serve(async (req) => {
         user_id,
         role: finalRole,
         is_approved: finalIsApproved,
-        ...(profilesMirror !== null ? { profiles_mirror: profilesMirror } : {}),
       },
       200
     )

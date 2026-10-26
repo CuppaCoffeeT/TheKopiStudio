@@ -52,7 +52,7 @@ Detail: `StoredResultReport` rebuilds the FULL report from the stored row by reu
 
 ## 👤 Account surfaces
 
-**Account Settings**: Profile tab (read-only email/role/member-since/legacy-username + editable name/phone via `users_update`); Security tab (email change with confirmation-link flow + password change, both via `supabase.auth.updateUser` — never bare `users.email` writes); sign-out card. Username displays from legacy `profiles` (never edited).
+**Account Settings**: Profile tab (read-only email/role/member-since + editable name/phone via `users_update`); Security tab (email change with confirmation-link flow + password change, both via `supabase.auth.updateUser` — never bare `users.email` writes); sign-out card.
 
 **Manage Accounts**: direct `users` select (NEVER `get_all_users()` — super_admin-gated, managers would silently get 0 rows), All/Pending tabs with alert badge, per-row role SelectMenu + Approve. ALL role/approval mutations POST to the **role-sync** edge function with the caller's JWT — direct `users.role` UPDATEs match 0 rows / raise 42501 by design (`protect_user_privileges` trigger). Role-sync errors (incl. the last-super-admin 400 guard) surface verbatim. Self row is read-only ("This is you").
 

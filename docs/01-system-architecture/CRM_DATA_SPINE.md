@@ -9,7 +9,7 @@
 
 The database spine for the merged Prospect Profiler app on Supabase project `mymzcbalyqqgdmzsfmam`: the 5 Insurance-CRM tables (upgraded to AppBase conventions), the **Pattern D** RLS shape that encodes "advisors own their book, managers see everything", the capability seeds, the `users`-table privilege-escalation fix, the `role-sync` edge function, and the one-time import runbook for the old CRM book (project `uivdgousiyfeyrebloaz`). No UI ships here — the profiler/crm module PRDs consume these tables.
 
-This DB also serves the still-deployed legacy app: everything here is **additive**; legacy `profiles` / `results` tables and policies are untouched.
+This DB also served the then-deployed legacy app, so everything here was **additive**. **2026-10-26 cutover:** the legacy app is gone, `public.profiles` + `get_my_role()` were dropped, and `results` moved onto Pattern D (`view_all_results`) — migration `20261026154319_retire_legacy_profiles.sql`.
 
 ## 📚 Related Documentation
 
@@ -43,7 +43,7 @@ The three sanctioned patterns in `.claude/rules/rls-policy.md` don't fit a multi
 {table}_delete:  USING ((SELECT auth.uid()) = user_id)
 ```
 
-Writes stay **owner-only** (manager read-only — PRD Open Question #1; reversible later by changing one policy per table). No hardcoded role lists — read-all rides on `has_capability()`. Every function call is `(SELECT …)`-wrapped (initplan caching). Policy names: `{table}_{cmd}`. Pattern D is also the intended template for the later profiler `results` cutover (via `view_all_results`).
+Writes stay **owner-only** (manager read-only — PRD Open Question #1; reversible later by changing one policy per table). No hardcoded role lists — read-all rides on `has_capability()`. Every function call is `(SELECT …)`-wrapped (initplan caching). Policy names: `{table}_{cmd}`. `results` adopted Pattern D at the 2026-10-26 cutover (via `view_all_results`), with one deliberate addition: INSERT also admits the anonymous shape (`user_id IS NULL AND client_id IS NULL`) for the public `/profiler` wizard's signed-out save, and owned writes may only link `client_id` to the caller's own client.
 
 ## 🎫 Capabilities (seeded in the CRM migration)
 
@@ -66,18 +66,18 @@ Migration: `supabase/migrations/20260611_165020_harden_users_rls.sql`. The found
 
 ## 🔄 role-sync Edge Function Contract
 
-`supabase/functions/role-sync/index.ts` — v2 (profiles mirror, 2026-06-11), `verify_jwt` ON. The only sanctioned promote/demote/approve mechanism.
+`supabase/functions/role-sync/index.ts` — v3 (2026-10-26: profiles mirror removed with the table; v2 added it 2026-06-11), `verify_jwt` ON. The only sanctioned promote/demote/approve mechanism.
 
 **Request**: `POST` with caller `Authorization: Bearer <user JWT>` and JSON body
 `{ "user_id": "<uuid>", "role"?: "<role name>", "is_approved"?: boolean }` — at least one of `role`/`is_approved` required.
 
-**Flow**: (1) caller identity via anon-key client + `auth.getUser()`; (2) **authoritative** authorization via service-role read of `public.users` (caller must be approved/active/not-deleted) joined to `rls_capabilities` requiring `manage_accounts` — the JWT `app_metadata.role` claim is never trusted alone; (3) target + role validation against `public.roles` (must exist and be active); (4) UPDATE `public.users`, then on role change sync `auth.users` `app_metadata.role` via `auth.admin.updateUserById` (existing app_metadata keys preserved; on sync failure the `users` row is rolled back); (5) **v2 — legacy `public.profiles.role` mirror** on any request that includes `role`: `'advisor'`/`'manager'` mirror as-is, `'super_admin'` mirrors as `'manager'` (the profiles CHECK constraint only allows `advisor|manager`). The legacy results policy reads `profiles.role` via `get_my_role()`, so promotions must land there for manager read-all visibility until cutover. The mirror is **non-fatal**: on failure (DB error or missing profiles row) the function logs, returns `"profiles_mirror": "failed"`, and does NOT roll back `public.users` — `users` stays canonical; `profiles` is the legacy table.
+**Flow**: (1) caller identity via anon-key client + `auth.getUser()`; (2) **authoritative** authorization via service-role read of `public.users` (caller must be approved/active/not-deleted) joined to `rls_capabilities` requiring `manage_accounts` — the JWT `app_metadata.role` claim is never trusted alone; (3) target + role validation against `public.roles` (must exist and be active); (4) UPDATE `public.users`, then on role change sync `auth.users` `app_metadata.role` via `auth.admin.updateUserById` (existing app_metadata keys preserved; on sync failure the `users` row is rolled back); (5) ~~**v2 — legacy `public.profiles.role` mirror**~~ *(retired v3, 2026-10-26 — kept as history)* on any request that includes `role`: `'advisor'`/`'manager'` mirror as-is, `'super_admin'` mirrors as `'manager'` (the profiles CHECK constraint only allows `advisor|manager`). The legacy results policy reads `profiles.role` via `get_my_role()`, so promotions must land there for manager read-all visibility until cutover. The mirror is **non-fatal**: on failure (DB error or missing profiles row) the function logs, returns `"profiles_mirror": "failed"`, and does NOT roll back `public.users` — `users` stays canonical; `profiles` is the legacy table.
 
 **Responses**:
 
 | Status | Body | When |
 |---|---|---|
-| 200 | `{ success: true, user_id, role, is_approved, profiles_mirror? }` | Mutation (and any auth sync) succeeded. `profiles_mirror` (`"ok"` \| `"failed"`) present only when the request included `role` |
+| 200 | `{ success: true, user_id, role, is_approved }` | Mutation (and any auth sync) succeeded. (v2's `profiles_mirror` field is gone since v3.) |
 | 400 | `{ error }` | Invalid JSON; missing/non-string `user_id`; neither `role` nor `is_approved`; unknown/inactive role; **last-super-admin guard** |
 | 401 | `{ error: "Unauthorized" }` | Missing `Authorization` header or invalid/anon token |
 | 403 | `{ error }` | Caller not approved/active, or caller's role lacks `manage_accounts` |

@@ -2,7 +2,7 @@
  * Account Settings data access — self-profile reads + self-update writes.
  *
  * Reads: `get_user_profile()` RPC (no phone) + direct `users` select for
- * phone/created_at + legacy `profiles.username` (display-only, pre-cutover).
+ * phone/created_at.
  * Writes: name/phone via the `users_update` policy. Email/password are NEVER
  * written here — they go through `supabase.auth.updateUser` (see hooks/).
  */
@@ -10,25 +10,19 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { AccountProfile, AccountUser, UpdateSelfInput } from '../types';
 
-/** Fetch the signed-in user's combined profile (RPC + users row + legacy username). */
+/** Fetch the signed-in user's combined profile (RPC + users row). */
 export async function getAccountProfile(userId: string): Promise<AccountProfile> {
-  const [profileRes, userRowRes, legacyRes] = await Promise.all([
+  const [profileRes, userRowRes] = await Promise.all([
     supabase.rpc('get_user_profile'),
     supabase
       .from('users')
       .select('phone, created_at')
       .eq('id', userId)
       .maybeSingle(),
-    supabase
-      .from('profiles')
-      .select('username')
-      .eq('id', userId)
-      .maybeSingle(),
   ]);
 
   if (profileRes.error) throw profileRes.error;
   if (userRowRes.error) throw userRowRes.error;
-  if (legacyRes.error) throw legacyRes.error;
 
   const rpcRow = profileRes.data?.[0];
   if (!rpcRow) {
@@ -44,8 +38,6 @@ export async function getAccountProfile(userId: string): Promise<AccountProfile>
     isActive: rpcRow.is_active,
     phone: userRowRes.data?.phone ?? null,
     createdAt: userRowRes.data?.created_at ?? null,
-    // Legacy mirror row may simply not exist for post-cutover signups.
-    legacyUsername: legacyRes.data?.username ?? null,
   };
 }
 

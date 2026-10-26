@@ -10,9 +10,9 @@
  * identities) moves between gotrue releases, so a hand-written INSERT silently
  * produces an account that cannot sign in. `auth.admin.createUser` is the
  * version-stable contract; it also fires public.handle_new_user(), which
- * creates the matching public.users + public.profiles rows for us.
+ * creates the matching public.users row for us.
  *
- * The three things this must get right, all of them load-bearing:
+ * The two things this must get right, both load-bearing:
  *
  *  1. `app_metadata.role` — has_capability() / is_super_admin() read the role
  *     from `auth.jwt()->'app_metadata'->>'role'`, NOT from public.users. Miss
@@ -23,16 +23,9 @@
  *     /dashboard (is_approved_user()), and users.role drives module grants via
  *     role_modules. The BEFORE UPDATE protect_user_privileges() trigger admits
  *     us because PostgREST presents `request.jwt.claims.role = service_role`.
- *  3. `public.profiles.role` — the legacy table. `get_my_role()` reads it, and
- *     the "Managers read all results/profiles" policies are written against
- *     get_my_role() = 'manager'. Its CHECK allows only advisor|manager.
- *     **The super_admin is 'advisor' here, deliberately.** role-sync v2 would
- *     map super_admin→manager, but the e2e super_admin account has never been
- *     through role-sync in prod: it is still pre-cutover, and
- *     results-superadmin.spec.ts asserts exactly that (it must NOT see the
- *     legacy rows; deep-linking 'Bee zhen' must resolve not-found). Mapping it
- *     to 'manager' here makes the local DB more "correct" than prod and fails
- *     that spec — which is what the first CI run did.
+ *  (A third surface — the legacy `public.profiles.role` read by get_my_role()
+ *  — was retired with that table on 2026-10-26; results read-all now rides on
+ *  view_all_results like every other table.)
  *
  * Idempotent: re-running against an already-seeded stack updates in place.
  */
@@ -67,7 +60,6 @@ const probe = createClient(SUPABASE_URL, ANON_KEY, { auth: { persistSession: fal
 /**
  * Ids/emails mirror the committed defaults in tests/fixtures/testUsers.ts —
  * specs address rows by these ids, so they must not drift.
- * `profilesRole` is the legacy-table mapping described in the header.
  */
 const USERS = [
   {
@@ -75,7 +67,6 @@ const USERS = [
     email: 'skytwech+e2e-advisor@gmail.com',
     name: 'e2e-advisor',
     role: 'advisor',
-    profilesRole: 'advisor',
     passwordEnv: 'TEST_ADVISOR_PASSWORD',
   },
   {
@@ -83,7 +74,6 @@ const USERS = [
     email: 'skytwech+e2e-manager@gmail.com',
     name: 'e2e-manager',
     role: 'manager',
-    profilesRole: 'manager',
     passwordEnv: 'TEST_MANAGER_PASSWORD',
   },
   {
@@ -91,8 +81,6 @@ const USERS = [
     email: 'skytwech+e2e-superadmin@gmail.com',
     name: 'e2e-superadmin',
     role: 'super_admin',
-    // 'advisor', NOT 'manager' — pre-cutover, per results-superadmin.spec.
-    profilesRole: 'advisor',
     passwordEnv: 'TEST_SUPER_ADMIN_PASSWORD',
   },
   /**
@@ -107,8 +95,8 @@ const USERS = [
    *     must not be the manager;
    *   - results-advisor.spec and results-superadmin.spec both assert a search
    *     for 'Bee zhen' yields ZERO rows → owner must be neither of those two.
-   * So: a real profiles row belonging to nobody the specs sign in as. It has
-   * to be a real auth user because public.profiles.id FKs auth.users(id).
+   * So: a real users row belonging to nobody the specs sign in as. It has to
+   * be a real auth user because public.users.id FKs auth.users(id).
    *
    * Its email deliberately contains no 'e2e' — manage-accounts.spec searches
    * that string and asserts on the accounts it surfaces.
@@ -118,7 +106,6 @@ const USERS = [
     email: 'legacy-owner@kopistudio.invalid',
     name: 'Legacy Owner',
     role: 'advisor',
-    profilesRole: 'advisor',
     passwordEnv: 'TEST_LEGACY_OWNER_PASSWORD',
     // Never signs in; no storageState is minted for it.
     skipSignInProbe: true,
@@ -126,7 +113,7 @@ const USERS = [
 ];
 
 /** The legacy "Bee zhen" fixture → the Keane stand-in above. results.user_id
- *  FKs to profiles, not users. */
+ *  FKs to public.users. */
 const BEE_ZHEN_RESULT_ID = '883d2eca-e09a-4dc8-957c-b1a84bf15e5d';
 const RESULT_OWNER_ID = '5e0ac7d1-0b17-4d3e-9f2a-6c1d5e8a4b70';
 
@@ -175,14 +162,6 @@ async function applyRoles(user) {
     })
     .eq('id', user.id);
   if (usersError) throw new Error(`[seed-auth-users] users ${user.email}: ${usersError.message}`);
-
-  const { error: profilesError } = await admin
-    .from('profiles')
-    .update({ role: user.profilesRole, full_name: user.name, email: user.email })
-    .eq('id', user.id);
-  if (profilesError) {
-    throw new Error(`[seed-auth-users] profiles ${user.email}: ${profilesError.message}`);
-  }
 }
 
 /**
