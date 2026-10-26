@@ -26,6 +26,7 @@ dist-ssr
 # Claude Code MCP configuration (contains secrets)
 .clauderc
 .mcp.json
+.mcp.json.bak*
 
 # Local secrets — browser MCP auth, ad-hoc credentials (NEVER commit)
 .env.secrets
@@ -87,3 +88,7 @@ tmp/
 .env
 backups/
 .vercel
+
+# Supabase CLI local cache + ad-hoc schema dumps
+supabase/.temp/
+supabase/schema*.sql
