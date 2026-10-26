@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.15"
   }
   public: {
     Tables: {
@@ -728,36 +728,6 @@ export type Database = {
           },
         ]
       }
-      profiles: {
-        Row: {
-          created_at: string
-          email: string
-          full_name: string | null
-          id: string
-          role: string
-          updated_at: string
-          username: string
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          full_name?: string | null
-          id: string
-          role?: string
-          updated_at?: string
-          username: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          full_name?: string | null
-          id?: string
-          role?: string
-          updated_at?: string
-          username?: string
-        }
-        Relationships: []
-      }
       projected_cash_values: {
         Row: {
           age: number
@@ -911,7 +881,7 @@ export type Database = {
             foreignKeyName: "results_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -1125,7 +1095,6 @@ export type Database = {
           role: string
         }[]
       }
-      get_my_role: { Args: never; Returns: string }
       get_user_modules: {
         Args: { p_user_id: string }
         Returns: {
