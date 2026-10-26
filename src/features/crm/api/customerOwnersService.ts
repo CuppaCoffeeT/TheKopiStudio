@@ -9,9 +9,9 @@
  *
  * Only called for viewers who hold `view_all_clients`; a solo advisor owns
  * every row they can see, so the column (and this lookup) never mount for them.
- * `public.users` is world-readable to authenticated users (RLS `users_select`
- * = true), so a foreign owner's name resolves even though their CUSTOMERS are
- * RLS-hidden from a plain advisor.
+ * RLS `users_select` admits view_all_clients holders to every users row (since
+ * 2026-10-26; before that it was `true` for any signed-in account), so the
+ * owner names resolve for exactly the viewers this column mounts for.
  */
 
 import { supabase } from '@/integrations/supabase/client';

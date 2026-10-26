@@ -65,6 +65,10 @@ CREATE POLICY clients_select ON public.clients FOR SELECT TO authenticated
 
 The 5 CRM tables (`view_all_clients`) and `results` (`view_all_results`, since the 2026-10-26 cutover — its INSERT also admits the anonymous `/profiler` save). Spec: [CRM_DATA_SPINE.md](../../docs/01-system-architecture/CRM_DATA_SPINE.md).
 
+### `anon` has no table privileges (since 2026-10-26)
+
+The public key reaches no table except `INSERT` on `results`, and new tables do not grant `anon` anything by default. A table that truly needs signed-out access must `GRANT` it explicitly — and any `anon` policy must not subquery another table (it runs with anon's privileges; see supabase/lessons.md).
+
 ### Anti-patterns
 
 ```sql

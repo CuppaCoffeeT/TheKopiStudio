@@ -43,7 +43,7 @@ The three sanctioned patterns in `.claude/rules/rls-policy.md` don't fit a multi
 {table}_delete:  USING ((SELECT auth.uid()) = user_id)
 ```
 
-Writes stay **owner-only** (manager read-only — PRD Open Question #1; reversible later by changing one policy per table). No hardcoded role lists — read-all rides on `has_capability()`. Every function call is `(SELECT …)`-wrapped (initplan caching). Policy names: `{table}_{cmd}`. `results` adopted Pattern D at the 2026-10-26 cutover (via `view_all_results`), with one deliberate addition: INSERT also admits the anonymous shape (`user_id IS NULL AND client_id IS NULL`) for the public `/profiler` wizard's signed-out save, and owned writes may only link `client_id` to the caller's own client.
+Writes stay **owner-only** (manager read-only — PRD Open Question #1; reversible later by changing one policy per table). No hardcoded role lists — read-all rides on `has_capability()`. Every function call is `(SELECT …)`-wrapped (initplan caching). Policy names: `{table}_{cmd}`. `results` adopted Pattern D at the 2026-10-26 cutover (via `view_all_results`), with one deliberate addition: INSERT also admits the anonymous shape (`user_id IS NULL AND client_id IS NULL`) for the public `/profiler` wizard's signed-out save — as its own subquery-free `results_insert_anon` policy, because anon holds no SELECT on `clients` (supabase/lessons.md 2026-10-26) — and owned writes may only link `client_id` to the caller's own client.
 
 ## 🎫 Capabilities (seeded in the CRM migration)
 
@@ -59,7 +59,7 @@ Template roles `management`/`supervisor` get nothing (donor-codebase artifacts).
 
 Migration: `supabase/migrations/20260611_165020_harden_users_rls.sql`. The foundation migration left `public.users` with one permissive policy (`"Authenticated can CRUD users"` USING(true)/WITH CHECK(true)) — any signed-in user could UPDATE any row's `role`/`is_approved`/`is_active` and self-elevate (module access + approval gating read those columns). Two layers fix it:
 
-1. **Per-command policies**: `users_select` USING(true) (names needed app-wide) · `users_update` self-only (`(SELECT auth.uid()) = id`, USING + WITH CHECK) · `users_insert`/`users_delete` require `(SELECT public.is_super_admin())`.
+1. **Per-command policies**: `users_select` own row OR `view_all_clients` OR `manage_accounts` (was USING(true) until 2026-10-26 — open `/signup` made that a staff-directory leak to any confirmed stranger) · `users_update` self-only (`(SELECT auth.uid()) = id`, USING + WITH CHECK) · `users_insert`/`users_delete` require `(SELECT public.is_super_admin())`.
 2. **Guard trigger** `public.protect_user_privileges()` (BEFORE UPDATE, SECURITY DEFINER, `search_path = ''`): raises `42501` when `role`/`is_approved`/`is_active`/`is_deleted` change, unless the caller is (a) a direct postgres/migration session (`request.jwt.claims` unset), (b) `service_role` claims — the role-sync path, or (c) a super_admin JWT. Needed because RLS is row-level only: `users_update` legitimately allows self-row updates, so without the trigger a user could still flip their OWN role.
 
 **Cross-user role/approval changes flow exclusively through the `role-sync` edge function** (service role): `users_update` is self-only, so even a super_admin's direct cross-row UPDATE matches 0 rows (disclosed semantic, Execution Log P2). Signup stays intact — `handle_new_user()` is SECURITY DEFINER owned by the table owner (bypasses RLS) and the guard is UPDATE-only; no `FORCE ROW LEVEL SECURITY`.

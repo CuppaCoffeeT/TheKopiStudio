@@ -75,6 +75,7 @@ export function EmailComposeForm({
 
   return (
     <form
+      method="post"
       className={cn('flex flex-col gap-3', className)}
       style={{ fontFamily: 'var(--font-sans)' }}
       onSubmit={(e) => {

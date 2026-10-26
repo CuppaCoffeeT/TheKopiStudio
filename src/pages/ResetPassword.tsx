@@ -113,6 +113,7 @@ export default function ResetPassword() {
       footer={footer}
     >
       <form
+        method="post"
         onSubmit={handleSubmit}
         className="mt-5 flex flex-col gap-4 border-t border-[color:var(--border-soft)] pt-5"
       >

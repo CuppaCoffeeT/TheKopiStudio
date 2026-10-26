@@ -2,7 +2,7 @@
 
 Workspace: `supabase/` (migrations, RLS, triggers, edge functions)
 
-Last Updated: 2026-07-29
+Last Updated: 2026-10-26
 
 ---
 
@@ -29,3 +29,9 @@ Last Updated: 2026-07-29
 **Fix**: None available — the rows are gone. Evidence they were all test residue survives the loss: every name matched the machine pattern `E2E-<Suite>-<browser>-r<n>-<epoch-ms>`, and all three child tables fell to exactly 0, which could only happen if no non-E2E parent existed (the WHERE clause would have spared a real customer and left their children behind).
 
 **How to apply**: On this project, treat every destructive statement as irreversible. BEFORE any DELETE/UPDATE touching more than a handful of prod rows, dump the target set first — `SELECT` the rows and write the JSON to a file via the MCP result, or `supabase db dump` — then delete. Confirming *scope* is not the same as having a *safety net*; both are required. Root cause of the residue itself: the Playwright suite writes to the live production database (residue dating to 2026-06-12), so CI should be pointed at a separate project/branch — that also removes the shared-`e2e-advisor`-role race that reddened CI the same day.
+
+## 2026-10-26 — Revoking a table privilege broke a policy subquery on ANOTHER table
+**What happened**: `revoke all on all tables in schema public from anon` (keeping only `INSERT` on `results`) made every anonymous `/profiler` save fail with `permission denied for table clients` — on prod, for ~1 minute, caught by the REST probe straight after applying.
+**Root cause**: the `results_insert` policy (`TO anon, authenticated`) contained `EXISTS (SELECT … FROM public.clients …)`. A policy's subquery runs with the CALLER's privileges, so it needs SELECT on `clients` even when the short-circuited branch never matters for that caller.
+**Fix**: split the policy by role — `results_insert_anon` (no subquery) + `results_insert` for `authenticated` (`20261026171703_split_results_insert_anon`).
+**How to apply**: before revoking a role's table privileges, grep `pg_policies.qual/with_check` of every policy that role can hit for subqueries into the revoked tables. After any grant/policy change, re-run the anon REST probe (insert + select) before calling it done.

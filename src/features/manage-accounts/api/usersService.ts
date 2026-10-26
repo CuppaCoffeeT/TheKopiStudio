@@ -1,7 +1,8 @@
 /**
  * Users API — single supabase access layer for the Manage Accounts list.
  *
- * Reads `public.users` DIRECTLY (the `users_select` policy allows it) —
+ * Reads `public.users` DIRECTLY (`users_select` admits manage_accounts holders —
+ * manager + super_admin, the only roles this page mounts for) —
  * NEVER via the `get_all_users()` RPC, which is super_admin-gated and
  * silently returns 0 rows for managers (PRD-verified).
  *
