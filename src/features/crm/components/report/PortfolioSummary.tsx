@@ -17,15 +17,13 @@
 
 import { describeIlpExclusion } from '../../lib/ilpExclusion';
 import type { PortfolioTotals } from '../../lib/financeReport';
+import { money } from '../../planning/lib/format';
 
 interface PortfolioSummaryProps {
   totals: PortfolioTotals;
   /** Pre-formatted generation timestamp (SG clock — the page owns the clock). */
   generatedAt: string;
 }
-
-/** Legacy display wrapper (Reports.jsx:45,63,67,74,83). */
-const money = (value: number) => `$${Math.round(value).toLocaleString()}`;
 
 export function PortfolioSummary({ totals, generatedAt }: PortfolioSummaryProps) {
   const stats = [

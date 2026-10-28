@@ -2,21 +2,21 @@
 
 **Before building anything new, grep here.** Canonical matrix: [DESIGN_CATALOG.md](../../../docs/99-refactor/_system/DESIGN_CATALOG.md).
 
-**166 `.tsx` files across 9 groups** — counted from the filesystem on 2026-08-19. Reproduce with:
+**96 `.tsx` files across 8 groups** — counted from the filesystem on 2026-10-28 (the 2026-10-28 dead-code cleanup deleted `charts/` and ~70 unused files; see [DEPRECATIONS.md](../../../docs/99-refactor/_system/DEPRECATIONS.md)). Reproduce with:
 
 ```sh
 find src/components/primitives -name '*.tsx' | wc -l                 # total
-for d in charts dashboard detail form overlays shell tools ui; do    # per group
+for d in dashboard detail form overlays shell tools ui; do    # per group
   printf '%-10s %s\n' "$d" "$(find src/components/primitives/$d -name '*.tsx' | wc -l)"
 done
 ```
 
 The table below counts **every `.tsx` under the group directory, including nested
-folders** (`shell/cells`, `overlays/wizard`, `detail/dossier`,
-`detail/LineItemsEditor`). That is a file count, not an export count — several
+folders** (`shell/cells`, `detail/dossier`). That is a file count, not an export count — several
 files are internal splits that the barrel does not re-export, and several files
 export more than one component. **The barrel `index.ts` is the authoritative
-import surface**; when in doubt read it rather than this table.
+import surface**; when in doubt read it rather than this table. `detail/` and `ui/`
+have **no barrel** — import those files by deep path.
 
 All primitives consume Tailwind v4 `@theme` tokens from [src/index.css](../../index.css) —
 Instrument Serif (`--font-pixel`, headings ≥18px only) + IBM Plex Sans (`--font-sans`),
@@ -31,7 +31,7 @@ Promotion + registration history: [CHANGELOG.md](./CHANGELOG.md).
 ## Scope
 
 **Belongs**: design-system primitives — stateless, spec-backed, feature-agnostic.
-**Doesn't**: shadcn raw (`../ui/`); feature-specific components (`src/features/<x>/components/`).
+**Doesn't**: shadcn raw (`../ui/` — only `sheet.tsx` survives); feature-specific components (`src/features/<x>/components/`).
 
 ## Core rule
 
@@ -41,14 +41,13 @@ Promotion + registration history: [CHANGELOG.md](./CHANGELOG.md).
 
 | Group | `.tsx` | Import pattern | What's inside |
 |---|---|---|---|
-| **root atoms** | 3 | `@/components/primitives/Avatar` (deep) | Avatar · IconButton · StatusBadge |
-| **[shell/](./shell/)** | 46 | `@/components/primitives/shell` | AppSidebar · AppSidebarNav · AppNavDrawer · AppSidebarFooter · AppHeaderShell · AppHeaderLogo · AppHeaderMobileBar · AppHeaderUserMenu · Wordmark · Badge · Breadcrumb · Button · Card · Chip · DrawingStatusBar · EmailCategoryBadge · EmailSidebar · ExpandableDataTable · FilterBar · FilterCard · FilterDropdown · FilterPill · FloatingCTA · ImpersonationBanner · LinkedEntityPill · LoadingSkeleton · LoadingSpinner · ErrorState · NoResultsState · NotificationsBell · PageDescription · PageTitle · SanitizedHtmlProse · MarkdownProse · ScrollArea · SearchInput · SEO · TruncatedText · ViewAsSelector · AttachmentChip · AIInboxRail (exports InboxChip · SituationBar · InboxRailPanel) · cells/{DateCell · DateTimeCell · CurrencyCell · NumberCell} · internal split (not barrel-exported): ErrorStateHero |
-| **[overlays/](./overlays/)** | 22 | `@/components/primitives/overlays` | Alert · ChoiceCards · Collapsible · CommandPalette · ContextMenu · DialogCompat · Drawer · DropdownMenu · Kbd · Modal · Popover · RecipientPickerDialog · SearchableMultiSelect · SelectMenu · Tabs · Toaster · Tooltip · wizard/{WizardShell · WizardMobileDrawer · WizardStepperHeader · WizardFooter} · internal split: CommandPaletteAtoms · [RECIPES.md](./overlays/RECIPES.md) |
-| **[dashboard/](./dashboard/)** | 9 | `@/components/primitives/dashboard` | AttentionHeader · CDWProgressTimeline · CountBadge · GreetingHeader · KpiDeltaBadge · KpiIndexCard · KpiTile · NeedsAttentionPill · NumberTicker |
-| **[detail/](./detail/)** | 27 | `@/components/primitives/detail` | ActivityLogTimeline · DestructiveConfirmDialog · DetailPageFrame · PageShell · PageShellStatusPill · QuotationReferencePanel · RelatedRecordsCard · SendEmailDialog · StatusTransitionModal · TabNav · Timeline · EmailDetailHeader · EmailMessageCard · AIPanel · AIClassificationPanel · AIOverrideClassificationPanel · AIDraftReplyPanel · HistoryTrailList · dossier/{DossierPanel · DossierStatGrid · DossierRampBar · DossierKeyValueList · DossierLoadingPanel} · LineItemsEditor/{index · LineItemRow · cells/DescriptionCell · cells/NumberCell} |
-| **[form/](./form/)** | 22 | `@/components/primitives/form` | Input · Textarea · Select · Checkbox · Radio · RadioGroup · Switch · DatePicker (+ .trigger/.panel/.dropdown splits) · TimePicker (+ .trigger/.panel splits) · FileUpload · Field · Label · Progress · RichTextEditor · Stepper · EmailComposeForm · StarredMultiSelect |
-| **[ui/](./ui/)** | 17 | `@/components/primitives/ui` | DataTable · DataRow · TableHeader · SortIcon · TableCheckbox · Pagination · PageBtn · MobileListCard · EditableListCard · StatusTabs · ListPageFrame · EmailThreadRow · internal splits (not barrel-exported): DataTableRows · DataTableStates · DataRowCells · ListPageHeader · ListPageTable |
-| **[charts/](./charts/)** | 8 | `@/components/primitives/charts` | ChartShell · AreaChart · BarChart · HBarChart · ChartTooltip · ChartLoading · ChartError · LegendRow |
+| **root atoms** | 2 | `@/components/primitives/IconButton` (deep) | IconButton · StatusBadge |
+| **[shell/](./shell/)** | 34 | `@/components/primitives/shell` | AppSidebar · AppSidebarNav · AppNavDrawer · AppSidebarFooter · AppHeaderShell · AppHeaderLogo · AppHeaderMobileBar · AppHeaderUserMenu · Wordmark · Badge · Breadcrumb · Button · Card · Chip · FilterBar · FloatingCTA · ImpersonationBanner · LoadingSkeleton · LoadingSpinner · ErrorState · NoResultsState · NotificationsBell · PageDescription · PageTitle · SearchInput · SEO · ViewAsSelector · cells/DateCell · internal split (not barrel-exported): ErrorStateHero |
+| **[overlays/](./overlays/)** | 13 | `@/components/primitives/overlays` | Alert · ChoiceCards · CommandPalette · DropdownMenu · Kbd · Modal · Popover · SearchableMultiSelect · SelectMenu · Tabs · Toaster · Tooltip · internal split: CommandPaletteAtoms · [RECIPES.md](./overlays/RECIPES.md) |
+| **[dashboard/](./dashboard/)** | 5 | `@/components/primitives/dashboard` | DailyQuoteCard · GreetingHeader · KpiDeltaBadge · KpiTile · NumberTicker |
+| **[detail/](./detail/)** | 10 | `@/components/primitives/detail/<File>` (deep; no barrel) | DestructiveConfirmDialog · DetailPageFrame · PageShell · PageShellStatusPill · TabNav · dossier/{DossierPanel · DossierStatGrid · DossierRampBar · DossierKeyValueList · DossierLoadingPanel} |
+| **[form/](./form/)** | 11 | `@/components/primitives/form` | Input · Textarea · Checkbox · Radio · Switch · DatePicker (+ .trigger/.panel/.dropdown splits) · Field · Progress |
+| **[ui/](./ui/)** | 15 | `@/components/primitives/ui/<File>` (deep; no barrel) | DataTable · DataRow · TableHeader · SortIcon · TableCheckbox · Pagination · PageBtn · MobileListCard · StatusTabs · ListPageFrame · internal splits: DataTableRows · DataTableStates · DataRowCells · ListPageHeader · ListPageTable |
 | **[tools/](./tools/)** | 6 | `@/components/primitives/tools` | The chrome behind every numbered tool in `src/lib/toolRoutes` — ToolPageShell · ToolPageHeader · ToolCustomerBar (presentational) · ToolPanel · ToolFigures (ToolStatGrid · SummaryRow) · ToolSelect (+ ToolNote). See [tools/CONTEXT.md](./tools/CONTEXT.md) |
 
 ## Adoption tracker

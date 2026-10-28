@@ -22,8 +22,8 @@ import {
   retirementSumOpportunityCost,
   totalRetirementIfInvested,
 } from '../../lib/financeReport';
+import { money } from '../../planning/lib/format';
 
-const money = (value: number): string => `$${Math.round(value).toLocaleString()}`;
 
 interface ReportRetirementEconomicsProps {
   balance: number;

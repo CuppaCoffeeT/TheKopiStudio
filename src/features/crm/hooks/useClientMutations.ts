@@ -52,7 +52,8 @@ export function useCreateClient() {
       return row;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.crmClients.lists() });
+      // .all, not lists(): the ownOptions pickers must see the new customer too.
+      queryClient.invalidateQueries({ queryKey: queryKeys.crmClients.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.crmDashboard.all });
       showSuccess('Client added');
     },
@@ -91,8 +92,8 @@ export function useUpdateClient(id: string) {
       return row;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.crmClients.lists() });
-      queryClient.invalidateQueries({ queryKey: queryKeys.crmClients.detail(id) });
+      // .all also covers detail(id), signals, owners and the ownOptions pickers.
+      queryClient.invalidateQueries({ queryKey: queryKeys.crmClients.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.crmDashboard.all });
       showSuccess('Client updated');
     },
@@ -114,8 +115,8 @@ export function useSoftDeleteClient(id: string) {
       return softDeleteClient(id, user.id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.crmClients.lists() });
-      queryClient.invalidateQueries({ queryKey: queryKeys.crmClients.detail(id) });
+      // .all also covers detail(id), signals, owners and the ownOptions pickers.
+      queryClient.invalidateQueries({ queryKey: queryKeys.crmClients.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.crmDashboard.all });
       showSuccess('Client deleted');
       navigate('/clients');

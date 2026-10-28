@@ -11,8 +11,8 @@
 
 import { cpfBuildUp, type ClientCpfPlan, type CpfBuildUpLine } from '../../lib/cpfBuildUp';
 import type { CpfWithContributionsProjection } from '../../lib/cpfContributions';
+import { money } from '../../planning/lib/format';
 
-const money = (value: number): string => `$${Math.round(value).toLocaleString()}`;
 
 interface ReportCpfBuildUpProps {
   plan: ClientCpfPlan;

@@ -20,8 +20,8 @@ import { cpfCurrentTotal } from '../../lib/financeReport';
 import type { CrmClient } from '../../types';
 import { ReportCpfBuildUp } from './ReportCpfBuildUp';
 import { ReportCpfRaPanel } from './ReportCpfRaPanel';
+import { money } from '../../planning/lib/format';
 
-const money = (value: number): string => `$${Math.round(value).toLocaleString()}`;
 const moneyExact = (value: number): string => `$${value.toLocaleString()}`;
 
 interface ReportCpfProjectionProps {

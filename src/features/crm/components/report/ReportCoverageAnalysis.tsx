@@ -25,6 +25,7 @@ import {
 } from '../../lib/financeReport';
 import type { CrmPolicy } from '../../types';
 import { ReportProtectionStructure } from './ReportProtectionStructure';
+import { money } from '../../planning/lib/format';
 
 interface ReportCoverageAnalysisProps {
   summary: ClientSummary;
@@ -32,7 +33,6 @@ interface ReportCoverageAnalysisProps {
   policies: CrmPolicy[];
 }
 
-const money = (value: number): string => `$${Math.round(value).toLocaleString()}`;
 
 export function ReportCoverageAnalysis({
   summary,

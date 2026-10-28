@@ -9,8 +9,8 @@
 
 import { liquidity } from '../../lib/protectionStructure';
 import type { CrmPolicy } from '../../types';
+import { money } from '../../planning/lib/format';
 
-const money = (value: number): string => `$${Math.round(value).toLocaleString()}`;
 
 export function ReportLiquidity({ policies }: { policies: CrmPolicy[] }) {
   const { total, lines } = liquidity(policies);

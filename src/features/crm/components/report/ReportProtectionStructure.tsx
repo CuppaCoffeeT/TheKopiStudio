@@ -16,8 +16,8 @@ import {
 } from '../../lib/protectionStructure';
 import { toFloat } from '../../lib/finance';
 import type { CrmPolicy } from '../../types';
+import { money } from '../../planning/lib/format';
 
-const money = (value: number): string => `$${Math.round(value).toLocaleString()}`;
 const cell = (value: string): string => (toFloat(value) > 0 ? money(toFloat(value)) : '—');
 
 export function ReportProtectionStructure({ policies }: { policies: CrmPolicy[] }) {

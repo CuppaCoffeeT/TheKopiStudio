@@ -17,9 +17,8 @@
 import { useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { deriveJourney, type CustomerJourney } from '../lib/customerJourney';
+import { PROFILER_PATH } from '../lib/profilerEntry';
 import type { CrmClient, LinkedProfilerResult } from '../types';
-
-const PROFILER_PATH = '/profiler';
 
 export interface DetailJourney {
   /** Null until the customer resolves. */

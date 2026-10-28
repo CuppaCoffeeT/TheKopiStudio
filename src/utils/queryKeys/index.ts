@@ -11,8 +11,8 @@
  *   details()    → ['entity', 'detail']
  *   detail(id)   → ['entity', 'detail', id]
  *
- * This base ships only the foundation entities (users / people / modules /
- * notifications). Add a new entity with `createQueryKeys('entityName')` and
+ * Entities: users · profilerResults · crmClients · crmDashboard · crmPortfolio.
+ * Add a new entity with `createQueryKeys('entityName')` and
  * register it on the `queryKeys` object below.
  */
 
@@ -31,17 +31,8 @@ function createQueryKeys(entity: string) {
 }
 
 const usersKeys = createQueryKeys('users');
-const peopleBase = createQueryKeys('people');
-const modulesKeys = createQueryKeys('modules');
-const notificationsKeys = createQueryKeys('notifications');
 const profilerResultsKeys = createQueryKeys('profilerResults');
 const crmClientsBase = createQueryKeys('crmClients');
-
-const peopleKeys = {
-  ...peopleBase,
-  unapprovedUsers: () => [...peopleBase.all, 'unapproved'] as const,
-  pendingUsers: () => [...peopleBase.all, 'pending'] as const,
-};
 
 /**
  * CRM child collections (policies / interactions / bank history) nest under
@@ -63,6 +54,8 @@ const crmClientsKeys = {
    * the whole book — and so a client mutation invalidating `.all` clears it.
    */
   signals: (ids: readonly string[]) => [...crmClientsBase.all, 'signals', ids.join(',')] as const,
+  /** Prefix over every page's `signals` — for mutations that move "last contact". */
+  signalsAll: () => [...crmClientsBase.all, 'signals'] as const,
   /**
    * Owning-advisor names for ONE page of the Customers list — keyed by the
    * distinct owner ids on screen, same page-scoped shape as `signals`. Only
@@ -82,8 +75,6 @@ const crmDashboardBase = createQueryKeys('crmDashboard');
 const crmDashboardKeys = {
   ...crmDashboardBase,
   stats: () => [...crmDashboardBase.all, 'stats'] as const,
-  /** Newest saved profiler results feeding the /dashboard "Latest additions" table. */
-  recentResults: (limit: number) => [...crmDashboardBase.all, 'recent-results', limit] as const,
   /**
    * The customer-centred Overview action queue (who is waiting on you).
    * Keyed by the advisor whose book it is — the queue is own-book only, and
@@ -102,15 +93,8 @@ const crmPortfolioKeys = {
 
 export const queryKeys = {
   users: usersKeys,
-  people: peopleKeys,
-  modules: modulesKeys,
-  notifications: notificationsKeys,
   profilerResults: profilerResultsKeys,
   crmClients: crmClientsKeys,
   crmDashboard: crmDashboardKeys,
   crmPortfolio: crmPortfolioKeys,
 } as const;
-
-// ---------------------------------------------------------------------------
-// Debug / test helpers
-// ---------------------------------------------------------------------------

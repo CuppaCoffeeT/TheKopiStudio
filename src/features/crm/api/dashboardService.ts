@@ -69,11 +69,11 @@ export function computeDashboardStats(
 /** Fetch the viewer-visible book (RLS-scoped) and compute the four KPI tiles. */
 export async function getDashboardStats(): Promise<CrmDashboardStats> {
   const [clientsResult, policiesResult, interactionsResult] = await Promise.all([
+    // Count-only: an exact total, no rows shipped, no STATS_LIMIT cap.
     supabase
       .from('clients')
-      .select('id')
-      .eq('is_deleted', false)
-      .limit(STATS_LIMIT),
+      .select('id', { count: 'exact', head: true })
+      .eq('is_deleted', false),
     supabase
       .from('policies')
       .select(
@@ -95,7 +95,7 @@ export async function getDashboardStats(): Promise<CrmDashboardStats> {
   if (interactionsResult.error) throw interactionsResult.error;
 
   return computeDashboardStats(
-    clientsResult.data?.length ?? 0,
+    clientsResult.count ?? 0,
     policiesResult.data ?? [],
     (interactionsResult.data ?? []).map((row) => row.follow_up),
     getCurrentSingaporeTime(),

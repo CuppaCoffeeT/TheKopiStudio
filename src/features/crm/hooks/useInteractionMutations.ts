@@ -31,6 +31,7 @@ export function useCreateInteraction(clientId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.crmClients.detail(clientId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.crmClients.signalsAll() });
       queryClient.invalidateQueries({ queryKey: queryKeys.crmDashboard.all });
       showSuccess('Interaction logged');
     },
@@ -51,6 +52,7 @@ export function useUpdateInteraction(clientId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.crmClients.detail(clientId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.crmClients.signalsAll() });
       queryClient.invalidateQueries({ queryKey: queryKeys.crmDashboard.all });
       showSuccess('Interaction updated');
     },
@@ -71,6 +73,7 @@ export function useSoftDeleteInteraction(clientId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.crmClients.detail(clientId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.crmClients.signalsAll() });
       queryClient.invalidateQueries({ queryKey: queryKeys.crmDashboard.all });
       showSuccess('Interaction deleted');
     },

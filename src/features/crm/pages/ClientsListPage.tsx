@@ -44,6 +44,7 @@ import { useClientsList } from '../hooks/useClientsList';
 import { useCustomerSignals } from '../hooks/useCustomerSignals';
 import { useAdvisorColumn } from '../hooks/useAdvisorColumn';
 import { clientFromRow } from '../lib/clientMapping';
+import { PROFILER_PATH } from '../lib/profilerEntry';
 import { JourneyChecklist } from '../components/JourneyChecklist';
 import {
   buildCustomerRow,
@@ -55,7 +56,6 @@ import { AddCustomerChoiceModal } from '../components/modals/AddCustomerChoiceMo
 import { ClientFormModal } from '../components/modals/ClientFormModal';
 
 const ROWS_PER_PAGE = 25;
-const PROFILER_PATH = '/profiler';
 
 export default function ClientsListPage() {
   const navigate = useNavigate();

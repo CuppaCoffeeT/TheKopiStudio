@@ -154,8 +154,11 @@ export default function ClientReportPage() {
             subhead="This report didn't load."
             body="The client and their policies could not be read. Check your connection and try again."
             onRetry={() => {
+              // Every query `failed` checks — retrying only some leaves the error up.
               void client.refetch();
               void policies.refetch();
+              void interactions.refetch();
+              void bankHistory.refetch();
             }}
           />
         )}

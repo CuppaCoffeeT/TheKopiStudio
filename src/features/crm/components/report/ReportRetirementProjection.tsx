@@ -19,8 +19,8 @@ import { toFloat } from '../../lib/finance';
 import { currentHoldingsTotal, heroTotals } from '../../lib/financeReport';
 import type { CrmBankRecord, CrmClient, CrmPolicy } from '../../types';
 import { ReportRetirementEconomics } from './ReportRetirementEconomics';
+import { money } from '../../planning/lib/format';
 
-const money = (value: number): string => `$${Math.round(value).toLocaleString()}`;
 const moneyExact = (value: number): string => `$${value.toLocaleString()}`;
 /** Legacy `parseInt(v || 0).toLocaleString()` cells — truncate, never round. */
 const moneyTrunc = (value: string): string => `$${Math.trunc(toFloat(value)).toLocaleString()}`;

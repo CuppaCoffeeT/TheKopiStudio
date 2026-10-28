@@ -19,15 +19,20 @@ import { listInteractionsByClient } from '../api/interactionsService';
 import { listLinkedResultsByClient } from '../api/linkedResultsService';
 import { listPoliciesByClient } from '../api/policiesService';
 
+/** Just the client row — same key as `useClientDetail().client`, so they share a cache entry. */
+export function useClient(id: string | undefined) {
+  return useQuery({
+    queryKey: queryKeys.crmClients.detail(id ?? ''),
+    queryFn: () => getClientById(id ?? ''),
+    enabled: Boolean(id),
+  });
+}
+
 export function useClientDetail(id: string | undefined) {
   const clientId = id ?? '';
   const enabled = Boolean(id);
 
-  const client = useQuery({
-    queryKey: queryKeys.crmClients.detail(clientId),
-    queryFn: () => getClientById(clientId),
-    enabled,
-  });
+  const client = useClient(id);
 
   const policies = useQuery({
     queryKey: queryKeys.crmClients.policies(clientId),

@@ -28,7 +28,7 @@ import { NoResultsState } from '@/components/primitives/shell/NoResultsState';
 import { useAuth } from '@/contexts/AuthContext';
 import type { ActivityTool } from '@/lib/activityLog';
 import { CUSTOMER_PARAM } from '@/lib/toolRoutes';
-import { useClientDetail } from '../../hooks/useClientDetail';
+import { useClient } from '../../hooks/useClientDetail';
 import { useLogToolOpen } from '../../hooks/useLogToolOpen';
 import { clientFromRow } from '../../lib/clientMapping';
 import { EMPTY_CLIENT } from '../../components/modals/client/clientFormModel';
@@ -88,7 +88,7 @@ export function PlanningToolFrame({
   const { user } = useAuth();
 
   const customerId = params.get(CUSTOMER_PARAM) || null;
-  const { client } = useClientDetail(customerId ?? undefined);
+  const client = useClient(customerId ?? undefined);
 
   const row = client.data ?? null;
   const model = row ? clientFromRow(row) : null;
