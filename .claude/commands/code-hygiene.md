@@ -31,7 +31,7 @@ Check for `.cursorignore`, `.cursor/`, `.clauderc`, or config folders for tools 
 Root should only contain `CLAUDE.md` and `README.md`. Any other `.md` belongs in `docs/` or should be deleted.
 
 ### 1.6 One-off scripts
-Check for `.ps1`, `.cmd`, `.sh` files in root (except `deploy-edge-functions.sh` which is the valid deploy script).
+Check for `.ps1`, `.cmd`, `.sh` files in root (none are expected — edge functions deploy via the Supabase MCP).
 
 ### 1.7 Unexpected folders
 Valid root folders: `src/`, `docs/`, `supabase/`, `public/`, `pdf-service/`, `dist/`, `node_modules/`, `.claude/`, `.github/`, `.vscode/`, `.git/`. Flag anything else.

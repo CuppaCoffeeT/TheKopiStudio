@@ -22,7 +22,6 @@ Security policies, authentication flows, and vulnerability analysis. Covers auth
 |------|--------|
 | `AUTH_USER_ID_NORMALIZATION.md` | Auth ID consistency across public.users |
 | `DUPLICATE_USER_ACCOUNT_ISSUE_AND_PREVENTION.md` | Duplicate user detection and prevention |
-| `SEO_BLOCKING_GUIDE.md` | Preventing search engine indexing |
 | `USER_APPROVAL_WORKFLOW.md` | New user registration approval flow |
 
 RLS/capability policy for the CRM tables lives in [`../01-system-architecture/CRM_DATA_SPINE.md`](../01-system-architecture/CRM_DATA_SPINE.md), not here.

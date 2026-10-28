@@ -32,7 +32,6 @@ These files are **required to stay in root** — all their tools auto-discover t
 | `components.json` | shadcn/ui config | No — shadcn CLI reads from root |
 | `index.html` | Vite entry point | No |
 | `docker-compose.yml` | pdf-service local dev | No — Docker convention |
-| `deploy-edge-functions.sh` | Supabase Edge Function deploy | No — deployment script |
 | `.mcp.json` | MCP server config (gitignored) | No — Claude Code reads from root |
 | `.env` / `.env.local` | Environment variables (gitignored) | No |
 | `.gitignore` / `.github/` | Git config | No |

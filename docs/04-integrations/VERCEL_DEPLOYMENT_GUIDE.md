@@ -11,7 +11,6 @@ The portal is hosted on Vercel under the **YOUR-TEAM** team. Production domain: 
 
 ## 📚 Related Documentation
 
-- [EDGE_FUNCTION_DEPLOYMENT_GUIDE.md](./EDGE_FUNCTION_DEPLOYMENT_GUIDE.md) — Supabase edge function deploys (backend tier)
 - [PDF_SERVICE_RAILWAY_DEPLOYMENT_GUIDE.md](./PDF_SERVICE_RAILWAY_DEPLOYMENT_GUIDE.md) — PDF microservice (Railway, not Vercel)
 - [MCP_DB_ACCESS.md](./MCP_DB_ACCESS.md) — DB access from the deployed app
 - Root `vercel.json` — SPA rewrite (all routes → `/index.html`)

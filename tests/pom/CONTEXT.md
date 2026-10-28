@@ -13,7 +13,6 @@ Per-page interaction wrappers + cross-cutting UI helpers. Specs import these ins
 |------|---------|
 | `LoginPage.ts` | Login flow wrapper (used by storageState seeding + ad-hoc specs) |
 | `QuotationCreatePage.ts` | Quotation creation flow — multi-step form helpers |
-| `responsiveTabs.ts` | `switchResponsiveTab(page, prefix, value)` — handles desktop Tabs + mobile Select; required for any module using shared `ResponsiveTabsList` |
 
 ## Before working here
 

@@ -22,8 +22,6 @@ This app ships **four** feature folders under `src/features/`. Every row below w
 
 | Doc | Note |
 |---|---|
-| `CLIENT_PROFILES_MODULE.md` | 2026-04-26 template-era client-profiles module — predates the CRM merge; superseded by `crm/CRM_MODULE.md` |
-| `SPATIAL_FEATURES_COORDINATE_SYSTEM.md` | 2025 PostGIS / OneMap notes — no spatial feature ships in this app |
 
 The old JLCode-portal domains (claiming · NAS · OT calculation · payslip · quotations · purchase orders · NCE · material requests · work-entry · …) were **never merged into this repo** and neither their doc folders nor their `src/features/` folders exist. A reference to any of them is template drift — delete it.
 
