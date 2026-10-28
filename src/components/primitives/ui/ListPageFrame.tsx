@@ -70,7 +70,7 @@ export interface ListPageFrameProps extends ListPageTableProps {
    * `data-testid` shared by the inline desktop primary-action button AND the
    * mobile FloatingCTA. Both are always in the DOM (one hidden per viewport), so
    * a bare `getByTestId(primaryActionTestId)` resolves to TWO nodes — tests must
-   * target the visible one (`[data-testid="…"]:visible` or
+   * target the visible one (a `:visible` CSS pseudo on the test-id selector, or
    * `.filter({ visible: true }).first()`).
    */
   primaryActionTestId?: string;

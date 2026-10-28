@@ -1,5 +1,8 @@
 /* Tailwind v4 — migrated from v3 on 2026-04-19 (W08 Phase 1). */
-@import "tailwindcss";
+/* Scan src/ only. Auto-detection also read tests/, docs/ and the legacy HTML
+   prototype, minting ~140 junk selectors (Playwright `:visible` strings, zinc/
+   navy-era doc classes) — 16 KB of CSS and 21 build warnings. 2026-10-28. */
+@import "tailwindcss" source("../src");
 
 /* Legacy plugins used across the app. */
 @plugin "tailwindcss-animate";
