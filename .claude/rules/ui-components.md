@@ -7,7 +7,7 @@ paths:
 
 ## Summary
 
-Prefer the existing `DatePicker` and `SearchableMultiSelect` components (currently in `@/components/primitives/`) over hand-rolled equivalents. The legacy shadcn-style equivalents at `@/components/ui/date-picker` and `@/components/ui/searchable-select` are deprecated. Portal rendering inside Dialogs is component-specific: Radix `Select` / `DropdownMenu` Portal-render correctly, but `SearchableMultiSelect` MUST NOT use Portal (iOS Safari touch event blocking).
+Prefer the existing `DatePicker` and `SearchableMultiSelect` components (currently in `@/components/primitives/`) over hand-rolled equivalents. The legacy shadcn-style equivalents at `@/components/ui/date-picker` and `@/components/ui/searchable-select` were deleted 2026-10-28 (all of `src/components/ui/` except `sheet.tsx`). Single-select is `SelectMenu` (`@/components/primitives/overlays`). Portal rendering inside Dialogs is component-specific: Radix `Select` (`SelectMenu`) / `DropdownMenu` Portal-render correctly, but `SearchableMultiSelect` MUST NOT use Portal (iOS Safari touch event blocking).
 
 ## Detailed Patterns
 
@@ -18,8 +18,7 @@ Prefer the existing `DatePicker` and `SearchableMultiSelect` components (current
 import { DatePicker } from '@/components/primitives/form';
 <DatePicker value={date} onChange={setDate} placeholder="Select date" />
 
-// ⚠ DEPRECATED — legacy ui/ wrapper (kept for unmigrated callsites)
-import { DatePicker } from '@/components/ui/date-picker';
+// ❌ GONE — `@/components/ui/date-picker` was deleted 2026-10-28
 
 // ❌ FORBIDDEN in new code — Inline Popover+Calendar pattern
 <Popover><PopoverTrigger>...</PopoverTrigger><PopoverContent><Calendar ... /></PopoverContent></Popover>
@@ -35,7 +34,7 @@ import { DatePicker } from '@/components/ui/date-picker';
 // ✅ CORRECT — primitive (handles single + multi via discriminator)
 import { SearchableMultiSelect, type SMSOption } from '@/components/primitives/overlays';
 
-// ⚠ DEPRECATED — `@/components/ui/searchable-select` (kept for unmigrated callsites)
+// ❌ GONE — `@/components/ui/searchable-select` was deleted 2026-10-28
 // ❌ FORBIDDEN — hand-rolling Popover + Command per callsite
 ```
 
@@ -46,9 +45,9 @@ import { SearchableMultiSelect, type SMSOption } from '@/components/primitives/o
 
 | Component | Portal? | Why |
 |---|---|---|
-| Radix `Select` (`SelectPrimitive.Portal`) | ✅ Required | Avoids clipping by Dialog `overflow: hidden`; Portal works with `react-remove-scroll` for native Select rows |
+| Radix `Select` (`SelectPrimitive.Portal`, inside `SelectMenuContent`) | ✅ Required | Avoids clipping by Dialog `overflow: hidden`; Portal works with `react-remove-scroll` for native Select rows |
 | Radix `DropdownMenu` (`DropdownMenuPrimitive.Portal`) | ✅ Required | Same as Select |
-| `SearchableMultiSelect` / `ui/searchable-select` | ❌ **Forbidden** | Portal-rendered Popover content sits outside Radix Dialog's `react-remove-scroll` shard → iOS Safari blocks touch events on options. Verified 2026-03-20. Fix clipping at the container level instead. |
+| `SearchableMultiSelect` | ❌ **Forbidden** | Portal-rendered Popover content sits outside Radix Dialog's `react-remove-scroll` shard → iOS Safari blocks touch events on options. Verified 2026-03-20. Fix clipping at the container level instead. |
 | Other custom `Popover`+content compositions | Case-by-case | Default to no Portal for combobox patterns; use Portal only when the content has no touch interactions inside Dialog. |
 
 ```typescript

@@ -29,7 +29,7 @@ List every importer, the route, any shared component the module owns, and whethe
 - Delete any thin `src/pages/<X>.tsx` route shell the module created (route entries normally live in `src/features/<module>/pages/`).
 
 ### 3. Remove query-key entity
-Remove the module's entity block **and its `Filters` type** from `src/utils/queryKeys.ts`.
+Remove the module's entity block **and its `Filters` type** from `src/utils/queryKeys/index.ts`.
 
 ### 4. Database (confirm with user before destructive SQL)
 Write a migration `supabase/migrations/YYYYMMDD_HHMMSS_remove_<module>.sql`. Run in **FK-safe order**:
@@ -69,5 +69,5 @@ Report: what was removed, what was soft-archived vs hard-dropped (and the confir
 
 - `docs/06-operations/MODULE_COMPLIANCE_CHECKLIST.md` (deletion reverse-checklist — authority) · `.claude/commands/create-module.md` · `.claude/commands/check-module.md`
 - `docs/01-system-architecture/canonical-page-patterns/CANONICAL_FEATURE_FOLDER.md` (folder shape + `shared/<domain>/` promotion lane) · `.dependency-cruiser.cjs` (`no-stray-domain-components`)
-- `src/components/shared/CONTEXT.md` (update when a shared surface is deleted) · `src/utils/queryKeys.ts` (remove entity block)
+- `src/components/shared/CONTEXT.md` (update when a shared surface is deleted) · `src/utils/queryKeys/index.ts` (remove entity block)
 - `.claude/rules/code-hygiene.md` (preserve debugging history) · `.claude/rules/rls-policy.md`

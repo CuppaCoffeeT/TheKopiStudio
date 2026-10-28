@@ -2,7 +2,7 @@
 
 Append-only. Newest at the bottom. Format authority: [DECISIONS_LESSONS_PATTERN.md](/Volumes/YourVolume/META_FOLDER_STRUCTURE/DECISIONS_LESSONS_PATTERN.md).
 
-Last Updated: 2026-09-07 (fill() appends into a focus-rewritten input; the Activity tab is never empty; a masked run reads zeros — see the 2026-09-07 entries)
+Last Updated: 2026-10-28 (bare `tsc --noEmit` checked nothing — see the 2026-10-28 entry)
 
 ---
 
@@ -293,3 +293,8 @@ run's "empty book" assertions.
 **Fix**: `tests/fixtures/privacy.ts` → `revealMaskedValues(page)` before the first `goto` of any spec that asserts on names or figures. Render-only specs stay masked on purpose (that is the first-visit state, and the masked-contrast fix is only exercised masked).
 **Generalise**: a persisted UI default is part of the fixture. When one changes, every spec that reads the screen inherits it silently.
 
+## 2026-10-28 — The tsc gate type-checked nothing for months
+**What happened**: pre-commit, pre-push and seatbelt CI all ran `npx tsc --noEmit` and stayed green while `tsconfig.app.json` had 14 type errors.
+**Root cause**: root `tsconfig.json` is a references-only shell (`"files": []`); without `-b`, tsc compiles that empty program and exits 0.
+**Fix**: every gate now runs `tsc --noEmit -p tsconfig.app.json` (+ `-p tsconfig.node.json` on pre-push/CI); the 3 surviving errors were fixed.
+**Generalise**: a gate that has never gone red has not been proven to work — break it on purpose once.

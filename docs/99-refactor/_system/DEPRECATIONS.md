@@ -1,7 +1,7 @@
 # Deprecations Log
 
 **Created**: 2026-05-25 SGT
-**Last Updated**: 2026-07-27 SGT
+**Last Updated**: 2026-10-28 SGT
 **Status**: 🟢 Production
 **Priority**: 🔴 Critical
 
@@ -20,6 +20,39 @@ Single source of truth for routes, components, hooks, and services that have bee
 ---
 
 ## Active deprecations
+
+### 2026-10-28 — Dead-code cleanup: 145 unreferenced src files + 2 edge functions
+
+`knip` reported **zero importers** for every file below — inherited AppBase template surface and pre-2a primitives that no Kopi Studio page used. Deleted outright, not replaced. **Re-create one only when a real consumer needs it**; to see the old version, read it from history (`git show a39b275^:<path>` for whole files, `git show 49a7cc4^:<path>` for files orphaned by the unused-export strip).
+
+| Area | Deleted |
+|---|---|
+| shadcn `src/components/ui/` | 53 of 54 files — everything except `sheet.tsx` (used by `AppNavDrawer`) |
+| `primitives/` root + `charts/` | `Avatar.tsx` · all of `charts/*` (`ChartShell` · `AreaChart` · `BarChart` · `HBarChart` · `ChartTooltip` · `ChartLoading` · `ChartError` · `LegendRow`) |
+| `primitives/dashboard/` | `AttentionHeader` · `CDWProgressTimeline` · `CountBadge` · `KpiIndexCard` · `NeedsAttentionPill` |
+| `primitives/detail/` | everything except `DestructiveConfirmDialog` · `DetailPageFrame` · `PageShell` · `PageShellStatusPill` · `TabNav` · `dossier/*` — incl. the `detail/index.ts` barrel, `LineItemsEditor/*`, `Timeline`, `ActivityLogTimeline`, `HistoryTrailList`, `RelatedRecordsCard`, `SendEmailDialog`, `StatusTransitionModal`, `QuotationReferencePanel`, `Email*`, `AI*Panel` |
+| `primitives/form/` | `EmailComposeForm` · `FileUpload` · `Label` · `RadioGroup` · `RichTextEditor` · `Select` · `StarredMultiSelect` · `Stepper` · `TimePicker*` |
+| `primitives/overlays/` | `Collapsible` · `ContextMenu` · `DialogCompat` · `Drawer` · `RecipientPickerDialog` · `wizard/*` |
+| `primitives/shell/` | `AIInboxRail` · `AttachmentChip` · `DrawingStatusBar` · `EmailCategoryBadge` · `EmailSidebar` · `ExpandableDataTable` · `FilterCard` · `FilterDropdown` · `FilterPill` · `LinkedEntityPill` · `MarkdownProse` · `SanitizedHtmlProse` · `ScrollArea` · `TruncatedText` · `cells/{CurrencyCell,DateTimeCell,NumberCell,index}` |
+| `primitives/ui/` | `EditableListCard` · `EmailThreadRow` · the `ui/index.ts` barrel |
+| hooks | `use-mobile` · `useEditableCard` · `useMediaQuery` · `usePendingUserCount` |
+| lib | `pagination.ts` · `supabase/typed-client.ts` · `design/emailCategoryTones.ts` |
+| utils | `databaseErrorHandler` · `resumableUpload` · `threadDateFormat` · `numberFormatter` · `textTruncation` |
+| Edge functions | `supabase/functions/pdf-generation` · `supabase/functions/resend-webhook` (undeployed) |
+
+**Sub-exports removed from surviving files**: `Card`'s `CardHeader`/`CardContent`/`CardFooter` · `SensitiveMoney`/`SensitiveCount` · `SelectMenuGroup`/`Label`/`Separator` + the shadcn-compat `Select*` aliases in `SelectMenu.tsx` · `DropdownMenuGroup`/`Sub`/`RadioGroup` · `PopoverAnchor` · `PageShellSideRail` · `mapStatusCodeToVariant` · `Tooltip`/`TooltipTrigger` from `primitives/overlays/Tooltip.tsx`.
+
+**Surviving equivalents**: single-select → `overlays/SelectMenu` · bottom/side sheet → `@/components/ui/sheet` · `detail/` and `ui/` primitives → deep-import by file (no barrels).
+
+**Commits**: `a39b275` (files + edge functions) · `49a7cc4` (unused exports + the files they orphaned).
+
+**Doc sweep (same day)**: inventories (`primitives/CONTEXT.md`, `PRIMITIVES.md`, hooks/utils CONTEXT, `lib/README.md`), rules, commands and the canonical page patterns. Dated program history (`workflows/*`, `05-implementation/completed/*`, design catalogs, CHANGELOG / lessons / decisions) left verbatim.
+
+**Verification** — zero import hits in `src/` + `tests/` (JSDoc prose mentions are history and may stay):
+
+```bash
+grep -rnE "from '@/(components/primitives/(charts|Avatar|overlays/(Drawer|wizard))|components/ui/[a-rt-z]|lib/supabase/typed-client)" src/ tests/ --include="*.ts" --include="*.tsx"
+```
 
 ### 2026-07-25 — Top masthead + its desktop bar (Kopi Studio 2a redesign, P3)
 

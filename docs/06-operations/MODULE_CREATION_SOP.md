@@ -1,7 +1,7 @@
 # Module Creation SOP
 
 **Created**: 2026-05-30 SGT
-**Last Updated**: 2026-05-31 SGT
+**Last Updated**: 2026-10-28 SGT
 **Status**: 🟢 Production
 **Priority**: 🔴 Critical
 **Supersedes**: 2026-03-23 MODULE_CREATION_SOP (pre-refactor, 33KB stale)
@@ -22,7 +22,7 @@ Every page is exactly ONE of six shapes. **Run in order, first match wins:** rou
 |---|---|---|
 | LIST | `ListPageFrame` | `features/<slug>/pages/<Slug>List.tsx` |
 | DETAIL | `DetailPageFrame` | `features/<slug>/pages/<Slug>Detail.tsx` |
-| DASHBOARD | `AppHeaderShell` + `KpiTile`/`ChartShell` | `features/<slug>-dashboard/` |
+| DASHBOARD | `AppHeaderShell` + `KpiTile` (no chart primitives — `charts/*` deleted 2026-10-28) | `features/<slug>-dashboard/` |
 | FORM | `Field` rows in `Modal`/`Dialog` | `features/<slug>/pages/<Slug>Create.tsx` |
 | SETTINGS | `AppHeaderShell` + `TabNav` | `features/<slug>-settings/` |
 | TOOL | `AppHeaderShell` + bespoke | `features/<slug>/pages/<Slug>Page.tsx` |
@@ -86,7 +86,7 @@ Access is **module-path based via `useAuth().modules`, never role strings** ([mo
 
 Build order keys → service → hooks → page. [react-query.md](../../.claude/rules/react-query.md) · [query-compliance.md](../../.claude/rules/query-compliance.md) · [SUPABASE_QUERY_STANDARDS.md](../01-system-architecture/SUPABASE_QUERY_STANDARDS.md).
 
-- **`queryKeys.ts` factory** (single source of truth, no hardcoded arrays). Shape, every line `as const`: `all` → `lists()` → `list(filters)` → `details()` → `detail(id)` → `statistics()`. Filter type includes every param that changes the result set.
+- **`queryKeys` factory** (`src/utils/queryKeys/index.ts`) (single source of truth, no hardcoded arrays). Shape, every line `as const`: `all` → `lists()` → `list(filters)` → `details()` → `detail(id)` → `statistics()`. Filter type includes every param that changes the result set.
 - **Bound EVERY `.select()`** (PostgREST silently caps at 1,000 rows — a super_admin at row 1,013 once vanished): list `.range(from,to)`+`{count:'exact'}` (100/page); dropdown `.limit(5000)`; single `.single()`/`.maybeSingle()`; count `{count:'exact',head:true}`.
 - **Pagination** `from=(page-1)*100`, `to=from+99` (zero-based inclusive). Filter/search/sort in DB (`.eq`/`.or`/`.ilike`/`.order`), never JS.
 - **List hook** key `list(params)` + `placeholderData: keepPreviousData` + `isFetching` opacity fade. **Detail hook** `detail(id)` + `enabled: !!id`.
@@ -95,9 +95,9 @@ Build order keys → service → hooks → page. [react-query.md](../../.claude/
 
 ## Step 6: Components — 4-tier system
 
-**Decision (top-down, stop at first match)**: 1) primitive covers it → `@/components/primitives/<group>`; 2) new reusable + design-spec → build a primitive (`/design-prompt` first); 3) 2+ features → `src/components/shared/<domain>/`; 4) one feature → `features/<x>/components/`; 5) shadcn base / sanctioned wrapper → `@/components/ui/`. **Reuse existing shared components (`primitives/`, `ui/`, `shared/`)** — a new design system from Claude Design will replace the old primitive mandates. Inventory: [primitives/CONTEXT.md](../../src/components/primitives/CONTEXT.md).
+**Decision (top-down, stop at first match)**: 1) primitive covers it → `@/components/primitives/<group>`; 2) new reusable + design-spec → build a primitive (`/design-prompt` first); 3) 2+ features → `src/components/shared/<domain>/`; 4) one feature → `features/<x>/components/`; 5) shadcn base → `@/components/ui/` (only `sheet.tsx` survives the 2026-10-28 cleanup; add nothing there). **Reuse existing shared components (`primitives/`, `ui/`, `shared/`)** — a new design system from Claude Design will replace the old primitive mandates. Inventory: [primitives/CONTEXT.md](../../src/components/primitives/CONTEXT.md).
 
-Key imports: `Button`/`Badge`/`Card`/`PageTitle`/`PageDescription` (shell) · `Input`/`Select`/`Textarea`/`Field`/`DatePicker`/`FileUpload` (form) · `Modal`/`DestructiveConfirmDialog`/`DrawerRoot`/`Alert`/`SearchableMultiSelect`/`Tabs` (overlays) · `DataTable` (ui) · `KpiTile` (dashboard) · `showSuccess`/`showError`. **Page frames**: LIST→`ListPageFrame` (ui); DETAIL→`DetailPageFrame` (detail); TOOL/SETTINGS/custom→`AppHeaderShell` (shell). Never `DashboardHeader` in new code; all frames internalize chrome via `useViewAs()`/`useNotificationsBell()`.
+Key imports: `Button`/`Badge`/`Card`/`PageTitle`/`PageDescription` (shell) · `Input`/`Textarea`/`Field`/`DatePicker` (form) · `Modal`/`SelectMenu`/`Alert`/`SearchableMultiSelect`/`Tabs` (overlays) · `DestructiveConfirmDialog` (detail, deep import) · `DataTable` (ui) · `KpiTile` (dashboard) · `showSuccess`/`showError`. **Page frames**: LIST→`ListPageFrame` (ui); DETAIL→`DetailPageFrame` (detail); TOOL/SETTINGS/custom→`AppHeaderShell` (shell). Never `DashboardHeader` in new code; all frames internalize chrome via `useViewAs()`/`useNotificationsBell()`.
 
 **Import hygiene must be clean before close** — shared UI imported only from `primitives/`, `ui/`, or `shared/`; no cross-feature or stray-domain imports. See [MODULE_COMPLIANCE_CHECKLIST.md](./MODULE_COMPLIANCE_CHECKLIST.md) gate 3.
 

@@ -14,7 +14,7 @@ Audit `src/features/$ARGUMENTS/` (or every feature if `all`) against the canonic
 2. **Lint** — `npm run lint` → within cap (15).
 3. **Query compliance** — every `.select(` in `src/features/<x>/` has a `.range(`/`.limit(`/`.single(` (grep + eyeball; flag any unbounded select). See Gate 9.4 for the guided procedure.
 4. **RLS** — for each table the module owns: RLS enabled, a minimal authenticated policy exists, writes are capability-gated (`has_capability`), FKs reference `public.users(id)` not `auth.users`. Verify via `execute_sql` against `pg_policies` + `get_advisors(security)`. See Gate 9.8.
-5. **Component import hygiene** — the grep below returns zero: shared UI comes from `@/components/primitives/**`, `@/components/ui/**`, or `@/components/shared/**` only (no cross-feature or stray-domain imports).
+5. **Component import hygiene** — the grep below returns zero: shared UI comes from `@/components/primitives/**`, `@/components/ui/**` (only `sheet.tsx` survives the 2026-10-28 cleanup), or `@/components/shared/**` only (no cross-feature or stray-domain imports).
 6. **Drift** — `npm run drift:check` → 0 net-new (no circular, no cross-feature import, no pages→features). Confirm the feature isn't a new offender. **"0 net-new" is necessary but NOT sufficient for structure** — also assert the three structural rules report **literal zero** (run the full check, then grep the rule names):
    ```bash
    npm run drift:check 2>&1 | grep -cE "no-stray-domain-components|no-pages-to-features|no-pages-import-outside-pages"   # → 0

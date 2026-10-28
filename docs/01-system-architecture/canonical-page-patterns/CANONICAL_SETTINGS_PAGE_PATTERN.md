@@ -1,7 +1,7 @@
 # Canonical Settings Page Pattern
 
 **Created**: 2026-05-30 SGT
-**Last Updated**: 2026-05-30 SGT
+**Last Updated**: 2026-10-28 SGT
 **Status**: 🟢 Production
 **Priority**: 🟡 High
 
@@ -18,9 +18,9 @@ Router-style doc — links to real adopters + primitives. Does not duplicate cod
 | Layer | Use | Never |
 |-------|-----|-------|
 | Page frame | `AppHeaderShell` (`@/components/primitives/shell`) | hand-rolled header + `<main>` |
-| Tab strip | `Tabs` + `TabsList` + `TabsTrigger` + `TabsContent` (`@/components/primitives/overlays`) · or `StatusTabs` (`@/components/primitives/ui`) for count-style segments | raw button row + manual active state |
-| Tab panel body | `DataTable` (ref-data list) or `Field`+`Input`/`Select` (config form) | bespoke `<table>` / native inputs |
-| Ref-data CRUD modals | sanctioned `ui/quotation-ref-data-modals` (`JobTypeFormModal` · `ClientWorkTypeFormModal` · `AreaTypeFormModal`) | inline dialogs duplicated per feature |
+| Tab strip | `Tabs` + `TabsList` + `TabsTrigger` + `TabsContent` (`@/components/primitives/overlays`) · or `StatusTabs` (`@/components/primitives/ui/StatusTabs`, deep import) for count-style segments | raw button row + manual active state |
+| Tab panel body | `DataTable` (ref-data list) or `Field`+`Input`/`SelectMenu` (config form) | bespoke `<table>` / native inputs |
+| Ref-data CRUD modals | `Modal` (`@/components/primitives/overlays/Modal`) in the owning feature — the AppBase `ui/quotation-ref-data-modals` no longer exist (`src/components/ui/` holds only `sheet.tsx` since 2026-10-28) | inline dialogs duplicated per feature |
 | Toggle row | `Switch` (`@/components/primitives/form`) | native checkbox |
 | Card surface | `Card` (`@/components/primitives/shell`) | `@/components/ui/card` |
 
@@ -58,7 +58,7 @@ Start from **QuotationSettingsPage.tsx** — clean `AppHeaderShell` + tabs + ref
 ## Rules
 
 - Tab state is **controlled** by the page (`useState`), passed via `value` + `onValueChange`. The tab primitive does not own it.
-- Inline-create / edit dialogs for shared reference data (job types, work types, area types) come from sanctioned `ui/quotation-ref-data-modals` — do not re-implement per feature (avoids cross-feature import + duplication).
+- Inline-create / edit dialogs for shared reference data (job types, work types, area types) live once in the owning feature (or `shared/` if 2+ features use them) — do not re-implement per feature (avoids cross-feature import + duplication).
 - Each settings mutation uses `showSuccess`/`showError` and invalidates its ref-data query key.
 - A SETTINGS page renders no record-hero and no KPI row — if you need those, it's a DETAIL or DASHBOARD, not SETTINGS.
 - Keep the page component under 200 LOC; one child component per tab panel.

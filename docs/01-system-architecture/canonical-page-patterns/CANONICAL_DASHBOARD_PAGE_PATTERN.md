@@ -1,7 +1,7 @@
 # Canonical Dashboard Page Pattern
 
 **Created**: 2026-05-30 SGT
-**Last Updated**: 2026-05-30 SGT
+**Last Updated**: 2026-10-28 SGT
 **Status**: 🟢 Production
 **Priority**: 🟡 High
 
@@ -20,15 +20,14 @@ Router-style doc — links to real adopters + primitives. Does not duplicate cod
 | Page frame / header | `AppHeaderShell` (`@/components/primitives/shell`) — page-bg backdrop + `ImpersonationBanner` + kicker/breadcrumb → H1 → description | hand-rolled `<h1>` + greeting block · `DashboardHeader` / `AppHeader` (**both deleted 2026-07-25** — see [DEPRECATIONS.md](../../99-refactor/_system/DEPRECATIONS.md)) |
 | Greeting block | `GreetingHeader` (`@/components/primitives/dashboard`) | bespoke welcome text |
 | KPI tile | `KpiTile` (`@/components/primitives/dashboard`) — `prefix/suffix/delta/subtitle/icon/alert/sparkline`, count-up via bundled `NumberTicker` | ad-hoc `<Card>` + big number + hand-rolled delta badge |
-| KPI tile (2a Overview) | `KpiIndexCard` (`@/components/primitives/dashboard`) — uppercase label + brown index numeral + serif value/unit + meta line | a `KpiTile` with the icon/delta slots left empty |
 | Count-up number | `NumberTicker` (`@/components/primitives/dashboard`) | hand-rolled `useEffect` + `setInterval` |
-| Section / attention header | `AttentionHeader` (`@/components/primitives/dashboard`) | bare `<section>` + `<h2>` |
 | Module navigation | the `AppSidebar` rail + the ⌘K palette | a launcher grid on the page (removed 2026-07-25) |
 | KPI row layout | Tailwind grid (`grid grid-cols-2 md:grid-cols-4 gap-*`) wrapping `KpiTile`s | a bespoke metric-box grid |
-| Charts | `ChartShell` + `AreaChart`/`BarChart`/`HBarChart` (`@/components/primitives/charts`) | raw recharts in the page |
 | Empty / error state | `NoResultsState` · `ErrorState` (`@/components/primitives/shell`) | inline "nothing here" text |
 
-Full inventory: [PRIMITIVES.md](../design-system/PRIMITIVES.md) (verified) · [src/components/primitives/CONTEXT.md](../../../src/components/primitives/CONTEXT.md) (⚠️ last regenerated 2026-05-30, pre-Kopi).
+Full inventory: [PRIMITIVES.md](../design-system/PRIMITIVES.md) · [src/components/primitives/CONTEXT.md](../../../src/components/primitives/CONTEXT.md).
+
+> **2026-10-28**: `KpiIndexCard`, `AttentionHeader` and the whole `primitives/charts` group (`ChartShell` · `AreaChart` · `BarChart` · `HBarChart` …) were deleted as unused — no dashboard imported them. There is no chart primitive today; re-create one (via `/design-prompt`) only when a real dashboard needs a chart. See [DEPRECATIONS.md](../../99-refactor/_system/DEPRECATIONS.md).
 
 ## Shape
 
@@ -39,19 +38,17 @@ Full inventory: [PRIMITIVES.md](../design-system/PRIMITIVES.md) (verified) · [s
     <KpiTile value={open}    label="Open"    sparkline={…} />
     {/* … */}
   </div>
-  <AttentionHeader title="This week" />
-  <ChartShell><BarChart data={…} /></ChartShell>
 </AppHeaderShell>
 ```
 
-The 2a Overview at `/dashboard` is the exception: it uses **no frame**, opening with `GreetingHeader` (dateline + serif greeting) followed by a `KpiIndexCard` pair and a hairline feed table.
+The 2a Overview at `/dashboard` is the exception: it uses **no frame**, opening with `GreetingHeader` (dateline + serif greeting) followed by a hairline feed table.
 
 ## Adopter references
 
 | Adopter | File |
 |---------|------|
-| 2a Overview (`/dashboard`) | `src/features/crm/pages/DashboardHomePage.tsx` — dateline masthead + `KpiIndexCard` pair + hairline feed table |
-| CRM role dashboard (`/crm`) | `src/features/crm/pages/CrmDashboardPage.tsx` — `AppHeaderShell` + `KpiTile` row + charts |
+| 2a Overview (`/dashboard`) | `src/features/crm/pages/DashboardHomePage.tsx` — dateline masthead + hairline feed table |
+| CRM role dashboard (`/crm`) | `src/features/crm/pages/CrmDashboardPage.tsx` — `AppHeaderShell` + `CrmKpiGrid` + `Card` sections |
 
 Start from **DashboardHomePage.tsx** for the 2a Overview and **CrmDashboardPage.tsx** for a framed role dashboard. The AppBase-era adopters (drafter · supervisor · client-profiles · companies · competitor-analysis) were never merged into this repo — those paths do not exist.
 
@@ -60,14 +57,14 @@ Start from **DashboardHomePage.tsx** for the 2a Overview and **CrmDashboardPage.
 - KPI numbers load via dedicated count hooks (e.g. `useDashboardCounts`); the page is presentation only.
 - One `KpiTile` per metric; group related tiles in a single Tailwind grid. Don't nest grids.
 - Account chrome (notifications, view-as, sign-out) is mounted **once** by `AppSidebarFooter` at ≥ lg and by `AppHeaderMobileBar` below it, both wired through `useDashboardChrome` — a page must never re-mount it (W09 grep 6b lesson). Use the `NotificationsBell` / `ViewAsSelector` primitives directly only if a page genuinely needs a second instance.
-- Charts import from `primitives/charts`; never drop raw recharts/visx into the page.
+- No chart primitive exists (deleted 2026-10-28). Don't drop raw recharts/visx into a page — build the primitive first.
 - Keep the dashboard component under 200 LOC; extract each section body (KPI strip, chart block) to a child component (see `SupervisorKpiSection`).
 
 ## Anti-patterns
 
 - ❌ Bespoke metric card with inline `bg-*-100` → `KpiTile`.
 - ❌ Manual count-up with `setInterval` → `KpiTile` (bundles `NumberTicker`).
-- ❌ Hand-rolled `<svg>` charts → `primitives/charts`.
+- ❌ Hand-rolled `<svg>` charts → build a chart primitive first (`primitives/charts` was deleted 2026-10-28).
 
 ## 📚 Related Documentation
 

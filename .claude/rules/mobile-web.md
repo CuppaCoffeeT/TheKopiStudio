@@ -20,14 +20,15 @@ The single most important rule: **long multi-step forms on touch go in a fullscr
 
 ```tsx
 // ✅ CORRECT — long form on mobile → fullscreen Dialog (Radix)
-// `WizardMobileDrawer` is the canonical adopter (legacy name; internally Dialog)
+// (the former adopter `WizardMobileDrawer` was deleted 2026-10-28 as unused — no live primitive; build on Radix Dialog)
 <DialogPrimitive.Content className="fixed inset-0 z-50 flex flex-col bg-white">
   <header className="flex-shrink-0">…</header>
   <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">{form}</div>
   <footer className="flex-shrink-0">…</footer>
 </DialogPrimitive.Content>
 
-// ✅ CORRECT — short quick action → vaul Drawer (bottom sheet)
+// ✅ CORRECT — short quick action → bottom sheet (the `primitives/overlays/Drawer` wrapper was deleted 2026-10-28;
+//    the only live sheet is `@/components/ui/sheet` — re-create a Drawer primitive only when a real consumer needs it)
 <DrawerRoot><DrawerContent>{quickPickerOrFilter}</DrawerContent></DrawerRoot>
 
 // ❌ FORBIDDEN — long form in a bottom drawer
@@ -140,5 +141,5 @@ Use `Button size="lg"` (h-12) and `Input` with `h-11` override on screens primar
 
 - [docs/01-system-architecture/MOBILE_WEB_STANDARDS.md](../../docs/01-system-architecture/MOBILE_WEB_STANDARDS.md) — full spec + audit checklist
 - [.claude/rules/ui-components.md](./ui-components.md) — Portal-in-Dialog gotchas
-- [src/components/primitives/overlays/wizard/WizardMobileDrawer.tsx](../../src/components/primitives/overlays/wizard/WizardMobileDrawer.tsx) — canonical fullscreen-modal adopter
-- [src/components/primitives/overlays/Drawer.tsx](../../src/components/primitives/overlays/Drawer.tsx) — bottom drawer (quick actions only)
+- ~~`overlays/wizard/WizardMobileDrawer.tsx`~~ (fullscreen-modal adopter) and ~~`overlays/Drawer.tsx`~~ (bottom drawer) — deleted 2026-10-28 as unused; see [DEPRECATIONS.md](../../docs/99-refactor/_system/DEPRECATIONS.md)
+- [src/components/ui/sheet.tsx](../../src/components/ui/sheet.tsx) — the one live sheet (`AppNavDrawer`)

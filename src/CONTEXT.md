@@ -12,24 +12,24 @@ New code goes in `features/<name>/` (Bulletproof React), not `pages/` or `servic
 
 | Folder | Purpose | Status |
 |--------|---------|--------|
-| `features/` | 51 feature modules, each `components/hooks/api/lib/pages/` | ✅ primary |
-| `components/primitives/` | Design-system primitives, 8 groups (shell/overlays/form/detail/dashboard/charts/ui/atoms) | ✅ primary |
-| `components/ui/` | shadcn base + sanctioned domain wrappers (staff-select, contact-form…) | ✅ primary |
-| `components/shared/` | Cross-feature surfaces used by ≥2 features (cdw-spatial, nas, email…) | ✅ primary |
+| `features/` | 4 feature modules (account-settings · crm · manage-accounts · profiler), each `components/hooks/api/lib/pages/` | ✅ primary |
+| `components/primitives/` | Design-system primitives, 8 groups (shell/overlays/form/detail/dashboard/tools/ui/atoms) | ✅ primary |
+| `components/ui/` | shadcn remnant — only `sheet.tsx` (used by `AppNavDrawer`); the other 53 files were deleted 2026-10-28 as unused | 🟠 vestigial |
+| `components/shared/` | Cross-feature surfaces used by ≥2 features (app-shell, auth-shell) | ✅ primary |
 | `pages/` | Thin route shells re-exporting `features/<name>/pages/` | 🟠 thinned |
 | `services/` | Draining into `features/<x>/api/` — add nothing here | 🟠 drain target |
-| `hooks/` | Cross-feature hooks (useAuth, useURLPagination, useViewAs…) | ✅ stable |
+| `hooks/` | Cross-feature hooks (useURLPagination, useViewAs, useDebounce…) | ✅ stable |
 | `utils/` | Pure fns (timezoneUtils, queryKeys, toastHelper) | ✅ stable |
-| `lib/` | Infra (supabase client, queryClient, ThemeProvider) | ✅ stable |
+| `lib/` | Non-UI helpers (design tokens, ThemeProvider, toolRoutes, masking, cn) | ✅ stable |
 | `types/` `contexts/` `integrations/` | Global types · React Context providers · Supabase setup | ✅ stable |
 
-**Component placement:** primitive exists → `primitives/<group>/` · ≥2 features → `shared/<domain>/` · 1 feature → `features/<x>/components/` · shadcn base → `ui/`.
+**Component placement:** primitive exists → `primitives/<group>/` · ≥2 features → `shared/<domain>/` · 1 feature → `features/<x>/components/` · (`ui/` takes no new files).
 
 ## Before working here
 
-- State: React Query (`utils/queryKeys.ts` factory) for server, Context for UI only
+- State: React Query (`utils/queryKeys/` factory) for server, Context for UI only
 - Forms: RHF + Zod · Dates: `utils/timezoneUtils.ts` only · no raw date-fns
-- Toast: `showSuccess`/`showError` from `utils/toastHelper.ts` — no useToast
+- Toast: `showSuccess`/`showError` from `utils/toastHelper.tsx` — no useToast
 - Lists: `hooks/useURLPagination.ts` + server-side `.range()` pagination
 - Access: `useAuth()` module check, never role strings · Portals in dialogs
 - Rule detail in `.claude/rules/` (timezone, toast-system, query-compliance, react-query, module-access)

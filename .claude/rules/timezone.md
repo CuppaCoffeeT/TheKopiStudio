@@ -34,7 +34,7 @@ const dateKey = getLocalDateString(record.start_datetime);             // DB →
 | `formatDisplayDateSlashed()` | `dd/MM/yyyy` in SGT — TODO W08 |
 | `formatDisplayDateTimeSlashed()` | `dd/MM/yyyy HH:mm` in SGT — TODO W08 |
 | `formatDisplayDateShort()` | `dd/mm/yy` in SGT (e.g. "20/04/26") — **canonical cell/picker display since 2026-05-29** (`DateCell` + `DatePicker` default) |
-| `formatDisplayDateTimeShort()` | `dd/mm/yy, HH:mm` in SGT — `DateTimeCell` display since 2026-05-29 |
+| `formatDisplayDateTimeShort()` | `dd/mm/yy, HH:mm` in SGT (was the `DateTimeCell` display; that cell was deleted 2026-10-28 as unused) |
 | `formatDisplayDateUS()` | `MMM dd, yyyy` in SGT — TODO W08 |
 | `formatDisplayDateTimeUS()` | `MMM dd, yyyy HH:mm` in SGT — TODO W08 |
 | `formatMonthYear()` | `MMMM yyyy` in SGT (e.g. "April 2026") |
@@ -66,8 +66,7 @@ Rule of thumb: if the symbol **returns a string**, it probably consults the loca
 
 Components that drive `<input type="datetime-local">` or use `Date#setHours()` intentionally operate in browser-local time (to preserve what the user sees/types). These may continue to use raw `format(d, 'HH:mm')` and `format(d, 'PPP')` pending W08 design-system review:
 
-- `src/components/ui/datetime-picker.tsx` (time input value)
-- `src/components/ui/date-picker.tsx` (display format is low-risk; date-only)
+- ~~`src/components/ui/datetime-picker.tsx`~~ · ~~`src/components/ui/date-picker.tsx`~~ — deleted 2026-10-28 as unused; the live picker is `primitives/form/DatePicker`
 - Any shadcn `Popover` + `Calendar` pattern using `format(d, 'PPP')` for the preview chip
 
 ## References

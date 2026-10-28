@@ -1,5 +1,5 @@
 {
-  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "$schema": "https://unpkg.com/knip@6/schema.json",
   "entry": [
     "index.html",
     "playwright.parallel.config.ts",
@@ -19,7 +19,6 @@
   ],
   "ignoreDependencies": [
     "tailwindcss",
-    "tailwindcss-animate",
-    "@tailwindcss/typography"
+    "tailwindcss-animate"
   ]
 }

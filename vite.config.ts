@@ -52,13 +52,6 @@ export default defineConfig({
             ) {
               return "query";
             }
-            if (
-              id.includes("node_modules/@tiptap/") ||
-              id.includes("node_modules/prosemirror-") ||
-              id.includes("node_modules/dompurify/")
-            ) {
-              return "editor";
-            }
           }
         },
       },

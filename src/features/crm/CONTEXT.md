@@ -6,7 +6,7 @@ Insurance CRM (SHIPPED): customers/policies/activity/bank + dashboards + reports
 
 **Superseded (2026-07-28 → 2026-08-18):** "tools are launched FROM a customer, never from nav", and the Overview shortcut row that softened it. Both are gone: a shortcut that opens a modal before the page is a gate, and an advisor often has no customer yet. The record's own `CustomerToolLauncher` remains — it is the other direction of the same trip.
 
-**Privacy:** customer names and money are masked by default app-wide (`MaskContext` + `SensitiveName`/`SensitiveMoney`); the eye lives in the app chrome, not per page. Report pages never mask — they ARE the client-facing artifact.
+**Privacy:** customer names and money are masked by default app-wide (`MaskContext` + `SensitiveName`/`SensitiveText` from `primitives/shell/Sensitive`; the `SensitiveMoney`/`SensitiveCount` exports were removed 2026-10-28 as unused); the eye lives in the app chrome, not per page. Report pages never mask — they ARE the client-facing artifact.
 
 ## Map
 

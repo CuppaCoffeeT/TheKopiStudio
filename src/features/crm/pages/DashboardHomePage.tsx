@@ -20,7 +20,7 @@
  * WHAT THIS REPLACED (2026-07-28): a "Latest additions" record-inventory
  * feed over two index KPI cards, and the four modules that served only it
  * (`useLatestAdditions`, `LatestAdditionsTable`, `OverviewKpiRow`,
- * `lib/latestAdditions`). The `KpiIndexCard` primitive survives.
+ * `lib/latestAdditions`). `KpiIndexCard` itself was deleted 2026-10-28 (unused).
  *
  * Every figure and row is live data derived by ONE ruleset
  * (`lib/customerJourney` + `lib/customerAttention`) shared with the Customers list and the customer

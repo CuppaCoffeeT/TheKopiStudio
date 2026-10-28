@@ -6,7 +6,6 @@
 
 /* Legacy plugins used across the app. */
 @plugin "tailwindcss-animate";
-@plugin "@tailwindcss/typography";
 
 /* The app is light-pinned (Kopi Studio brand, 2026-07-25) — no `.dark` token
    block exists and nothing puts a `dark` class on the tree, so every legacy

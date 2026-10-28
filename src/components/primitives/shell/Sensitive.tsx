@@ -16,7 +16,7 @@
  */
 
 import { useMask } from '@/contexts/MaskContext';
-import { maskCount, maskMoney, maskName, maskText } from '@/lib/masking';
+import { maskName, maskText } from '@/lib/masking';
 import { cn } from '@/lib/utils';
 
 interface SensitiveProps {

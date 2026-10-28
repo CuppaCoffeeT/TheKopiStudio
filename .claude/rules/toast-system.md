@@ -28,8 +28,9 @@ import { useToast } from '@/hooks/use-toast';
 |----------|---------|
 | `showSuccess(message)` | Green success toast |
 | `showError(message)` | Red error toast |
+| `showInfo(message)` / `showWarning(message)` | Info / warning toast |
 | `showEnhancedToast(options)` | Advanced toast with custom styling |
 
 ## References
 
-- Source: `src/utils/toastHelper.ts`
+- Source: `src/utils/toastHelper.tsx`

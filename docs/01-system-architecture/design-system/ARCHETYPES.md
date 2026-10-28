@@ -1,7 +1,7 @@
 # Page Archetypes
 
 **Created**: 2026-04-22 SGT
-**Last Updated**: 2026-07-25 SGT
+**Last Updated**: 2026-10-28 SGT
 **Status**: 🟢 Production
 **Priority**: 🟡 High
 
@@ -22,13 +22,13 @@ Two shapes: the **Home Overview** (`/dashboard`) and **role/operational dashboar
 **Home Overview** — bespoke composition, no frame primitive. Top to bottom, per the 2a comp:
 
 1. **Masthead** — uppercase dateline (600 11px, tracking `.14em`) carrying one live context stat, over the Instrument Serif 36px greeting, closed by a `--border-soft` hairline.
-2. **KPI grid** — `1fr 1fr`, gap 18px. Each `KpiIndexCard`: uppercase module label left / brown serif index numeral right, then the serif 32px figure with its unit inline in 13px sans, then a 12.5px meta line. Whole tile clickable.
+2. **KPI grid** — `1fr 1fr`, gap 18px. Each KPI index card (spec only — the `KpiIndexCard` primitive was deleted 2026-10-28 as unused; the live Overview dropped the grid): uppercase module label left / brown serif index numeral right, then the serif 32px figure with its unit inline in 13px sans, then a 12.5px meta line. Whole tile clickable.
 3. **Section head** — baseline-aligned flex row, serif 22px title left + primary CTA right, closed by a hairline.
 4. **Feed table** — sits directly under the section head with **no card wrapper**.
 
-**Primitives**: `GreetingHeader` · `KpiIndexCard` · `DataRow`. The module-launcher composition it replaced (`CategoryHeader` · `ModuleCard` · `ModuleSearch`) was **deleted 2026-07-25** — module navigation is the sidebar rail plus ⌘K. `NeedsAttentionPill` · `AttentionHeader` · `CountBadge` survive with no current adopter.
+**Primitives**: `GreetingHeader` · `DataRow`. The module-launcher composition it replaced (`CategoryHeader` · `ModuleCard` · `ModuleSearch`) was **deleted 2026-07-25** — module navigation is the sidebar rail plus ⌘K. `NeedsAttentionPill` · `AttentionHeader` · `CountBadge` · `KpiIndexCard` were deleted 2026-10-28 (no adopter).
 
-**Role dashboard**: `AppHeaderShell` + `KpiTile` (bundles `NumberTicker` + `KpiDeltaBadge`) + `ChartShell` with `AreaChart` / `BarChart` / `HBarChart` + `ChartTooltip` / `LegendRow`.
+**Role dashboard**: `AppHeaderShell` + `KpiTile` (bundles `NumberTicker` + `KpiDeltaBadge`). No chart primitives — `charts/*` was deleted 2026-10-28 as unused; re-create via `/design-prompt` when a dashboard needs one.
 
 **Live**: `/dashboard` (`crm/pages/DashboardHomePage.tsx`) · `/crm` (`crm/pages/CrmDashboardPage.tsx`).
 Full rules: [CANONICAL_DASHBOARD_PAGE_PATTERN.md](../canonical-page-patterns/CANONICAL_DASHBOARD_PAGE_PATTERN.md).
@@ -72,13 +72,13 @@ Full rules: [CANONICAL_DETAIL_PAGE_PATTERN.md](../canonical-page-patterns/CANONI
 
 Data entry with validation, often multi-step. 2a never mocked one — derive from its parts.
 
-**Primary**: `AppHeaderShell` · `Field`-wrapped `Input` · `Textarea` · `Select` · `Checkbox` · `Radio` · `RadioGroup` · `Switch` · `DatePicker` · `TimePicker` · `FileUpload` · `Progress` · `Stepper` · `Button` primary + secondary.
+**Primary**: `AppHeaderShell` · `Field`-wrapped `Input` · `Textarea` · `SelectMenu` · `Checkbox` · `Radio` · `Switch` · `DatePicker` · `Progress` · `Button` primary + secondary. (`Select` · `RadioGroup` · `TimePicker` · `FileUpload` · `Stepper` were deleted 2026-10-28 as unused.)
 
 Inputs are the **only place white appears**: `bg-popover` `#FFFFFF`, 1px `#D9CCC0`, radius 8px, padding `10px 14px`, 400 13px. Focus is the one sanctioned exception to "focus is always a visible outline" — `border-color: brown` + `box-shadow: var(--shadow-focus)` (brown @ 12%); it must never be removed without a replacement. Labels are `--brown-text` weight 600.
 
 **On touch, long multi-step forms go in a fullscreen `Dialog`, never a bottom drawer** — see [.claude/rules/mobile-web.md](../../../.claude/rules/mobile-web.md).
 
-**Live**: the `/profiler` wizard (`overlays/wizard/WizardShell`, public, outside the app shell) · modal forms such as `ClientFormModal`.
+**Live**: the `/profiler` wizard (`tools/ToolPageShell` + feature-local `profiler/components/wizard/*`; the `overlays/wizard/*` primitives were deleted 2026-10-28) · modal forms such as `ClientFormModal`.
 Full rules: [CANONICAL_FORM_PAGE_PATTERN.md](../canonical-page-patterns/CANONICAL_FORM_PAGE_PATTERN.md).
 
 ## 5. Settings
@@ -96,7 +96,7 @@ Full rules: [CANONICAL_SETTINGS_PAGE_PATTERN.md](../canonical-page-patterns/CANO
 
 One-off utility — report generators, export tools. No fixed skeleton; intentionally bespoke. Must still compose primitives, not hand-roll UI.
 
-**Primary kit**: `AppHeaderShell` as root (kicker + serif title + hairline) · form primitives for parameter entry · `DataTable` for tabular results · `ChartShell` + chart family for visual results · `Button variant="primary"` for run / export.
+**Primary kit**: `AppHeaderShell` as root (kicker + serif title + hairline) · form primitives for parameter entry · `DataTable` for tabular results · (no chart primitive since 2026-10-28) · `Button variant="primary"` for run / export.
 
 **Rules**:
 

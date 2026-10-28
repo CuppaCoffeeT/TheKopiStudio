@@ -1,7 +1,7 @@
 # Canonical List + Table Pattern
 
 **Created**: 2026-05-24 SGT
-**Last Updated**: 2026-05-27 SGT
+**Last Updated**: 2026-10-28 SGT
 **Status**: 🟢 Production
 **Priority**: 🔴 Critical
 
@@ -19,22 +19,19 @@ This doc tells a new agent: **what to import**, **what to copy from a reference 
 
 ## Primitive layer (`src/components/primitives/ui/`)
 
-All table primitives live in **one folder**. Import as a barrel:
+All table primitives live in **one folder**. There is **no barrel** (the `ui/index.ts` barrel was deleted 2026-10-28) — deep-import each file:
 
 ```ts
-import {
-  ListPageFrame,       // full archetype page (chrome + filter + table + pagination + mobile)
-  DataTable,           // table shell (selection · sort · pagination slot · mobileBody · NEW: renderExpanded)
-  Pagination,          // page nav + rows-per-page
-  MobileListCard,      // <md row replacement (canonical mobile card)
-  StatusTabs,          // All / Draft / Sent style tab strip
-  FilterDropdown,      // filter popover trigger
-  type DataTableRow,
-  type DataTableVariant,
-  type TableHeaderColumn,
-  type DataRowCell,
-} from '@/components/primitives/ui';
+import { ListPageFrame } from '@/components/primitives/ui/ListPageFrame';   // full archetype page (chrome + filter + table + pagination + mobile)
+import { DataTable, type DataTableRow, type DataTableVariant } from '@/components/primitives/ui/DataTable'; // table shell (selection · sort · pagination slot · mobileBody · renderExpanded)
+import { Pagination } from '@/components/primitives/ui/Pagination';         // page nav + rows-per-page
+import { MobileListCard } from '@/components/primitives/ui/MobileListCard'; // <md row replacement (canonical mobile card)
+import { StatusTabs } from '@/components/primitives/ui/StatusTabs';         // All / Draft / Sent style tab strip
+import { type TableHeaderColumn } from '@/components/primitives/ui/TableHeader';
+import { type DataRowCell } from '@/components/primitives/ui/DataRow';
 ```
+
+`FilterDropdown`, `FilterPill`, `ExpandableDataTable` and the `CurrencyCell` / `DateTimeCell` / `NumberCell` cells were deleted 2026-10-28 as unused ([DEPRECATIONS.md](../../99-refactor/_system/DEPRECATIONS.md)); re-create one only when a real list needs it.
 
 ## Two reference adopters in the repo
 
@@ -185,7 +182,7 @@ Wrap with `<UnifiedFiltersBar>` + `<JLTTTableActionBar>`-style chrome above if y
 
 - ❌ Build a new table primitive in `features/` — extend `DataTable` instead.
 - ❌ Use raw `<table>` / `@/components/ui/table` — both are pre-W09 legacy.
-- ❌ Import the old `ExpandableDataTable` from `@/components/primitives/shell` for new code — `DataTable.renderExpanded` is the canonical replacement.
+- ❌ Re-create the old `ExpandableDataTable` (deleted 2026-10-28) — `DataTable.renderExpanded` is the canonical replacement.
 - ❌ Skip `<Pagination>` on mobile — server-side pagination is a hard rule; users must be able to navigate past page 1 at any viewport.
 - ❌ Hard-code page size — accept it from the caller / URL state and pass `rowsPerPage`.
 
@@ -205,10 +202,9 @@ Future GW and OT tables will share **most** building blocks with JLTT. Here's th
 
 | Building block | Path | Used by |
 |---|---|---|
-| Table chrome (`DataTable`, `ListPageFrame`, `Pagination`, `MobileListCard`, `StatusTabs`, `FilterDropdown`, `TableHeader`, `DataRow`) | `src/components/primitives/ui/` | every list page |
-| Generic cells (`DateCell`, `DateTimeCell`, `CurrencyCell`, `NumberCell`) | `src/components/primitives/shell/` | every list page |
+| Table chrome (`DataTable`, `ListPageFrame`, `Pagination`, `MobileListCard`, `StatusTabs`, `TableHeader`, `DataRow`) | `src/components/primitives/ui/` | every list page |
+| Generic cells (`DateCell` only — the others were deleted 2026-10-28) | `src/components/primitives/shell/cells/` | every list page |
 | Badge (status pills + count chips) | `src/components/primitives/shell/Badge.tsx` | every list page |
-| FilterPill (advanced-filter trigger) | `src/components/primitives/shell/FilterPill.tsx` | every list page |
 
 ### Shared across trial-trench / GW / OT — currently at `features/trialtrench/components/cfe/cells/`
 
@@ -234,7 +230,7 @@ These cells were originally JLTT-only but the data shapes they render (`projects
 | `src/features/<feature>/lib/<page>Columns.ts` | **Thin** wrapper — picks factories from `TableShared`. ~30-50 LOC. |
 | `src/features/<feature>/lib/<page>Row.tsx` | **Thin** wrapper — picks factories + adds page-specific action cell. ~50-130 LOC. |
 | Expanded panel (e.g. `TrialTrenchExpandedPanel`) | Detail layout is per-feature, not per-page. |
-| Filter component (e.g. `UnifiedTrialTrenchFilters`, `JLTTFilterDrawer`) | Filter field set is per-feature. Trigger is the shared `FilterPill`. |
+| Filter component (e.g. `UnifiedTrialTrenchFilters`, `JLTTFilterDrawer`) | Filter field set is per-feature. (The shared `FilterPill` trigger was deleted 2026-10-28.) |
 
 ### Worked example — adding the Worker OT queue (with shared library)
 
@@ -247,7 +243,7 @@ src/features/workerot/
 ├── components/
 │   ├── WorkerOtTable.tsx          ← composes DataTable + Pagination
 │   ├── WorkerOtExpandedPanel.tsx  ← caller of renderExpanded
-│   └── WorkerOtFilterDrawer.tsx   ← reuses vaul Drawer primitive
+│   └── WorkerOtFilterDrawer.tsx   ← bottom sheet (Drawer primitive deleted 2026-10-28 — build on `ui/sheet`)
 └── pages/WorkerOtPage.tsx
 ```
 

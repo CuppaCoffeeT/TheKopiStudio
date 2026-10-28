@@ -1,7 +1,7 @@
 # Canonical Detail Page Pattern
 
 **Created**: 2026-05-30 SGT
-**Last Updated**: 2026-05-30 SGT
+**Last Updated**: 2026-10-28 SGT
 **Status**: 🟢 Production
 **Priority**: 🟡 High
 
@@ -17,15 +17,14 @@ Router-style doc — links to real adopters + primitives. Does not duplicate cod
 
 | Layer | Use | Never |
 |-------|-----|-------|
-| Page frame + hero + tabs + side-rail | `DetailPageFrame` (`@/components/primitives/detail`) | hand-rolled `<div>` + back button + bespoke title block |
-| Tab strip (standalone) | `TabNav` (`@/components/primitives/detail`) — already bundled by `DetailPageFrame` via `tabs` prop | raw button row + manual active state |
-| Related-records side card | `RelatedRecordsCard` | ad-hoc aside `<div>` |
-| Activity / audit timeline | `ActivityLogTimeline` · `Timeline` · `HistoryTrailList` | ordered `<ol>` + arrow spans |
+| Page frame + hero + tabs + side-rail | `DetailPageFrame` (`@/components/primitives/detail/DetailPageFrame` — `detail/` has no barrel) | hand-rolled `<div>` + back button + bespoke title block |
+| Tab strip (standalone) | `TabNav` (`@/components/primitives/detail/TabNav`) — already bundled by `DetailPageFrame` via `tabs` prop | raw button row + manual active state |
+| Side-rail / body panels | `detail/dossier/*` (`DossierPanel` · `DossierStatGrid` · `DossierKeyValueList` …) | ad-hoc aside `<div>` |
 | Card surface inside a tab | `Card` (`@/components/primitives/shell`) | `@/components/ui/card` |
-| AI-annotation panel | `AIPanel` · `AIClassificationPanel` | hand-rolled `<Card>` with a coloured strip |
-| Stored HTML body | `SanitizedHtmlProse` (`@/components/primitives/shell`) | inline `dangerouslySetInnerHTML` |
 
 Full inventory: [src/components/primitives/CONTEXT.md](../../../src/components/primitives/CONTEXT.md).
+
+> **2026-10-28**: `RelatedRecordsCard`, `ActivityLogTimeline`, `Timeline`, `HistoryTrailList`, `AIPanel`, `AIClassificationPanel` and `SanitizedHtmlProse` were deleted as unused (no detail page imported them). Re-create one only when a real page needs it — see [DEPRECATIONS.md](../../99-refactor/_system/DEPRECATIONS.md).
 
 ## Shape — flat props, not nested slots
 
@@ -43,7 +42,7 @@ Full inventory: [src/components/primitives/CONTEXT.md](../../../src/components/p
   activeTab={tab}
   onTabChange={setTab}
   variant="withSideRail"           // or 'fullWidth'
-  sideRail={<RelatedRecordsCard ... />}
+  sideRail={<DossierPanel ... />}
 >
   {activeTabBody}                   {/* main column (2/3) */}
 </DetailPageFrame>
@@ -72,8 +71,7 @@ Start from **ClientDetailPage.tsx** — it is the page the 2a Detail comp was bu
 
 ## Anti-patterns
 
-- ❌ Hand-rolled `<Card>` with a coloured left strip for AI/annotation surfaces → use `AIPanel` / `AIClassificationPanel`.
-- ❌ Inline `dangerouslySetInnerHTML` for stored HTML bodies → use `SanitizedHtmlProse`.
+- ❌ Inline `dangerouslySetInnerHTML` for stored HTML bodies — sanitize first (the `SanitizedHtmlProse` primitive was deleted 2026-10-28; re-create it if a page needs one).
 - ❌ Re-implementing hero/title/status outside the frame → pass `title`/`recordId`/`status`/`meta`/`actions` props instead.
 
 ## 📚 Related Documentation

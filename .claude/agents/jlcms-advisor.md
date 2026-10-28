@@ -70,7 +70,7 @@ Read and cite:
 Read and cite:
 - `CLAUDE.md` Rule #9 — centralized `queryKeys` factory, never hardcode keys
 - `docs/01-system-architecture/react-query-cache/CONTEXT.md`
-- Reference: `src/utils/queryKeys.ts`
+- Reference: `src/utils/queryKeys/index.ts`
 
 **"How do I handle dates/times?"**
 
@@ -90,12 +90,12 @@ Read and cite:
 
 Read and cite:
 - `CLAUDE.md` Rule #5 — Sonner only, `use-toast` is forbidden
-- Reference: `src/utils/toastHelper.ts` (`showSuccess`, `showError`, `showEnhancedToast`)
+- Reference: `src/utils/toastHelper.tsx` (`showSuccess`, `showError`, `showEnhancedToast`)
 
 **"How do I build a date picker?"**
 
 Read and cite:
-- `CLAUDE.md` Rule #10 — use `DatePicker` from `src/components/ui/date-picker.tsx`
+- `CLAUDE.md` Rule #10 — use `DatePicker` from `src/components/primitives/form/DatePicker.tsx` (`ui/date-picker` deleted 2026-10-28)
 - Inline `Popover+Calendar` pattern is forbidden in new code
 
 ### C. Rule Violation Checks

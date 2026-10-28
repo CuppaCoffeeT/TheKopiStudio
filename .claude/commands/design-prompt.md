@@ -29,18 +29,19 @@ Output a single fenced block the user copy-pastes. Structure:
 [2–4 lines: what the user currently has in repo — component name, file path, current visual behavior. Pull from step 1.]
 
 ## Reuse inventory — USE THESE AS-IS, DO NOT REBUILD
-This is a COMPOSITION task, not a redesign. The AppBase Design System already publishes 82+ primitives across 8 groups. Use them by name; never invent a second copy.
+This is a COMPOSITION task, not a redesign. The AppBase Design System already publishes ~80 primitive files across 8 groups (see `src/components/primitives/CONTEXT.md` for the live list). Use them by name; never invent a second copy.
 
 **Primitives in scope for this feature:**
-- shell: [enumerate — e.g. AppSidebar, AppSidebarFooter, AppHeaderShell, AppHeaderMobileBar, Wordmark, Card, Button, IconButton, Chip, SearchInput, FloatingCTA, LoadingSkeleton, NoResultsState, ErrorState, DateTimeCell, …]
-- overlays: [enumerate — e.g. Modal, Drawer (vaul bottom-sheet · v2 lock), Popover, Tooltip, DropdownMenu, Alert, …]
-- form: [enumerate — e.g. Input, Textarea, Select, Checkbox, Switch, Field, Label, DatePicker, …]
+- shell: [enumerate — e.g. AppSidebar, AppSidebarFooter, AppHeaderShell, AppHeaderMobileBar, Wordmark, Card, Button, IconButton, Chip, SearchInput, FloatingCTA, LoadingSkeleton, NoResultsState, ErrorState, DateCell, …]
+- overlays: [enumerate — e.g. Modal, SelectMenu, Popover, Tooltip, DropdownMenu, Alert, …]
+- form: [enumerate — e.g. Input, Textarea, Checkbox, Switch, Field, DatePicker, …]
 - ui: [enumerate — e.g. DataTable, DataRow, MobileListCard, Pagination, StatusTabs, …]
-- detail / dashboard / charts / root atoms: [enumerate only those plausibly relevant]
+- detail / dashboard / tools / root atoms: [enumerate only those plausibly relevant]
 
 **Hard bans (failure mode observed 2026-04-23):**
-- Do NOT rebuild `Drawer` — the v2-locked vaul bottom-sheet is canonical. Mobile = reuse `Drawer`, desktop = reuse `Modal`. Never both, never new.
-- Do NOT rebuild `Modal`, `Card`, `Badge`, `Button`, `Input`, `Select`, `Textarea`, `AppSidebar` — all published and locked.
+- Do NOT design a second bottom-sheet. The `Drawer` primitive was deleted 2026-10-28 as unused; the one live sheet is `@/components/ui/sheet` (used by `AppNavDrawer`). Mobile = that sheet, desktop = reuse `Modal`. Never both, never new.
+- Do NOT rebuild `Modal`, `Card`, `Badge`, `Button`, `Input`, `SelectMenu`, `Textarea`, `AppSidebar` — all published and locked.
+- Before naming any primitive, confirm it still exists — the 2026-10-28 cleanup deleted `charts/*`, `Avatar`, `KpiIndexCard`, `Stepper`, `Timeline`, `wizard/*` and ~70 more (DEPRECATIONS.md).
 - Do NOT reintroduce a horizontal top masthead, a module-launcher grid, or the primitives that built them (`AppHeader`, `AppHeaderDesktopBar`, `ModuleCard`, `CategoryHeader`, `ModuleSearch`) — all deleted 2026-07-25, see DEPRECATIONS.md. Desktop chrome is the 200px `AppSidebar` rail; module jump is ⌘K `CommandPalette`.
 - Any `.<feature>-*` CSS class in the preview is page-scoped styling for the spec sheet ONLY — it must compose to an existing primitive at promote time. Don't export such classes as new primitives.
 
