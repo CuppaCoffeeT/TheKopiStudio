@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { SearchInput } from './SearchInput';
 import { IconButton } from '../IconButton';
 
-export interface ActiveFilter {
+interface ActiveFilter {
   key: string;
   label: string;
   value: string;

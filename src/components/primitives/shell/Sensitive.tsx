@@ -50,28 +50,6 @@ export function SensitiveName({
   );
 }
 
-/** A monetary figure. `value` is what would have been rendered in the clear. */
-export function SensitiveMoney({
-  value,
-  className,
-  reveal,
-}: SensitiveProps & { value: string }) {
-  const { masked } = useMask();
-  const hide = masked && !reveal;
-  return <span className={cn(hide && MASKED_CLASS, className)}>{maskMoney(value, hide)}</span>;
-}
-
-/** A count that sizes the book — total customers, policies held. */
-export function SensitiveCount({
-  value,
-  className,
-  reveal,
-}: SensitiveProps & { value: number | string }) {
-  const { masked } = useMask();
-  const hide = masked && !reveal;
-  return <span className={cn(hide && MASKED_CLASS, className)}>{maskCount(value, hide)}</span>;
-}
-
 /** Free text that may carry a name or a figure — hidden wholesale. */
 export function SensitiveText({
   value,

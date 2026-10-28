@@ -14,6 +14,5 @@ export type { UsersListParams, UsersListResult, UsersListTab } from './api/users
 
 export { useUsersList } from './hooks/useUsersList';
 export { useRoleSync } from './hooks/useRoleSync';
-export type { RoleSyncInput, RoleSyncResponse } from './hooks/useRoleSync';
 
 export { ASSIGNABLE_ROLES, ROLE_LABELS, isAssignableRole } from './lib/roleLabels';

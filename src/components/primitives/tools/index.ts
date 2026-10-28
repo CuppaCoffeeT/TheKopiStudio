@@ -12,5 +12,5 @@ export { ToolPageShell } from './ToolPageShell';
 export { ToolPageHeader } from './ToolPageHeader';
 export { ToolCustomerBar } from './ToolCustomerBar';
 export { ToolPanel } from './ToolPanel';
-export { ToolStatGrid, SummaryRow, type ToolStat } from './ToolFigures';
-export { ToolSelect, ToolNote, type ToolSelectOption } from './ToolSelect';
+export { ToolStatGrid, SummaryRow,  } from './ToolFigures';
+export { ToolSelect, ToolNote,  } from './ToolSelect';

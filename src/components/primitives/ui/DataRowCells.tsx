@@ -22,7 +22,7 @@
 import { cn } from '@/lib/utils';
 
 /** Semantic ink for status / meta cells — always an AA-safe text variant. */
-export type DataRowCellTone = 'positive' | 'neutral' | 'negative';
+type DataRowCellTone = 'positive' | 'neutral' | 'negative';
 
 const CELL_TONE: Record<DataRowCellTone, string> = {
   positive: 'text-[color:var(--sage-text)] font-semibold',

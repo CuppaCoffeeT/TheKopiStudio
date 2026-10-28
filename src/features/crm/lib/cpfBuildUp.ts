@@ -17,7 +17,7 @@ type ClientCpfFields = Parameters<typeof incomeStepsFromClient>[0] & {
   cpfHousingEndAge?: string | number | null;
 };
 
-export type IncomeBasis = 'tiers' | 'average' | 'none';
+type IncomeBasis = 'tiers' | 'average' | 'none';
 
 export interface ClientCpfPlan
   extends Pick<CpfWithContributionsInput, 'incomeSteps' | 'avgIncomeTo55' | 'housing'> {

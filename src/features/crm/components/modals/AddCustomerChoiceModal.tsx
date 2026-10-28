@@ -21,7 +21,7 @@ import { FileUser, UserSearch } from 'lucide-react';
 import { ChoiceCards, type ChoiceCardOption } from '@/components/primitives/overlays/ChoiceCards';
 import { Modal, ModalGhostAction } from '@/components/primitives/overlays/Modal';
 
-export type AddCustomerChoice = 'profiler' | 'empty';
+type AddCustomerChoice = 'profiler' | 'empty';
 
 interface AddCustomerChoiceModalProps {
   open: boolean;

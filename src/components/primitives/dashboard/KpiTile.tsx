@@ -19,7 +19,7 @@ import { KpiDeltaBadge, type KpiDelta } from './KpiDeltaBadge';
  *   <KpiTile compact label="Hours" value={42.5} decimals={1} suffix="h" />
  */
 
-export type { KpiDelta, KpiDeltaTone } from './KpiDeltaBadge';
+;
 
 interface KpiTileProps {
   label: string;

@@ -5,9 +5,6 @@ import { Kbd } from './Kbd';
 
 export const DropdownMenu = DropdownMenuPrimitive.Root;
 export const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
-export const DropdownMenuGroup = DropdownMenuPrimitive.Group;
-export const DropdownMenuSub = DropdownMenuPrimitive.Sub;
-export const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
 
 /** Glass-surface dropdown content — Portal'd, safe inside Dialog. */
 export const DropdownMenuContent = ({
@@ -89,7 +86,7 @@ export const DropdownMenuItem = ({
 );
 DropdownMenuItem.displayName = 'DropdownMenuItem';
 
-export const DropdownMenuLabel = ({
+const DropdownMenuLabel = ({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Label>) => (

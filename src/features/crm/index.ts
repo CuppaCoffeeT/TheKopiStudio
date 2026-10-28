@@ -15,20 +15,11 @@ export type { CrmDashboardStats } from './types';
 
 export type {
   ClientRow,
-  ClientRowInsert,
   ClientRowUpdate,
   PolicyRow,
-  PolicyRowInsert,
-  PolicyRowUpdate,
   ProjectedCashValueRow,
-  ProjectedCashValueRowInsert,
-  ProjectedCashValueRowUpdate,
   InteractionRow,
-  InteractionRowInsert,
-  InteractionRowUpdate,
   BankBalanceRow,
-  BankBalanceRowInsert,
-  BankBalanceRowUpdate,
 } from './types';
 
 // P2 — lib port (finance · report math · follow-ups · row↔model mapping)
@@ -59,10 +50,6 @@ export type {
 
 export {
   BANK_INTEREST_RATE,
-  DEATH_COVER_INCOME_MULTIPLE,
-  CI_COVER_INCOME_MULTIPLE,
-  ECI_COVER_INCOME_MULTIPLE,
-  CPF_LIFE_PAYOUT_AT_FRS,
   projectBankTo65,
   futureCICost,
   futureECICost,
@@ -144,7 +131,6 @@ export {
   updateBankRecord,
   softDeleteBankRecord,
 } from './api/bankService';
-export { listRecentResults } from './api/linkedResultsService';
 export { computeDashboardStats, getDashboardStats } from './api/dashboardService';
 export type { StatsPolicyRow } from './api/dashboardService';
 
@@ -171,10 +157,9 @@ export { default as ClientReportPage } from './pages/ClientReportPage';
 export { default as PortfolioReportPage } from './pages/PortfolioReportPage';
 export { summarisePortfolio } from './lib/financeReport';
 export type { PortfolioPolicyInput, PortfolioTotals } from './lib/financeReport';
-export { assemblePortfolioReport, getPortfolioReport } from './api/portfolioService';
+export { getPortfolioReport } from './api/portfolioService';
 export type {
   PortfolioReportClient,
   PortfolioReportData,
-  PortfolioReportPolicy,
 } from './api/portfolioService';
 export { usePortfolioReport } from './hooks/usePortfolioReport';

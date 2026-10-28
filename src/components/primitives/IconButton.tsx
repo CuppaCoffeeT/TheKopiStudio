@@ -12,7 +12,7 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 
-export type IconButtonSize = 'sm' | 'md';
+type IconButtonSize = 'sm' | 'md';
 
 const SIZE_CLASSES: Record<IconButtonSize, string> = {
   sm: 'h-8 w-8',       // 32px — toolbar/filter bar

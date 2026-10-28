@@ -17,7 +17,7 @@ export interface BuilderResult {
   count?: number | null;
 }
 
-export interface RecordedCall {
+interface RecordedCall {
   method: string;
   args: unknown[];
 }

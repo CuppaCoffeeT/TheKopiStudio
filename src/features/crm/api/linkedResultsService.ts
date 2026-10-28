@@ -33,35 +33,15 @@ export async function listLinkedResultsByClient(
 }
 
 /** One newest-first `results` row as the /dashboard Overview feed reads it. */
-export interface RecentProfilerResult {
+interface RecentProfilerResult {
   id: string;
   prospect_name: string;
   created_at: string;
 }
 
 /** The newest saved profiles plus the RLS-visible total behind them. */
-export interface RecentProfilerResultsPage {
+interface RecentProfilerResultsPage {
   rows: RecentProfilerResult[];
   /** Total visible `results` rows — the /dashboard "profiles saved" figure. */
   count: number;
-}
-
-/**
- * Newest saved profiling results for the /dashboard "Latest additions" feed
- * (KOPI_STUDIO_REDESIGN_PRD P4). Same crm-owned-read sanction as the linked
- * lookup above: the feed merges CRM clients with profiler results, and
- * importing profiler's `resultsService` from this feature would be a
- * cross-feature drift error.
- *
- * `count: 'exact'` rides along with the page so the Overview's profiler KPI
- * never needs a second round trip.
- */
-export async function listRecentResults(limit: number): Promise<RecentProfilerResultsPage> {
-  const { data, count, error } = await supabase
-    .from('results')
-    .select('id, prospect_name, created_at', { count: 'exact' })
-    .order('created_at', { ascending: false })
-    .range(0, limit - 1);
-  if (error) throw error;
-  return { rows: data ?? [], count: count ?? 0 };
 }

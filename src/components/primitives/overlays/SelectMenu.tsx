@@ -23,7 +23,6 @@ import { cn } from '@/lib/utils';
 import { GLASS_SURFACE } from './shared';
 
 export const SelectMenu = SelectPrimitive.Root;
-export const SelectMenuGroup = SelectPrimitive.Group;
 export const SelectMenuValue = SelectPrimitive.Value;
 
 export type SelectMenuSize = 'sm' | 'md' | 'lg';
@@ -73,7 +72,7 @@ export const SelectMenuTrigger = forwardRef<
   );
 });
 
-export const SelectMenuScrollUpButton = forwardRef<
+const SelectMenuScrollUpButton = forwardRef<
   React.ElementRef<typeof SelectPrimitive.ScrollUpButton>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>
 >(function SelectMenuScrollUpButton({ className, ...props }, ref) {
@@ -88,7 +87,7 @@ export const SelectMenuScrollUpButton = forwardRef<
   );
 });
 
-export const SelectMenuScrollDownButton = forwardRef<
+const SelectMenuScrollDownButton = forwardRef<
   React.ElementRef<typeof SelectPrimitive.ScrollDownButton>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>
 >(function SelectMenuScrollDownButton({ className, ...props }, ref) {
@@ -141,23 +140,6 @@ export const SelectMenuContent = forwardRef<
   );
 });
 
-export const SelectMenuLabel = forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Label>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
->(function SelectMenuLabel({ className, ...props }, ref) {
-  return (
-    <SelectPrimitive.Label
-      ref={ref}
-      className={cn(
-        'px-2 py-1.5 text-[10.5px] font-semibold uppercase tracking-widest text-muted-foreground',
-        className,
-      )}
-      style={{ fontFamily: 'var(--font-sans)' }}
-      {...props}
-    />
-  );
-});
-
 export const SelectMenuItem = forwardRef<
   React.ElementRef<typeof SelectPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
@@ -189,28 +171,3 @@ export const SelectMenuItem = forwardRef<
     </SelectPrimitive.Item>
   );
 });
-
-export const SelectMenuSeparator = forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Separator>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
->(function SelectMenuSeparator({ className, ...props }, ref) {
-  return (
-    <SelectPrimitive.Separator
-      ref={ref}
-      className={cn('-mx-1 my-1 h-px bg-border', className)}
-      {...props}
-    />
-  );
-});
-
-// Shadcn-compat re-exports so legacy callsites migrate via import swap only.
-export {
-  SelectMenu as Select,
-  SelectMenuTrigger as SelectTrigger,
-  SelectMenuValue as SelectValue,
-  SelectMenuContent as SelectContent,
-  SelectMenuItem as SelectItem,
-  SelectMenuGroup as SelectGroup,
-  SelectMenuLabel as SelectLabel,
-  SelectMenuSeparator as SelectSeparator,
-};

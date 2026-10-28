@@ -33,7 +33,7 @@ import { PrivacyToggle } from './PrivacyToggle';
  * rail: these sit directly on the page cream with content behind them, so they
  * need an edge to read as chrome rather than as page furniture.
  */
-export const CHROME_BUTTON = cn(
+const CHROME_BUTTON = cn(
   'inline-flex h-9 w-9 items-center justify-center rounded-md',
   'border border-sidebar-border bg-sidebar text-muted-foreground shadow-sm',
   'transition-colors hover:bg-[color:var(--surface-subtle)] hover:text-[color:var(--brown-text)]',

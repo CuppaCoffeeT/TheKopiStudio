@@ -26,7 +26,7 @@ import { cn } from '@/lib/utils';
  * When any slot is used, wraps in a bordered `<div>` container.
  */
 
-export type InputSize = 'md' | 'lg';
+type InputSize = 'md' | 'lg';
 
 interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'prefix'> {
   size?: InputSize;

@@ -26,7 +26,7 @@ const RAMP = [
   'var(--chart-ramp-4)',
 ];
 
-export interface DossierRampSegment {
+interface DossierRampSegment {
   label: string;
   /** Absolute magnitude; shares are computed from the total. Negatives are clamped to 0. */
   value: number;

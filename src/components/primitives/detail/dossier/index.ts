@@ -9,8 +9,8 @@
  *                  DossierLoadingPanel [ transient states ]
  */
 
-export { DossierPanel, DossierPanelLabel, type DossierPanelDensity } from './DossierPanel';
-export { DossierStatGrid, type DossierStat } from './DossierStatGrid';
-export { DossierRampBar, type DossierRampSegment } from './DossierRampBar';
-export { DossierKeyValueList, type DossierKeyValue } from './DossierKeyValueList';
+export { DossierPanel,   } from './DossierPanel';
+export { DossierStatGrid,  } from './DossierStatGrid';
+export { DossierRampBar,  } from './DossierRampBar';
+export { DossierKeyValueList,  } from './DossierKeyValueList';
 export { DossierLoadingPanel } from './DossierLoadingPanel';

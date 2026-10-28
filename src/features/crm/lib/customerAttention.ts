@@ -18,7 +18,7 @@ import { getLocalDateString } from '@/utils/timezoneUtils';
 import { JOURNEY_STEP_ORDER, type CustomerJourney } from './customerJourney';
 
 /** A customer surfaces on the Overview queue for exactly one headline reason. */
-export type AttentionReason = 'quiet' | 'unfinished' | 'review-due';
+type AttentionReason = 'quiet' | 'unfinished' | 'review-due';
 
 /** No inbound contact for this many days ⇒ the customer has "gone quiet". */
 export const QUIET_DAYS = 14;

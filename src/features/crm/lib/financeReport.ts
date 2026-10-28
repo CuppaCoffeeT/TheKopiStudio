@@ -29,11 +29,11 @@ import {
 } from './finance';
 
 /** ClientReportModal.jsx:42-44 — gap-math income multiples (death / CI / early CI). */
-export const DEATH_COVER_INCOME_MULTIPLE = 10;
-export const CI_COVER_INCOME_MULTIPLE = 5;
-export const ECI_COVER_INCOME_MULTIPLE = 1.5;
+const DEATH_COVER_INCOME_MULTIPLE = 10;
+const CI_COVER_INCOME_MULTIPLE = 5;
+const ECI_COVER_INCOME_MULTIPLE = 1.5;
 /** CPFProjection.jsx:201 — CPF LIFE Standard Plan monthly payout at exactly FRS. */
-export const CPF_LIFE_PAYOUT_AT_FRS = 1780;
+const CPF_LIFE_PAYOUT_AT_FRS = 1780;
 
 /** ClientReportModal.jsx:37-38 — average CI cost inflated at 6% medical inflation. */
 export function futureCICost(yearsToRetirement: number): number {

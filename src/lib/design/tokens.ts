@@ -38,7 +38,7 @@
 // v1 — Card · DataTable · KpiTile
 // ===========================================================================
 
-export const cardTokens = {
+const cardTokens = {
   radius: 'var(--card-radius)',
   border: 'var(--card-border)',
   shadowRest: 'var(--card-shadow-rest)',
@@ -46,7 +46,7 @@ export const cardTokens = {
   padding: 'var(--card-padding)',
 } as const;
 
-export const dataTableTokens = {
+const dataTableTokens = {
   rowHoverBg: 'var(--row-hover-bg)',
   rowEnterDurationMs: 180,
   sortIconOpacityRest: 0.4,
@@ -68,7 +68,7 @@ export const kpiTileTokens = {
 // v2 — Drawer · Stepper · Timeline · Charts
 // ===========================================================================
 
-export const drawerTokens = {
+const drawerTokens = {
   radius: 'var(--drawer-radius)',
   handleWidth: 'var(--drawer-handle-w)',
   handleHeight: 'var(--drawer-handle-h)',
@@ -76,7 +76,7 @@ export const drawerTokens = {
   handlePulseDurationMs: 1600,
 } as const;
 
-export const stepperTokens = {
+const stepperTokens = {
   chipSize: 'var(--chip-size)',
   chipSizeCompact: 'var(--chip-size-compact)',
   chipActive: 'var(--chip-active)',
@@ -87,7 +87,7 @@ export const stepperTokens = {
   },
 } as const;
 
-export const timelineTokens = {
+const timelineTokens = {
   railColor: 'var(--timeline-rail-color)',
   beam: 'var(--timeline-beam)',
   dotSize: 'var(--timeline-dot-size)',
@@ -98,7 +98,7 @@ export const timelineTokens = {
  *  order. `pipeline`/`accepted` are ramp steps 1 and 2 (the gold + dim-cream
  *  series pair was retired 2026-07-25). Steps past the anchor are decorative
  *  contrast only — always label the series and restate any encoded figure. */
-export const chartTokens = {
+const chartTokens = {
   pipeline: 'var(--chart-pipeline)',
   accepted: 'var(--chart-accepted)',
   gridDasharray: 'var(--chart-grid-dasharray)',
@@ -114,7 +114,7 @@ export const chartTokens = {
  *  terracotta is destructive. Key names are legacy (`brandRed`,
  *  `accentRedSoft*`) — values resolve to the brand BROWN accent, in its
  *  AA-safe text variant wherever the consumer paints small type. */
-export const ctaTokens = {
+const ctaTokens = {
   primaryBg: 'var(--cta-primary-bg)',
   primaryBgHover: 'var(--cta-primary-bg-hover)',
   primaryFg: 'var(--cta-primary-fg)',
@@ -128,7 +128,7 @@ export const ctaTokens = {
  *  since 2026-07-25. The page backdrop is a FLAT cream canvas now, so
  *  `pageGradientLight`/`pageGradientDark` are same-value back-compat aliases —
  *  neither implies a gradient nor a theme branch. */
-export const glassTokens = {
+const glassTokens = {
   translucentBg: 'var(--surface-translucent-bg)',
   translucentBlur: 'var(--surface-translucent-blur)',
   translucentBorder: 'var(--surface-translucent-border)',
@@ -137,7 +137,7 @@ export const glassTokens = {
 } as const;
 
 /** v3.3 — Mobile data-table layout. */
-export const mobileTokens = {
+const mobileTokens = {
   pagePadding: 'var(--mobile-page-padding)',
   rowCardGap: 'var(--row-card-gap)',
   rowCardBorder: 'var(--row-card-border)',
@@ -147,7 +147,7 @@ export const mobileTokens = {
 // Motion — Q-W08-b RESERVED philosophy
 // ===========================================================================
 
-export const motionTokens = {
+const motionTokens = {
   durationInstant: 'var(--motion-duration-instant)',
   durationQuick: 'var(--motion-duration-quick)',
   durationSmooth: 'var(--motion-duration-smooth)',
@@ -162,7 +162,7 @@ export const motionTokens = {
 // Aggregate
 // ===========================================================================
 
-export const tokens = {
+const tokens = {
   card: cardTokens,
   dataTable: dataTableTokens,
   kpiTile: kpiTileTokens,
@@ -175,5 +175,3 @@ export const tokens = {
   mobile: mobileTokens,
   motion: motionTokens,
 } as const;
-
-export type TokenGroup = keyof typeof tokens;

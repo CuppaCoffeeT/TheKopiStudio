@@ -12,7 +12,7 @@
 import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
-export type MobileListCardState = 'default' | 'hover' | 'selected';
+type MobileListCardState = 'default' | 'hover' | 'selected';
 
 export interface MobileListCardProps extends React.HTMLAttributes<HTMLDivElement> {
   state?: MobileListCardState;

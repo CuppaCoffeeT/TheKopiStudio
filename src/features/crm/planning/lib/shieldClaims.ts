@@ -12,14 +12,14 @@
 export const NO_CAP = 1e12;
 
 /** The rider's yearly co-payment cap on both insurers, on panel. */
-export const COPAY_CAP = 6000;
+const COPAY_CAP = 6000;
 
 export interface ClaimSplit {
   plan: number;
   client: number;
 }
 
-export function claimSplit(
+function claimSplit(
   bill: number,
   deductible: number,
   rate: number,

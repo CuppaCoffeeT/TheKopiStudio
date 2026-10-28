@@ -22,7 +22,7 @@ import { summarisePortfolio, type PortfolioTotals } from '../lib/financeReport';
 const REPORT_LIMIT = 5000;
 
 /** One policy line in a per-client portfolio table (raw row values renamed). */
-export interface PortfolioReportPolicy {
+interface PortfolioReportPolicy {
   id: string;
   type: string;
   provider: string;
@@ -89,7 +89,7 @@ function policyFromSelectRow(row: PolicySelectRow): PortfolioReportPolicy {
 }
 
 /** Pure assembly — exported for direct unit coverage without a supabase mock. */
-export function assemblePortfolioReport(
+function assemblePortfolioReport(
   clientRows: readonly ClientSelectRow[],
   policyRows: readonly PolicySelectRow[],
 ): PortfolioReportData {

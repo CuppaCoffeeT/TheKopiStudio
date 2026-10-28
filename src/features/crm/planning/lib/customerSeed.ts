@@ -30,8 +30,8 @@ import { ageFromDOB } from '../../lib/finance';
 export const DEFAULT_SEED_AGE = 40;
 
 /** Nobody outside this range is a plausible advice subject. */
-export const MIN_SEED_AGE = 16;
-export const MAX_SEED_AGE = 100;
+const MIN_SEED_AGE = 16;
+const MAX_SEED_AGE = 100;
 
 /**
  * A usable starting age for a planning tool.

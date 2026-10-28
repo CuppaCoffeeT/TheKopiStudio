@@ -17,13 +17,13 @@ import { showError, showSuccess } from '@/utils/toastHelper';
 import type { AssignableRole } from '../types';
 import { ROLE_LABELS } from '../lib/roleLabels';
 
-export interface RoleSyncInput {
+interface RoleSyncInput {
   user_id: string;
   role?: AssignableRole;
   is_approved?: boolean;
 }
 
-export interface RoleSyncResponse {
+interface RoleSyncResponse {
   success: boolean;
   user_id: string;
   role: string;

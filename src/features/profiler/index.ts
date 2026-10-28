@@ -12,18 +12,11 @@ export { default as ResultDetailPage } from './pages/ResultDetailPage';
 export type {
   ProfilerResult,
   ProfilerResultInsert,
-  ProfilerResultUpdate,
   DiscLetter,
-  MbtiDimension,
   MbtiPole,
-  MbtiSignal,
-  QuestionPhase,
-  QsOption,
   QsQuestion,
-  NvItem,
   NvGroup,
   PlaybookCategoryKey,
-  PlaybookCategory,
   DiscProfile,
   RawAnswer,
   LegacyResultRow,
@@ -34,4 +27,4 @@ export { getResultsPaginated, sanitizeSearchTerm } from './api/resultsService';
 export type { ResultsListParams, ResultsPage } from './api/resultsService';
 export { useResultsList } from './hooks/useResultsList';
 export { DiscChip } from './components/DiscChip';
-export { MEETING_LABELS, MEETING_LABELS_SHORT, meetingLabel } from './lib/meeting';
+export { meetingLabel } from './lib/meeting';

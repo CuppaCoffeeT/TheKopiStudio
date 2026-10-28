@@ -51,9 +51,6 @@ export const SRS_EXEMPT_FRACTION = 0.5;
 /** Annual contribution cap for citizens and PRs. */
 export const SRS_CAP_CITIZEN = 15_300;
 
-/** Annual contribution cap for foreigners. */
-export const SRS_CAP_FOREIGNER = 35_700;
-
 /**
  * The age any remaining balance is deemed withdrawn at.
  *

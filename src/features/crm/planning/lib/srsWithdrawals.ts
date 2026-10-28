@@ -31,7 +31,7 @@ export interface WithdrawalPlanInput {
   startAge: number;
 }
 
-export interface WithdrawalYear {
+interface WithdrawalYear {
   age: number;
   withdrawal: number;
   /** The 50% exemption PLUS whatever of the taxable half fell in the free room. */

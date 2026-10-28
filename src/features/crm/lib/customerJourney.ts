@@ -50,7 +50,7 @@ export const JOURNEY_STEP_LABEL: Record<JourneyStepKey, string> = {
 export const INFO_CHECK_COUNT = 5;
 
 /** Human names for the five checks, in the order `countInfoChecks` evaluates them. */
-export const INFO_CHECK_LABELS = [
+const INFO_CHECK_LABELS = [
   'contact',
   'date of birth',
   'occupation',

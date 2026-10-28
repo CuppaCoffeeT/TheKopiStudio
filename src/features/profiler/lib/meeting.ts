@@ -8,7 +8,7 @@
  */
 
 /** Full labels — result report header + list "Meeting" column. */
-export const MEETING_LABELS: Record<string, string> = {
+const MEETING_LABELS: Record<string, string> = {
   '1': '1st Meeting',
   '2': '2nd Meeting',
   '3': '3rd Meeting',
@@ -16,7 +16,7 @@ export const MEETING_LABELS: Record<string, string> = {
 };
 
 /** Short labels — compact badges (mobile cards), legacy `results.js` map. */
-export const MEETING_LABELS_SHORT: Record<string, string> = {
+const MEETING_LABELS_SHORT: Record<string, string> = {
   '1': '1st',
   '2': '2nd',
   '3': '3rd',

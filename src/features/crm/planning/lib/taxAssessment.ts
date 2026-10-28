@@ -63,7 +63,7 @@ export interface TaxAssessmentInput {
   reliefs: ReliefState;
 }
 
-export interface ReliefLine {
+interface ReliefLine {
   id: string;
   name: string;
   amount: number;

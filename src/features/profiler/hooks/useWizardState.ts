@@ -29,7 +29,7 @@ export const TOTAL_STEPS = DISCOVERY_STEP;
 
 export type WizardScreen = number | 'R';
 
-export const EMPTY_INTAKE: IntakeInfo = { adv: '', name: '', age: '', meeting: '1', occ: '' };
+const EMPTY_INTAKE: IntakeInfo = { adv: '', name: '', age: '', meeting: '1', occ: '' };
 
 /** Legacy `startForm` defaults: blank names become "Advisor"/"Prospect". */
 export function effectiveIntake(intake: IntakeInfo): IntakeInfo {

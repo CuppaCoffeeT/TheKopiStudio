@@ -39,7 +39,7 @@ export type TabNavItem = {
   testId?: string;
 };
 
-export type TabNavSize = 'sm' | 'md';
+type TabNavSize = 'sm' | 'md';
 
 interface TabNavProps {
   tabs: TabNavItem[];

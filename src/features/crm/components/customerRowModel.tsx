@@ -94,7 +94,7 @@ export function toRowState(
  * "Today" under a "Last contact" heading for someone who has never been
  * contacted is simply false. The two readings are separated on purpose.
  */
-export function contactLabel(state: RowState): string {
+function contactLabel(state: RowState): string {
   if (!state.hasContact) return 'Never contacted';
   const days = state.quietDays;
   if (days === null) return 'Never contacted';
@@ -132,7 +132,7 @@ export function contactCell(client: CrmClient, state: RowState): ReactNode {
  * owns some of the book they can see), the name/email otherwise, a dash when it
  * could not be resolved. Same bare-row `--fg-dim` reason as `contactCell`.
  */
-export function advisorCell(name: string | null): ReactNode {
+function advisorCell(name: string | null): ReactNode {
   return <span className="truncate text-[color:var(--fg-dim)]">{name || '—'}</span>;
 }
 

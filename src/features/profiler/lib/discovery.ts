@@ -18,7 +18,7 @@ import type { DiscLetter, DiscoveryTracks, RawAnswer, TrackKey } from '../types'
 import { DISCOVERY_AXES, MONEY_ANCHOR_QI, MONEY_WORRY, TRACK_KEYS } from './content';
 import { calcProfile, type DiscScores } from './scoring';
 
-export type InterimConfidence = 'clear' | 'fairly clear' | 'still forming';
+type InterimConfidence = 'clear' | 'fairly clear' | 'still forming';
 
 /** The pit stop's provisional read. */
 export interface InterimRead {

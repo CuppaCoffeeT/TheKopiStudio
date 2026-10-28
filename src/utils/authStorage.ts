@@ -44,7 +44,7 @@ export const clearAuthStorage = (): void => {
  * Clears only Supabase auth cookies (targets cookies with project prefix).
  * Preserves other application cookies.
  */
-export const clearAuthCookies = (): void => {
+const clearAuthCookies = (): void => {
   console.log('🧹 Clearing auth-specific cookies...');
 
   const authCookiePrefix = `sb-${PROJECT_ID}`;
@@ -56,13 +56,4 @@ export const clearAuthCookies = (): void => {
       document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
     }
   });
-};
-
-/**
- * Comprehensive auth state clearing (storage + cookies).
- * Use this for login/logout flows to ensure complete auth reset.
- */
-export const clearAuthState = (): void => {
-  clearAuthStorage();
-  clearAuthCookies();
 };

@@ -15,7 +15,7 @@ import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Modal, ModalGhostAction, ModalPrimaryAction } from '../overlays/Modal';
 
-export type DestructiveTier = 1 | 2 | 3;
+type DestructiveTier = 1 | 2 | 3;
 
 interface DestructiveConfirmDialogProps {
   open: boolean;

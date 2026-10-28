@@ -94,7 +94,7 @@ export async function resolveLinkableClientId(
 }
 
 /** Provenance block prepended to the client notes (legacy-auditable origin). */
-export function buildProvenanceNotes(result: ProfilerResult): string {
+function buildProvenanceNotes(result: ProfilerResult): string {
   const provenance = [
     `Converted from profiler result ${result.id.slice(0, 8)}`,
     `Age range: ${result.age_range ?? 'Not specified'}`,

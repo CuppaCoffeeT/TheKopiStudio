@@ -56,7 +56,7 @@ export const BAND_LABEL = cn(
   BAND_TEXT,
 );
 
-export const ACTIVE =
+const ACTIVE =
   'border-l-sidebar-primary bg-[color:var(--surface-subtle)] font-semibold text-sidebar-foreground';
 
 interface SidebarItemProps {

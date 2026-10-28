@@ -1,5 +1,4 @@
-/* eslint-disable react-refresh/only-export-components -- re-exports sonner's `toast` alongside the Toaster primitive; HMR-only, no component boundary impact */
-import { Toaster as Sonner, toast } from 'sonner';
+import { Toaster as Sonner } from 'sonner';
 import { useTheme } from '@/lib/design/ThemeProvider';
 import { cn } from '@/lib/utils';
 import { VARIANT_ACCENT, VARIANT_ICON, type OverlayVariant } from './shared';
@@ -141,4 +140,4 @@ export function AppBaseToast({ variant, title, description, action, cancel, onDi
   );
 }
 
-export { toast };
+;

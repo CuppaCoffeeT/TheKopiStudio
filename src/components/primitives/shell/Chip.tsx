@@ -1,8 +1,8 @@
 import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
-export type ChipKind = 'filter' | 'tab';
-export type ChipSize = 'sm' | 'md';
+type ChipKind = 'filter' | 'tab';
+type ChipSize = 'sm' | 'md';
 
 interface ChipProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'size'> {

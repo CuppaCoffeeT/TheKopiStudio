@@ -21,7 +21,7 @@
  */
 import { cn } from '@/lib/utils';
 
-export type StatusVariant = 'draft' | 'sent' | 'accepted' | 'rejected' | 'expired' | 'revised';
+type StatusVariant = 'draft' | 'sent' | 'accepted' | 'rejected' | 'expired' | 'revised';
 
 const STYLE_BY_VARIANT: Record<StatusVariant, string> = {
   draft: 'bg-[var(--status-draft-bg)] text-[var(--status-draft-fg)] border-[color:var(--status-draft-border)]',
@@ -60,20 +60,4 @@ export function StatusBadge({ variant, children, className }: StatusBadgeProps) 
       {children}
     </span>
   );
-}
-
-/**
- * Map a raw workflow status code (Supabase `quotation_workflow_status.code`
- * or similar) to a visual variant. Heuristic — refine per-domain as needed.
- */
-export function mapStatusCodeToVariant(code: string | null | undefined): StatusVariant {
-  if (!code) return 'draft';
-  const lower = code.toLowerCase();
-  if (lower.includes('draft')) return 'draft';
-  if (lower.includes('sent') || lower.includes('pending') || lower.includes('awaiting')) return 'sent';
-  if (lower.includes('accept') || lower.includes('approv') || lower.includes('won')) return 'accepted';
-  if (lower.includes('reject') || lower.includes('lost') || lower.includes('declin')) return 'rejected';
-  if (lower.includes('expir')) return 'expired';
-  if (lower.includes('revis') || lower.includes('amend')) return 'revised';
-  return 'draft';
 }

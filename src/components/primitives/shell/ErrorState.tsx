@@ -21,7 +21,7 @@ import { cn } from '@/lib/utils';
 import { Button } from './Button';
 import { ErrorStateHero } from './ErrorStateHero';
 
-export type ErrorStateVariant = 'hero' | 'compact';
+type ErrorStateVariant = 'hero' | 'compact';
 
 interface ErrorStateProps {
   /** `compact` (2a in-layout error) or `hero` (full-screen crash). Default `hero`. */

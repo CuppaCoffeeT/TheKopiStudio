@@ -30,7 +30,7 @@ export interface URLPaginationDefaults {
   status?: string;
 }
 
-export interface URLPaginationParams {
+interface URLPaginationParams {
   search: string;
   status: string;
   /** Comma-separated multi-value filters parsed into string[] */
@@ -41,7 +41,7 @@ export interface URLPaginationParams {
   tab: string;
 }
 
-export interface URLPaginationSetters {
+interface URLPaginationSetters {
   setSearch: (value: string) => void;
   setStatus: (value: string) => void;
   setRole: (values: string[]) => void;

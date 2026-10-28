@@ -13,7 +13,7 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
-export interface DossierStat {
+interface DossierStat {
   label: ReactNode;
   value: ReactNode;
   /** Forwarded as `data-testid` on the value cell. */

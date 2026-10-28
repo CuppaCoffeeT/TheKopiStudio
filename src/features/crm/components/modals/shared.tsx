@@ -72,7 +72,7 @@ export function TextField({
   );
 }
 
-export interface SelectOption {
+interface SelectOption {
   value: string;
   label: string;
 }

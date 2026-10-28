@@ -25,13 +25,13 @@ export interface CategoryGroup {
   modules: DashboardModule[];
 }
 
-export type CardDensity = 'large' | 'medium' | 'compact';
+type CardDensity = 'large' | 'medium' | 'compact';
 
 // ---- Category Metadata (optional per-project overrides) ----
 // Map a module `category` slug → display label / sort order / lucide icon.
 // Unknown categories fall back to a title-cased label and alphabetical order.
 
-export const CATEGORY_META: Record<string, { label: string; order: number; icon: string }> = {
+const CATEGORY_META: Record<string, { label: string; order: number; icon: string }> = {
   general: { label: 'General', order: 1, icon: 'LayoutGrid' },
 };
 
@@ -77,32 +77,16 @@ const STORAGE_KEYS = {
 
 const STORAGE_CHANGE_EVENT = 'app-storage-change';
 
-export function dispatchStorageChange(key: string) {
+function dispatchStorageChange(key: string) {
   window.dispatchEvent(new CustomEvent(STORAGE_CHANGE_EVENT, { detail: { key } }));
 }
 
-export const STORAGE_EVENT_NAME = STORAGE_CHANGE_EVENT;
-
 // ---- Pinned Modules ----
 
-export function getPinnedModules(): string[] {
+function getPinnedModules(): string[] {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEYS.PINNED_MODULES) || '[]');
   } catch { return []; }
-}
-
-export function togglePinModule(path: string): string[] {
-  const current = getPinnedModules();
-  const updated = current.includes(path)
-    ? current.filter(p => p !== path)
-    : [...current, path];
-  localStorage.setItem(STORAGE_KEYS.PINNED_MODULES, JSON.stringify(updated));
-  dispatchStorageChange(STORAGE_KEYS.PINNED_MODULES);
-  return updated;
-}
-
-export function isPinned(path: string): boolean {
-  return getPinnedModules().includes(path);
 }
 
 // ---- Recent Modules ----
@@ -122,20 +106,10 @@ export function addRecentModule(path: string): void {
 
 // ---- Collapsed Categories ----
 
-export function getCollapsedCategories(): string[] {
+function getCollapsedCategories(): string[] {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEYS.COLLAPSED_CATEGORIES) || '[]');
   } catch { return []; }
-}
-
-export function toggleCategoryCollapsed(key: string): string[] {
-  const current = getCollapsedCategories();
-  const updated = current.includes(key)
-    ? current.filter(k => k !== key)
-    : [...current, key];
-  localStorage.setItem(STORAGE_KEYS.COLLAPSED_CATEGORIES, JSON.stringify(updated));
-  dispatchStorageChange(STORAGE_KEYS.COLLAPSED_CATEGORIES);
-  return updated;
 }
 
 // ---- Group Modules by Category ----
@@ -168,9 +142,3 @@ export function groupModulesByCategory(modules: DashboardModule[]): CategoryGrou
 }
 
 // ---- Card Density ----
-
-export function getCardDensity(totalModules: number): CardDensity {
-  if (totalModules <= 6) return 'large';
-  if (totalModules <= 15) return 'medium';
-  return 'compact';
-}

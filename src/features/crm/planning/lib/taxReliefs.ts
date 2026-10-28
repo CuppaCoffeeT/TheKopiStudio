@@ -17,7 +17,7 @@
  * - `wmcrFixed` / `wmcrPercentage` the two Working Mother's Child Relief regimes
  * - `manual`   the user types the amount, optionally capped
  */
-export type ReliefKind = 'auto' | 'fixed' | 'quantity' | 'wmcrFixed' | 'wmcrPercentage' | 'manual';
+type ReliefKind = 'auto' | 'fixed' | 'quantity' | 'wmcrFixed' | 'wmcrPercentage' | 'manual';
 
 export interface ReliefDefinition {
   id: string;

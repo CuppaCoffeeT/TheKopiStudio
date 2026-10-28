@@ -46,7 +46,7 @@ import { CalendarPanel } from './DatePicker.panel';
 import { DatePickerTrigger } from './DatePicker.trigger';
 import { useDatePickerOutsideClick, useDatePickerPortalPos } from './DatePicker.hooks';
 
-export type { DatePickerMode, DatePickerSize, DateRange } from './DatePicker.helpers';
+;
 
 const PANEL_W = 296; // CalendarPanel width (see DatePicker.panel.tsx `w-[296px]`)
 

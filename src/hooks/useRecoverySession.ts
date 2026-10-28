@@ -22,7 +22,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-export type RecoverySessionState = 'checking' | 'ready' | 'invalid';
+type RecoverySessionState = 'checking' | 'ready' | 'invalid';
 
 export interface RecoverySession {
   state: RecoverySessionState;

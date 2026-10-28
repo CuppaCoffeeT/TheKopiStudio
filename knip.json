@@ -1,16 +1,13 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "entry": [
-    "src/main.tsx",
     "index.html",
-    "vite.config.ts",
-    "playwright.config.ts",
     "playwright.parallel.config.ts",
-    "tests/**/*.spec.ts",
     "tests/auth.setup.ts",
     "scripts/**",
     "supabase/functions/**",
-    "playwright.comprehensive.config.ts"
+    "src/utils/timezoneUtils.ts",
+    "tests/**/*.ts"
   ],
   "project": [
     "src/**/*.{ts,tsx}"

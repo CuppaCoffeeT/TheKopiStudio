@@ -14,7 +14,7 @@
  */
 
 /** One relief's saved state. Structurally the planner's `ReliefEntry`. */
-export interface SavedReliefEntry {
+interface SavedReliefEntry {
   on: boolean;
   quantity: number;
   manualAmount: number;

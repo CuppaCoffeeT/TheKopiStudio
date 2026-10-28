@@ -22,7 +22,7 @@ export interface PeriodFields {
   years: string;
 }
 
-export const EMPTY_PERIODS: PeriodFields[] = [
+const EMPTY_PERIODS: PeriodFields[] = [
   { amount: '60000', years: '5' },
   { amount: '0', years: '0' },
   { amount: '0', years: '0' },

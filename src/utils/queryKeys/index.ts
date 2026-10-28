@@ -16,10 +16,10 @@
  * register it on the `queryKeys` object below.
  */
 
-export type QueryFilters = Record<string, unknown>;
+type QueryFilters = Record<string, unknown>;
 
 /** Build the canonical 5-method key factory for an entity. */
-export function createQueryKeys(entity: string) {
+function createQueryKeys(entity: string) {
   const all = [entity] as const;
   return {
     all,
@@ -114,21 +114,3 @@ export const queryKeys = {
 // ---------------------------------------------------------------------------
 // Debug / test helpers
 // ---------------------------------------------------------------------------
-
-/** True when `queryKey` starts with every element of `pattern`. */
-export function matchesQueryKey(queryKey: unknown[], pattern: readonly unknown[]): boolean {
-  if (queryKey.length < pattern.length) return false;
-  for (let i = 0; i < pattern.length; i++) {
-    if (queryKey[i] !== pattern[i]) return false;
-  }
-  return true;
-}
-
-/** Human-readable description of a query key (debugging aid). */
-export function describeQueryKey(queryKey: unknown[]): string {
-  const [entity, type, ...rest] = queryKey;
-  if (!type) return `${entity} (all)`;
-  if (type === 'list') return `${entity} list${rest.length > 0 ? ' with filters' : ''}`;
-  if (type === 'detail') return `${entity} detail ${rest[0] || ''}`.trim();
-  return queryKey.join(' > ');
-}

@@ -25,7 +25,7 @@ import { cn } from '@/lib/utils';
 import { PageTitle } from '@/components/primitives/shell';
 import { PageShellStatusPill, type PageShellStatusTone } from './PageShellStatusPill';
 
-export type PageShellVariant = 'withSideRail' | 'fullWidth';
+type PageShellVariant = 'withSideRail' | 'fullWidth';
 
 /** Re-exported so `@/components/primitives/detail/PageShell` stays the import path adopters know. */
 export type { PageShellStatusTone };
@@ -185,7 +185,3 @@ export function PageShellHero({
 }
 
 // ─── Side-rail container ─────────────────────────────────────
-
-export function PageShellSideRail({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn('flex flex-col gap-6', className)}>{children}</div>;
-}

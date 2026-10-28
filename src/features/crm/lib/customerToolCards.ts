@@ -53,7 +53,7 @@ export type ToolCardKind =
   | 'open-srs'
   | 'open-legacy';
 
-export interface ToolCardAction {
+interface ToolCardAction {
   label: string;
   /** Discriminator the component maps to a real handler — keeps this file pure. */
   kind: ToolCardKind;

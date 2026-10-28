@@ -14,7 +14,7 @@ import {
   SelectMenuValue,
 } from '@/components/primitives/overlays/SelectMenu';
 
-export interface ToolSelectOption {
+interface ToolSelectOption {
   value: string;
   label: string;
 }

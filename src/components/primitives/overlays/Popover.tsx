@@ -4,7 +4,6 @@ import { GLASS_SURFACE } from './shared';
 
 export const Popover = PopoverPrimitive.Root;
 export const PopoverTrigger = PopoverPrimitive.Trigger;
-export const PopoverAnchor = PopoverPrimitive.Anchor;
 
 interface PopoverContentProps extends React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content> {
   /** Render a small glass arrow anchored to the trigger. Matches S2 spec. */

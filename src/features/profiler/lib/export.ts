@@ -87,7 +87,7 @@ export function buildCsv(row: ProfileCsvRow): string {
  * Triggers a browser download of `csv` as `filename` via a Blob object URL
  * (same mechanism as legacy `dlCSV`; no dependencies).
  */
-export function downloadCsv(filename: string, csv: string): void {
+function downloadCsv(filename: string, csv: string): void {
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');

@@ -13,12 +13,12 @@
 
 export const SAP_MONTHS = 36;
 /** Monthly bonus (BDB) — a flat 25% of base commission. */
-export const SAP_BDB_RATE = 0.25;
+const SAP_BDB_RATE = 0.25;
 
 /** Income support tier, in dollars a month. 0 = not on the scheme. */
 export type SapTier = 0 | 1000 | 5000 | 8000 | 10000;
 
-export interface SapMonth {
+interface SapMonth {
   month: number;
   base: number;
   bonus: number;

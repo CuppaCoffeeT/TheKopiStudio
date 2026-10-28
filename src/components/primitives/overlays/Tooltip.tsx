@@ -3,8 +3,6 @@ import { cn } from '@/lib/utils';
 import { Kbd } from './Kbd';
 
 export const TooltipProvider = TooltipPrimitive.Provider;
-export const Tooltip = TooltipPrimitive.Root;
-export const TooltipTrigger = TooltipPrimitive.Trigger;
 
 interface TooltipContentProps
   extends React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content> {
@@ -17,7 +15,7 @@ interface TooltipContentProps
  * type (`text-background`). Light-pinned, no dark arm.
  * Optionally shows a Kbd chip inline (e.g. for toolbar hints).
  */
-export const TooltipContent = ({
+const TooltipContent = ({
   className,
   sideOffset = 6,
   children,

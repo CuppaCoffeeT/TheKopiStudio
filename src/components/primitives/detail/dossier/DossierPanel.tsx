@@ -24,7 +24,7 @@ import { Card } from '@/components/primitives/shell/Card';
 import { cn } from '@/lib/utils';
 
 /** Which body the panel carries — drives only the label's bottom margin. */
-export type DossierPanelDensity = 'stat' | 'list' | 'prose';
+type DossierPanelDensity = 'stat' | 'list' | 'prose';
 
 const LABEL_GAP: Record<DossierPanelDensity, string> = {
   stat: 'mb-4', // 16px — stat grid
@@ -58,7 +58,7 @@ export function DossierPanel({
 }
 
 /** The bare label, for surfaces that need it outside a `DossierPanel` card. */
-export function DossierPanelLabel({
+function DossierPanelLabel({
   children,
   className,
 }: {

@@ -32,8 +32,8 @@
 /** Query param carrying the chosen customer on every standalone tool route. */
 export const CUSTOMER_PARAM = 'customer';
 
-export const CLIENTS_MODULE = '/clients';
-export const PROFILER_MODULE = '/profiler';
+const CLIENTS_MODULE = '/clients';
+const PROFILER_MODULE = '/profiler';
 
 export interface ToolRoute {
   key: 'profiler' | 'tax' | 'srs' | 'legacy' | 'shield' | 'sappro' | 'report';
@@ -46,7 +46,7 @@ export interface ToolRoute {
   description: string;
 }
 
-export const TOOL_ROUTES: readonly ToolRoute[] = [
+const TOOL_ROUTES: readonly ToolRoute[] = [
   {
     key: 'profiler',
     label: 'Prospect Profiler',

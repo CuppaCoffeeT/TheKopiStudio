@@ -63,7 +63,7 @@ export function postCoverageOOP(futureCost: number, coverage: number): number {
   return Math.max(0, futureCost - coverage);
 }
 
-export interface HeroPolicyInput {
+interface HeroPolicyInput {
   isInvestmentLinked?: boolean | null;
   illustratedValueAge65?: string | number | null;
 }

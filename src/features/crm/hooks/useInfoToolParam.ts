@@ -25,8 +25,8 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 /** `?tool=info` — the only intent the record route carries in a query param. */
-export const INFO_TOOL_PARAM = 'tool';
-export const INFO_TOOL_VALUE = 'info';
+const INFO_TOOL_PARAM = 'tool';
+const INFO_TOOL_VALUE = 'info';
 
 export function useInfoToolParam(
   ready: boolean,

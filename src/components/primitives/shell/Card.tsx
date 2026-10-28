@@ -18,7 +18,7 @@
 import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
-export type CardTone = 'default' | 'translucent';
+type CardTone = 'default' | 'translucent';
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   tone?: CardTone;
@@ -61,14 +61,6 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
 
 type CardHeaderProps = React.HTMLAttributes<HTMLDivElement>;
 
-export function CardHeader({ className, children, ...props }: CardHeaderProps) {
-  return (
-    <div className={cn('flex flex-col gap-1.5 mb-3', className)} {...props}>
-      {children}
-    </div>
-  );
-}
-
 interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
   as?: 'h2' | 'h3' | 'h4';
 }
@@ -103,20 +95,4 @@ export function CardDescription({ className, children, ...props }: CardDescripti
 
 type CardContentProps = React.HTMLAttributes<HTMLDivElement>;
 
-export function CardContent({ className, children, ...props }: CardContentProps) {
-  return (
-    <div className={cn('flex flex-col gap-3', className)} {...props}>
-      {children}
-    </div>
-  );
-}
-
 type CardFooterProps = React.HTMLAttributes<HTMLDivElement>;
-
-export function CardFooter({ className, children, ...props }: CardFooterProps) {
-  return (
-    <div className={cn('flex items-center gap-2 pt-4 mt-3 border-t border-border', className)} {...props}>
-      {children}
-    </div>
-  );
-}

@@ -8,38 +8,20 @@ import type { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase
 
 /** A client row (`public.clients`). */
 export type ClientRow = Tables<'clients'>;
-/** Insert payload for `public.clients`. */
-export type ClientRowInsert = TablesInsert<'clients'>;
 /** Update payload for `public.clients`. */
 export type ClientRowUpdate = TablesUpdate<'clients'>;
 
 /** A policy row (`public.policies`). */
 export type PolicyRow = Tables<'policies'>;
-/** Insert payload for `public.policies`. */
-export type PolicyRowInsert = TablesInsert<'policies'>;
-/** Update payload for `public.policies`. */
-export type PolicyRowUpdate = TablesUpdate<'policies'>;
 
 /** A projected cash value row (`public.projected_cash_values`, UNIQUE(policy_id, age)). */
 export type ProjectedCashValueRow = Tables<'projected_cash_values'>;
-/** Insert payload for `public.projected_cash_values`. */
-export type ProjectedCashValueRowInsert = TablesInsert<'projected_cash_values'>;
-/** Update payload for `public.projected_cash_values`. */
-export type ProjectedCashValueRowUpdate = TablesUpdate<'projected_cash_values'>;
 
 /** An interaction row (`public.interactions`). */
 export type InteractionRow = Tables<'interactions'>;
-/** Insert payload for `public.interactions`. */
-export type InteractionRowInsert = TablesInsert<'interactions'>;
-/** Update payload for `public.interactions`. */
-export type InteractionRowUpdate = TablesUpdate<'interactions'>;
 
 /** A bank balance history row (`public.bank_balance_history`). */
 export type BankBalanceRow = Tables<'bank_balance_history'>;
-/** Insert payload for `public.bank_balance_history`. */
-export type BankBalanceRowInsert = TablesInsert<'bank_balance_history'>;
-/** Update payload for `public.bank_balance_history`. */
-export type BankBalanceRowUpdate = TablesUpdate<'bank_balance_history'>;
 
 // ── P2 — domain models (lib/mapping.ts row↔model contract; legacy UI shapes) ──
 // Numeric fields are STRINGS in models ('' = unset) because the legacy modals

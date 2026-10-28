@@ -28,7 +28,7 @@ import { cn } from '@/lib/utils';
 import { useTabsOverflow } from '@/hooks/useTabsOverflow';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/primitives/overlays/Popover';
 
-export type StatusTabTone = 'default' | 'warn' | 'alert';
+type StatusTabTone = 'default' | 'warn' | 'alert';
 
 export interface StatusTab {
   key: string;

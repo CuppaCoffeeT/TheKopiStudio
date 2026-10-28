@@ -28,7 +28,7 @@
 import type { ActivityChange, ActivityTool, ActivityType } from '@/lib/activityLog';
 import type { CrmClient } from '../types';
 
-export type { ActivityChange, ActivityTool, ActivityType };
+export type { ActivityChange,   };
 
 /** One row of the timeline, mapped out of the DB row. */
 export interface CustomerActivityEntry {

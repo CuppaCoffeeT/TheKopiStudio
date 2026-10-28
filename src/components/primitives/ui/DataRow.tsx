@@ -31,7 +31,7 @@ import { cn } from '@/lib/utils';
 import { TableCheckbox } from './TableCheckbox';
 import { DataRowCells, type DataRowCell } from './DataRowCells';
 
-export type { DataRowCell, DataRowCellTone } from './DataRowCells';
+export type { DataRowCell,  } from './DataRowCells';
 
 export type DataRowDensity = 'compact' | 'cozy' | 'comfortable';
 export type DataRowState = 'default' | 'hover' | 'selected' | 'focused' | 'disabled';

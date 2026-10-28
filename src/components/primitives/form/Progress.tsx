@@ -13,8 +13,8 @@ import { cn } from '@/lib/utils';
  * the --secondary track, which raw #D97551 misses (2.71:1) and #AB4925 clears.
  */
 
-export type ProgressTone = 'neutral' | 'active' | 'success' | 'error';
-export type ProgressSize = 'sm' | 'md';
+type ProgressTone = 'neutral' | 'active' | 'success' | 'error';
+type ProgressSize = 'sm' | 'md';
 
 interface ProgressProps {
   tone?: ProgressTone;
