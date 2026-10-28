@@ -4,19 +4,25 @@
     "src/main.tsx",
     "index.html",
     "vite.config.ts",
-    "tailwind.config.ts",
     "playwright.config.ts",
     "playwright.parallel.config.ts",
     "tests/**/*.spec.ts",
     "tests/auth.setup.ts",
     "scripts/**",
-    "supabase/functions/**"
+    "supabase/functions/**",
+    "playwright.comprehensive.config.ts"
   ],
-  "project": ["src/**/*.{ts,tsx}"],
+  "project": [
+    "src/**/*.{ts,tsx}"
+  ],
   "ignore": [
     "src/integrations/supabase/types.ts",
-    "src/components/ui/**",
     "**/*.d.ts",
     "dist/**"
+  ],
+  "ignoreDependencies": [
+    "tailwindcss",
+    "tailwindcss-animate",
+    "@tailwindcss/typography"
   ]
 }
