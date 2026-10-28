@@ -29,7 +29,8 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - name: tsc --noEmit
-        run: npx tsc --noEmit
+        # Root tsconfig is references-only (files: []) — check each project.
+        run: npx tsc --noEmit -p tsconfig.app.json && npx tsc --noEmit -p tsconfig.node.json
       - name: ESLint (max-warnings=15 — zero-debt ratchet, lowered from 1610 after full any-cleanup 2026-05-29)
         run: npm run lint
       - name: dependency-cruiser drift (net-new vs baseline — circular=0, cross-feature/page ratcheting down)

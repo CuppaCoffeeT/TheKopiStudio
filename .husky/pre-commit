@@ -2,8 +2,8 @@
 # W22 pre-commit gate — fast checks (~15-25s).
 # Bypass in emergencies with:  git commit --no-verify
 
-echo "[W22] pre-commit: tsc --noEmit (incremental)..."
-npx tsc --noEmit --incremental || {
+echo "[W22] pre-commit: tsc --noEmit (app project)..."
+npx tsc --noEmit -p tsconfig.app.json || {
   echo ""
   echo "✖ TypeScript errors — commit rejected."
   echo "  Fix the errors above, re-stage, try again."

@@ -4,8 +4,11 @@
 # comprehensive run remains the E2E safety net.
 # Bypass in emergencies with:  git push --no-verify
 
+# tsconfig.json is a references-only shell (`files: []`), so a bare
+# `tsc --noEmit` checked NOTHING — 14 app type errors sat behind a green gate
+# until 2026-10-28. Check each referenced project explicitly.
 echo "[W22] pre-push: tsc --noEmit (full)..."
-npx tsc --noEmit || {
+npx tsc --noEmit -p tsconfig.app.json && npx tsc --noEmit -p tsconfig.node.json || {
   echo ""
   echo "✖ TypeScript errors — push rejected."
   exit 1

@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
 
 type MobileListCardState = 'default' | 'hover' | 'selected';
 
-export interface MobileListCardProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface MobileListCardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   state?: MobileListCardState;
   title: React.ReactNode;
   subtitle?: React.ReactNode;

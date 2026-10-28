@@ -27,7 +27,7 @@ interface BreadcrumbProps {
  * Hover underline is brown (`decoration-primary`). Middle-ellipsis /…/ when deep.
  */
 export function Breadcrumb({ segments, truncate = true, className }: BreadcrumbProps) {
-  const visible =
+  const visible: (BreadcrumbSegment & { ellipsis?: boolean })[] =
     truncate && segments.length > 4
       ? [segments[0], { label: '…', ellipsis: true }, segments[segments.length - 2], segments[segments.length - 1]]
       : segments.map((s) => ({ ...s, ellipsis: false }));

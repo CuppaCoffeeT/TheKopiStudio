@@ -30,7 +30,7 @@ const STATE: RowState = {
   hasContact: false,
 };
 
-const keysOf = <T extends { key: string }>(items: T[]) => items.map((i) => i.key);
+const keysOf = <T extends { key?: string }>(items: T[]) => items.map((i) => i.key);
 
 describe('customerColumns', () => {
   it('omits the Advisor column when the viewer cannot see other books', () => {
